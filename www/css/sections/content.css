@@ -1,0 +1,42 @@
+/* -------------------------------------------------------------------- */
+
+/* @group Content */
+
+	/* Use these to style content, like blog posts
+	
+/* -------------------------------------------------------------------- */
+	
+	/*
+	
+	<div class="pic columns-4 left .pull-4">
+		<img src="image.jpg" />
+		<p>Caption goes here.</p>
+	</div>
+
+	or
+	
+	<img src="image.jpg" class="pic four left frame solo"/>
+	
+	*/
+	
+	.right 		{ float: right; margin: grid(baseline) 0 grid(baseline) grid(baseline); }
+	.left 			{ float: left;  margin: grid(baseline) grid(baseline) grid(baseline) 0; }
+	.solo	 		{ margin-bottom: grid(baseline); }
+	
+	.pic			{ }
+	.pic p, 
+	.caption 		{ class: small; }	
+	
+	.frame 		{ border: 1px solid #999; }
+	.full			{ margin-left: 0; margin-right: 0; }
+	
+	.top        	{ margin-top:0; padding-top:0; }
+	.bottom     	{ margin-bottom:0; padding-bottom:0; }
+	
+	.first			{ margin-left: 0; }
+	.last 			{ margin-right: 0; }
+	
+	.row			{ margin-top: 0; }
+	
+/* @end */
+		
