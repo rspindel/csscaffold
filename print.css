@@ -1,0 +1,30 @@
+	body 
+	{ 
+		width:100% 	!important;
+		margin:0 		!important;
+		padding:0 		!important;
+		
+		line-height: 1.4;
+		word-spacing:1.1pt;
+		letter-spacing:0.2pt; 
+		font-family: Garamond,"Times New Roman", serif; 
+		
+		color: #000; 
+		background: none; 
+		font-size: 12pt; 
+	}
+	
+	/* Links */
+	a:link, 
+	a:visited 
+	{ 
+		background: transparent; 
+		font-weight: 700; 
+		text-decoration: underline;
+		color:#333; 
+	}
+	
+	a:link[href^="http://"]:after, 
+	a[href^="http://"]:visited:after { content: " (" attr(href) ") "; font-size: 90%; }
+	
+	a[href^="http://"] {color:#000; }

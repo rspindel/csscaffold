@@ -1,0 +1,73 @@
+/* -------------------------------------------------------------------- */
+
+/* @group Content */
+	
+/* -------------------------------------------------------------------- */
+
+	
+	.date			{}
+	.author			{}
+	.avatar			{}
+	.category		{}
+	
+	.meta			{}
+	.meta-2			{}
+	
+	.quiet     		{ color: #666; }
+	.loud       	{ color: #000; }
+	.highlight  	{ background:#ff0; }
+	.added      	{ background:#060; color: #fff; }
+	.removed    	{ background:#900; color: #fff; }
+	.open			{}
+	.closed			{}
+	
+	.small      	{ font-size: 11px; margin-bottom: grid(baseline); line-height: grid(baseline); } 
+	.large      	{ font-size: 2.2em; line-height: math(grid(baseline) * 2)px; margin-bottom: grid(baseline); letter-spacing: -1px; }
+	
+	.inner-box		{ padding:math(grid(baseline)/2)px; }
+		
+	
+	
+/* @group Modular Layout System */
+/*---------------------------------------------------------------- */	
+	
+	/*
+	
+	EXAMPLES
+	
+	<div class="pic columns-4 left .pull-4">
+		<img src="image.jpg" />
+		<p>Caption goes here.</p>
+	</div>
+
+	or
+	
+	<img src="image.jpg" class="pic four left frame solo"/>
+	
+	*/
+	
+	.right 			{ float: right; margin: grid(baseline) 0 grid(baseline) grid(baseline); }
+	.left 			{ float: left;  margin: grid(baseline) grid(baseline) grid(baseline) 0; }
+	.solo	 		{ margin-bottom: grid(baseline); }
+	
+	.pic			{ }
+	.pic p,
+	.pic p *,
+	.caption 		{ class: small; }	
+	
+	.frame 			{ border: 1px solid #999; }
+	.full			{ margin-left: 0; margin-right: 0; }
+	
+	/* If the figure isn't sitting flush to the paragraph or sides use these */
+	.top        	{ margin-top:0; }
+	.bottom     	{ margin-bottom:0;}
+	.first			{ margin-left: 0; }
+	.last 			{ margin-right: 0; }
+	
+	/* @end */
+
+	
+	
+	
+/* @end */
+		

@@ -1,0 +1,73 @@
+/* -------------------------------------------------------------------- */
+
+/* @group Page Layout */
+	
+/* -------------------------------------------------------------------- */
+
+	#page	{ class:container; }
+	
+	#header
+	{ 
+		columns		: 24!; 
+		height		: 108px; 
+		class		: column; 
+		padding		: 10px; 
+	}
+	 
+	#footer
+	{ 
+		columns		: 24!; 
+		height		: round(100); 
+		class		: column; 
+		margin		: 0; 
+		based-on	: base(invertedText);
+	}
+		
+	#primary-content 		{ }
+	#secondary-content		{ }
+	#tertiary-content		{ }
+	
+
+/* @group Layout Styles */
+/* ---------------------------------------------------------------- */
+	
+	
+	.layout-homepage 
+	{ 
+		#primary-content 			{ columns:18!; class:column; }
+		#secondary-content			{ columns:6!; class:last,column;}
+		#tertiary-content			{ columns:24!; class:column; }
+	}
+	
+
+	
+/* @end */
+/* @group Page Specific */
+/*---------------------------------------------------------------- */	
+	
+	#home					{}
+	#about					{}	
+	#services				{}
+	#contact				{}
+	#search-results			{}	
+
+
+
+/* @end */	
+/* @group Navigation */
+/* -------------------------------------------------------------------- */
+	
+	/* Give your navigation ul a class of .inline-nav in the markup */
+	#navigation			{ based-on:base(tabs); }
+	#navigation li 		{ }
+	#navigation li a 	{ }
+
+
+
+/* @end */
+/* @group Specific / Unique */
+/*---------------------------------------------------------------- */
+
+
+/* @end */
+

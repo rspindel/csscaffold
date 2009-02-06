@@ -1,0 +1,222 @@
+/* -------------------------------------------------------------------- */
+
+/* @group Typography */
+	
+/* -------------------------------------------------------------------- */
+
+	
+	/* Required Constants */
+	@constants 
+	{
+		smallFontSize		: 10px;
+		fontSize			: 13px;
+		largeFontSize		: 15px;
+		
+		textColor			: #444;
+		backgroundColor		: #fff;
+		
+		/* Its a good idea to define your colour swatch here. eg: */
+		colorGrey			: #eee; 
+		invertedTextColor	: #fff;
+	}
+	
+	body 
+	{ 
+	  	background			: const(backgroundColor); 
+	  	color				: const(textColor);
+	  	based-on			: base(myriad);
+	  	font-size			: const(fontSize);
+	  	line-height			: grid(baseline);
+	}
+	
+	
+	
+	
+	/* @group Headings */
+	/*	-------------------------------------------------------------- */
+	
+	h1,h2,h3,h4,h5,h6 { font-weight: normal; color: #111; }
+	
+	h1 
+	{ 
+		font-size			: 3em;
+		font-weight			: bold;
+		letter-spacing 		: -2px;
+		based-on			: base(franklingothic);
+		line-height			: math(grid(baseline)*3)px;
+		margin-bottom		: grid(baseline);
+	}
+	
+	h2 
+	{
+		font-size			: 2em;
+		based-on			: base(helvetica);
+		line-height			: math(grid(baseline)*2)px;
+		margin-bottom		: grid(baseline);  
+	}
+	
+	h3 
+	{ 
+		font-size			: 1.5em;
+		based-on			: base(helvetica);
+		line-height			: math(grid(baseline)*2)px;
+		margin-bottom		: grid(baseline);  
+	}
+	
+	h4 
+	{ 
+		font-size			: 1.2em;
+		based-on			: base(helvetica);
+		line-height			: grid(baseline);
+		margin-bottom		: grid(baseline); 
+	}
+	
+	h5 
+	{ 
+		font-size			: 1em;
+		font-weight			: bold;
+		based-on			: base(helvetica);
+		line-height			: grid(baseline);
+		margin-bottom		: grid(baseline); 
+	}
+	
+	h6 
+	{ 
+		font-size			: 1em;
+		font-weight			: bold;
+		based-on			: base(helvetica);
+		line-height			: grid(baseline);
+		margin-bottom		: 0; 
+	}
+	
+	h1 img, h2 img, h3 img, 
+	h4 img, h5 img, h6 img { margin: 0; }
+	
+		
+	/* @end */	
+	/* @group Text elements */
+	/* 	-------------------------------------------------------------- */
+	
+	p				{ margin: 0 0 grid(baseline) 0; }
+	p:last-child	{ margin-bottom:0;}
+	
+	/* ------ */
+	
+	blockquote  	{ margin: grid(baseline); font-style: italic; color: #666; }
+	cite			{}
+	q				{}
+	
+	blockquote > *:first-child:before { content:"\201C"; }
+	
+	/* ------ */
+	
+	strong      	{ font-weight: bold; }
+	em      	  	{ font-style: italic; }
+	
+	/* ------ */
+	
+	pre,code,kbd,
+	samp,var		{ margin: grid(baseline) 0; white-space: pre; }
+	
+	pre,code,tt,
+	pre *		 	{ font-size: 11px; based-on: base(monospace); line-height: grid(baseline); }
+	
+	/* ------ */
+	
+	del         	{ color:#666; }
+	ins 			{ background: #fffde2;text-decoration:none;}
+	sup, sub    	{ line-height: 0; }
+	
+	/* ------ */
+	
+	abbr			{ } 
+	acronym     	{ }
+	dfn         	{ font-weight: bold; font-style: italic;  }
+	
+	abbr[title],
+	acronym[title],
+	dfn[title] 	{ border-bottom:1px solid #666; cursor:help; }
+	
+	/* ------ */
+	
+	address     	{ margin: 0 0 grid(baseline); font-style: italic; }
+	
+	hr 				
+	{ 
+		clear:both; 
+		float:none; 
+		width:100%; 
+		height:1px; 
+		margin:math(grid(baseline)-1) 0 grid(baseline) 0; 
+		border:none; 
+		background:#ddd; 
+	}
+	
+	
+	/* @end */
+	/* @group Links */
+	/* 	------------------------------------------------------------- */
+	
+	a:focus, 
+	a:hover     	{ color: #000; }
+	a           	{ color: #009; text-decoration: underline; }
+	
+	h2 a 			{}
+	h3 a 			{}
+	h4 a 			{}
+	h5 a 			{}
+	h6 a 			{}
+	
+	h1 a:hover		{}
+	h2 a:hover 		{}
+	h3 a:hover 		{}
+	h4 a:hover 		{}
+	h5 a:hover 		{}
+	h6 a:hover 		{}
+	
+	
+	
+	/* @end */
+	/* @group Figures */
+	/* 	-------------------------------------------------------------- */
+	
+	p img       	{ float: left; margin: grid(baseline) grid(baseline) grid(baseline) 0; padding: 0; }
+	
+	
+	
+	/* @end */
+	/* @group Lists */
+	/* 	-------------------------------------------------------------- */
+	
+	li ul, 
+	li ol       	{ margin:0 grid(baseline); }
+	ul, ol     		{ margin: 0 grid(baseline) grid(baseline) grid(baseline); }
+	
+	ul          	{ list-style-type: disc; }
+	ol          	{ list-style-type: decimal; }
+	
+	dl          	{ margin: 0 0 grid(baseline) 0; }
+	dt	      		{ font-weight: bold; }
+	dd          	{ margin-left: grid(baseline);}
+	
+	
+	
+	/* @end */
+	/* @group Tables */
+	/* Note: Tables still need 'cellspacing="0"' in the markup.
+	-------------------------------------------------------------- */
+	
+	table       { margin-bottom: grid(baseline); width:100%; }
+	th          { font-weight: bold; background: #C3D9FF; }
+	th,td       { padding: 4px 10px 4px 5px; }
+	tr.alt td   { background: #E5ECF9; }
+	tfoot       { font-style: italic; }
+	caption     { background: #eee; }
+	
+	table[border]	{ border-collapse:separate; border-spacing:0; }
+	
+	/* @end */	
+	
+	
+	
+/* @end */

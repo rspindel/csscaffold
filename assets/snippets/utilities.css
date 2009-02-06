@@ -1,0 +1,393 @@
+/* -------------------------------------------------------------------- */
+
+/* @group Utilities */
+	
+/* -------------------------------------------------------------------- */
+
+
+/* @group Layout */
+/* ---------------------------------------------------------------- */
+
+	.clear 			{ overflow:hidden; }
+	
+	
+	// Needs to be in the markup
+	.clearfix:after 	{ content:"."; display:block; height:0; clear:both; visibility:hidden; }
+	 
+	/* 
+	Any div that is used for layout, should have a 'column' class. The columns property
+	automatically gives this to you.
+	*/
+	.column 		{ float:left; margin: 0 grid(gutter) grid(baseline) 0; }
+	.single			{ clear:both; }
+	
+	/* For column classes when testing */
+	.wireframe		{ opacity:0.7; background: lightblue; min-height:round(40);}
+	
+	.container		{ width: grid(max); margin: 0 auto; overflow: hidden; position: relative; }
+	
+	.showgrid		{ background: url('assets/backgrounds/grid.png'); }
+	
+	.last 			{ margin-right: 0; }	
+	
+	.hide       	{ display: none; }
+	
+	/* Used for any horizontal navigation-style ul/ol */
+	@base(inline-list)			
+	{ 
+		list-style:none; 
+		margin:0; 
+		padding:0; 
+		
+		li 		{ float:left; padding:0; margin-right:10px; }
+		a 		{ display:block; }
+	!}
+
+
+/* @end */	
+/* @group Typography */
+/* -------------------------------------------------------------- */
+		
+	/* Incremental Leading */
+	.incr-leading { line-height: math((grid(baseline)*4)/5)px; font-size: const(smallFontSize); } 
+
+
+	/* Surround uppercase words and abbreviations with this class.
+   Based on work by Jørgen Arnor Gårdsø Lom [http://twistedintellect.com/] */
+	.caps { 
+	  font-variant: small-caps; 
+	  letter-spacing: 1px; 
+	  text-transform: lowercase; 
+	  font-size:1.2em;
+	  line-height:1%;
+	  font-weight:bold;
+	  padding:0 2px;
+	}
+	
+	
+	/* Eternal Links */
+	a[href^="http"]:after 
+	{  
+		margin:0 5px 0 0;    
+		font-family:"Zapf Dingbats";  
+		content: "\279C";  
+ 	} 
+ 	
+ 	a[href$="pdf"]:after
+	{    
+		content: " (PDF)";  
+	}  
+
+	a[href$=".doc"]:after 
+	{
+		content: " (DOC)";
+	} 
+	
+	/* Drop Cap */
+	p.drop-cap:first-letter
+	{  
+		display:block;  
+		margin:5px 0 0 5px;  
+		float:left;    
+		font-size:60px;  
+		font-family:Georgia;  
+	}
+	
+	/* For some nice Ampersands */
+	.nice-amp { 
+	  font-family: "Warnock Pro", "Goudy Old Style","Palatino","Book Antiqua", Georgia, serif; 
+	  font-style: italic;
+	  font-weight: normal;
+	}
+	
+	/* Indentation instead of line shifts for sibling paragraphs. */
+   /*p + p { text-indent:2em; margin-top:-1.5em; }*/
+   /*form p + p  { text-indent: 0; } /* Don't want this in forms. */
+   
+   	.image-replaced
+	{
+		display:block;
+		text-indent:-9999px;
+		background:no-repeat 0 0;
+		overflow:hidden;
+	}
+	
+	/* Font stacks. Based on the work of Nathan from Unit Interactive.
+	
+	For titles:
+	font-family: Ideal, Alternative, Common, Generic;
+	
+	For body copy:
+	font-family: Ideal, Fit, Common, Generic;
+	
+	http://unitinteractive.com/blog/2008/06/26/better-css-font-stacks/
+	
+	*/
+	
+	@base(invertedText)
+	{
+		color:const(invertedTextColor);
+		
+		a { color: const(invertedLinkColor); }
+		a:hover { color: const(invertedLinkHoverColor); }
+	!}
+
+	@base(times)
+	{
+		font-family: Times, Times New Roman, Georgia, serif;
+	!}
+	
+	@base(helvetica)
+	{
+		font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	!}
+	
+	@base(myriad)
+	{
+		font-family: "MyriadPro", Myriad, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	!}
+	
+	@base(baskerville)
+	{
+		font-family: Baskerville, Times New Roman, Times, serif;
+	!}
+	
+	@base(cambria)
+	{
+		font-family: Cambria, Georgia, Times, Times New Roman, serif;
+	!}
+	
+	@base(centurygothic)
+	{
+		font-family: Century Gothic, Apple Gothic, sans-serif;
+	!}
+	
+	@base(monospace)
+	{
+		font-family: "Espresso Mono", Consolas, Lucida Console, Monaco, monospace;
+	!}
+	
+	@base(franklingothic)
+	{
+		font-family: Franklin Gothic Medium, Arial Narrow Bold, Arial, sans-serif;
+	!}
+	
+	@base(futura)
+	{
+		font-family: Futura, Century Gothic, AppleGothic, sans-serif;
+	!}
+	
+	@base(garamond)
+	{
+		font-family: Garamond, Hoefler Text, Times New Roman, Times, serif;
+	!}
+
+	@base(geneva)
+	{
+		font-family: Geneva, Verdana, Lucida Sans, Lucida Grande, Lucida Sans Unicode, sans-serif;
+	!}
+	
+	@base(georgia)
+	{
+		font-family: Georgia, Palatino, Palatino Linotype, Times, Times New Roman, serif;
+	!}
+	
+	@base(gillsans)
+	{
+		font-family: Gill Sans, Calibri, Trebuchet, sans-serif;
+	!}
+	
+	@base(impact)
+	{
+		font-family: Impact, Haettenschweiler, Arial Narrow Bold, sans-serif;
+	!}
+	
+	@base(palatino)
+	{
+		font-family: Palatino, Palatino Linotype, Hoefler Text, Times, Times New Roman, serif ;
+	!}
+
+	@base(tahoma)
+	{
+		font-family: Tahoma, Geneva, Verdana;
+	!}
+	
+	@base(trebuchet)
+	{
+		font-family: Trebuchet, Tahoma, Arial, sans-serif;
+	!}
+
+/* @end */
+/* @group Buttons */
+/* -------------------------------------------------------------- */
+
+	/* -------------------------------------------------------------- 
+		   
+	   Created by Kevin Hale [particletree.com]
+	   * particletree.com/features/rediscovering-the-button-element
+	
+	-------------------------------------------------------------- */
+	
+	a.button, button {
+	  display:block;
+	  float:left;
+	  margin:0 0.583em 0.667em 0;
+	  padding:5px 10px 5px 7px;   /* Links */
+	  
+	  border:1px solid #dedede;
+	  border-top:1px solid #eee;
+	  border-left:1px solid #eee;
+	
+	  background-color:#f5f5f5;
+	  font-family:"Lucida Grande", Tahoma, Arial, Verdana, sans-serif;
+	  font-size:100%;
+	  line-height:130%;
+	  text-decoration:none;
+	  font-weight:bold;
+	  color:#565656;
+	  cursor:pointer;
+	}
+	
+	button {
+	  width:auto;
+	  overflow:visible;
+	  padding:4px 10px 4px 7px;
+	  line-height:math(grid(baseline)-1)px; /* Need this to fix the button lineheight issue */
+	}
+	
+	button img, 
+	a.button img
+	{
+	  margin:0 3px -3px 0;
+	  padding:0;
+	  border:none;
+	  width:16px;
+	  height:16px;
+	  float:none;
+	}
+	
+	
+	/* Button colors
+	-------------------------------------------------------------- */
+	
+	/* Standard */
+	button:hover, a.button:hover{
+	  background-color:#dff4ff;
+	  border:1px solid #c2e1ef;
+	  color:#336699;
+	}
+	a.button:active{
+	  background-color:#6299c5;
+	  border:1px solid #6299c5;
+	  color:#fff;
+	}
+	
+	/* Positive */
+	.positive {
+	  color:#529214;
+	}
+	a.positive:hover, button.positive:hover {
+	  background-color:#E6EFC2;
+	  border:1px solid #C6D880;
+	  color:#529214;
+	}
+	a.positive:active {
+	  background-color:#529214;
+	  border:1px solid #529214;
+	  color:#fff;
+	}
+	
+	/* Negative */
+	.negative {
+	  color:#d12f19;
+	}
+	a.negative:hover, button.negative:hover {
+	  background:#fbe3e4;
+	  border:1px solid #fbc2c4;
+	  color:#d12f19;
+	}
+	a.negative:active {
+	  background-color:#d12f19;
+	  border:1px solid #d12f19;
+	  color:#fff;
+	}
+
+
+/* @end */
+/* @group Tabs */
+/* -------------------------------------------------------------- */
+
+	/* ------------------------------------------------------------
+	
+	 Tabs Plugin 0.1 for the Blueprint CSS Framework
+	 http://blueprintcss.org
+	
+	------------------------------------------------------------- */
+	
+	@base(tabs) 
+	{ 
+		border-bottom:1px solid #ccc;
+		margin:0;
+		min-height:auto;
+		overflow:auto;
+		
+		li 
+		{
+		  	border:1px solid #ccc;
+		  	border-bottom:none;
+		  	float:left;
+		  	line-height:1.5; 
+		 	list-style-type:none;
+		  	margin:0 .25em 0 0;
+		  	padding:0;
+		  
+		  	a 
+			{ 
+				background:#ddd;
+			  	border:1px solid #eee;
+			  	border-bottom:none;
+			  	color:#222;
+			  	cursor:pointer;
+			 	display:block;
+			  	float:left;
+			  	font-weight:bold;
+			  	padding:.15em .33em .25em .33em;
+			}
+			
+			a.selected 
+			{ 
+			  	background:#666;
+			 	border:1px solid #666;
+			  	border-bottom:none;
+			  	color:#fff;
+			  	cursor:default;
+			}
+			
+			a, 
+			a:focus, 
+			a:hover 	{ text-decoration:none; }
+			
+			a:focus, 
+			a:hover 	{ color:#555; outline:none; }
+			
+			a.selected:focus, 
+			a.selected:hover { color:#fafafa; }
+			
+		}
+		
+		li.label 
+		{ 
+			border:none;
+			font-weight:bold;
+			line-height:1.5; 
+			margin-right:.5em; 
+			padding:.25em .33em .25em .33em;
+		}
+		
+	!}
+
+
+
+/* @end */
+
+

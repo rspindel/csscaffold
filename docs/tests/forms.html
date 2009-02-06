@@ -1,0 +1,299 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<title>Forms Test</title>
+	<link href="../../screen.css?recache" media="screen" rel="stylesheet" type="text/css" />
+	<link href="css/test.css" media="screen" rel="stylesheet" type="text/css" />
+	
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
+	<script type="text/javascript" src="js/test.js"></script>
+	
+</head>
+
+<body>
+	
+	<div id="page" class="layout-blog">
+		<div id="primary-content">
+		
+			<form id="form-id" action="" method="get">
+		
+				<fieldset class="block">
+					<legend>Fieldset 1 - class="block"</legend>
+		
+						<div class="text">
+				<label for="name">Name</label>
+				<input type="text" id="name" name="name" value="" />
+				<p class="formtip">This is a form tip</p>
+			</div>
+			<div class="textarea">
+				<label for="longtext">Textarea</label>
+				<p class="formtip above">This is a form tip</p>
+				<textarea id="longtext" name="longtext" rows="10" cols="10">Textarea content</textarea>
+			</div>
+			<div class="checkboxes">
+				<p class="label">Choose some</p>
+				<p class="formtip">This is a form tip</p>
+				<ul>
+					<li class="checkbox">
+						<label for="choice">
+							<input type="checkbox" id="choice" name="choice" value="yes" />
+							This is the name
+						</label>
+					</li>
+					<li class="checkbox">
+						<label for="choice2">
+							<input type="checkbox" id="choice2" name="choice2" value="yes" />
+							This is the name
+						</label>
+					</li>
+					<li class="checkbox">
+						<label for="choice3">
+							<input type="checkbox" id="choice3" name="choice3" value="yes" />
+							This is the name
+						</label>
+					</li>
+				</ul>	
+			</div>
+			<input type="hidden" name="redirect" value="http://www.opera.com" />
+			<div class="radio">
+				<p class="label">Choose one</p>
+				<p class="formtip">This is a form tip</p>
+				<ul>
+					<li>
+						<input type="radio" name="radiogroup" id="radiobutton" value="thisisthevalue" />
+						<label for="radiobutton">This is the value</label>
+					</li>
+				</ul>
+			</div>
+			<div class="select">
+				<label for="town">Select your Town</label>
+				<p class="formtip">This is a form tip</p>
+				<select id="town">
+					<option value="">Please Select One</option>
+					<option value="hoha">Ho Ha</option>
+					<option value="hoha">Ho Ha</option>
+					<option value="hoha">Ho Ha</option>
+					<option value="hoha">Ho Ha</option>
+				</select>
+			</div>
+			<div class="buttons">
+				<button type="submit" id="submit" name="submit">Submit</button>
+				<button type="reset" id="reset" name="reset">Reset</button>
+				<p class="formtip">This is a form tip</p>
+			</div><div class="upload">
+					<label for="file">Upload Image</label>
+					<p class="formtip">This is a form tip</p>
+					<input type="file" id="file" name="file" value="" />
+			</div>
+				</fieldset>
+			</form>
+
+
+			<form id="form-id-2" action="" method="get">
+		
+				<fieldset class="inline">
+					<legend>Fieldset 1 - class="inline"</legend>
+		
+						<div class="text">
+				<label for="name">Name</label>
+				<input type="text" id="name" name="name" value="" />
+				<p class="formtip">This is a form tip</p>
+			</div>
+			<div class="textarea">
+				<label for="longtext">Textarea</label>
+				<p class="formtip above">This is a form tip</p>
+				<textarea id="longtext" name="longtext" rows="10" cols="10">Textarea content</textarea>
+			</div>
+			<div class="checkboxes">
+				<p class="label">Choose some</p>
+				<p class="formtip">This is a form tip</p>
+				<ul>
+					<li class="checkbox">
+						<label for="choice">
+							<input type="checkbox" id="choice" name="choice" value="yes" />
+							This is the name
+						</label>
+					</li>
+					<li class="checkbox">
+						<label for="choice2">
+							<input type="checkbox" id="choice2" name="choice2" value="yes" />
+							This is the name
+						</label>
+					</li>
+					<li class="checkbox">
+						<label for="choice3">
+							<input type="checkbox" id="choice3" name="choice3" value="yes" />
+							This is the name
+						</label>
+					</li>
+				</ul>	
+			</div>
+			<input type="hidden" name="redirect" value="http://www.opera.com" />
+			<div class="radio">
+				<p class="label">Choose one</p>
+				<p class="formtip">This is a form tip</p>
+				<ul>
+					<li>
+						<input type="radio" name="radiogroup" id="radiobutton" value="thisisthevalue" />
+						<label for="radiobutton">This is the value</label>
+					</li>
+				</ul>
+			</div>
+			<div class="select">
+				<label for="town">Select your Town</label>
+				<p class="formtip">This is a form tip</p>
+				<select id="town">
+					<option value="">Please Select One</option>
+					<option value="hoha">Ho Ha</option>
+					<option value="hoha">Ho Ha</option>
+					<option value="hoha">Ho Ha</option>
+					<option value="hoha">Ho Ha</option>
+				</select>
+			</div>
+			<div class="buttons">
+				<button type="submit" id="submit" name="submit">Submit</button>
+				<button type="reset" id="reset" name="reset">Reset</button>
+				<p class="formtip">This is a form tip</p>
+			</div><div class="upload">
+					<label for="file">Upload Image</label>
+					<p class="formtip">This is a form tip</p>
+					<input type="file" id="file" name="file" value="" />
+			</div>
+				</fieldset>
+			</form>
+			
+		</div>
+		
+		<div id="secondary-content">
+			<h2>Instructions</h2>
+			
+			<p>Use the markup specified here, and you'll have access to the form styles of Scaffold.</p>
+			
+			<p>By simply changing the class on the fieldset, or overriding it at the wrapper div for the form element,
+			you can change the layout from inline labels to block labels.</p>
+			
+			<h3>Markup Templates</h3>
+			
+			<h4>Text Fields</h4>
+			<pre>
+<code>&lt;div class="text">
+	&lt;label for="name">Name&lt;/label>
+	&lt;input type="text" id="name" name="name" value="" />
+	&lt;p class="formtip">This is a form tip&lt;/p>
+&lt;/div></code>
+			</pre>
+			
+			<h4>Textareas</h4>
+			
+<pre>
+<code>&lt;div class=&quot;textarea&quot;&gt;
+	&lt;label for=&quot;longtext&quot;&gt;Textarea&lt;/label&gt;
+	&lt;p class=&quot;formtip above&quot;&gt;This is a form tip&lt;/p&gt;
+	&lt;textarea id=&quot;longtext&quot; name=&quot;longtext&quot; rows=&quot;10&quot; cols=&quot;10&quot;&gt;Textarea content&lt;/textarea&gt;
+&lt;/div&gt;</code></pre>
+
+			<h4>Checkboxes</h4>
+
+<pre>
+<code>&lt;div class=&quot;checkboxes&quot;&gt;
+&lt;p class=&quot;label&quot;&gt;Choose some&lt;/p&gt;
+&lt;p class=&quot;formtip&quot;&gt;This is a form tip&lt;/p&gt;
+&lt;ul&gt;
+&lt;li class=&quot;checkbox&quot;&gt;
+   &lt;label for=&quot;choice&quot;&gt;
+   &lt;input type=&quot;checkbox&quot; id=&quot;choice&quot; name=&quot;choice&quot; value=&quot;yes&quot; /&gt;
+   This is the name
+   &lt;/label&gt;
+&lt;/li&gt;
+&lt;li class=&quot;checkbox&quot;&gt;
+   &lt;label for=&quot;choice2&quot;&gt;
+   &lt;input type=&quot;checkbox&quot; id=&quot;choice2&quot; name=&quot;choice2&quot; value=&quot;yes&quot; /&gt;
+   This is the name
+   &lt;/label&gt;
+&lt;/li&gt;
+&lt;li class=&quot;checkbox&quot;&gt;
+   &lt;label for=&quot;choice3&quot;&gt;
+   &lt;input type=&quot;checkbox&quot; id=&quot;choice3&quot; name=&quot;choice3&quot; value=&quot;yes&quot; /&gt;
+   This is the name
+   &lt;/label&gt;
+&lt;/li&gt;
+&lt;/ul&gt;	
+&lt;/div&gt;</code></pre>
+
+	<h4>Radio Buttons</h4>
+	
+<pre>
+<code>&lt;div class=&quot;radio&quot;&gt;
+	&lt;p class=&quot;label&quot;&gt;Choose one&lt;/p&gt;
+	&lt;p class=&quot;formtip&quot;&gt;This is a form tip&lt;/p&gt;
+	&lt;ul&gt;
+		&lt;li&gt;
+			&lt;input type=&quot;radio&quot; name=&quot;radiogroup&quot; id=&quot;radiobutton&quot; value=&quot;thisisthevalue&quot; /&gt;
+			&lt;label for=&quot;radiobutton&quot;&gt;This is the value&lt;/label&gt;
+		&lt;/li&gt;
+	&lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+
+	<h4>Select Boxes</h4>
+
+<pre>
+<code>&lt;div class=&quot;select&quot;&gt;
+	&lt;label for=&quot;town&quot;&gt;Select your Town&lt;/label&gt;
+	&lt;p class=&quot;formtip&quot;&gt;This is a form tip&lt;/p&gt;
+	&lt;select id=&quot;town&quot;&gt;
+		&lt;option value=&quot;&quot;&gt;Please Select One&lt;/option&gt;
+		&lt;option value=&quot;hoha&quot;&gt;Ho Ha&lt;/option&gt;
+		&lt;option value=&quot;hoha&quot;&gt;Ho Ha&lt;/option&gt;
+		&lt;option value=&quot;hoha&quot;&gt;Ho Ha&lt;/option&gt;
+		&lt;option value=&quot;hoha&quot;&gt;Ho Ha&lt;/option&gt;
+	&lt;/select&gt;
+&lt;/div&gt;</code></pre>
+
+	<h4>Buttons</h4>
+
+<pre>
+<code>&lt;div class=&quot;buttons&quot;&gt;
+	&lt;button type=&quot;submit&quot; id=&quot;submit&quot; name=&quot;submit&quot;&gt;Submit&lt;/button&gt;
+	&lt;button type=&quot;reset&quot; id=&quot;reset&quot; name=&quot;reset&quot;&gt;Reset&lt;/button&gt;
+	&lt;p class=&quot;formtip&quot;&gt;This is a form tip&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+
+	<h4>Upload</h4>
+
+<pre>
+<code>&lt;div class=&quot;upload&quot;&gt;
+		&lt;label for=&quot;file&quot;&gt;Upload Image&lt;/label&gt;
+		&lt;p class=&quot;formtip&quot;&gt;This is a form tip&lt;/p&gt;
+		&lt;input type=&quot;file&quot; id=&quot;file&quot; name=&quot;file&quot; value=&quot;&quot; /&gt;
+&lt;/div&gt;</code></pre>
+			
+		</div>
+		<div id="tertiary-content"></div>
+	
+</div>
+
+	<a href="#" id="showgrid">
+		Toggle Grid View
+	</a>
+	
+	<select id="layout-options">
+		<option>Choose a Layout</option>
+	</select>
+	
+	<div id="nav-wrap">
+	<ul id="navigation">
+		<li><a href="typography.html">Typography</a></li>
+		<li><a href="content.html">Content</a></li>
+		<li><a href="forms.html">Forms</a></li>
+		<li><a href="layout.html">Layouts</a></li>
+	</ul>
+	</div>
+	
+	
+	
+</body>
+</html>

@@ -1,0 +1,7 @@
+/* Fix text rendering in Safari */
+p, li, dt, dd, label, legend, caption, td { text-shadow: 0 0 0 const(backgroundColor); }
+
+.inverted 
+{
+	p, li, dt, dd, label, legend, caption, td { text-shadow: 0 0 0 const(InvertedBackgroundColor); }
+}
