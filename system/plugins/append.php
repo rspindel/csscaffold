@@ -11,11 +11,12 @@ class Append extends CacheerPlugin
 	
 	function post_process($css)
 	{
-		$append_dir = 'assets/plugins/';
+		global $css_plugin_dir;
 		
-		if (is_dir($append_dir))
+		
+		if (is_dir($css_plugin_dir))
 		{
-			if ($dir_handle = opendir($append_dir)) 
+			if ($dir_handle = opendir($css_plugin_dir)) 
 			{
 				while (($file = readdir($dir_handle)) !== false) 
 				{
@@ -23,9 +24,9 @@ class Append extends CacheerPlugin
 					{ 
 						continue; 
 					}
-					
-					$append .= file_get_contents($append_dir.$file);
-				
+
+					$append .= file_get_contents($css_plugin_dir.$file);
+
 				}
 				closedir($dir_handle);
 			}

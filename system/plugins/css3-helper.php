@@ -18,27 +18,7 @@ class CSS3Helper extends CacheerPlugin
 		
 		return $css;
 	}
-	
-	/*
-	function rgbToHex($css)
-	{
-		if(preg_match_all('/rgba?\((\d+),(\d+),(\d+),?([0-9.]*?)\)/', $css, $matches))
-		{
-			foreach($matches[0] as $key => $rgb_property)
-			{
-				$red 		= $matches[1][$key];
-				$blue 		= $matches[2][$key];
-				$green 	= $matches[3][$key];
-				$alpha 	= $matches[4][$key];
-				
-				$hex = "#".base_convert($red,8,16).base_convert($green,8,16).base_convert($blue,8,16);
-			}
-
-		}
-
-		return $css;
-	} */
-	
+		
 	function borderRadius($css)
 	{
 		if(preg_match_all('/border\-radius\:(.*?)\;/', $css, $matches))
@@ -107,12 +87,12 @@ class CSS3Helper extends CacheerPlugin
 	
 	function fontFace($css)
 	{
-		$font_path = "assets/fonts/";
+		global $font_dir;
 	
 	
-		if (is_dir($font_path))
+		if (is_dir($font_dir))
 		{
-			if ($dir_handle = opendir($font_path)) 
+			if ($dir_handle = opendir($font_dir)) 
 			{
 				while (($font_file = readdir($dir_handle)) !== false) 
 				{
@@ -134,7 +114,7 @@ class CSS3Helper extends CacheerPlugin
 						$fn = preg_replace('/\.otf|\.ttf|\.eot/', "", $font_file);
 											
 						// Build the selector
-						$properties = "name:'$fn';src:url('$font_path$font_file');";
+						$properties = "name:'$fn';src:url('$font_dir$font_file');";
 												
 						
 						// Add them as classes

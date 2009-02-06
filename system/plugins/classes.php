@@ -13,13 +13,11 @@ class Classes extends CacheerPlugin
 		// Put all the selectors into an array
 		preg_match_all("/([\w#,.@\-\+\s:]+)\s*\{(.*?)\}/sx", $css, $selector);
 	
-		// Loop through each of them
 		foreach ($selector[2] as $key => $properties)
 		{		
 			// Find selectors with the class property
 			if(preg_match_all('/class:(.*?)\;/sx', $properties, $classproperty))
 			{	
-				// Split the property and loop through them. eg - class: showgrid, container;
 				$classes = explode(",", $classproperty[1][0]);
 				
 				foreach ($classes as $num => $class)
@@ -32,7 +30,6 @@ class Classes extends CacheerPlugin
 						// Add our new selector to the selector array
 						array_push($selectors, $selector[1][$key]);
 						
-						// Turn it back into a comma-separated string
 						$selectors = implode(",", $selectors);
 						
 						$newselector = $selectors."{".$base[2][0]."}";

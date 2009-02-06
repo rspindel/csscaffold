@@ -13,6 +13,7 @@ class ServerImportPlugin extends CacheerPlugin
 		
 		$imported	= array($relative_dir.$relative_file);
 		$context	= $relative_dir;
+		
 		while (preg_match_all('#@server\s+import\s+url\(([^\)]+)+\);#i', $css, $matches))
 		{
 			foreach($matches[1] as $i => $include)

@@ -13,9 +13,6 @@
 		
 	/* Snippets */
 	@server import url('assets/snippets/reset.css');
-	@server import url('assets/snippets/utilities.css');
-	@server import url('assets/snippets/type-utilities.css');
-	@server import url('assets/snippets/layout-utilities.css');
 
 	
 	/* Sections */
@@ -23,12 +20,8 @@
 	@server import url('sections/content.css');
 	@server import url('sections/forms.css');
 	@server import url('sections/layout.css');
-	
-	/* Generated Grid Classes */
-	@server import url('assets/snippets/grid.css');
-	
-	
-	
+
+		
 /* @end */  
 		
 	

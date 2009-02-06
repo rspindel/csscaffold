@@ -133,8 +133,7 @@ class GridCSS
 	
 	public function generateGrid($css)
 	{
-		global $settings;
-		global $generated_dir;
+		global $settings,$generated_dir;
 		
 		// Make the .columns-x classes
 		for ($i=1; $i < $settings['columncount'] + 1; $i++) { 
@@ -221,13 +220,13 @@ class GridCSS
 		imageline($image, 0, ($settings['baseline'] - 1 ), $settings['columnwidth'], ($settings['baseline'] - 1 ), $colorGrey);
 		
 		
-	    ImagePNG($image,"./" .$css_dir . "/assets/backgrounds/grid.png") or die("Can't save the grid.png file");
+	    ImagePNG($image,"./" .$css_dir . $bg_dir . "/grid.png") or die("Can't save the grid.png file");
 	    ImageDestroy($image);
 	}
 	
 	public function generateLayoutXML($css)
 	{
-		global $settings;
+		global $settings, $css_dir, $xml_dir;
 		
 		$list = "<layouts>\n";
 		$layoutnames = array();
@@ -249,9 +248,9 @@ class GridCSS
 		}
 		
 		$list .= "\n</layouts>";
-		
+				
 		// Open the file
-		$file = fopen("assets/snippets/layouts.xml", "w") or die("Can't open the xml file");
+		$file = fopen($css_dir . $xml_dir . "/layouts.xml", "w") or die("Can't open the xml file");
 		
 		// Write the string to the file
 		chmod($file, 777);

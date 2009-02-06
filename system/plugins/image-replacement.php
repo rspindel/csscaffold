@@ -10,11 +10,9 @@ class ImageReplacement extends CacheerPlugin
 {
 	function process($css)
 	{	
-		
-		// First, we want to get all the images from the image-replace directory
-		$ir_path = "assets/image-replacement/";
-		
-		$ua = parse_user_agent($_SERVER['HTTP_USER_AGENT']);
+		global $ir_path;
+			
+		$ua = (isset($_SERVER['HTTP_USER_AGENT'])) ? parse_user_agent($_SERVER['HTTP_USER_AGENT']) : "";
 		
 
 		if (is_dir($ir_path))
