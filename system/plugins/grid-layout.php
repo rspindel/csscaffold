@@ -207,7 +207,7 @@ class GridCSS
 	
 	public function generateGridImage($css)
 	{
-		global $settings;
+		global $settings, $css_dir;
 		
 		$image = ImageCreate($settings['columnwidth'], $settings['baseline']);
 		
@@ -220,7 +220,8 @@ class GridCSS
 	
 		imageline($image, 0, ($settings['baseline'] - 1 ), $settings['columnwidth'], ($settings['baseline'] - 1 ), $colorGrey);
 		
-	    ImagePNG($image,"../css/assets/backgrounds/grid.png") or die("Can't save the grid.png file");
+		
+	    ImagePNG($image,"./" .$css_dir . "/assets/backgrounds/grid.png") or die("Can't save the grid.png file");
 	    ImageDestroy($image);
 	}
 	
