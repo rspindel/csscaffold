@@ -19,8 +19,6 @@ class CSS3Helper extends CacheerPlugin
 		return $css;
 	}
 	
-	
-	
 	/*
 	function rgbToHex($css)
 	{

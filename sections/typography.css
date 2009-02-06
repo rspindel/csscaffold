@@ -8,16 +8,9 @@
 	/* Required Constants */
 	@constants 
 	{
-		smallFontSize		: 10px;
-		fontSize			: 13px;
-		largeFontSize		: 15px;
-		
+		fontSize			: 12px;
 		textColor			: #444;
 		backgroundColor		: #fff;
-		
-		/* Its a good idea to define your colour swatch here. eg: */
-		colorGrey			: #eee; 
-		invertedTextColor	: #fff;
 	}
 	
 	body 
@@ -28,12 +21,10 @@
 	  	font-size			: const(fontSize);
 	  	line-height			: grid(baseline);
 	}
-	
-	
-	
+		
 	
 	/* @group Headings */
-	/*	-------------------------------------------------------------- */
+	/*-------------------------------------------------------------- */
 	
 	h1,h2,h3,h4,h5,h6 { font-weight: normal; color: #111; }
 	

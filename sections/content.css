@@ -3,7 +3,6 @@
 /* @group Content */
 	
 /* -------------------------------------------------------------------- */
-
 	
 	.date			{}
 	.author			{}
@@ -32,20 +31,9 @@
 /*---------------------------------------------------------------- */	
 	
 	/*
-	
-	EXAMPLES
-	
-	<div class="pic columns-4 left .pull-4">
-		<img src="image.jpg" />
-		<p>Caption goes here.</p>
-	</div>
-
-	or
-	
-	<img src="image.jpg" class="pic four left frame solo"/>
-	
+		Based on Jason Santa Maria's Work on 24Ways
 	*/
-	
+
 	.right 			{ float: right; margin: grid(baseline) 0 grid(baseline) grid(baseline); }
 	.left 			{ float: left;  margin: grid(baseline) grid(baseline) grid(baseline) 0; }
 	.solo	 		{ margin-bottom: grid(baseline); }
@@ -64,10 +52,6 @@
 	.first			{ margin-left: 0; }
 	.last 			{ margin-right: 0; }
 	
-	/* @end */
-
-	
-	
-	
+/* @end */	
 /* @end */
 		

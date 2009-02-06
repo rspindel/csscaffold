@@ -23,8 +23,7 @@ A dynamic CSS framework built on top of Shaun Inman's CSS Cacheer. Favouring con
 
 To install Scaffold, all you need to do is place everything into your servers www directory or root directory. You also need to make sure these files are set to CHMOD 777 (Read and Write):
 
-- /assets/images/*
-- /assets/snippets/
+- /assets/*
 - /system/cache
 
 If you want a speedy setup, just make css/ and everything in it read/write so you can have a play with it quicker. I wouldn't do this on a live site though...
@@ -34,3 +33,9 @@ If you want a speedy setup, just make css/ and everything in it read/write so yo
 - You can delete the docs folder and README.markdown
 - I'm still writing the docs for this, so you may have trouble figuring it out until then
 - Paths are always relative to screen.css, even in deeper folders, if they are imported.
+
+##Todo:
+
+- Update forms framework. Dropping IE6 support (it's about time) so we can use input[type='blah'] and more now.
+- Finish off the documentation and tests
+- Finish the printed styles

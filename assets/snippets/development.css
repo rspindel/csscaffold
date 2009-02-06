@@ -1,10 +1,8 @@
-/* @group Development *//* -------------------------------------
+/* -------------------------------------------------------------------- */
 
-	Development
+/* @group Development Debugging Styles */
 	
-	!Remember to comment these out when it goes live!
-
--------------------------------------------------------------*/
+/* -------------------------------------------------------------------- */
 
 	div:empty, span:empty,
 	li:empty, p:empty,
