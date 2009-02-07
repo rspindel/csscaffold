@@ -206,7 +206,7 @@ class GridCSS
 	
 	public function generateGridImage($css)
 	{
-		global $settings, $css_dir;
+		global $settings, $css_dir, $bg_dir;
 		
 		$image = ImageCreate($settings['columnwidth'], $settings['baseline']);
 		

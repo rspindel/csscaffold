@@ -3,8 +3,8 @@
 	// really simple (read: imperfect) rendering engine detection
 	function parse_user_agent($user_agent)
 	{
-		$ua['browser']	= '';
-		$ua['version']	= 0;
+		$ua['browser']	= 'Unknown Browser';
+		$ua['version']	= '';
 
 		if (preg_match('/(firefox|opera|applewebkit)(?: \(|\/|[^\/]*\/| )v?([0-9.]*)/i', $user_agent, $m))
 		{

@@ -183,6 +183,21 @@ else if
 /******************************************************************************
  Send cached file to browser
  ******************************************************************************/
+$css = file_get_contents($cached_file);
+
+$ua 			= parse_user_agent($_SERVER['HTTP_USER_AGENT']);
+$time_end 		= microtime(true);
+$time 			= $time_end - $time_start;
+
+if ($show_header)
+{
+	$header  = "/* Processed and cached by Shaun Inman's CSS Cacheer. ";
+	$header	.= "Processed in ".$time." seconds and rendered as " . $ua['browser'] . $ua['version'];
+	$header .= ' (with '.str_replace('Plugin', '', preg_replace('#,([^,]+)$#', " &$1", join(', ', array_keys($plugins)))).' enabled)';
+	$header .= ' on '.gmdate('r').' <http://shauninman.com/search/?q=cacheer> */'."\r\n";
+	$css = $header.$css;
+}
+ 
 header('Content-Type: text/css');
 header('Last-Modified: '.gmdate('D, d M Y H:i:s', $requested_mod_time).' GMT');
-@include($cached_file);
+echo $css;
