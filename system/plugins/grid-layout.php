@@ -137,7 +137,7 @@ class GridCSS
 		
 		// Make the .columns-x classes
 		for ($i=1; $i < $settings['columncount'] + 1; $i++) { 
-			$w = $settings['columnwidth'] * $i - $settings['gutterwidth'];\
+			$w = $settings['columnwidth'] * $i - $settings['gutterwidth'];
 			$s .= "  .columns-$i \t{ width:".$w."px; }\n";
 		}
 	

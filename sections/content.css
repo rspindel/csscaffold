@@ -12,7 +12,7 @@
 	.meta			{}
 	.meta-2			{}
 	
-	.quiet     		{ color: #666; }
+	.quiet, .container     		{ color: #666; }
 	.loud       	{ color: #000; }
 	.highlight  	{ background:#ff0; }
 	.added      	{ background:#060; color: #fff; }
@@ -20,10 +20,11 @@
 	.open			{}
 	.closed			{}
 	
-	.small      	{ font-size: 11px; margin-bottom: grid(baseline); line-height: grid(baseline); } 
+	.small, .container      	{ font-size: 11px; margin-bottom: grid(baseline); line-height: grid(baseline); } 
 	.large      	{ font-size: 2.2em; line-height: math(grid(baseline) * 2)px; margin-bottom: grid(baseline); letter-spacing: -1px; }
 	
 	.inner-box		{ padding:math(grid(baseline)/2)px; }
+	
 		
 	
 	
@@ -41,7 +42,7 @@
 	.pic			{ }
 	.pic p,
 	.pic p *,
-	.caption 		{ class: small; }	
+	.caption 		{ }	
 	
 	.frame 			{ border: 1px solid #999; }
 	.full			{ margin-left: 0; margin-right: 0; }

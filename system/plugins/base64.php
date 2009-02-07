@@ -9,20 +9,17 @@ class Base64Plugin extends CacheerPlugin
 {
 	function Base64Plugin()
 	{
-		if (isset($_SERVER['HTTP_USER_AGENT']))
-		{
-			$ua = parse_user_agent($_SERVER['HTTP_USER_AGENT']);
+		global $ua;
 						
-			// Safari (WebKit), Firefox & Opera are known to support data: urls so embed base64-encoded images
-			if
-			(
-				($ua['browser'] == 'applewebkit' && $ua['version'] >= 125) || // Safari and ilk
-				($ua['browser'] == 'firefox') || // Firefox et al
-				($ua['browser'] == 'opera' && $ua['version'] >= 7.2) // quell vociferous Opera evangelists
-			)
-			{
-				$this->flags['Base64'] = true;
-			}
+		// Safari (WebKit), Firefox & Opera are known to support data: urls so embed base64-encoded images
+		if
+		(
+			($ua['browser'] == 'applewebkit' && $ua['version'] >= 125) || // Safari and ilk
+			($ua['browser'] == 'firefox') || // Firefox et al
+			($ua['browser'] == 'opera' && $ua['version'] >= 7.2) // quell vociferous Opera evangelists
+		)
+		{
+			$this->flags['Base64'] = true;
 		}
 	}
 	

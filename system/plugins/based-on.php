@@ -5,19 +5,18 @@
 if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
 $plugin_class = 'BasedOnPlugin';
+
 class BasedOnPlugin extends CacheerPlugin
 {
 	function process($css)
 	{
 		$bases = array();
 		
-		
-		
 		if (preg_match_all('/@base\(([^\s\{]+)\)\s*\{\s*(.*?)\s*\!\}\s*/xs', $css, $matches))
 		{		
 			// For each declaration
 			foreach ($matches[0] as $key => $base)
-			{
+			{			
 				// Remove the @base declaration
 				$css = str_replace($base, '', $css);
 

@@ -4,13 +4,13 @@
 	
 /* -------------------------------------------------------------------- */
 
-	#page	{ class:container; }
+	#page	{ }
 	
 	#header
 	{ 
 		columns		: 24!; 
 		height		: 108px; 
-		class		: column; 
+		add-to		: selector('.column'); 
 		padding		: 10px; 
 	}
 	 
@@ -18,9 +18,8 @@
 	{ 
 		columns		: 24!; 
 		height		: round(100); 
-		class		: column; 
+		add-to		: selector('.column'); 
 		margin		: 0; 
-		based-on	: base(invertedText);
 	}
 		
 	#primary-content 		{ }
@@ -34,9 +33,9 @@
 	
 	.layout-homepage 
 	{ 
-		#primary-content 			{ columns:18!; class:column; }
-		#secondary-content			{ columns:6!; class:last,column;}
-		#tertiary-content			{ columns:24!; class:column; }
+		#primary-content 			{ columns:18!; add-to:selector('.column'); }
+		#secondary-content			{ columns:6!; add-to:selector('.column'),selector('.last');}
+		#tertiary-content			{ columns:24!; add-to:selector('.column'); }
 	}
 	
 
@@ -46,7 +45,7 @@
 /* -------------------------------------------------------------------- */
 	
 	/* Give your navigation ul a class of .inline-nav in the markup */
-	#navigation			{ based-on:base(tabs); }
+	#navigation			{ }
 	#navigation li 		{ }
 	#navigation li a 	{ }
 

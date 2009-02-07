@@ -4,10 +4,11 @@
 	
 /* -------------------------------------------------------------------- */
 
-	@grid {
-		column-width:64;
+	@grid 
+	{
+		column-width:23;
 		gutter-width:18;
-		column-count:12;
+		column-count:24;
 		baseline:18;
 	}
 		

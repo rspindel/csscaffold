@@ -9,10 +9,9 @@ $plugin_class = 'Append';
 class Append extends CacheerPlugin
 {
 	
-	function post_process($css)
+	function pre_process($css)
 	{
 		global $css_plugin_dir;
-		
 		
 		if (is_dir($css_plugin_dir))
 		{
@@ -25,15 +24,15 @@ class Append extends CacheerPlugin
 						continue; 
 					}
 
-					$append .= file_get_contents($css_plugin_dir.$file);
-
+					$append .= file_get_contents($css_plugin_dir."/".$file);
+					
 				}
 				closedir($dir_handle);
 			}
 		}
 		
 		$css = $css . $append;
-		
+						
 		return $css;
 	}
 }

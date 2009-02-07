@@ -1,7 +1,7 @@
 <?php
 
-
 $system_dir 		= "system"; 				// Name of the system directory relative to your css folder
+$ext_dir 			= "extensions/";			// Path to the extensions folder
 $generated_dir 		= "assets/plugins/"; 		// Path of generated css files to your css folder
 $xml_dir 			= "assets/"; 				// XML Directory
 $css_plugin_dir 	= 'assets/plugins/'; 		// CSS plugins directory
@@ -37,24 +37,20 @@ $tidy_options = array(
 $plugin_order = array(
 	
 		'ServerImportPlugin',
-		'Browsers'	,
+		//'Browsers'	,
 		'Append',
-		
 		'BasedOnPlugin',
 		'NestedSelectorsPlugin',
 		'ConstantsPlugin',
-		
 		'Math',
 		'Grid',
 		'ImageReplacement',
 		'Classes',
-
 		'Base64Plugin',
-		'CSSTidyPlugin',
+		//'CSSTidyPlugin',
 		'CSS3Helper',
 		'CondenserPlugin',
 		//'PrettyPlugin'
-		
 );
 
 ?>

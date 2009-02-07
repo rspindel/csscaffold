@@ -61,7 +61,7 @@ class Browsers extends CacheerPlugin
 
 		if (isset($this->flags['IE7']))
 		{
-			$file 		= file_get_contents("browser-specific/ie7.css");
+			$file 		= file_get_contents("specific/ie7.css");
 			$opacity 	= $this -> getOpacity($css);
 			$css 		= $css . $inline . $file . $opacity;
 	
@@ -69,14 +69,14 @@ class Browsers extends CacheerPlugin
 		}
 		elseif (isset($this->flags['Safari3']))
 		{
-			$file 		= file_get_contents("browser-specific/webkit.css");		
+			$file 		= file_get_contents("specific/webkit.css");		
 			$css 		= $css . $file;
 			
 			return $css;
 		}
 		elseif (isset($this->flags['Firefox3']))
 		{
-			$file 		= file_get_contents("browser-specific/gecko.css");
+			$file 		= file_get_contents("specific/gecko.css");
 			$css 		= $css .$file;
 		
 			return $css;
