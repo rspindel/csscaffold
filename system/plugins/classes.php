@@ -37,7 +37,8 @@ class Classes extends CacheerPlugin
 				}
 			}
 		}
-						
+			
+		//print_r($addto);exit;
 		$css = preg_replace("/add\-to\s*\:([^\;]*)\;/", "", $css);
 		
 
@@ -53,40 +54,28 @@ class Classes extends CacheerPlugin
 			
 			$selector = explode(",",$selector);	
 			
-//			foreach($selector as $selector_key => $s)
-//			{
-//				$selector[$selector_key] = trim($s);
-//			}		
-			
-			foreach($addto as $addto_key => $addto_value)
+			foreach($selector as $selector_key => $selector_value)
 			{
-//				echo $addto_key;
-//				print_r($selector);
-//				if( in_array($addto_key, $selector) )
-//				{
-//				  echo "found";
-//				}
-
-				foreach($selector as $selector_key => $selector_value)
+				foreach($addto as $addto_key => $addto_value)
 				{
+					//print_r($addto_key);
 					if (trim($selector_value) == $addto_key)
 					{
-						echo $selector[$selector_key];
-						$selector[$selector_key] = $addto_value . "," . $selector[$selector_key] . "FOOD";
+						$selector[$selector_key] = implode(",", $addto_value) . "," . $selector[$selector_key];
+						//echo $selector[$selector_key];
 					}
 				}
 			}
-			//print_r($selector);
-			
+
 			$selector = implode(",", $selector);
 						
 			$selectors[$key] = $selector . "{" . $properties[$key] . "}";
 		}
-		exit;
-		
+
+		print_r($selectors);
 		
 		$css = implode("", $selectors);
-		
+		exit;
 		return $css;
 	}
 }

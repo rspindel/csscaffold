@@ -34,7 +34,7 @@
 		font-weight			: bold;
 		letter-spacing 		: -2px;
 		based-on			: base(franklingothic);
-		line-height			: math(grid(baseline)*3)px;
+		line-height			: math('grid(baseline)*3')px;
 		margin-bottom		: grid(baseline);
 	}
 	
@@ -42,7 +42,7 @@
 	{
 		font-size			: 2em;
 		based-on			: base(helvetica);
-		line-height			: math(grid(baseline)*2)px;
+		line-height			: math('grid(baseline)*2')px;
 		margin-bottom		: grid(baseline);  
 	}
 	
@@ -50,7 +50,7 @@
 	{ 
 		font-size			: 1.5em;
 		based-on			: base(helvetica);
-		line-height			: math(grid(baseline)*2)px;
+		line-height			: math('grid(baseline)*2')px;
 		margin-bottom		: grid(baseline);  
 	}
 	
@@ -138,7 +138,7 @@
 		float:none; 
 		width:100%; 
 		height:1px; 
-		margin:math(grid(baseline)-1) 0 grid(baseline) 0; 
+		margin:math('grid(baseline)-1') 0 grid(baseline) 0; 
 		border:none; 
 		background:#ddd; 
 	}

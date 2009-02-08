@@ -12,7 +12,7 @@ class Math extends CacheerPlugin
 	{
 		global $settings;
 		
-		if(preg_match_all('/math\([\"|\']?(.*?)[\"|\']?\)/', $css, $matches))
+		if(preg_match_all('/math\([\"|\'](.*?)[\"|\']\)/', $css, $matches))
 		{
 			foreach($matches[1] as $key => $match)
 			{	

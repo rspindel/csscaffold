@@ -138,7 +138,7 @@ class GridCSS
 		// Make the .columns-x classes
 		for ($i=1; $i < $settings['columncount'] + 1; $i++) { 
 			$w = $settings['columnwidth'] * $i - $settings['gutterwidth'];
-			$s .= "  .columns-$i \t{ width:".$w."px; }\n";
+			$s .= ".columns-$i{ width:".$w."px; }";
 		}
 	
 		
@@ -148,10 +148,10 @@ class GridCSS
 		// Make the .push classes
 		for ($i=1; $i < $settings['columncount']; $i++) { 
 			$w = $settings['columnwidth'] * $i;
-			$s .= "  .push-$i \t{ margin-left: ".$w."px; }\n";
+			$s .= ".push-$i \t{ margin-left: ".$w."px; }";
 			$pushselectors .= ".push-$i,";
 		}
-		$s .= $pushselectors . "{ float:right; position:relative; }\n\n";
+		$s .= substr_replace($pushselectors,"",-1) . "{ float:right; position:relative; }\n\n";
 		
 		// Add an extra line to clean it up
 		$s .= "\n";
@@ -160,47 +160,47 @@ class GridCSS
 		// Make the .pull classes
 		for ($i=1; $i < $settings['columncount']; $i++) { 
 			$w = $settings['columnwidth'] * $i;
-			$s .= "  .pull-$i \t{ margin-right:".$w."px; }\n";
+			$s .= ".pull-$i \t{ margin-right:".$w."px; }";
 			$pullselectors .= ".pull-$i,";
 		}
-		$s .= $pullselectors . "{ float:left; position:relative; }\n\n";
+		$s .= substr_replace($pullselectors,"",-1) . "{ float:left; position:relative; }\n\n";
 		
 		// Make the .baseline-x classes
 		for ($i=1; $i < 51; $i++) { 
 			$h = $settings['baseline'] * $i;
-			$s .= "  .baseline-$i \t{ height:".$h."px; }\n";
+			$s .= ".baseline-$i \t{ height:".$h."px; }";
 		}
 		
 		// Make the .baseline-pull-x class
 		for ($i=1; $i < 51; $i++) { 
 			$h = $settings['baseline'] * $i;
-			$s .= "  .baseline-pull-$i \t{ margin-top:-".$h."px; }\n";
+			$s .= ".baseline-pull-$i \t{ margin-top:-".$h."px; }";
 		}
 		
 		// Make the .baseline-push-x classes
 		for ($i=1; $i < 51; $i++) { 
 			$h = $settings['baseline'] * $i;
-			$s .= "  .baseline-push-$i \t{ margin-bottom:-".$h."px; }\n";
+			$s .= ".baseline-push-$i \t{ margin-bottom:-".$h."px; }";
 		}
 		
 		// Make the .append classes
 		for ($i=1; $i < $settings['columncount']; $i++) { 
 			$w = $settings['columnwidth'] * $i;
-			$s .= "  .append-$i \t{ padding-right:".$w."px; }\n";
+			$s .= ".append-$i \t{ padding-right:".$w."px; }";
 		}
 		
 		// Make the .prepend classes
 		for ($i=1; $i < $settings['columncount']; $i++) { 
 			$w = $settings['columnwidth'] * $i;
-			$s .= "  .prepend-$i \t{ padding-left:".$w."px; }\n";
+			$s .= ".prepend-$i \t{ padding-left:".$w."px; }";
 		}
 		
 		// Open the file relative to /css/
 		$file = fopen($generated_dir."/grid.css", "w") or die("Can't open the grid.css file");
 		
 		// Write the string to the file
-		chmod($file, 777);
 		fwrite($file, $s);
+		//chmod($file, 777);
 		fclose($file);
 	}
 	
@@ -253,8 +253,8 @@ class GridCSS
 		$file = fopen($css_dir . $xml_dir . "/layouts.xml", "w") or die("Can't open the xml file");
 		
 		// Write the string to the file
-		chmod($file, 777);
 		fwrite($file, $list);
+		//chmod($file, 777);
 		fclose($file);
 		
 	}

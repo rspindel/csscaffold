@@ -12,7 +12,7 @@
 	.meta			{}
 	.meta-2			{}
 	
-	.quiet, .container     		{ color: #666; }
+	.quiet     		{ color: #666; }
 	.loud       	{ color: #000; }
 	.highlight  	{ background:#ff0; }
 	.added      	{ background:#060; color: #fff; }
@@ -21,9 +21,9 @@
 	.closed			{}
 	
 	.small, .container      	{ font-size: 11px; margin-bottom: grid(baseline); line-height: grid(baseline); } 
-	.large      	{ font-size: 2.2em; line-height: math(grid(baseline) * 2)px; margin-bottom: grid(baseline); letter-spacing: -1px; }
+	.large      	{ font-size: 2.2em; line-height: math('grid(baseline) * 2')px; margin-bottom: grid(baseline); letter-spacing: -1px; }
 	
-	.inner-box		{ padding:math(grid(baseline)/2)px; }
+	.inner-box		{ padding:math('grid(baseline)/2')px; add-to: selector('.container'); }
 	
 		
 	

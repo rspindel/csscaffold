@@ -37,7 +37,7 @@ $tidy_options = array(
 $plugin_order = array(
 	
 		'ServerImportPlugin',
-		//'Browsers'	,
+		'Browsers'	,
 		'Append',
 		'BasedOnPlugin',
 		'NestedSelectorsPlugin',
@@ -47,7 +47,7 @@ $plugin_order = array(
 		'ImageReplacement',
 		'Classes',
 		'Base64Plugin',
-		//'CSSTidyPlugin',
+		'CSSTidyPlugin',
 		'CSS3Helper',
 		'CondenserPlugin',
 		//'PrettyPlugin'

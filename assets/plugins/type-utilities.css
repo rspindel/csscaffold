@@ -7,7 +7,7 @@
 	/* Incremental Leading */
 	.incr-leading 
 	{ 
-		line-height: math((grid(baseline)*4)/5)px; 
+		line-height: math('(grid(baseline)*4)/5')px; 
 		font-size: 0.8em; 
 	} 
 

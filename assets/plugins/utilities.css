@@ -32,7 +32,7 @@
 	  width:auto;
 	  overflow:visible;
 	  padding:4px 10px 4px 7px;
-	  line-height:math(grid(baseline)-1)px; /* Need this to fix the button lineheight issue */
+	  line-height:math('grid(baseline)-1')px; /* Need this to fix the button lineheight issue */
 	}
 	
 	button img, 
