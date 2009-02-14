@@ -4,20 +4,22 @@
 	
 /* -------------------------------------------------------------------- */
 
-	#page	{ }
+	#page	{ add-to: selector('.container'); }
 	
 	#header
 	{ 
 		columns		: 24!; 
 		height		: 108px; 
 		padding		: 10px; 
+		add-to		: selector('.column');
 	}
 	 
 	#footer
 	{ 
 		columns		: 24!; 
 		height		: round(100); 
-		margin		: 0; 
+		margin		: 0;
+		add-to		: selector('.column');
 	}
 		
 	#primary-content 		{ }
@@ -28,7 +30,12 @@
 /* @group Layout Styles */
 /* ---------------------------------------------------------------- */
 	
-
+	.layout-docs
+	{
+		#primary-content 		{ }
+		#secondary-content		{ }
+		#tertiary-content		{ }
+	}
 	
 /* @end */
 /* @group Navigation */

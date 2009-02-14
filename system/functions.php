@@ -4,8 +4,8 @@
 Returns every file in a directory passed to it
  ******************************************************************************/
 
-function get_files_in_directory($directory)
-{
+function get_files_in_directory($directory, $get)
+{	
 	if (is_dir($directory))
 	{
 		if ($dir_handle = opendir($directory)) 
@@ -17,8 +17,14 @@ function get_files_in_directory($directory)
 					continue; 
 				}
 				
-				$f[$file]['data'] = file_get_contents($directory . "/" .$file);
-				$f[$file]['path'] = $directory . "/" .$file;
+				if($get == "data")
+				{
+					$f[$file] = file_get_contents($directory . "/" .$file);
+				}
+				elseif($get == "path")
+				{
+					$f[$file] = $directory . "/" .$file;
+				}
 			}
 			closedir($dir_handle);
 		}

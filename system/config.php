@@ -2,7 +2,7 @@
 
 $system_dir 		= "system"; 				// Name of the system directory relative to your css folder
 $ext_dir 			= "extensions/";			// Path to the extensions folder
-$generated_dir 		= "assets/plugins/"; 		// Path of generated css files to your css folder
+$generated_dir 		= "frameworks/";			// Path of generated css files to your css folder
 $xml_dir 			= "assets/"; 				// XML Directory
 $css_plugin_dir 	= 'assets/plugins/'; 		// CSS plugins directory
 $font_dir 			= "assets/fonts/"; 			// Font Directory 

@@ -39,43 +39,47 @@ class Classes extends CacheerPlugin
 		}
 			
 		//print_r($addto);exit;
-		$css = preg_replace("/add\-to\s*\:([^\;]*)\;/", "", $css);
 		
-
-		preg_match_all("/([^{]*?)\{([^}]*?)\}/xs", $css, $css_array);
-
-		$selectors 	= $css_array[1];
-		$properties = $css_array[2];
 		
-		//print_r($selectors);exit;
-					
-		foreach($selectors as $key => $selector)
+		if($addto)
 		{
 			
-			$selector = explode(",",$selector);	
+			$css = preg_replace("/add\-to\s*\:([^\;]*)\;/", "", $css);
 			
-			foreach($selector as $selector_key => $selector_value)
+			preg_match_all("/([^{]*?)\{([^}]*?)\}/xs", $css, $css_array);
+	
+			$selectors 	= $css_array[1];
+			$properties = $css_array[2];
+			
+			//print_r($selectors);exit;
+						
+			foreach($selectors as $key => $selector)
 			{
-				foreach($addto as $addto_key => $addto_value)
+				
+				$selector = explode(",",$selector);	
+				
+				foreach($selector as $selector_key => $selector_value)
 				{
-					//print_r($addto_key);
-					if (trim($selector_value) == $addto_key)
+					foreach($addto as $addto_key => $addto_value)
 					{
-						$selector[$selector_key] = implode(",", $addto_value) . "," . $selector[$selector_key];
-						//echo $selector[$selector_key];
+						//print_r($addto_key);
+						if (trim($selector_value) == $addto_key)
+						{
+							$selector[$selector_key] = implode(",", $addto_value) . "," . $selector[$selector_key];
+							//echo $selector[$selector_key];
+						}
 					}
 				}
+	
+				$selector = implode(",", $selector);
+							
+				$selectors[$key] = $selector . "{" . $properties[$key] . "}";
 			}
 
-			$selector = implode(",", $selector);
-						
-			$selectors[$key] = $selector . "{" . $properties[$key] . "}";
-		}
-
-		print_r($selectors);
+			$css = implode("", $selectors);
 		
-		$css = implode("", $selectors);
-		exit;
+		}
+		
 		return $css;
 	}
 }

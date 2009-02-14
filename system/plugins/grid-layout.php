@@ -133,7 +133,7 @@ class GridCSS
 	
 	public function generateGrid($css)
 	{
-		global $settings,$generated_dir;
+		global $settings,$generated_dir,$system_dir;
 		
 		// Make the .columns-x classes
 		for ($i=1; $i < $settings['columncount'] + 1; $i++) { 
@@ -196,7 +196,7 @@ class GridCSS
 		}
 		
 		// Open the file relative to /css/
-		$file = fopen($generated_dir."/grid.css", "w") or die("Can't open the grid.css file");
+		$file = fopen($system_dir . "/" . $generated_dir."/grid.css", "w") or die("Can't open the grid.css file");
 		
 		// Write the string to the file
 		fwrite($file, $s);
@@ -210,7 +210,7 @@ class GridCSS
 		
 		$image = ImageCreate($settings['columnwidth'], $settings['baseline']);
 		
-		$colorWhite	= ImageColorAllocate($image, 255, 255, 255);
+		$colorWhite		= ImageColorAllocate($image, 255, 255, 255);
 		$colorGrey		= ImageColorAllocate($image, 200, 200, 200);
 		$colorBlue		= ImageColorAllocate($image, 240, 240, 255);
 		

@@ -1,6 +1,6 @@
 	$(document).ready(function(){
 	
-		$("#showgrid").click(function(){
+		$(".showgrid-toggle").click(function(){
 			$('#page').toggleClass('showgrid');
 		});	
 		

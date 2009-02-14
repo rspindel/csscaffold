@@ -14,10 +14,27 @@
 	// Get the user agent to use throughout
 	$ua = parse_user_agent($_SERVER['HTTP_USER_AGENT']);
 	
-//	error_reporting(0);
+	//	error_reporting(0);
 	
 	// We'll work from inside the /css directory
 	chdir('../');
+	
+/******************************************************************************
+ If recache=all url param - delete all the cache files.
+ ******************************************************************************/
+ 
+	if($_GET['recache'] == "all")
+	{
+		$f = get_files_in_directory($system_dir . "/cache", "path");
+		
+		foreach($f as $file)
+		{
+			if(substr($file, -3) == 'css')
+			{
+				unlink($file);
+			}
+		}
+	}
 
 
 /******************************************************************************
@@ -77,11 +94,12 @@
 	$flags = array();
 	$plugins = array();
 
-	$plugin_files = get_files_in_directory($system_dir."/plugins");
+	// Use our included function. (directory, what to return, what file types to get)
+	$plugin_files = get_files_in_directory($system_dir."/plugins", "path");
 	
 	foreach($plugin_files as $plugin)
 	{
-		include($plugin['path']);
+		include($plugin);
 	}
 	
 	// Now enable the plugins
@@ -218,8 +236,8 @@
 		// Open the file relative to /css/
 		$benchmark_file = fopen($cssc_cache_dir . "/css_report.txt", "w") or die("Can't open the report.txt file");
 		// Write the string to the file
-		chmod($benchmark_file, 777);
 		fwrite($benchmark_file, $s);
+		//chmod($benchmark_file, 777);
 		fclose($benchmark_file);
 
 	}

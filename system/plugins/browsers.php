@@ -69,14 +69,14 @@ class Browsers extends CacheerPlugin
 		}
 		elseif (isset($this->flags['Safari3']))
 		{
-			$file 		= file_get_contents("specific/webkit.css");		
+			$file 		= file_get_contents("specific/safari.css");		
 			$css 		= $css . $file;
 			
 			return $css;
 		}
 		elseif (isset($this->flags['Firefox3']))
 		{
-			$file 		= file_get_contents("specific/gecko.css");
+			$file 		= file_get_contents("specific/firefox.css");
 			$css 		= $css .$file;
 		
 			return $css;

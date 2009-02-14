@@ -5,7 +5,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-	<title>CSS Scaffold Test Page</title>
+	<title>CSS Scaffold Documentation</title>
 	
 	<link href="/screen.css?recache" media="screen" rel="stylesheet" type="text/css" />
 	<link href="css/test.css" media="screen" rel="stylesheet" type="text/css" />
@@ -15,12 +15,12 @@
 	
 </head>
 
-<body>
+<body id="docs">
 	
-	<div id="page" class="layout-blog">
+	<div id="page">
 		
 		<div id="primary-content">
-			<h1>CSScaffold Tests</h1>
+			<h1>CSScaffold Documentation and Tests</h1>
 			
 			<p class="large">These pages are tied directly to your work CSS, so when you've styled up these, your site
 			will have a head start!</p>
@@ -36,21 +36,51 @@
 		
 			<h2>Get Started!</h2>
 			
-			<h4><a href="typography.html">Typography</a></h4>
-			<p>Style every typographic element, from headings to tables.</p>
-			
-			<h4><a href="content.html">Content</a></h4>
-			<p>The content, such as blog posts, and their common elements
-			such as figure-positioning, code, quotes etc.</p>
-			
-			
-			<h4><a href="forms.html">Forms</a></h4>
-			<p>Scaffold comes with a forms framework to help you style your forms. Getting forms right is difficult,
-			but this should ease the pain</p>
-			
-			<h4><a href="layout.html">Layouts</a></h4>
-			<p>Get your layouts right before you create your pages, and you'll find you'll breeze through
-			the creation of your site.</p>
+			<div class="box">
+				<h3>Math</h3>
+				
+				<div class="description">
+				<p>The math plugin allows you to perform some simple math equations
+				inside your css. This is particularly useful for calculating the 
+				widths of baselines and other grid specific widths.</p>
+				
+				<p>You can use the grid variables inside the math function, so you
+				can calculate accurate widths.</p>
+				</div>
+				
+<pre><code>#id
+{
+	width: math('grid(baseline) * 2')px;
+	padding: math('10 * 2')px;
+}
+</code>
+</pre>
+			</div>
+
+
+
+			<div class="box">
+				<h3>Grid</h3>
+				
+				<div class="description">
+				<p>The math plugin allows you to perform some simple math equations
+				inside your css. This is particularly useful for calculating the 
+				widths of baselines and other grid specific widths.</p>
+				
+				<p>You can use the grid variables inside the math function, so you
+				can calculate accurate widths.</p>
+				</div>
+				
+<pre><code>#id
+{
+	width: math('grid(baseline) * 2')px;
+	padding: math('10 * 2')px;
+}
+</code>
+</pre>
+			</div>
+
+
 			
 		</div>
 		
@@ -60,7 +90,7 @@
 	
 	</div>
 	
-	<a href="#" id="showgrid">
+	<a href="#" class="showgrid-toggle">
 		Toggle Grid View
 	</a>
 	
