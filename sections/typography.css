@@ -91,7 +91,6 @@
 	p				{ margin: 0 0 grid(baseline) 0; }
 	p:last-child	{ margin-bottom:0;}
 	
-	/* ------ */
 	
 	blockquote  	{ margin: grid(baseline); font-style: italic; color: #666; }
 	cite			{}
@@ -99,26 +98,24 @@
 	
 	blockquote > *:first-child:before { content:"\201C"; }
 	
-	/* ------ */
 	
 	strong      	{ font-weight: bold; }
 	em      	  	{ font-style: italic; }
 	
-	/* ------ */
+	/* Use the <mark> tag if you want to highlight parts of your text */
+	mark 			{ background: #ffffd9; }
+	
 	
 	pre,code,kbd,
-	samp,var		{ margin: grid(baseline) 0; white-space: pre; }
-	
-	pre,code,tt,
+	samp,var, output{ margin: grid(baseline) 0; white-space: pre; }
+	pre,code,tt,output,
 	pre *		 	{ font-size: 11px; based-on: base(monospace); line-height: grid(baseline); }
 	
-	/* ------ */
 	
 	del         	{ color:#666; }
 	ins 			{ background: #fffde2;text-decoration:none;}
 	sup, sub    	{ line-height: 0; }
-	
-	/* ------ */
+
 	
 	abbr			{ } 
 	acronym     	{ }
@@ -126,10 +123,9 @@
 	
 	abbr[title],
 	acronym[title],
-	dfn[title] 	{ border-bottom:1px solid #666; cursor:help; }
+	dfn[title] 		{ border-bottom:1px solid #666; cursor:help; }
 	
-	/* ------ */
-	
+	time			{ }
 	address     	{ margin: 0 0 grid(baseline); font-style: italic; }
 	
 	hr 				
