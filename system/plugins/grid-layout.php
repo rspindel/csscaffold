@@ -231,7 +231,7 @@ class GridCSS
 		$list = "<layouts>\n";
 		$layoutnames = array();
 
-		if(preg_match_all('/\.layout\-(\w*)/',$css,$matches))
+		if(preg_match_all('/\.layout\-([a-zA-Z0-9\-]*)/',$css,$matches))
 		{
 			foreach($matches[1] as $match)
 			{

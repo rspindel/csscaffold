@@ -1,57 +1,49 @@
-/* -------------------------------------------------------------------- */
+/* @group Grid */
+/* ---------------------------------------------------------------- */
 
-/* @group Page Layout */
-	
-/* -------------------------------------------------------------------- */
-
-	#page	{ add-to: selector('.container'); }
-	
-	#header
-	{ 
-		columns		: 24!; 
-		height		: 108px; 
-		padding		: 10px; 
-		add-to		: selector('.column');
+	/* The grid plugin requires these settings*/
+	@grid 
+	{
+		column-width:23;
+		gutter-width:18;
+		column-count:24;
+		baseline:18;
 	}
-	 
-	#footer
-	{ 
-		columns		: 24!; 
-		height		: round(100); 
-		margin		: 0;
-		add-to		: selector('.column');
-	}
-		
-	#primary-content 		{ }
-	#secondary-content		{ }
-	#tertiary-content		{ }
 	
+	#page 	{ add-to: selector('.container'); }
+	#header { columns: 24; }
+	#footer { columns: 24; }
 
-/* @group Layout Styles */
+/* @end */
+/* @group Layouts */
 /* ---------------------------------------------------------------- */
 	
-	.layout-docs
+	.layout-3-column
 	{
-		#primary-content 		{ }
-		#secondary-content		{ }
-		#tertiary-content		{ }
+		#primary-content 		{ columns:6; }
+		#secondary-content		{ columns:12; }
+		#tertiary-content		{ columns:6; margin-right:0; }
+	}
+	
+	.layout-2-column
+	{
+		#primary-content 		{ columns:18; }
+		#secondary-content		{ columns:6; margin-right:0; }
+	}
+	
+	.layout-blog
+	{
+		#primary-content 		{ columns:18;float:right;margin-right:0; }
+		#secondary-content		{ columns:6; }
 	}
 	
 /* @end */
 /* @group Navigation */
 /* -------------------------------------------------------------------- */
 	
-	/* Give your navigation ul a class of .inline-nav in the markup */
-	#navigation			{ }
+	#navigation			{ add-to: selector('.inline-list'); }
 	#navigation li 		{ }
 	#navigation li a 	{ }
 
 
-
 /* @end */
-/* @group Specific / Unique */
-/*---------------------------------------------------------------- */
-
-
-/* @end */
-

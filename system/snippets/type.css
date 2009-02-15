@@ -4,7 +4,8 @@
 	
 /* -------------------------------------------------------------------- */
 		
-	/* Incremental Leading */
+	/* Incremental Leading - for every 4 lines of normal type, there are 5 lines of
+	smaller type */
 	.incr-leading 
 	{ 
 		line-height: math('(grid(baseline)*4)/5')px; 
@@ -14,7 +15,8 @@
 
 	/* Surround uppercase words and abbreviations with this class.
    Based on work by Jørgen Arnor Gårdsø Lom [http://twistedintellect.com/] */
-	.caps { 
+	.caps 
+	{ 
 	  font-variant: small-caps; 
 	  letter-spacing: 1px; 
 	  text-transform: lowercase; 

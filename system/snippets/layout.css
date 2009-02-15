@@ -11,7 +11,7 @@
 	Any div that is used for layout, should have a 'column' class. The columns property
 	automatically gives this to you.
 	*/
-	.column 		{ float:left; margin: 0 grid(gutter) grid(baseline) 0; }
+	.column 		{ float:left; margin: 0 grid(gutter) 0 0; }
 	.single			{ clear:both; }
 	
 	/* For column classes when testing */
@@ -22,7 +22,7 @@
 	.hide       	{ display: none; }
 	
 	/* Used for any horizontal navigation-style ul/ol */
-	@base(inline-list)			
+	.inline-list			
 	{ 
 		list-style:none; 
 		margin:0; 

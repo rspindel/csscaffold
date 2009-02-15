@@ -1,24 +1,10 @@
-/* -------------------------------------------------------------------- */
 
-/* @group Typography */
-	
-/* -------------------------------------------------------------------- */
-
-	
-	/* Required Constants */
-	@constants 
-	{
-		fontSize			: 12px;
-		textColor			: #444;
-		backgroundColor		: #fff;
-	}
-	
 	body 
 	{ 
-	  	background			: const(backgroundColor); 
-	  	color				: const(textColor);
+	  	font-size			: 12px;
+	  	background			: #fff; 
+	  	color				: #444;
 	  	based-on			: base(myriad);
-	  	font-size			: const(fontSize);
 	  	line-height			: grid(baseline);
 	}
 		
@@ -203,7 +189,4 @@
 	table[border]	{ border-collapse:separate; border-spacing:0; }
 	
 	/* @end */	
-	
-	
-	
-/* @end */
+

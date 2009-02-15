@@ -6,7 +6,7 @@
 		
 		$.ajax({
         	type: "GET",
-			url: "../../assets/layouts.xml",
+			url: "../../system/layouts.xml",
 			dataType: "xml",
 			success: function(xml) {
  				$(xml).find('layout').each(function(){

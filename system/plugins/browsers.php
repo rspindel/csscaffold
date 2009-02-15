@@ -61,7 +61,7 @@ class Browsers extends CacheerPlugin
 
 		if (isset($this->flags['IE7']))
 		{
-			$file 		= file_get_contents("specific/ie7.css");
+			$file 		= file_get_contents("specific/ie.css");
 			$opacity 	= $this -> getOpacity($css);
 			$css 		= $css . $inline . $file . $opacity;
 	
