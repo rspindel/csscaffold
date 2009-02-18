@@ -2,21 +2,22 @@
 /* @group Common Content */
 /*---------------------------------------------------------------- */	
 
-	.date			{}
-	.author			{}
-	.avatar			{}
-	.category		{}
 	
-	.meta			{}
-	.meta-2			{}
+	/* eg. Post meta underneath its title */
+	.meta			{ color:#888; }
+	.sub-meta		{ color:#aaa; }
 	
+	.date			{ font-style:italic; }
+	.author			{ font-weight:bold; }
+	.avatar			{ height:50px; width:50px; }
+	.category		{ font-weight:bold; }
+	
+	/* General content styles for text */
 	.quiet     		{ color: #666; }
 	.loud       	{ color: #000; }
-	.highlight  	{ background:#ff0; }
-	.added      	{ background:#060; color: #fff; }
-	.removed    	{ background:#900; color: #fff; }
-	.open			{}
-	.closed			{}
+	.highlight  	{ background:#ff0; } /* Or use the HTML5 <mark> tag */
+	.added      	{ background:#060; color: #fff; } /* Or use <ins> */
+	.removed    	{ background:#900; color: #fff; } /* Or use <del> */
 	
 	.small      	{ font-size: 11px; margin-bottom: grid(baseline); line-height: grid(baseline); } 
 	.large      	{ font-size: 2.2em; line-height: math('grid(baseline)*2')px; margin-bottom: grid(baseline); letter-spacing: -1px; }
@@ -31,12 +32,16 @@
 	
 	/*
 		Based on Jason Santa Maria's Work on 24Ways
+		These aren't entirely semantic. But you don't want to 
+		fill up your CSS with id's for every figure. Consistency
+		creates its own form of semantics. 
 	*/
 
 	.right 			{ float: right; margin: grid(baseline) 0 grid(baseline) grid(baseline); }
 	.left 			{ float: left;  margin: grid(baseline) grid(baseline) grid(baseline) 0; }
 	.solo	 		{ margin-bottom: grid(baseline); }
 	
+	/* Alternatively use the html5 <figure> element instead of .pic */
 	.pic			{ }
 	.pic p,
 	.pic p *,

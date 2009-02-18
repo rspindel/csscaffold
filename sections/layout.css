@@ -10,13 +10,19 @@
 		baseline:18;
 	}
 	
+	/* Give our main wrapper a container class so that it's centered */
 	#page 	{ add-to: selector('.container'); }
+
 	#header { columns: 24; }
 	#footer { columns: 24; }
 
 /* @end */
 /* @group Layouts */
 /* ---------------------------------------------------------------- */
+	
+	/* Now all you have to do is give your body tag a class
+	of .layout-name. Its by far the easiest way to create 
+	layouts. */
 	
 	.layout-3-column
 	{
@@ -40,6 +46,8 @@
 /* @end */
 /* @group Navigation */
 /* -------------------------------------------------------------------- */
+	
+	/* .inline-list is a class from the layout utilities
 	
 	#navigation			{ add-to: selector('.inline-list'); }
 	#navigation li 		{ }

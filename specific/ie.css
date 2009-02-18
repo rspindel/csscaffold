@@ -1,11 +1,10 @@
 	/* For smoother downsampling in IE7+ */
 	img { -ms-interpolation-mode: bicubic; } 
-
 	
 	/* WARNING. You will get the double margin bug and the overflow bug if you
 	don't use these properties for ie6. I've separated them, as ie6 support
 	is up to the designer */
-	.ie6fix		{ overflow:hidden; display:inline; } 
+	.ie6-layout-fix		{ overflow:hidden; display:inline; } 
 
 /* Elements
 -------------------------------------------------------------- */
@@ -34,9 +33,8 @@
 -------------------------------------------------------------- */
 
 	/* Makes clearfix actually work in IE */ 
-	.clearfix, .container {display: inline-block;}
-	* html .clearfix,
-	* html .container {height: 1%;}
+	.clearfix {display: inline-block;}
+	* html .clearfix {height: 1%;}
 
 
 /* Forms 
