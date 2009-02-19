@@ -1,5 +1,7 @@
 <?php
 
+// All paths are relative to the css directory above your system folder
+
 $system_dir 		= "system"; 				// Name of the system directory relative to your css folder
 $ext_dir 			= "extensions/";			// Path to the extensions folder
 $generated_dir 		= "frameworks/";			// Path of generated css files to your css folder

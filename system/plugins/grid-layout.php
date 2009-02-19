@@ -135,6 +135,8 @@ class GridCSS
 	{
 		global $settings,$generated_dir,$system_dir;
 		
+		$s = $pushselectors = $pullselectors = "";
+		
 		// Make the .columns-x classes
 		for ($i=1; $i < $settings['columncount'] + 1; $i++) { 
 			$w = $settings['columnwidth'] * $i - $settings['gutterwidth'];
@@ -219,8 +221,7 @@ class GridCSS
 	
 		imageline($image, 0, ($settings['baseline'] - 1 ), $settings['columnwidth'], ($settings['baseline'] - 1 ), $colorGrey);
 		
-		
-	    ImagePNG($image,"./" .$css_dir . $bg_dir . "/grid.png") or die("Can't save the grid.png file");
+	    ImagePNG($image, $bg_dir . "/grid.png") or die("Can't save the grid.png file");
 	    ImageDestroy($image);
 	}
 	
@@ -250,7 +251,7 @@ class GridCSS
 		$list .= "\n</layouts>";
 				
 		// Open the file
-		$file = fopen($css_dir . $xml_dir . "/layouts.xml", "w") or die("Can't open the xml file");
+		$file = fopen($xml_dir . "/layouts.xml", "w") or die("Can't open the xml file");
 		
 		// Write the string to the file
 		fwrite($file, $list);

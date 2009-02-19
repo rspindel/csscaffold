@@ -14,7 +14,7 @@
 	// Get the user agent to use throughout
 	$ua = parse_user_agent($_SERVER['HTTP_USER_AGENT']);
 	
-	//	error_reporting(0);
+	error_reporting(0);
 	
 	// We'll work from inside the /css directory
 	chdir('../');
@@ -23,7 +23,7 @@
  If recache=all url param - delete all the cache files.
  ******************************************************************************/
  
-	if($_GET['recache'] == "all")
+	if(isset($_GET['recache']) &&  $_GET['recache'] == "all")
 	{
 		$f = get_files_in_directory($system_dir . "/cache", "path");
 		
@@ -219,7 +219,8 @@
 		/****************************************************************************
 		 Create the size report
 		 ****************************************************************************/
-	 
+	 	$s = "";
+	 	
 		// Output the benchmark text file
 		foreach($filesize as $plugin_class => $css_size)
 		{

@@ -13,6 +13,8 @@ class Append extends CacheerPlugin
 	{
 		global $css_plugin_dir;
 		
+		$append = "";
+		
 		if (is_dir($css_plugin_dir))
 		{
 			if ($dir_handle = opendir($css_plugin_dir)) 
