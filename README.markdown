@@ -43,7 +43,6 @@ If you want a speedy setup, just make css/ and everything in it read/write so yo
 
 - Update forms framework. Dropping IE6 support (it's about time) so we can use input[type='blah'] and more now.
 - Finish off the documentation and tests
-- Finish the printed styles
 
 ##Usage
 

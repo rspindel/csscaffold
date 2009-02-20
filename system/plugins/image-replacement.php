@@ -10,14 +10,14 @@ class ImageReplacement extends CacheerPlugin
 {
 	function process($css)
 	{	
-		global $ir_path;
+		global $path;
 			
 		$ua = (isset($_SERVER['HTTP_USER_AGENT'])) ? parse_user_agent($_SERVER['HTTP_USER_AGENT']) : "";
 		
 
-		if (is_dir($ir_path))
+		if (is_dir($path['image_titles']))
 		{
-			if ($dir_handle = opendir($ir_path)) 
+			if ($dir_handle = opendir($path['image_titles'])) 
 			{
 				while (($ir_file = readdir($dir_handle)) !== false) 
 				{
@@ -40,7 +40,7 @@ class ImageReplacement extends CacheerPlugin
 											
 													
 						// Get the size of the image file
-						$size = GetImageSize($ir_path.$ir_file);
+						$size = GetImageSize($path['image_titles'].$ir_file);
 						$width = $size[0];
 						$height = $size[1];
 						
@@ -54,7 +54,7 @@ class ImageReplacement extends CacheerPlugin
 						
 						// Build the selector
 						$properties = "
-							background:url($ir_path$ir_file) no-repeat 0 0;
+							background:url(".$path['image_titles']."/$ir_file) no-repeat 0 0;
 							height:".$height."px;
 							width:".$width."px;
 							display:block;

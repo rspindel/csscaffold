@@ -47,7 +47,7 @@
 /* @group Navigation */
 /* -------------------------------------------------------------------- */
 	
-	/* .inline-list is a class from the layout utilities
+	/* .inline-list is a class from the layout utilities */
 	
 	#navigation			{ add-to: selector('.inline-list'); }
 	#navigation li 		{ }

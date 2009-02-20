@@ -15,11 +15,10 @@ class Grid extends CacheerPlugin
 		
 		// Create a new GridCSS object and put the css into it
 		$grid = new GridCSS($css);
-		
+				
 		// If there are settings, keep going
-		if($grid->isSettings() === TRUE)
+		if($grid->getSettings() != FALSE)
 		{
-		
 			// Generate the grid.css
 			$grid -> generateGrid($css);
 			
@@ -28,7 +27,6 @@ class Grid extends CacheerPlugin
 			
 			// Replace the grid() variables
 			$css = $grid -> replaceGridVariables($css);
-		
 		}
 
 		return $css;
@@ -39,7 +37,7 @@ class Grid extends CacheerPlugin
 		global $grid;
 		
 		// If there are settings, keep going
-		if($grid->isSettings() === TRUE)
+		if($grid->getSettings() != FALSE)
 		{
 			// Create the layouts xml for use with the tests
 			$grid -> generateLayoutXML($css);
@@ -56,7 +54,7 @@ class Grid extends CacheerPlugin
 		global $grid;
 		
 		// If there are settings, keep going
-		if($grid->isSettings() === TRUE)
+		if($grid->getSettings() != FALSE)
 		{
 			// Remove the settings
 			$css = $grid -> removeSettings($css);
@@ -69,6 +67,13 @@ class Grid extends CacheerPlugin
 
 class GridCSS
 {
+	var $settings = array();
+	
+	function __construct($css)
+	{
+		$this->GridCSS($css);
+	}
+	
 	function GridCSS($css)
 	{	
 		global $settings;
@@ -106,8 +111,7 @@ class GridCSS
 			if ($settings['format'] == "") 
 			{
 				$settings['format'] = "newline";
-			}
-		
+			}		
 		}
 		
 		else
@@ -115,25 +119,19 @@ class GridCSS
 			$settings = FALSE;
 		}
 		
+		return $settings;
+		
 	}
 	
-	public function isSettings()
+	public function getSettings()
 	{
 		global $settings;
-		
-		if($settings === FALSE)
-		{
-			return FALSE;
-		}
-		else
-		{
-			return TRUE;
-		}
+		return $settings;
 	}
 	
 	public function generateGrid($css)
 	{
-		global $settings,$generated_dir,$system_dir;
+		global $settings,$path;
 		
 		$s = $pushselectors = $pullselectors = "";
 		
@@ -143,62 +141,54 @@ class GridCSS
 			$s .= ".columns-$i{ width:".$w."px; }";
 		}
 	
-		
-		// Add an extra line to clean it up
-		$s .= "\n";
-		
 		// Make the .push classes
 		for ($i=1; $i < $settings['columncount']; $i++) { 
 			$w = $settings['columnwidth'] * $i;
-			$s .= ".push-$i \t{ margin-left: ".$w."px; }";
+			$s .= ".push-$i{ margin-left: ".$w."px; }";
 			$pushselectors .= ".push-$i,";
 		}
-		$s .= substr_replace($pushselectors,"",-1) . "{ float:right; position:relative; }\n\n";
-		
-		// Add an extra line to clean it up
-		$s .= "\n";
-		
-		
+		$s .= substr_replace($pushselectors,"",-1) . "{ float:right; position:relative; }";
+				
 		// Make the .pull classes
 		for ($i=1; $i < $settings['columncount']; $i++) { 
 			$w = $settings['columnwidth'] * $i;
-			$s .= ".pull-$i \t{ margin-right:".$w."px; }";
+			$s .= ".pull-$i{ margin-right:".$w."px; }";
 			$pullselectors .= ".pull-$i,";
 		}
-		$s .= substr_replace($pullselectors,"",-1) . "{ float:left; position:relative; }\n\n";
+		$s .= substr_replace($pullselectors,"",-1) . "{ float:left; position:relative; }";
 		
 		// Make the .baseline-x classes
 		for ($i=1; $i < 51; $i++) { 
 			$h = $settings['baseline'] * $i;
-			$s .= ".baseline-$i \t{ height:".$h."px; }";
+			$s .= ".baseline-$i{ height:".$h."px; }";
 		}
 		
 		// Make the .baseline-pull-x class
 		for ($i=1; $i < 51; $i++) { 
 			$h = $settings['baseline'] * $i;
-			$s .= ".baseline-pull-$i \t{ margin-top:-".$h."px; }";
+			$s .= ".baseline-pull-$i{ margin-top:-".$h."px; }";
 		}
 		
 		// Make the .baseline-push-x classes
 		for ($i=1; $i < 51; $i++) { 
 			$h = $settings['baseline'] * $i;
-			$s .= ".baseline-push-$i \t{ margin-bottom:-".$h."px; }";
+			$s .= ".baseline-push-$i{ margin-bottom:-".$h."px; }";
 		}
 		
 		// Make the .append classes
 		for ($i=1; $i < $settings['columncount']; $i++) { 
 			$w = $settings['columnwidth'] * $i;
-			$s .= ".append-$i \t{ padding-right:".$w."px; }";
+			$s .= ".append-$i{ padding-right:".$w."px; }";
 		}
 		
 		// Make the .prepend classes
 		for ($i=1; $i < $settings['columncount']; $i++) { 
 			$w = $settings['columnwidth'] * $i;
-			$s .= ".prepend-$i \t{ padding-left:".$w."px; }";
+			$s .= ".prepend-$i{ padding-left:".$w."px; }";
 		}
 		
 		// Open the file relative to /css/
-		$file = fopen($system_dir . "/" . $generated_dir."/grid.css", "w") or die("Can't open the grid.css file");
+		$file = fopen($path['system']."/frameworks/grid.css", "w") or die("Can't open the grid.css file");
 		
 		// Write the string to the file
 		fwrite($file, $s);
@@ -208,7 +198,7 @@ class GridCSS
 	
 	public function generateGridImage($css)
 	{
-		global $settings, $css_dir, $bg_dir;
+		global $settings, $path;
 		
 		$image = ImageCreate($settings['columnwidth'], $settings['baseline']);
 		
@@ -221,13 +211,13 @@ class GridCSS
 	
 		imageline($image, 0, ($settings['baseline'] - 1 ), $settings['columnwidth'], ($settings['baseline'] - 1 ), $colorGrey);
 		
-	    ImagePNG($image, $bg_dir . "/grid.png") or die("Can't save the grid.png file");
+	    ImagePNG($image, $path['backgrounds'] . "/grid.png") or die("Can't save the grid.png file");
 	    ImageDestroy($image);
 	}
 	
 	public function generateLayoutXML($css)
 	{
-		global $settings, $css_dir, $xml_dir;
+		global $settings, $path;
 		
 		$list = "<layouts>\n";
 		$layoutnames = array();
@@ -251,7 +241,7 @@ class GridCSS
 		$list .= "\n</layouts>";
 				
 		// Open the file
-		$file = fopen($xml_dir . "/layouts.xml", "w") or die("Can't open the xml file");
+		$file = fopen($path['xml'] . "/layouts.xml", "w") or die("Can't open the xml file");
 		
 		// Write the string to the file
 		fwrite($file, $list);

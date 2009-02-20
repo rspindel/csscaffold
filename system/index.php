@@ -3,39 +3,19 @@
 	// Prevent direct access to CSS Cacheer files
 	define('CSS_CACHEER', true);
 	
-	// Get the globals
+	// Get everything
 	include 'config.php';
 	include 'functions.php';
 	include 'plugin.php';
-	
+		
 	// Start the timer...
 	$time_start = microtime(true);
 	
 	// Get the user agent to use throughout
 	$ua = parse_user_agent($_SERVER['HTTP_USER_AGENT']);
-	
-	error_reporting(0);
-	
+		
 	// We'll work from inside the /css directory
 	chdir('../');
-	
-/******************************************************************************
- If recache=all url param - delete all the cache files.
- ******************************************************************************/
- 
-	if(isset($_GET['recache']) &&  $_GET['recache'] == "all")
-	{
-		$f = get_files_in_directory($system_dir . "/cache", "path");
-		
-		foreach($f as $file)
-		{
-			if(substr($file, -3) == 'css')
-			{
-				unlink($file);
-			}
-		}
-	}
-
 
 /******************************************************************************
  Received request from mod_rewrite
@@ -48,44 +28,75 @@
 	$requested_dir	= preg_replace('#/[^/]*$#', '', $requested_file);
 	
 	// absolute path to css directory, eg. /css
-	$css_dir = preg_replace('#/[^/]*$#', '', (isset($_SERVER['PHP_SELF'])) ? $_SERVER['PHP_SELF'] : $_SERVER['SCRIPT_URL']);
-	$css_dir = str_replace("/".$system_dir, '', $css_dir);
+	$path['css_dir'] = str_replace("/".$path['system'], '', preg_replace('#/[^/]*$#', '', (isset($_SERVER['PHP_SELF'])) ? $_SERVER['PHP_SELF'] : $_SERVER['SCRIPT_URL']));
 
 
 /******************************************************************************
  Limit processing to existing css files within this and nested directories
  ******************************************************************************/
- 
+ 	
+ 	// If it isn't a css file
+	if (substr($requested_file, -4) != '.css')
+	{
+		echo "/* Error: Request file isn't a css file */";
+		exit;
+	}
+	
+	// Or the requested file is within the css directory
+	elseif(substr($requested_file, 0, strlen($path['css_dir'])) != $path['css_dir'])
+	{
+		echo "Error: The file wasn't requested from the css directory";
+		exit;
+	}
+	
+	// Or the file doesn't exist
+	elseif(!file_exists(substr($requested_file, strlen($path['css_dir']) + 1)))
+	{
+		echo "Error: That file doesn't exist";
+		exit;
+	}
+	
+/******************************************************************************
+ Check to see if we should enable test mode
+ ******************************************************************************/
+	
 	if 
 	(
-		// If it isn't a css file
-		substr($requested_file, -4) != '.css' ||
-		
-		// Or the requested file is within the css directory
-		substr($requested_file, 0, strlen($css_dir)) != $css_dir ||
-		
-		// Or the file doesn't exist
-		!file_exists(substr($requested_file, strlen($css_dir) + 1))
-	)
+		$cache_lock === TRUE &&
+		isset($_GET['test_mode']) && 
+ 		isset($_GET['secret_word']) && 
+ 		$_GET['secret_word'] == $secret_word
+ 	)
+ 	{
+ 		$test_mode = TRUE;
+ 	}
+	
+/******************************************************************************
+ Override cache locking with a secret word
+ ******************************************************************************/
+	
+	if(isset($_GET['secret_word']) && $_GET['secret_word'] = $secret_word)
 	{
-		echo '/* Invalid Request */';
-		exit();
+		$cache_lock = FALSE;
+	}
+	
+/******************************************************************************
+ If recache=all url param - delete all the cache files.
+ ******************************************************************************/
+ 
+	if(isset($_GET['recache']) &&  $_GET['recache'] == "all" && $cache_lock === FALSE)
+	{
+		$f = get_files_in_directory($path['system'] . "/cache", "path");
+		
+		foreach($f as $file)
+		{
+			if(substr($file, -3) == 'css')
+			{
+				unlink($file);
+			}
+		}
 	}
 
-
-/******************************************************************************
- Load extensions
- ******************************************************************************/
-
-	// Extensions are functions that can be used by any of the plugins
-	// They extend the capabilities of the plugins.
-	
-//	$ext_files = get_files_in_directory($system_dir."/".$ext_dir);
-//	
-//	foreach($ext_files as $ext)
-//	{
-//		include($ext['path']);
-//	}
 
 /******************************************************************************
  Load plugins
@@ -95,7 +106,7 @@
 	$plugins = array();
 
 	// Use our included function. (directory, what to return, what file types to get)
-	$plugin_files = get_files_in_directory($system_dir."/plugins", "path");
+	$plugin_files = get_files_in_directory($path['system']."/plugins", "path");
 	
 	foreach($plugin_files as $plugin)
 	{
@@ -126,29 +137,34 @@
 /******************************************************************************
  Determine relative and cache paths
  ******************************************************************************/
- 
-	$cssc_cache_dir = $system_dir."/cache/";
+	
+	// Directory to cache processed files
+	$cache_dir = $path['system']."/cache/";
 	
 	// path to requested file, relative to css directory, eg. nested/sample.css
-	$relative_file = substr($requested_file, strlen($css_dir) + 1);
+	$relative_file = substr($requested_file, strlen($path['css_dir']) + 1);
 	
 	// path to directory containing requested file, relative to css directory, eg. nested
 	$relative_dir = (strpos($relative_file, '/') === false) ? '' : preg_replace("/\/[^\/]*$/", '', $relative_file);
 	
 	// path to cache of requested file, relative to css directory, eg. css-cacheer/cache/nested/sample.css
-	$cached_file = $cssc_cache_dir.preg_replace('#(.+)(\.css)$#i', "$1-{$checksum}$2", $relative_file);
-	
-	// path to directory containing cache of requested CSS file, relative from the directory containing cache.php, eg. cache/nested
-	$cached_dir = $cssc_cache_dir;
+	if( $test_mode === TRUE ) 
+ 	{
+ 		$cached_file = $cache_dir."test_mode.css";
+ 	}
+	else
+	{
+		$cached_file = $cache_dir.preg_replace('#(.+)(\.css)$#i', "$1-{$checksum}$2", $relative_file);
+	}
 
 
 /******************************************************************************
  Delete file cache
  ******************************************************************************/
  
-	if ($recache && file_exists($cached_file))
+	if ($recache && file_exists($cached_file) && $cache_lock === FALSE || $test_mode === TRUE )
 	{
-		unlink($cached_file);
+		@unlink($cached_file);
 	}
 
 /******************************************************************************
@@ -163,7 +179,7 @@
  Recreate the cache if stale or nonexistent
  ******************************************************************************/
  
-	if ($cached_mod_time < $requested_mod_time)
+	if (($cached_mod_time < $requested_mod_time) && $cache_lock === FALSE)
 	{	
 		/******************************************************************************
 	 	 Grab the modified CSS file and process plugins
@@ -177,6 +193,7 @@
 			$css = $plugin->pre_process($css);
 		}
 		
+		
 		// Process for heavy lifting
 		foreach($plugins as $plugin)
 		{
@@ -189,14 +206,15 @@
 			$css = $plugin->post_process($css);
 			$filesize[$plugin_class] = strlen($css);
 		}
+		
 			
 		/******************************************************************************
 		 Make sure the target directory exists
 		 ******************************************************************************/
 	 
-		if ($cached_file != $cached_dir && !is_dir($cached_dir))
+		if ($cached_file != $cache_dir && !is_dir($cache_dir))
 		{
-			$path = $cssc_cache_dir;
+			$path = $cache_dir;
 			$dirs = explode('/', $relative_dir);
 			foreach ($dirs as $dir)
 			{
@@ -219,28 +237,30 @@
 		/****************************************************************************
 		 Create the size report
 		 ****************************************************************************/
-	 	$s = "";
-	 	
-		// Output the benchmark text file
-		foreach($filesize as $plugin_class => $css_size)
-		{
-			// Make the report line
-			$s .= "Filesize after ".$plugin_class." => ".$css_size."\n";
+	 	if($create_report == TRUE)
+	 	{
+		 	$s = "";
+		 	
+			// Output the benchmark text file
+			foreach($filesize as $plugin_class => $css_size)
+			{
+				// Make the report line
+				$s .= "Filesize after ".$plugin_class." => ".$css_size."\n";
+			}
+			
+			// Create the ratio in the string
+			$size_ratio = 100 - (end($filesize) / reset($filesize) * 100) ."%";
+			
+			$s .= "\n\n Compression Ratio = ". $size_ratio;
+			$s .= "\n Final CSS Size (as file before Gzip) = ". fileSize($cached_file) ." bytes (". fileSize($cached_file) / 1024 . " kB)";
+			
+			// Open the file relative to /css/
+			$benchmark_file = fopen($cache_dir . "/css_report.txt", "w") or die("Can't open the report.txt file");
+			// Write the string to the file
+			fwrite($benchmark_file, $s);
+			//chmod($benchmark_file, 777);
+			fclose($benchmark_file);
 		}
-		
-		// Create the ratio in the string
-		$size_ratio = 100 - (end($filesize) / reset($filesize) * 100) ."%";
-		
-		$s .= "\n\n Compression Ratio = ". $size_ratio;
-		$s .= "\n Final CSS Size (as file before Gzip) = ". fileSize($cached_file) ." bytes (". fileSize($cached_file) / 1024 . " kB)";
-		
-		// Open the file relative to /css/
-		$benchmark_file = fopen($cssc_cache_dir . "/css_report.txt", "w") or die("Can't open the report.txt file");
-		// Write the string to the file
-		fwrite($benchmark_file, $s);
-		//chmod($benchmark_file, 777);
-		fclose($benchmark_file);
-
 	}
 
 /******************************************************************************
@@ -261,15 +281,18 @@
 /******************************************************************************
  Send cached file to browser
  ******************************************************************************/
- 
+
 	$css = file_get_contents($cached_file);
-	
+
 	$time_end = microtime(true);
 	$time = $time_end - $time_start;
+	
+	$filesize = round( filesize($cached_file) / 1024 , 2);
 	
 	if ($show_header)
 	{
 		$header  = "/* Processed and cached by Shaun Inman's CSS Cacheer. ";
+		$header .= "Cached filesize is " . $filesize . " kilobytes. ";
 		$header	.= "Processed in ".$time." seconds and rendered as " . $ua['browser'] . $ua['version'];
 		$header .= ' (with '.str_replace('Plugin', '', preg_replace('#,([^,]+)$#', " &$1", join(', ', array_keys($plugins)))).' enabled)';
 		$header .= ' on '.gmdate('r').' <http://shauninman.com/search/?q=cacheer> */'."\r\n";
@@ -279,5 +302,6 @@
 	header('Content-Type: text/css');
 	header('Last-Modified: '.gmdate('D, d M Y H:i:s', $requested_mod_time).' GMT');
 	echo $css;
+
 	
 	

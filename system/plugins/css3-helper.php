@@ -87,12 +87,12 @@ class CSS3Helper extends CacheerPlugin
 	
 	function fontFace($css)
 	{
-		global $font_dir;
+		global $path;
 	
 	
-		if (is_dir($font_dir))
+		if (is_dir($path['fonts']))
 		{
-			if ($dir_handle = opendir($font_dir)) 
+			if ($dir_handle = opendir($path['fonts'])) 
 			{
 				while (($font_file = readdir($dir_handle)) !== false) 
 				{
@@ -114,7 +114,7 @@ class CSS3Helper extends CacheerPlugin
 						$fn = preg_replace('/\.otf|\.ttf|\.eot/', "", $font_file);
 											
 						// Build the selector
-						$properties = "name:'$fn';src:url('$font_dir$font_file');";
+						$properties = "name:'$fn';src:url('".$path['fonts']."/$font_file');";
 												
 						
 						// Add them as classes

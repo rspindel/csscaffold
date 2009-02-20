@@ -11,13 +11,13 @@ class Append extends CacheerPlugin
 	
 	function pre_process($css)
 	{
-		global $css_plugin_dir;
+		global $path;
 		
 		$append = "";
 		
-		if (is_dir($css_plugin_dir))
+		if (is_dir($path['plugins']))
 		{
-			if ($dir_handle = opendir($css_plugin_dir)) 
+			if ($dir_handle = opendir($path['path'])) 
 			{
 				while (($file = readdir($dir_handle)) !== false) 
 				{
@@ -26,7 +26,7 @@ class Append extends CacheerPlugin
 						continue; 
 					}
 
-					$append .= file_get_contents($css_plugin_dir."/".$file);
+					$append .= file_get_contents($path['path']."/".$file);
 					
 				}
 				closedir($dir_handle);
