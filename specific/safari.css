@@ -1,2 +1,10 @@
-/* Fix text rendering in Safari */
+/**
+* Text anti-aliasing in Safari is too heavy. By making the
+* text-shadow the same colour as the background, it 'fixes'
+* the rendering of the text so it appears much cleaner. 
+*
+* @bugfix
+* @affected Safari 2, Safari 3
+* @valid no
+*/
 p, li, dt, dd, label, legend, caption, td { text-shadow: 0 0 0 #fff; }

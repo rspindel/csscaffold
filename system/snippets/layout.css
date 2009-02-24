@@ -20,6 +20,7 @@
 	.showgrid		{ background: url('assets/backgrounds/grid.png'); }
 	.last 			{ margin-right: 0; }	
 	.hide       	{ display: none; }
+	.inner-box		{ padding:math('grid(baseline)/2')px; }
 	
 	/* Used for any horizontal navigation-style ul/ol */
 	.inline-list			

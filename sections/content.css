@@ -1,8 +1,9 @@
+/**
+* --------------------------------------------------------
+* @section Common Content
+* --------------------------------------------------------
+*/
 
-/* @group Common Content */
-/*---------------------------------------------------------------- */	
-
-	
 	/* eg. Post meta underneath its title */
 	.meta			{ color:#888; }
 	.sub-meta		{ color:#aaa; }
@@ -20,32 +21,26 @@
 	.removed    	{ background:#900; color: #fff; } /* Or use <del> */
 	
 	.small      	{ font-size: 11px; margin-bottom: grid(baseline); line-height: grid(baseline); } 
-	.large      	{ font-size: 2.2em; line-height: math('grid(baseline)*2')px; margin-bottom: grid(baseline); letter-spacing: -1px; }
-	
-	.inner-box		{ padding:math('grid(baseline)/2')px; }
-	
+	.large      	{ font-size: 2.2em; line-height: math('grid(baseline)*2')px; margin-bottom: grid(baseline); letter-spacing: -1px; }	
 		
+/**
+* --------------------------------------------------------
+* @section Content Layout
+* 
+* @note Based on Jason Santa Maria's Work on 24Ways. 
+* These aren't entirely semantic. But you don't want to 
+* fill up your CSS with id's for every figure.
+*
+* @see http://24ways.org/2008/making-modular-layout-systems
+* --------------------------------------------------------
+*/	
 	
-/* @end */	
-/* @group Content Layout */
-/*---------------------------------------------------------------- */	
+	/* Alternatively use the html5 <figure> element instead of .pic */
+	.pic, .caption  { add-to: selector('.small'); }
 	
-	/*
-		Based on Jason Santa Maria's Work on 24Ways
-		These aren't entirely semantic. But you don't want to 
-		fill up your CSS with id's for every figure. Consistency
-		creates its own form of semantics. 
-	*/
-
 	.right 			{ float: right; margin: grid(baseline) 0 grid(baseline) grid(baseline); }
 	.left 			{ float: left;  margin: grid(baseline) grid(baseline) grid(baseline) 0; }
 	.solo	 		{ margin-bottom: grid(baseline); }
-	
-	/* Alternatively use the html5 <figure> element instead of .pic */
-	.pic			{ }
-	.pic p,
-	.pic p *,
-	.caption 		{ }	
 	
 	.frame 			{ border: 1px solid #999; }
 	.full			{ margin-left: 0; margin-right: 0; }
@@ -53,9 +48,6 @@
 	/* If the figure isn't sitting flush to the paragraph or sides use these */
 	.top        	{ margin-top:0; }
 	.bottom     	{ margin-bottom:0;}
-	.first			{ margin-left: 0; }
-	.last 			{ margin-right: 0; }
-	
-/* @end */	
-
+	.first			{ margin-left:0; }
+	.last 			{ margin-right:0; }
 		

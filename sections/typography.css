@@ -1,7 +1,7 @@
 
 	body 
 	{ 
-	  	font-size			: 12px;
+	  	font-size			: 13px;
 	  	background			: #fff; 
 	  	color				: #444;
 	  	based-on			: base(myriad);
@@ -9,8 +9,11 @@
 	}
 		
 	
-	/* @group Headings */
-	/*-------------------------------------------------------------- */
+	/**
+	* --------------------------------------------------------
+	* @section Headings
+	* --------------------------------------------------------
+	*/
 	
 	h1,h2,h3,h4,h5,h6 { font-weight: normal; color: #111; }
 	
@@ -70,9 +73,11 @@
 	h4 img, h5 img, h6 img { margin: 0; }
 	
 		
-	/* @end */	
-	/* @group Text elements */
-	/* 	-------------------------------------------------------------- */
+	/**
+	* --------------------------------------------------------
+	* @section Text Elements
+	* --------------------------------------------------------
+	*/
 	
 	p				{ margin: 0 0 grid(baseline) 0; }
 	p:last-child	{ margin-bottom:0;}
@@ -126,9 +131,11 @@
 	}
 	
 	
-	/* @end */
-	/* @group Links */
-	/* 	------------------------------------------------------------- */
+	/**
+	* --------------------------------------------------------
+	* @section Links
+	* --------------------------------------------------------
+	*/
 	
 	a:focus, 
 	a:hover     	{ color: #000; }
@@ -147,19 +154,20 @@
 	h5 a:hover 		{}
 	h6 a:hover 		{}
 	
-	
-	
-	/* @end */
-	/* @group Figures */
-	/* 	-------------------------------------------------------------- */
+	/**
+	* --------------------------------------------------------
+	* @section Figures
+	* --------------------------------------------------------
+	*/
 	
 	p img       	{ float: left; margin: grid(baseline) grid(baseline) grid(baseline) 0; padding: 0; }
 	
 	
-	
-	/* @end */
-	/* @group Lists */
-	/* 	-------------------------------------------------------------- */
+	/**
+	* --------------------------------------------------------
+	* @section Lists
+	* --------------------------------------------------------
+	*/
 	
 	li ul, 
 	li ol       	{ margin:0 grid(baseline); }
@@ -173,11 +181,12 @@
 	dd          	{ margin-left: grid(baseline);}
 	
 	
-	
-	/* @end */
-	/* @group Tables */
-	/* Note: Tables still need 'cellspacing="0"' in the markup.
-	-------------------------------------------------------------- */
+	/**
+	* --------------------------------------------------------
+	* @section Tables
+	* @note You still need cellspacing="0" in your markup
+	* --------------------------------------------------------
+	*/
 	
 	table       { margin-bottom: grid(baseline); width:100%; }
 	th          { font-weight: bold; background: #C3D9FF; }
@@ -188,5 +197,3 @@
 	
 	table[border]	{ border-collapse:separate; border-spacing:0; }
 	
-	/* @end */	
-

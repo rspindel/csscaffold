@@ -1,7 +1,6 @@
 /* Styles for the test pages */
-		
-		#nav-wrap {position: fixed;left: 0;bottom: 0;width: 100%; background:#222;text-align: center; opacity: 0.9;padding:2px;} 
-		#navigation { margin:0 auto; width:500px; }
+	#nav-wrap {position: fixed;left: 0;bottom: 0;width: 100%; background:#222;text-align: center; opacity: 0.9;padding:2px;} 
+		#navigation { margin:0 auto; width:600px; }
 		#navigation li {list-style:none;float:left;}
 		#navigation li a {background: #111;width:100px;display:block;margin:2px; line-height:25px;color: #fff;text-decoration:none;}
 		#navigation li a:hover{background:#000;}  

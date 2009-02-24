@@ -69,13 +69,18 @@
  	)
  	{
  		$test_mode = TRUE;
+ 		$cache_lock = FALSE;
  	}
 	
 /******************************************************************************
  Override cache locking with a secret word
  ******************************************************************************/
 	
-	if(isset($_GET['secret_word']) && $_GET['secret_word'] = $secret_word)
+	if
+	(
+		isset($_GET['secret_word']) && $_GET['secret_word'] = $secret_word &&
+		isset($_GET['recache'])
+	)
 	{
 		$cache_lock = FALSE;
 	}

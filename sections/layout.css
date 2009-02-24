@@ -1,5 +1,8 @@
-/* @group Grid */
-/* ---------------------------------------------------------------- */
+/**
+* --------------------------------------------------------
+* @section Grid
+* --------------------------------------------------------
+*/
 
 	/* The grid plugin requires these settings*/
 	@grid 
@@ -10,19 +13,18 @@
 		baseline:18;
 	}
 	
-	/* Give our main wrapper a container class so that it's centered */
 	#page 	{ add-to: selector('.container'); }
-
 	#header { columns: 24; }
 	#footer { columns: 24; }
 
-/* @end */
-/* @group Layouts */
-/* ---------------------------------------------------------------- */
-	
-	/* Now all you have to do is give your body tag a class
-	of .layout-name. Its by far the easiest way to create 
-	layouts. */
+/**
+* --------------------------------------------------------
+* @section Layouts
+*
+* @note You have to do is give your body/container element a 
+* class of .layout-name. 
+* --------------------------------------------------------
+*/
 	
 	.layout-3-column
 	{
@@ -43,15 +45,12 @@
 		#secondary-content		{ columns:6; }
 	}
 	
-/* @end */
-/* @group Navigation */
-/* -------------------------------------------------------------------- */
-	
-	/* .inline-list is a class from the layout utilities */
+/**
+* --------------------------------------------------------
+* @section Navigation
+* --------------------------------------------------------
+*/
 	
 	#navigation			{ add-to: selector('.inline-list'); }
 	#navigation li 		{ }
 	#navigation li a 	{ }
-
-
-/* @end */

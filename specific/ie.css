@@ -1,44 +1,112 @@
-	/* For smoother downsampling in IE7+ */
-	img { -ms-interpolation-mode: bicubic; } 
-	
-	/* WARNING. You will get the double margin bug and the overflow bug if you
-	don't use these properties for ie6. I've separated them, as ie6 support
-	is up to the designer */
-	.ie6-layout-fix		{ overflow:hidden; display:inline; } 
+/**
+* Fixes the downsampling of images in ie7+ so that
+* they appear smoother
+*
+* @bugfix
+* @affected IE7+
+* @valid no
+*/
+img { -ms-interpolation-mode: bicubic; } 
 
-/* Elements
--------------------------------------------------------------- */
+/**
+* Fixes the double margin bug and expanding bug in IE6
+*
+* @bugfix
+* @affected IE6
+* @valid yes
+*/
+.ie6-fix { overflow:hidden; display:inline; } 
 
-	/* Fixes incorrect styling of legend in IE6. */
+/**
+* -------------------------
+* @section Elements
+* -------------------------
+*/
+
+	/**
+	* Fixes incorrect styling of legend elements
+	*
+	* @workaround
+	* @affected IE6
+	* @valid no
+	*/
 	* html legend { margin:0px -8px 16px 0; padding:0; }
-	
-	/* Fixes incorrect placement of ol numbers in IE6/7. */
+
+	/**
+	* Fixes incorrect placement of ol numbers in IE6/7.
+	*
+	* @bugfix
+	* @affected IE6, IE7
+	* @valid yes
+	*/
 	ol { margin-left:2em; }
 	
-	/* Fixes wrong line-height on sup/sub in IE. */
+	/**
+	* Fixes wrong line-height on sup/sub in IE.
+	*
+	* @bugfix
+	* @affected IE
+	* @valid yes
+	*/
 	sup { vertical-align: text-top; }
 	sub { vertical-align: text-bottom; }
 	
-	/* Fixes IE7 missing wrapping of code elements. */
+	/**
+	* Fixes IE7 missing wrapping of code elements.
+	*
+	* @bugfix
+	* @affected IE7
+	* @valid no
+	*/
 	html>body p code { *white-space: normal; } 
 	
-	/* IE 6&7 has problems with setting proper <hr> margins. */
+	/**
+	* IE has problems with setting proper <hr> margins.
+	*
+	* @bugfix
+	* @affected IE6, IE7
+	* @valid yes
+	*/
 	hr  { margin: -8px auto 11px; }
 	
-	/* Fix button padding */
+	/**
+	* Fix the padding on button elements
+	*
+	* @bugfix
+	* @affected IE6, IE7
+	* @valid yes
+	*/
 	button { padding:4px 10px 3px 7px; }
 
 
-/* Clearing 
--------------------------------------------------------------- */
+/**
+* -------------------------
+* @section Clears
+* -------------------------
+*/
 
-	/* Makes clearfix actually work in IE */ 
+	/**
+	*  Makes clearfix actually work in IE
+	*
+	* @bugfix
+	* @affected IE6, IE7
+	* @valid no
+	*/
 	.clearfix {display: inline-block;}
 	* html .clearfix {height: 1%;}
 
 
-/* Forms 
--------------------------------------------------------------- */
+/**
+* -------------------------
+* @section Forms
+* -------------------------
+*/
 
-	/* Fixes padding on fieldset */
+	/**
+	*  Fixes padding on fieldset
+	*
+	* @bugfix
+	* @affected IE6, IE7
+	* @valid yes
+	*/
 	fieldset {padding-top: 0;}
