@@ -36,6 +36,7 @@ $create_report = FALSE;
 // All paths are relative to the css directory above your system folder - usually your css folder
 $path = array(
 	"system" 		=> "system",
+	"cache"			=> "system/cache/",
 	"plugins" 		=> "plugins",
 	"xml" 			=> "assets/xml",
 	"fonts" 		=> "assets/fonts",

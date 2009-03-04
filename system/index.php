@@ -42,7 +42,7 @@
 		exit;
 	}
 	
-	// Or the requested file is within the css directory
+	// Or the requested file isn't within the css directory
 	elseif(substr($requested_file, 0, strlen($path['css_dir'])) != $path['css_dir'])
 	{
 		echo "Error: The file wasn't requested from the css directory";
@@ -55,14 +55,29 @@
 		echo "Error: That file doesn't exist";
 		exit;
 	}
-	
+
+
 /******************************************************************************
- Check to see if we should enable test mode
+ Check to see if we should unlock the cache
  ******************************************************************************/
 	
 	if 
 	(
 		$cache_lock === TRUE &&
+ 		isset($_GET['secret_word']) && 
+ 		$_GET['secret_word'] == $secret_word
+ 	)
+ 	{
+ 		$cache_lock = FALSE;
+ 	}
+ 	
+	
+/******************************************************************************
+ Check to see if we should enable test mode
+ ******************************************************************************/
+ 	
+ 	if 
+	(
 		isset($_GET['test_mode']) && 
  		isset($_GET['secret_word']) && 
  		$_GET['secret_word'] == $secret_word
@@ -71,27 +86,23 @@
  		$test_mode = TRUE;
  		$cache_lock = FALSE;
  	}
-	
-/******************************************************************************
- Override cache locking with a secret word
- ******************************************************************************/
-	
-	if
-	(
-		isset($_GET['secret_word']) && $_GET['secret_word'] = $secret_word &&
-		isset($_GET['recache'])
-	)
-	{
-		$cache_lock = FALSE;
-	}
+ 	else
+ 	{
+ 		$test_mode = FALSE;
+ 	}
+ 
 	
 /******************************************************************************
  If recache=all url param - delete all the cache files.
  ******************************************************************************/
  
-	if(isset($_GET['recache']) &&  $_GET['recache'] == "all" && $cache_lock === FALSE)
+	if
+	(
+		isset($_GET['recache']) &&  $_GET['recache'] == "all" &&
+		isset($_GET['secret_word']) && $_GET['secret_word'] = $secret_word
+	)
 	{
-		$f = get_files_in_directory($path['system'] . "/cache", "path");
+		$f = get_files_in_directory($path['cache'], "path");
 		
 		foreach($f as $file)
 		{
@@ -144,7 +155,7 @@
  ******************************************************************************/
 	
 	// Directory to cache processed files
-	$cache_dir = $path['system']."/cache/";
+	$cache_dir = $path['cache'];
 	
 	// path to requested file, relative to css directory, eg. nested/sample.css
 	$relative_file = substr($requested_file, strlen($path['css_dir']) + 1);
