@@ -54,7 +54,7 @@ class Base64Plugin extends CacheerPlugin
 					{
 						$img_raw = file_get_contents($absolute_img);
 						$img_data = 'data:image/'.$img_ext.';base64,'.base64_encode($img_raw);
-						$css = str_replace("url({$relative_img})", "url({$img_data})", $css);
+						$css = str_replace("embed({$relative_img})", "url({$img_data})", $css);
 					}
 				}
 			}
