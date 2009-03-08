@@ -4,9 +4,9 @@
  ******************************************************************************/
 if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
-$plugin_class = 'Classes';
+$plugin_class = 'AddTo';
 
-class Classes extends CacheerPlugin
+class AddTo extends CacheerPlugin
 {
 
 	function post_process($css)

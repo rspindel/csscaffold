@@ -15,9 +15,9 @@ class Append extends CacheerPlugin
 		
 		$append = "";
 		
-		if (is_dir($path['plugins']))
+		if (is_dir($path['append_dir']))
 		{
-			if ($dir_handle = opendir($path['path'])) 
+			if ($dir_handle = opendir($path['append_dir'])) 
 			{
 				while (($file = readdir($dir_handle)) !== false) 
 				{
@@ -26,7 +26,7 @@ class Append extends CacheerPlugin
 						continue; 
 					}
 
-					$append .= file_get_contents($path['path']."/".$file);
+					$append .= file_get_contents($path['append_dir']."/".$file);
 					
 				}
 				closedir($dir_handle);

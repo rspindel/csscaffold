@@ -18,6 +18,10 @@ class Browsers extends CacheerPlugin
 		{
 			$this->flags['IE7'] = true;
 		}
+		elseif($ua['browser'] == 'ie' && $ua['version'] == 6.0)
+		{
+			$this->flags['IE7'] = true;
+		}
 		elseif($ua['browser'] == 'applewebkit' && $ua['version'] >= 525)
 		{
 			$this->flags['Safari3'] = true;
@@ -29,54 +33,27 @@ class Browsers extends CacheerPlugin
 	}
 
 	
-	
-	
-	function getOpacity($css)
-	{
-		if(preg_match_all('/([\s.#a-z,-]*)\s*\{[^}]*opacity\:\s*(\d\.\d).*?\}/sx', $css, $matches))
-		{
-			foreach($matches[0] as $key => $match)
-			{
-				$selectors			= $matches[1][$key];
-				$opacity_value 	= $matches[2][$key];
-				
-				// Convert it for the filter 
-				$opacity_value = $opacity_value * 100;
-				
-				// Get rid of excess whitespace
-				$selectors = trim($selectors);
-				
-				$ie_string .= $selectors . "{filter:alpha(opacity='".$opacity_value."'); zoom:1;}";	
-			}
-		}		
-		
-		return $ie_string;
-	}
-	
-
-	
-	
 	function pre_process($css)
-	{		
+	{
+		global $path;		
 
-		if (isset($this->flags['IE7']))
+		if (isset($this->flags['IE7']) || isset($this->flags['IE6']))
 		{
-			$file 		= file_get_contents("specific/ie.css");
-			$opacity 	= $this -> getOpacity($css);
-			$css 		= $css . $inline . $file . $opacity;
+			$file 		= file_get_contents($path['browsers'] . "/ie.css");
+			$css 		= $css . $file;
 	
 			return $css;
 		}
 		elseif (isset($this->flags['Safari3']))
 		{
-			$file 		= file_get_contents("specific/safari.css");		
+			$file 		= file_get_contents($path['browsers'] . "/safari.css");		
 			$css 		= $css . $file;
 			
 			return $css;
 		}
 		elseif (isset($this->flags['Firefox3']))
 		{
-			$file 		= file_get_contents("specific/firefox.css");
+			$file 		= file_get_contents($path['browsers'] . "/firefox.css");
 			$css 		= $css .$file;
 		
 			return $css;

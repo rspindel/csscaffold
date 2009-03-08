@@ -84,6 +84,28 @@ class CSS3Helper extends CacheerPlugin
 		return $css;
 	}
 	
+	function getOpacity($css)
+	{
+		if(preg_match_all('/([\s.#a-z,-]*)\s*\{[^}]*opacity\:\s*(\d\.\d).*?\}/sx', $css, $matches))
+		{
+			foreach($matches[0] as $key => $match)
+			{
+				$selectors			= $matches[1][$key];
+				$opacity_value 	= $matches[2][$key];
+				
+				// Convert it for the filter 
+				$opacity_value = $opacity_value * 100;
+				
+				// Get rid of excess whitespace
+				$selectors = trim($selectors);
+				
+				$ie_string .= $selectors . "{filter:alpha(opacity='".$opacity_value."'); zoom:1;}";	
+			}
+		}		
+		
+		return $ie_string;
+	}
+	
 	
 	function fontFace($css)
 	{

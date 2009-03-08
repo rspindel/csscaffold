@@ -37,7 +37,8 @@ $create_report = FALSE;
 $path = array(
 	"system" 		=> "system",
 	"cache"			=> "system/cache/",
-	"plugins" 		=> "plugins",
+	"browsers"		=> "specific",
+	"append_dir" 	=> "plugins",
 	"xml" 			=> "assets/xml",
 	"fonts" 		=> "assets/fonts",
 	"backgrounds" 	=> "assets/backgrounds",
@@ -75,7 +76,7 @@ $plugin_order = array(
 	'Math',
 	'Grid',
 	'ImageReplacement',
-	'Classes',
+	'AddTo',
 	'Base64Plugin',
 	'CSSTidyPlugin',
 	'CSS3Helper',
