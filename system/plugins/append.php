@@ -21,13 +21,15 @@ class Append extends CacheerPlugin
 			{
 				while (($file = readdir($dir_handle)) !== false) 
 				{
-					if (substr($file, 0, 1) == '.' || substr($file, 0, 1) == '-')
+					if (substr($file, 0, 1) == '.' || substr($file, 0, 1) == '-' || substr($file, -3) != 'css')
 					{ 
 						continue; 
 					}
 
 					$append .= file_get_contents($path['append_dir']."/".$file);
 					
+					echo $append;
+					exit;
 				}
 				closedir($dir_handle);
 			}
