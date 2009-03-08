@@ -32,7 +32,7 @@ class Base64Plugin extends CacheerPlugin
 			$root_dir = $_SERVER['DOCUMENT_ROOT'];
 
 			$images = array();
-			if (preg_match_all('#url\(([^\)]+)\)#i', $css, $matches))
+			if (preg_match_all('#embed\(([^\)]+)\)#i', $css, $matches))
 			{
 				foreach($matches[1] as $relative_img)
 				{
