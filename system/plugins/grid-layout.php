@@ -234,11 +234,12 @@ class GridCSS
 		
 		foreach($layouts as $layout)
 		{
-			$node = "<layout>".$layout."</layout>\n";
+			$node = "<layout>layout-".$layout."</layout>\n";
 			$list .= $node;
 		}
 		
 		$list .= "\n</layouts>";
+		$list = "<?xml version=\"1.0\" ?>\n" . $list; 
 				
 		// Open the file
 		$file = fopen($path['xml'] . "/layouts.xml", "w") or die("Can't open the xml file");

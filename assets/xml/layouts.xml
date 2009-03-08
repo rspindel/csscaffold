@@ -1,6 +1,7 @@
+<?xml version="1.0" ?>
 <layouts>
-<layout>3-column</layout>
-<layout>2-column</layout>
-<layout>blog</layout>
+<layout>layout-3-column</layout>
+<layout>layout-2-column</layout>
+<layout>layout-blog</layout>
 
 </layouts>

@@ -50,3 +50,7 @@
 @server import url('sections/forms.css');
 @server import url('sections/layout.css');
 @server import url('sections/typography.css'); 
+
+@constants {
+	foo:"bar";
+}

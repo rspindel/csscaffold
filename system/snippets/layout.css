@@ -17,7 +17,7 @@
 	/* For column classes when testing */
 	.wireframe		{ opacity:0.7; background: lightblue; min-height:round(40);}
 	.container		{ width: grid(max); margin: 0 auto; overflow: hidden; position: relative; }
-	.showgrid		{ background: url('assets/backgrounds/grid.png'); }
+	.showgrid		{ background: embed('assets/backgrounds/grid.png'); }
 	.last 			{ margin-right: 0; }	
 	.hide       	{ display: none; }
 	.inner-box		{ padding:math('grid(baseline)/2')px; }
