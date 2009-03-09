@@ -61,15 +61,6 @@ img { -ms-interpolation-mode: bicubic; }
 	html>body p code { *white-space: normal; } 
 	
 	/**
-	* IE has problems with setting proper <hr> margins.
-	*
-	* @bugfix
-	* @affected IE6, IE7
-	* @valid yes
-	*/
-	hr  { margin: -8px auto 11px; }
-	
-	/**
 	* Fix the padding on button elements
 	*
 	* @bugfix

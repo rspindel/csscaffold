@@ -14,35 +14,37 @@
 	}
 	
 	#page 	{ add-to: selector('.container'); }
-	#header { columns: 24; }
+	#header { columns: 24; margin-bottom:grid(baseline);}
 	#footer { columns: 24; }
 
 /**
 * --------------------------------------------------------
 * @section Layouts
 *
-* @note You have to do is give your body/container element a 
+* @note All you have to do is give your body/container element a 
 * class of .layout-name. 
 * --------------------------------------------------------
 */
-	
+
 	.layout-3-column
 	{
-		#primary-content 		{ columns:6; }
-		#secondary-content		{ columns:12; }
-		#tertiary-content		{ columns:6; margin-right:0; }
+		#primary-content 		{ columns:6; margin-bottom:grid(baseline);padding:20px; }
+		#secondary-content		{ columns:12; margin-bottom:grid(baseline);}
+		#tertiary-content		{ columns:6; margin-right:0;margin-bottom:grid(baseline); }
 	}
 	
 	.layout-2-column
 	{
-		#primary-content 		{ columns:18; }
-		#secondary-content		{ columns:6; margin-right:0; }
+		#primary-content 		{ columns:18;margin-bottom:grid(baseline); }
+		#secondary-content		{ columns:6; margin-right:0;margin-bottom:grid(baseline); }
+		#tertiary-content 		{ columns:24;margin-bottom:grid(baseline); }
 	}
 	
-	.layout-blog
+	.layout-default
 	{
-		#primary-content 		{ columns:18;float:right;margin-right:0; }
-		#secondary-content		{ columns:6; }
+		#primary-content 		{ columns:18;float:right;margin-right:0;margin-bottom:grid(baseline); }
+		#secondary-content		{ columns:6;margin-bottom:grid(baseline); }
+		#tertiary-content 		{ columns:24;margin-bottom:grid(baseline); }
 	}
 	
 /**

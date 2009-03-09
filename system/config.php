@@ -68,15 +68,15 @@ $options = array(
 	
 	// Grid layout options
 	'grid_layout' => array(
-		'create_grid_css' => true,
-		'push' => true,
-		'pull' => true,
-		'append' => true,
-		'prepend' => true,
-		'columns-x' => true,
-		'baseline-x' => true,
-		'baseline-push-x' => true,
-		'baseline-pull-x' => true
+		'create_grid_css' 			=> true,
+		'push' 						=> true,
+		'pull' 						=> true,
+		'append' 					=> true,
+		'prepend' 					=> true,
+		'columns-x' 				=> true,
+		'baseline-x' 				=> true,
+		'baseline-push-x' 			=> true,
+		'baseline-pull-x' 			=> true
 	)
 	
 );
@@ -94,13 +94,12 @@ $plugin_order = array(
 	'ImageReplacement',
 	'AddTo',
 	'Base64Plugin',
-	//'CSSTidyPlugin',
+	//'CSSTidyPlugin', // Note: CSSTidy adds a large amount of processing time.
 	'CSS3Helper',
 	'Append',
 	'CondenserPlugin',
 	//'PrettyPlugin'
 );
-
 
 
 ?>

@@ -1,10 +1,10 @@
 
 	body 
 	{ 
-	  	font-size			: 13px;
+	  	font-size			: 12px;
 	  	background			: #fff; 
 	  	color				: #444;
-	  	based-on			: base(myriad);
+	  	based-on			: base(helvetica);
 	  	line-height			: grid(baseline);
 	}
 		
@@ -22,9 +22,10 @@
 		font-size			: 3em;
 		font-weight			: bold;
 		letter-spacing 		: -2px;
-		based-on			: base(franklingothic);
+		based-on			: base(helvetica);
 		line-height			: math('grid(baseline)*3')px;
 		margin-bottom		: grid(baseline);
+		clear				: both;
 	}
 	
 	h2 
@@ -32,7 +33,8 @@
 		font-size			: 2em;
 		based-on			: base(helvetica);
 		line-height			: math('grid(baseline)*2')px;
-		margin-bottom		: grid(baseline);  
+		margin-bottom		: grid(baseline);
+		clear				: both;  
 	}
 	
 	h3 
@@ -110,7 +112,7 @@
 	
 	abbr			{ } 
 	acronym     	{ }
-	dfn         	{ font-weight: bold; font-style: italic;  }
+	dfn         	{ font-weight: bold; font-style: italic; }
 	
 	abbr[title],
 	acronym[title],
@@ -121,11 +123,11 @@
 	
 	hr 				
 	{ 
-		classear:both; 
-		float:none; 
+		clear:both; 
+		float:left; 
 		width:100%; 
 		height:1px; 
-		margin:math('grid(baseline)-1') 0 grid(baseline) 0; 
+		margin:-1px 0 grid(baseline) 0; 
 		border:none; 
 		background:#ddd; 
 	}

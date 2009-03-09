@@ -6,7 +6,7 @@
 		
 		$.ajax({
         	type: "GET",
-			url: "../../system/layouts.xml",
+			url: "../../assets/xml/layouts.xml",
 			dataType: "xml",
 			success: function(xml) {
  				$(xml).find('layout').each(function(){
@@ -15,6 +15,8 @@
 				
 			}
 		});
+		
+		$("#page").addClass('layout-default');
 		
 		$("#layout-options").change(function(){
 		
@@ -28,10 +30,7 @@
 			$("#layout-options option:selected").each(function(){
 				newClass = $(this).text();
 			});
-			
-			// Make it into the correct format
-			newClass = "layout-" + newClass;
-			
+						
 			// Add the class
 			$("#page").addClass(newClass);
 			

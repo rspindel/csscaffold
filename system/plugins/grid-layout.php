@@ -183,7 +183,7 @@ class GridCSS
 			// Make the .baseline-push-x classes
 			for ($i=1; $i < 51; $i++) { 
 				$h = $settings['baseline'] * $i;
-				$s .= ".baseline-push-$i{ margin-bottom:-".$h."px; }";
+				$s .= ".baseline-push-$i{ margin-bottom:-".$h."px;}";
 			}
 		}
 		

@@ -8,7 +8,6 @@
 	<title>Typography Test Page</title>
 	
 	<link href="../../screen.css?recache" media="screen" rel="stylesheet" type="text/css" />
-	<link href="css/test.css" media="screen" rel="stylesheet" type="text/css" />
 	
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
 	<script type="text/javascript" src="js/test.js"></script>
@@ -67,9 +66,9 @@
 	
 </head>
 
-<body>
+<body id="tests">
 	
-	<div id="page" class="layout-homepage">
+	<div id="page">
 		
 		<div id="primary-content">
 			
@@ -186,15 +185,15 @@
 	      <h2>Other type elements</h2>
 	      
 		      	<p>
-	        		<strong>&lt;strong&gt;</strong><br>
-	        		<del>&lt;del&gt; deleted</del><br>
-	        		<dfn>&lt;dfn&gt; dfn</dfn><br>
-	        		<em>&lt;em&gt; emphasis</em>
+	        		<strong>strong</strong><br />
+	        		<del>deleted</del><br/>
+	        		<dfn>definition</dfn><br/>
+	        		<em>emphasis</em>
 	      		</p>
 	      		
 	      		<p>
-	        		<a>&lt;a&gt; anchor</a><br>
-	        		<a href="http://www.google.com">&lt;a&gt; a + href</a>
+	        		<a>anchor</a><br>
+	        		<a href="http://www.google.com">a + href</a>
 	      		</p>
 	      		
 		      <p>
@@ -209,7 +208,7 @@
 		        Disneyland
 		      </address>
 		      
-	      	   <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore dolore.</p>
+	      	   <p>Lorem ipsum dolor sit amet, <code>#id { color:#fff; }</code> consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore dolore.</p>
 	      	   
 	      	   <pre>&lt;pre&gt;
 pre  space1
@@ -219,12 +218,12 @@ pre    space2
 pre	tab
 pre	tab</pre>
 
-<code>&lt;code&gt;
+<pre><code>&lt;code&gt;
 Not indented
 	indent1
 	indent1
 		indent2
-			indent3</code>
+			indent3</code></pre>
 
       <tt>&lt;tt&gt;
       This tt text should be monospaced
@@ -343,7 +342,9 @@ Not indented
 		
 	</div>
 	
-	<a href="#" id="showgrid">Toggle Grid View</a>
+	<a href="#showgrid" class="showgrid-toggle">
+		Toggle Grid View
+	</a>
 	
 	<select id="layout-options">
 		<option>Choose a Layout</option>
