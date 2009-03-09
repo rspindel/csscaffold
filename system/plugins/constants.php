@@ -44,7 +44,7 @@ class ConstantsPlugin extends CacheerPlugin
 		if (!empty($constants))
 		{
 			$css = str_replace(array_keys($constants), array_values($constants), $css);
-		}
+		} 
 		
 		return $css;
 	}

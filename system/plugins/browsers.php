@@ -22,14 +22,35 @@ class Browsers extends CacheerPlugin
 		{
 			$this->flags['IE7'] = true;
 		}
+		elseif($ua['browser'] == 'ie' && $ua['version'] == 8.0)
+		{
+			$this->flags['IE8'] = true;
+		}
+		
 		elseif($ua['browser'] == 'applewebkit' && $ua['version'] >= 525)
 		{
 			$this->flags['Safari3'] = true;
+		}
+		elseif($ua['browser'] == 'applewebkit' && $ua['version'] >= 528)
+		{
+			$this->flags['Safari4'] = true;
+		}
+		
+		elseif($ua['browser'] == 'firefox' && $ua['version'] >= 2)
+		{
+			$this->flags['Firefox2'] = true;
 		}
 		elseif($ua['browser'] == 'firefox' && $ua['version'] >= 3)
 		{
 			$this->flags['Firefox3'] = true;
 		}
+		
+		elseif($ua['browser'] == 'opera')
+		{
+			$this->flags['Opera'] = true;
+		}
+		
+		
 	}
 
 	

@@ -27,9 +27,6 @@ class Append extends CacheerPlugin
 					}
 
 					$append .= file_get_contents($path['append_dir']."/".$file);
-					
-					echo $append;
-					exit;
 				}
 				closedir($dir_handle);
 			}
