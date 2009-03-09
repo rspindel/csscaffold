@@ -59,6 +59,12 @@ class Base64Plugin extends CacheerPlugin
 				}
 			}
 		}
+		
+		// If the browser can't do base64 images, change them to plain urls
+		else
+		{
+			$css = str_replace("embed(", "url(", $css);
+		}
 
 		return $css;
 	}
