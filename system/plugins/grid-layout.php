@@ -214,15 +214,19 @@ class GridCSS
 	{
 		global $settings, $path;
 		
-		$image = ImageCreate($settings['columnwidth'], $settings['baseline']);
+		$image = ImageCreate($settings['columnwidth'], $settings['gutterwidth']);
 		
 		$colorWhite		= ImageColorAllocate($image, 255, 255, 255);
 		$colorGrey		= ImageColorAllocate($image, 200, 200, 200);
 		$colorBlue		= ImageColorAllocate($image, 240, 240, 255);
+
+		// Draw column
+		Imagefilledrectangle($image, 0, 0, ($settings['columnwidth'] - $settings['gutterwidth'] - 1), ($settings['baseline'] - 1), $colorBlue);
 		
-		Imagefilledrectangle($image, 0, 0, ($settings['columnwidth'] - $settings['gutterwidth']), ($settings['baseline'] - 1), $colorBlue);
-		Imagefilledrectangle($image, ($settings['columnwidth'] - $settings['gutterwidth'] + 1), 0, $settings['columnwidth'], ($settings['baseline'] - 1), $colorWhite);
+		// Draw gutter
+		Imagefilledrectangle($image, ($settings['columnwidth'] - $settings['gutter'] + 1), 0, ($settings['columnwidth']), ($settings['baseline'] - 1), $colorWhite);
 	
+		// Draw baseline
 		imageline($image, 0, ($settings['baseline'] - 1 ), $settings['columnwidth'], ($settings['baseline'] - 1 ), $colorGrey);
 		
 	    ImagePNG($image, $path['backgrounds'] . "/grid.png") or die("Can't save the grid.png file");
