@@ -18,10 +18,7 @@ class Grid extends CacheerPlugin
 				
 		// If there are settings, keep going
 		if($grid->getSettings() != FALSE)
-		{
-			// Generate the grid.css
-			$grid -> generateGrid($css);
-			
+		{			
 			// Generate the grid.png
 			$grid -> generateGridImage($css);
 			
@@ -51,11 +48,17 @@ class Grid extends CacheerPlugin
 	
 	function post_process($css)
 	{
-		global $grid;
-		
+		global $grid,$options;
+			
 		// If there are settings, keep going
 		if($grid->getSettings() != FALSE)
 		{
+			if($options['grid_layout']['create_grid_css'] == TRUE)
+			{
+				// Generate the grid.css
+				$css = $grid -> generateGrid($css);
+			}
+		
 			// Remove the settings
 			$css = $grid -> removeSettings($css);
 		}
@@ -80,21 +83,12 @@ class GridCSS
 		
 		// Make sure there are settings, if so, grab them
 		if (preg_match_all('/@grid.*?\}/sx', $css, $match)) 
-		{			
-					
-			//$settings['format']			= 	$this -> getParam('format', $css);			/* newline or inline */
-			$settings['format']			= "inline";
-			
+		{						
 			$settings['columncount'] 	= 	$this -> getParam('column-count', $match[0][0]);
 			$settings['columnwidth']	= 	$this -> getParam('column-width', $match[0][0]);
 			$settings['gutterwidth']	= 	$this -> getParam('gutter-width', $match[0][0]);
 			$settings['baseline']		=	$this -> getParam('baseline', $match[0][0]);
-			
-			//$settings['keep-settings']	=	$this -> getParam('keep-settings', $css);	/* yes or no */
-			$settings['keep-settings']	= "no";
-			
-			//$settings['generate-path']	=	$this -> getParam('generate-path', $css); MAKE SURE IT HAS A GENERATE PATH
-			
+						
 			// Check whether we should use the column width or calculate it from the grid width
 			if ($settings['columnwidth'] == "") 
 			{
@@ -131,69 +125,89 @@ class GridCSS
 	
 	public function generateGrid($css)
 	{
-		global $settings,$path;
+		global $settings,$path,$options;
 		
 		$s = $pushselectors = $pullselectors = "";
 		
-		// Make the .columns-x classes
-		for ($i=1; $i < $settings['columncount'] + 1; $i++) { 
-			$w = $settings['columnwidth'] * $i - $settings['gutterwidth'];
-			$s .= ".columns-$i{ width:".$w."px; }";
+		if($options['grid_layout']['columns-x'] == TRUE)
+		{
+			// Make the .columns-x classes
+			for ($i=1; $i < $settings['columncount'] + 1; $i++) { 
+				$w = $settings['columnwidth'] * $i - $settings['gutterwidth'];
+				$s .= ".columns-$i{ width:".$w."px; }";
+			}
 		}
 	
-		// Make the .push classes
-		for ($i=1; $i < $settings['columncount']; $i++) { 
-			$w = $settings['columnwidth'] * $i;
-			$s .= ".push-$i{ margin-left: ".$w."px; }";
-			$pushselectors .= ".push-$i,";
-		}
-		$s .= substr_replace($pushselectors,"",-1) . "{ float:right; position:relative; }";
-				
-		// Make the .pull classes
-		for ($i=1; $i < $settings['columncount']; $i++) { 
-			$w = $settings['columnwidth'] * $i;
-			$s .= ".pull-$i{ margin-right:".$w."px; }";
-			$pullselectors .= ".pull-$i,";
-		}
-		$s .= substr_replace($pullselectors,"",-1) . "{ float:left; position:relative; }";
-		
-		// Make the .baseline-x classes
-		for ($i=1; $i < 51; $i++) { 
-			$h = $settings['baseline'] * $i;
-			$s .= ".baseline-$i{ height:".$h."px; }";
+		if($options['grid_layout']['push'] == TRUE)
+		{
+			// Make the .push classes
+			for ($i=1; $i < $settings['columncount']; $i++) { 
+				$w = $settings['columnwidth'] * $i;
+				$s .= ".push-$i{ margin-left: ".$w."px; }";
+				$pushselectors .= ".push-$i,";
+			}
+			$s .= substr_replace($pushselectors,"",-1) . "{ float:right; position:relative; }";
 		}
 		
-		// Make the .baseline-pull-x class
-		for ($i=1; $i < 51; $i++) { 
-			$h = $settings['baseline'] * $i;
-			$s .= ".baseline-pull-$i{ margin-top:-".$h."px; }";
+		if($options['grid_layout']['pull'] == TRUE)
+		{
+			// Make the .pull classes
+			for ($i=1; $i < $settings['columncount']; $i++) { 
+				$w = $settings['columnwidth'] * $i;
+				$s .= ".pull-$i{ margin-right:".$w."px; }";
+				$pullselectors .= ".pull-$i,";
+			}
+			$s .= substr_replace($pullselectors,"",-1) . "{ float:left; position:relative; }";
 		}
 		
-		// Make the .baseline-push-x classes
-		for ($i=1; $i < 51; $i++) { 
-			$h = $settings['baseline'] * $i;
-			$s .= ".baseline-push-$i{ margin-bottom:-".$h."px; }";
+		if($options['grid_layout']['baseline-x'] == TRUE)
+		{
+			// Make the .baseline-x classes
+			for ($i=1; $i < 51; $i++) { 
+				$h = $settings['baseline'] * $i;
+				$s .= ".baseline-$i{ height:".$h."px; }";
+			}
 		}
 		
-		// Make the .append classes
-		for ($i=1; $i < $settings['columncount']; $i++) { 
-			$w = $settings['columnwidth'] * $i;
-			$s .= ".append-$i{ padding-right:".$w."px; }";
+		if($options['grid_layout']['baseline-pull-x'] == TRUE)
+		{
+			// Make the .baseline-pull-x class
+			for ($i=1; $i < 51; $i++) { 
+				$h = $settings['baseline'] * $i;
+				$s .= ".baseline-pull-$i{ margin-top:-".$h."px; }";
+			}
 		}
 		
-		// Make the .prepend classes
-		for ($i=1; $i < $settings['columncount']; $i++) { 
-			$w = $settings['columnwidth'] * $i;
-			$s .= ".prepend-$i{ padding-left:".$w."px; }";
+		if($options['grid_layout']['baseline-push-x'] == TRUE)
+		{
+			// Make the .baseline-push-x classes
+			for ($i=1; $i < 51; $i++) { 
+				$h = $settings['baseline'] * $i;
+				$s .= ".baseline-push-$i{ margin-bottom:-".$h."px; }";
+			}
 		}
 		
-		// Open the file relative to /css/
-		$file = fopen($path['system']."/frameworks/grid.css", "w") or die("Can't open the grid.css file");
+		if($options['grid_layout']['append'] == TRUE)
+		{
+			// Make the .append classes
+			for ($i=1; $i < $settings['columncount']; $i++) { 
+				$w = $settings['columnwidth'] * $i;
+				$s .= ".append-$i{ padding-right:".$w."px; }";
+			}
+		}
 		
-		// Write the string to the file
-		fwrite($file, $s);
-		//chmod($file, 777);
-		fclose($file);
+		if($options['grid_layout']['prepend'] == TRUE)
+		{
+			// Make the .prepend classes
+			for ($i=1; $i < $settings['columncount']; $i++) { 
+				$w = $settings['columnwidth'] * $i;
+				$s .= ".prepend-$i{ padding-left:".$w."px; }";
+			}
+		}
+		
+		$css = $css . $s;
+		
+		return $css;
 	}
 	
 	public function generateGridImage($css)
@@ -261,96 +275,11 @@ class GridCSS
 		return $css;
 	}
 	 
-	public function freezeGrid()
-	{
-		// Remove the @grid settings 
-		$css = preg_replace('/\/\*.+\@grid.+?\*\//s','',$css);
-
-		//Remove all the grid(col) variable stores
-		while (preg_match_all('/\/\*.?grid\(\d+col\).?\*\//', $css, $match))
-		{
-			foreach ($match[0] as $key => $properties)
-			{
-				$css = str_replace($match[0][0], '', $css);
-			}
-		}
-
-		//Remove all the grid(gutter) variable stores
-		$css = preg_replace('/\/\*.?grid\(gut\).?\*\//', '', $css);
-
-		// Removes all the /*grid(cols:x;)*/ 
-		while (preg_match_all('/\/\*.?grid.?\(.?cols.?\:.?\d+.?\;.?\).?\*\//', $css, $match))
-		{
-			foreach ($match[0] as $key => $properties)
-			{
-				$css = str_replace($match[0][0], '', $css);
-			}
-		}
-
-		while (preg_match_all('/\/\*.?grid.?\(.?end.?\).?\*\//', $css, $match))
-		{
-			foreach ($match[0] as $key => $properties)
-			{
-				$css = str_replace($match[0][0], '', $css);
-			}
-		}
-
-		return $css;
-	}
 	
-	public function restoreGrid()
-	{
-		global $settings;
-		
-		//Replace grid(xcol)
-		while (preg_match_all('/\d*px\/\*grid\(\d+\)\*\//', $css, $match))
-		{
-			foreach ($match[0] as $key => $properties)
-			{
-				$s = $match[0][0];  // 23px/*grid(1)*/
-				
-				// Get the original variable
-				preg_match('/grid.+\)/', $s, $var); 
-				$original = $var[0]; // grid(1)
-				$original = str_replace(')', 'col)',$original); 
-				
-				// Get rid of the variable
-				// $s = preg_replace('/\/\*.+\*\//','',$s);
-				
-				$css = str_replace($match[0][0], $original, $css);
-
-			}
-			
-		}
-		
-		//Restore grid(gutter)
-		$css = preg_replace('/'.$settings['gutterwidth'].'px.?\/\*.?grid\(gut\).?\*\//', 'grid(gutter)', $css);
-		
-		// Restore columns:x;
-		while (preg_match_all('/\/\*grid\(cols\:\d+\;\)\*\/.+?\/\*grid\(end\)\*\//s', $css, $match))
-		{
-			foreach ($match[0] as $key => $properties)
-			{
-				$s = $match[0][0];
-				$s = str_replace("\n","",$s);
-				
-				// Get the original variable
-				preg_match('/cols:\d+\;/', $s, $var);
-				$original = $var[0];
-				$original = str_replace('cols','columns',$original);// 'columns' was causing issues for some reason
-				
-				$css = str_replace($match[0][0], $original, $css);
-			}
-			
-		}
-		
-		return $css;
-	}
-
 	public function replaceColumns($css)
 	{
-		global $settings;
-		
+		global $settings, $flags;
+				
 		// We'll loop through each of the columns properties by looking for each columns:x; property.
 		// This means we'll only loop through $columnscount number of times which could be better
 		// or worse depending on how many columns properties there are in your css
@@ -363,6 +292,8 @@ class GridCSS
 				// For each of the selectors with columns properties...
 				foreach ($match[0] as $key => $properties)
 				{
+					$styles = "";
+					
 					$properties 		= $match[1][0]; // First match is all the properties				
 					$columnsproperty 	= $match[2][0]; // Second match is just the columns property
 					$numberofcolumns	= $match[3][0]; // Third match is just number of columns
@@ -376,38 +307,49 @@ class GridCSS
 						$showproperties = true;
 					}
 			
+					// Calculate the width of the column
+					$width = (($settings['columnwidth']*$i)-$settings['gutterwidth']);
+										
 					// Send the properties through the functions to get the padding and border from them  
 					$padding 	= $this -> getPadding($properties);
 					$border 	= $this -> getBorder($properties);
-			
-					// Add it all together to get extra width
-					$extrawidth = $padding + $border;
-			
-					// Calculate the width of the column with adjustments for padding and border
-					$width = (($settings['columnwidth']*$i)-$settings['gutterwidth'])-$extrawidth;
 					
-					// Create the properties
-					$styles = "width:" . $width . "px;";
+					// Only factor in padding and border if it the selector has them
+					if ($padding > 0 || $border > 0)
+					{				
+						// If the browser doesn't support box-sizing, minus the padding and border
+						if
+						(
+							isset($flags['IE6']) ||
+							isset($flags['IE7'])
+						)
+						{
+							// Calculate the width of the column with adjustments for padding and border
+							$width = $width - ($padding + $border);
+						}
+						else
+						{
+							// Add box sizing for the browsers that support it. (Everything greater than IE7)
+							$styles .= "box-sizing:border-box;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;";
+						}
+					}
+										
+					// Create the width property
+					$styles .= "width:" . $width . "px;";
 					
 					if ($showproperties) 
 					{
-						$styles .= "display:inline;float:left;overflow:hidden;";
+						$styles .= "float:left;"; 
 						
-						if ($numberofcolumns <= $settings['columncount'])
+						if($this->flags['IE6'] === true)
+						{
+							$styles .= "display:inline;overflow:hidden;";
+						}
+						
+						if ($numberofcolumns < $settings['columncount'])
 						{
 							$styles .= "margin-right:" . $settings['gutterwidth'] . "px;";
 						}
-					}
-
-					// Apply some formatting and add variable comments
-					if ($settings['keep-settings'] == "yes") {
-						$styles = "/*grid(cols:".$numberofcolumns.";)*/". $styles . "/*grid(end)*/";
-					}
-
-					if ($settings['format'] == "newline")
-					{
-						$styles = str_replace("*/", "*/\n\t", $styles);
-						$styles = str_replace(";", ";\n\t", $styles);
 					}
 					
 					// Insert into property string
@@ -451,17 +393,11 @@ class GridCSS
 		global $settings;
 		
 		// Replace grid(xcol)
-		
 		if (preg_match_all('/grid\((\d+)?col\)/', $css, $matches))
 		{
 			foreach ($matches[1] as $key => $number)
 			{
-				$colw = ($number * $settings['columnwidth']) - $settings['gutterwidth'] .'px';
-				
-				if($settings['keep-settings'] == "yes"){
-					$colw   = $colw.'/*grid('.$number.')*/';
-				}
-				
+				$colw = ($number * $settings['columnwidth']) - $settings['gutterwidth'] .'px';		
 				$css = str_replace($matches[0][$key],$colw,$css);
 			}
 		}
@@ -471,28 +407,14 @@ class GridCSS
 		$css = str_replace('grid(max)',$maxw,$css);
 		
 		// Replace grid(baseline)
-		
-		$bl = $settings['baseline'].'px';
-		
-		if($settings['keep-settings'] == "yes")
-		{
-			$bl  = $bl.'/*grid(base)*/';
-		}
-			
+		$bl = $settings['baseline'].'px';		
 		$css = str_replace('grid(baseline)', $bl, $css);
 		
 		// Replace grid(gutter)
-		
-		$gutter = $settings['gutterwidth'].'px';
-		
-		if ($settings['keep-settings'] == "yes") {
-			$gutter = $gutter.'/*grid(gut)*/';
-		}
-		
+		$gutter = $settings['gutterwidth'].'px';		
 		$css = str_replace('grid(gutter)', $gutter, $css);
 		
 		// Send it all back
-		
 		return $css;
 	}
 	
