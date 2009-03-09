@@ -13,26 +13,26 @@ class CSSTidyPlugin extends CacheerPlugin
 	
 	function post_process($css)
 	{		
-		global $tidy_options;
+		global $options;
 	
 		$tidy = new csstidy();
+				
+		$tidy->set_cfg('preserve_css',$options['csstidy']['preserve_css']);
+		$tidy->set_cfg('sort_selectors',$options['csstidy']['sort_selectors']);
+		$tidy->set_cfg('sort_properties',$options['csstidy']['sort_properties']);
+		$tidy->set_cfg('merge_selectors',$options['csstidy']['merge_selectors']);
+		$tidy->set_cfg('optimise_shorthands',$options['csstidy']['optimise_shorthands']);
+		$tidy->set_cfg('compress_colors',$options['csstidy']['compress_colors']);
+		$tidy->set_cfg('compress_font-weight',$options['csstidy']['compress_font-weight']);
+		$tidy->set_cfg('lowercase_s',$options['csstidy']['lowercase_s']);
+		$tidy->set_cfg('case_properties',$options['csstidy']['case_properties']);
+		$tidy->set_cfg('remove_bslash',$options['csstidy']['remove_bslash']);
+		$tidy->set_cfg('remove_last_;',$options['csstidy']['remove_last_;']);
+		$tidy->set_cfg('discard_invalid_properties',$options['csstidy']['discard_invalid_properties']);
+		$tidy->set_cfg('css_level',$options['csstidy']['css_level']);
+		$tidy->set_cfg('timestamp',$options['csstidy']['timestamp']);
 		
-		$tidy->set_cfg('preserve_css',$tidy_options['preserve_css']);
-		$tidy->set_cfg('sort_selectors',$tidy_options['sort_selectors']);
-		$tidy->set_cfg('sort_properties',$tidy_options['sort_properties']);
-		$tidy->set_cfg('merge_selectors',$tidy_options['merge_selectors']);
-		$tidy->set_cfg('optimise_shorthands',$tidy_options['optimise_shorthands']);
-		$tidy->set_cfg('compress_colors',$tidy_options['compress_colors']);
-		$tidy->set_cfg('compress_font-weight',$tidy_options['compress_font-weight']);
-		$tidy->set_cfg('lowercase_s',$tidy_options['lowercase_s']);
-		$tidy->set_cfg('case_properties',$tidy_options['case_properties']);
-		$tidy->set_cfg('remove_bslash',$tidy_options['remove_bslash']);
-		$tidy->set_cfg('remove_last_;',$tidy_options['remove_last_;']);
-		$tidy->set_cfg('discard_invalid_properties',$tidy_options['discard_invalid_properties']);
-		$tidy->set_cfg('css_level',$tidy_options['css_level']);
-		$tidy->set_cfg('timestamp',$tidy_options['timestamp']);
-		
-		$tidy->load_template($tidy_options['template']);
+		$tidy->load_template($options['csstidy']['template']);
 		
 		$result = $tidy->parse($css);
 		
