@@ -27,8 +27,10 @@
 * --------------------------------------------------------
 */
 @server import url('system/snippets/reset.css');	
+@server import url('system/snippets/html5.css');	
 @server import url('system/snippets/layout.css');
 @server import url('system/snippets/type.css');
+@server import url('system/snippets/tabs.css');
 @server import url('system/snippets/font-stacks.css');
 @server import url('system/snippets/development.css');
 /* @end */
@@ -38,8 +40,8 @@
 * @section Frameworks
 * --------------------------------------------------------
 */
-@server import url('system/frameworks/forms.css');
-@server import url('system/frameworks/wireframing.css');
+@server import url('system/snippets/forms.css');
+@server import url('system/snippets/wireframing.css');
 
 /**
 * --------------------------------------------------------

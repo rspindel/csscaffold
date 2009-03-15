@@ -1,10 +1,16 @@
-<?php
-/******************************************************************************
- Prevent direct access
- ******************************************************************************/
-if (!defined('CSS_CACHEER')) { header('Location:/'); }
+<?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
+/**
+ * The class name
+ * @var string
+ */
 $plugin_class = 'NestedSelectorsPlugin';
+
+/**
+ * NestedSelectorsPlugin class
+ *
+ * @package cacheer
+ **/
 class NestedSelectorsPlugin extends CacheerPlugin
 {
 	var $DOM;

@@ -1,10 +1,16 @@
-<?php
-/******************************************************************************
- Prevent direct access
- ******************************************************************************/
-if (!defined('CSS_CACHEER')) { header('Location:/'); }
+<?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
+/**
+ * The class name
+ * @var string
+ */
 $plugin_class = 'ServerImportPlugin';
+
+/**
+ * ServerImportPlugin class
+ *
+ * @package Cacheer
+ **/
 class ServerImportPlugin extends CacheerPlugin
 {
 	function pre_process($css)

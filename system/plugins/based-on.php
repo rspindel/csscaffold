@@ -1,11 +1,16 @@
-<?php
-/******************************************************************************
- Prevent direct access
- ******************************************************************************/
-if (!defined('CSS_CACHEER')) { header('Location:/'); }
+<?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
+/**
+ * The class name
+ * @var string
+ */
 $plugin_class = 'BasedOnPlugin';
 
+/**
+ * BasedOnPlugin class
+ *
+ * @package Cacheer
+ **/
 class BasedOnPlugin extends CacheerPlugin
 {
 	function process($css)
@@ -69,4 +74,4 @@ class BasedOnPlugin extends CacheerPlugin
 		}
 		return $css;
 	}
-}
+} // END BasedOnPlugin

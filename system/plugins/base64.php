@@ -1,10 +1,16 @@
-<?php
-/******************************************************************************
- Prevent direct access
- ******************************************************************************/
-if (!defined('CSS_CACHEER')) { header('Location:/'); }
+<?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
+/**
+ * The class name
+ * @var string
+ */
 $plugin_class = 'Base64Plugin';
+
+/**
+ * Base64Plugin class
+ *
+ * @package Cacheer
+ **/
 class Base64Plugin extends CacheerPlugin
 {
 	function Base64Plugin()
@@ -68,6 +74,4 @@ class Base64Plugin extends CacheerPlugin
 
 		return $css;
 	}
-	
-	
-}
+} // END Base64Plugin

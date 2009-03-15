@@ -1,10 +1,16 @@
-<?php
-/******************************************************************************
- Prevent direct access
- ******************************************************************************/
-if (!defined('CSS_CACHEER')) { header('Location:/'); }
+<?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
+/**
+ * The class name
+ * @var string
+ */
 $plugin_class = 'CondenserPlugin';
+
+/**
+ * CondenserPlugin class
+ *
+ * @package Cacheer
+ **/
 class CondenserPlugin extends CacheerPlugin
 {
 	function post_process($css)

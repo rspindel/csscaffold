@@ -1,17 +1,27 @@
-<?php
-/******************************************************************************
- Prevent direct access
- ******************************************************************************/
-if (!defined('CSS_CACHEER')) { header('Location:/'); }
+<?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
+/**
+ * The class name
+ * @var string
+ */
 $plugin_class = 'ConstantsPlugin';
+
+/**
+ * ConstantsPlugin class
+ *
+ * @package Cacheer
+ **/
 class ConstantsPlugin extends CacheerPlugin
 {
 	function process($css)
 	{
-		global $path;
-			
-		$constants = array();
+		global $requested_mod_time,$config;
+		
+		// Add some default constants
+		$constants = array(
+			"const(asset_path)" => $config['assets']
+		);
+		
 		if (preg_match_all('#@constants\s*\{\s*([^\}]+)\s*\}\s*#i', $css, $matches))
 		{
 			foreach ($matches[0] as $i => $constant)
@@ -28,7 +38,7 @@ class ConstantsPlugin extends CacheerPlugin
 		// Override any constants with our XML constants
 		
 		// Get the constants from the XML
-		$xml = file_get_contents($path['xml'] . "/constants.xml");
+		$xml = file_get_contents($config['assets_dir'] . "/xml/constants.xml");
 		$this->DOM = new SI_Dom($xml);
 		
 		// Get the nodes
@@ -48,4 +58,4 @@ class ConstantsPlugin extends CacheerPlugin
 		
 		return $css;
 	}
-}
+} // END ConstantsPlugin

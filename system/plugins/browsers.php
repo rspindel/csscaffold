@@ -1,15 +1,28 @@
-<?php
-/******************************************************************************
- Prevent direct access
- ******************************************************************************/
-if (!defined('CSS_CACHEER')) { header('Location:/'); }
+<?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
+/**
+ * The class name
+ * @var string
+ */
 $plugin_class = 'Browsers';
 
+/**
+ * Include the settings
+ */
+include $config['system_dir'] . '/config/plugins/browsers.config.php';
+
+/**
+ * Browsers class
+ *
+ * @package csscaffold
+ **/
 class Browsers extends CacheerPlugin
-{
-
-
+{	
+	/**
+	 * Construct function
+	 *
+	 * @return void
+	 **/
 	function Browsers()
 	{
 		$ua = parse_user_agent($_SERVER['HTTP_USER_AGENT']);
@@ -50,31 +63,38 @@ class Browsers extends CacheerPlugin
 			$this->flags['Opera'] = true;
 		}
 		
-		
+		else
+		{
+			$this->flags['UnknownBrowser'] = true;
+		}		
 	}
 
-	
+	/**
+	 * pre_process function
+	 *
+	 * @return $css
+	 **/
 	function pre_process($css)
 	{
-		global $path;		
-
+		global $options;		
+		
 		if (isset($this->flags['IE7']) || isset($this->flags['IE6']))
 		{
-			$file 		= file_get_contents($path['browsers'] . "/ie.css");
+			$file 		= file_get_contents($options['Browsers']['path'] . "/ie.css");
 			$css 		= $css . $file;
 	
 			return $css;
 		}
 		elseif (isset($this->flags['Safari3']))
 		{
-			$file 		= file_get_contents($path['browsers'] . "/safari.css");		
+			$file 		= file_get_contents($options['Browsers']['path'] . "/safari.css");		
 			$css 		= $css . $file;
 			
 			return $css;
 		}
 		elseif (isset($this->flags['Firefox3']))
 		{
-			$file 		= file_get_contents($path['browsers'] . "/firefox.css");
+			$file 		= file_get_contents($options['Browsers']['path'] . "/firefox.css");
 			$css 		= $css .$file;
 		
 			return $css;
@@ -85,8 +105,6 @@ class Browsers extends CacheerPlugin
 		}
 	}
 	
-	
-	
-}
+} // END Browsers
 
 ?>

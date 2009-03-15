@@ -1,16 +1,21 @@
-<?php
-/******************************************************************************
- Prevent direct access
- ******************************************************************************/
-if (!defined('CSS_CACHEER')) { header('Location:/'); }
+<?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
+/**
+ * The class name
+ * @var string
+ */
 $plugin_class = 'Math';
 
+/**
+ * Math class
+ *
+ * @package csscaffold
+ **/
 class Math extends CacheerPlugin
 {	
-	function process($css)
+	function post_process($css)
 	{
-		global $settings;
+		global $options;
 		
 		if(preg_match_all('/math\([\"|\'](.*?)[\"|\']\)/', $css, $matches))
 		{
@@ -27,7 +32,7 @@ class Math extends CacheerPlugin
 		{
 			foreach($matches[1] as $key => $match)
 			{
-				$num = $this->round_nearest($match,$settings['baseline']);
+				$num = $this->round_nearest($match,$options['Grid']['baseline']);
 				$css = str_replace($matches[0][$key],$num."px",$css);
 			}
 		}
@@ -38,7 +43,7 @@ class Math extends CacheerPlugin
 	// Round a number to the nearest multiple
 	function round_nearest($number,$multiple) 
 	{ 
-    	return round($number/$multiple)*$multiple; 
+		return round($number/$multiple)*$multiple;
 	}
 	
 	

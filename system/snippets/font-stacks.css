@@ -14,14 +14,6 @@
 	
 	*/
 	
-	@base(invertedText)
-	{
-		color:const(invertedTextColor);
-		
-		a { color: const(invertedLinkColor); }
-		a:hover { color: const(invertedLinkHoverColor); }
-	!}
-
 	@base(times)
 	{
 		font-family: Times, Times New Roman, Georgia, serif;
