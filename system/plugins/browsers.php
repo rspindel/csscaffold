@@ -25,40 +25,40 @@ class Browsers extends CacheerPlugin
 	 **/
 	function Browsers()
 	{
-		$ua = parse_user_agent($_SERVER['HTTP_USER_AGENT']);
+		global $UA;
 		
-		if($ua['browser'] == 'ie' && $ua['version'] == 7.0)
+		if($UA->browser == 'ie' && $UA->version == 7.0)
 		{
 			$this->flags['IE7'] = true;
 		}
-		elseif($ua['browser'] == 'ie' && $ua['version'] == 6.0)
+		elseif($UA->browser == 'ie' && $UA->version == 6.0)
 		{
 			$this->flags['IE7'] = true;
 		}
-		elseif($ua['browser'] == 'ie' && $ua['version'] == 8.0)
+		elseif($UA->browser == 'ie' && $UA->version == 8.0)
 		{
 			$this->flags['IE8'] = true;
 		}
 		
-		elseif($ua['browser'] == 'applewebkit' && $ua['version'] >= 525)
+		elseif($UA->browser == 'applewebkit' && $UA->version >= 525)
 		{
 			$this->flags['Safari3'] = true;
 		}
-		elseif($ua['browser'] == 'applewebkit' && $ua['version'] >= 528)
+		elseif($UA->browser == 'applewebkit' && $UA->version >= 528)
 		{
 			$this->flags['Safari4'] = true;
 		}
 		
-		elseif($ua['browser'] == 'firefox' && $ua['version'] >= 2)
+		elseif($UA->browser == 'firefox' && $UA->version >= 2)
 		{
 			$this->flags['Firefox2'] = true;
 		}
-		elseif($ua['browser'] == 'firefox' && $ua['version'] >= 3)
+		elseif($UA->browser == 'firefox' && $UA->version >= 3)
 		{
 			$this->flags['Firefox3'] = true;
 		}
 		
-		elseif($ua['browser'] == 'opera')
+		elseif($UA->browser == 'opera')
 		{
 			$this->flags['Opera'] = true;
 		}

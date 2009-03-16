@@ -6,10 +6,7 @@
 	include_once 'include.php';
 	
 	// Start the timer...
-	$time_start = microtime(true);
-	
-	// Get the user agent to use throughout
-	$ua = parse_user_agent($_SERVER['HTTP_USER_AGENT']);
+	mark("start");
 	
 	// Move into the CSS directory
 	chdir($config['css_server_path']);
@@ -115,7 +112,7 @@
 		isset($_GET['secret_word']) && $_GET['secret_word'] = $secret_word
 	)
 	{
-		$f = get_files_in_directory($path['cache'], "path");
+		$f = get_files_in_directory($config['cache_dir'], "path");
 		
 		foreach($f as $file)
 		{
@@ -297,16 +294,15 @@
 
 	$css = file_get_contents($cached_file);
 
-	$time_end = microtime(true);
-	$time = $time_end - $time_start;
-	
+	mark("end");
+		
 	$filesize = round( filesize($cached_file) / 1024 , 2);
 	
 	if ($config['show_header'])
 	{
 		$header  = "/* Processed and cached by Shaun Inman's CSS Cacheer. ";
 		$header .= "Cached filesize is " . $filesize . " kilobytes. ";
-		$header	.= "Processed in ".$time." seconds and rendered as " . $ua['browser'] . $ua['version'];
+		$header	.= "Processed in ".elapsed_time("start", "end")." seconds and rendered as " . $UA->browser . $UA->version;
 		$header .= ' (with '.str_replace('Plugin', '', preg_replace('#,([^,]+)$#', " &$1", join(', ', array_keys($plugins)))).' enabled)';
 		$header .= ' on '.gmdate('r').' <http://shauninman.com/search/?q=cacheer> */'."\r\n";
 		$css = $header.$css;

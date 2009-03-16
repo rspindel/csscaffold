@@ -33,7 +33,6 @@ function log_message($message)
 {
 	$f = "system/logs/plugin_report.txt";
 	$log = file_get_contents($f);
-	$log .= $message . "\n"; 
+	$log .= gmdate('r') . "\n" . $message . "\n"; 
 	file_put_contents($f,$log);
 }
-// Logging functions

@@ -33,7 +33,7 @@ function load_dir($directory)
 	{
 		while (($file = readdir($dir_handle)) !== false) 
 		{
-			if (substr($file, 0, 1) == '.' || substr($file, 0, 1) == '-')
+			if (!check_prefix($file))
 			{ 
 				continue; 
 			}
@@ -58,7 +58,7 @@ function read_dir($directory)
 		{
 			while (($file = readdir($dir_handle)) !== false) 
 			{
-				if (substr($file, 0, 1) == '.' || substr($file, 0, 1) == '-')
+				if (!check_prefix($file))
 				{ 
 					continue; 
 				}
@@ -94,4 +94,23 @@ function read_dir($directory)
  		return false;
  	}
  }
+ 
+ 
+ /**
+ * Checks prefix
+ * @param string filename to check
+ */
+ function check_prefix($file)
+ {
+ 	if(substr($file, 0, 1) == '.' || substr($file, 0, 1) == '-')
+ 	{
+ 		return false;
+ 	}
+ 	else
+ 	{
+ 		return true;
+ 	}
+ }
+ 
+ 
 	

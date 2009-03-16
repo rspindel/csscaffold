@@ -139,37 +139,26 @@ class CSS3Helper extends CacheerPlugin
 	{
 		global $config;
 	
-		if (is_dir($config['assets'] . "/fonts"))
+		// Load up all the fonts into an array
+		$fonts = read_dir($config['assets_dir'] . "/fonts");
+
+		if($fonts != "")
 		{
-			if ($dir_handle = opendir($config['assets'] . "/fonts")) 
+			// Loop through each of them
+			foreach($fonts as $name => $path)
 			{
-				while (($font_file = readdir($dir_handle)) !== false) 
-				{
-
-					if(strlen($font_file) < 3)
-					{
-						continue;
-					}
-					
-					$ext = substr($font_file, -3, 3);
-
-					// Make sure its an image file, if not, skip it
-					if( $ext == 'otf' || $ext == 'ttf' || $ext == 'eot' )
-					{ 
-						// Ditch the extension
-						$fn = preg_replace('/\.otf|\.ttf|\.eot/', "", $font_file);
-											
-						// Build the selector
-						$properties = "name:'$fn';src:url('".$config['assets'] . "/fonts/$font_file');";
-												
-						// Add them as classes
-						$atfontface = "@font-face {" . $properties . "}";
-						$css .= $atfontface;								
-					}			
-				}			
-				closedir($dir_handle);
+				$ext = substr($path, -3, 3);
+				$name = str_replace(".".$ext,'',$name);
+	
+				// Make sure its a font file
+				if( $ext == 'otf' || $ext == 'ttf' || $ext == 'eot' )
+				{ 	
+					// Add them as @font-face rules			
+					$css .= "@font-face { name:'".$name."';src:url('".$path."'); }";								
+				}
 			}
 		}
+
 		return $css;
 	}
 	

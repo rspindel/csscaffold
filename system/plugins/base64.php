@@ -15,14 +15,14 @@ class Base64Plugin extends CacheerPlugin
 {
 	function Base64Plugin()
 	{
-		global $ua;
+		global $UA;
 						
 		// Safari (WebKit), Firefox & Opera are known to support data: urls so embed base64-encoded images
 		if
 		(
-			($ua['browser'] == 'applewebkit' && $ua['version'] >= 125) || // Safari and ilk
-			($ua['browser'] == 'firefox') || // Firefox et al
-			($ua['browser'] == 'opera' && $ua['version'] >= 7.2) // quell vociferous Opera evangelists
+			($UA->browser == 'applewebkit' && $UA->version >= 125) || // Safari and ilk
+			($UA->browser == 'firefox') || // Firefox et al
+			($UA->browser == 'opera' && $UA->version >= 7.2) // quell vociferous Opera evangelists
 		)
 		{
 			$this->flags['Base64'] = true;

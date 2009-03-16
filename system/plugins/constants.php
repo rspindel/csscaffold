@@ -36,9 +36,8 @@ class ConstantsPlugin extends CacheerPlugin
 		}
 		
 		// Override any constants with our XML constants
-		
 		// Get the constants from the XML
-		$xml = file_get_contents($config['assets_dir'] . "/xml/constants.xml");
+		$xml = load($config['assets_dir'] . "/xml/constants.xml");
 		$this->DOM = new SI_Dom($xml);
 		
 		// Get the nodes

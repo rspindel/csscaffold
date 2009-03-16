@@ -1,5 +1,10 @@
 <?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
+/*
+If you're looking for the configuration for the plugins, check
+the config/plugins folder
+*/
+
 /******************************************************************************
  Path Settings
  ******************************************************************************/
@@ -7,7 +12,7 @@
 /**
  * CSS DIRECTORY
  *
- * REQUIRED. No trailing slash! eg. ./themes/css
+ * REQUIRED. URL path to you css directory. No trailing slash! eg. /themes/css
  *
  * @var string
  **/
@@ -17,7 +22,8 @@ $config['css_dir'] = "";
 /**
  * CSS SERVER PATH
  *
- * REQUIRED. Full server path to your css directory. No trailing slash!
+ * REQUIRED. Server path to your css directory either absolute, or relative
+ * to your system folder. No trailing slash!
  *
  * @var string
  **/
@@ -29,6 +35,8 @@ $config['css_server_path'] = "..";
  *
  * Leave this BLANK unless you would like to set something other 
  * than the default system/cache/ folder.  Use a full server path with trailing slash.
+ * If you change this setting, you'll probably need to change the cache path below.
+ * Remember to check your .htaccess file in your CSS directory also.
  *
  * @var string
  **/

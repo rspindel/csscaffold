@@ -22,27 +22,18 @@ class Append extends CacheerPlugin
 	{
 		global $options;
 		
-		$append = "";
-				
-		if (is_dir($options['Append']['path']))
+		foreach(read_dir($options['Append']['path']) as $file)
 		{
-			if ($dir_handle = opendir($options['Append']['path'])) 
-			{
-				while (($file = readdir($dir_handle)) !== false) 
-				{
-					if (substr($file, 0, 1) == '.' || substr($file, 0, 1) == '-' || substr($file, -3) != 'css')
-					{ 
-						continue; 
-					}
-
-					$append .= file_get_contents($options['Append']['path']."/".$file);
-				}
-				closedir($dir_handle);
+			// Check for css files and files beginning with - or . 
+			if (!check_prefix($file) || !check_type($file, array('css')))
+			{ 
+				continue; 
 			}
+			
+			// Add it to our css
+			$css .= load($file);
 		}
 		
-		// Add them all to our css
-		$css = $css . $append;			
 		return $css;
 	}
 } // END Append
