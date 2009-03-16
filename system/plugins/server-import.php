@@ -15,9 +15,9 @@ class ServerImportPlugin extends CacheerPlugin
 {
 	function pre_process($css)
 	{
-		global $relative_file, $relative_dir;
+		global $relative_file, $relative_dir, $config;
 		
-		$imported	= array($relative_dir.$relative_file);
+		$imported = array($relative_dir.$relative_file);
 		
 		while (preg_match_all('#@server\s+import\s+url\(([^\)]+)+\);#i', $css, $matches))
 		{
@@ -27,12 +27,7 @@ class ServerImportPlugin extends CacheerPlugin
 				
 				if(is_dir($include))
 				{
-					$f = get_files_in_directory($include, "data");
-					
-					foreach($f as $file)
-					{
-						$include_css .= $file;
-					}
+					$include_css .= load($include);
 					$css = str_replace($matches[0][$i], $include_css, $css);
 				}
 				else
@@ -41,22 +36,14 @@ class ServerImportPlugin extends CacheerPlugin
 					if (!in_array($include, $imported) && substr($include, -3) == 'css')
 					{
 						$imported[] = $include;
-						if (file_exists($include))
-						{
-							$include_css = file_get_contents($include);
-							$css = str_replace($matches[0][$i], $include_css, $css);
-						}
-						else
-						{
-							$css .= "\r\nerror { -si-missing: url('{$include}'); }";
-						}
+						$include_css = load($include);
+						$css = str_replace($matches[0][$i], $include_css, $css);
 					}
 				}
 				
 				$css = str_replace($matches[0][$i], '', $css);
 			}
 		}
-		
 		return $css;
 	}
 }
