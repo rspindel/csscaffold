@@ -1,7 +1,5 @@
 <?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
-// TODO: Check file type
-
 /**
  * Load a file
  * @param string Path to the file
@@ -78,4 +76,22 @@ function read_dir($directory)
 	
 	return $files;
 }
+
+
+/**
+ * Checks filetype
+ * @param array of filetype
+ * @param string filename to check
+ */
+ function check_type($file, $ext)
+ {
+ 	if(in_array(substr($file, -3), $ext))
+ 	{
+ 		return true;
+ 	}
+ 	else
+ 	{
+ 		return false;
+ 	}
+ }
 	
