@@ -33,7 +33,7 @@ class ServerImportPlugin extends CacheerPlugin
 				else
 				{
 					// import each file once, only import css
-					if (!in_array($include, $imported) && substr($include, -3) == 'css')
+					if (!in_array($include, $imported) && check_type($include, array('css')))
 					{
 						$imported[] = $include;
 						$include_css = load($include);
@@ -41,6 +41,7 @@ class ServerImportPlugin extends CacheerPlugin
 					}
 				}
 				
+				// Remove any left over @server-imports
 				$css = str_replace($matches[0][$i], '', $css);
 			}
 		}
