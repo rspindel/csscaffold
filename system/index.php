@@ -75,7 +75,7 @@
 	(
 		$config['cache_lock'] === TRUE &&
  		isset($_GET['secret_word']) && 
- 		$_GET['secret_word'] == $secret_word
+ 		$_GET['secret_word'] == $config['secret_word']
  	)
  	{
  		$config['cache_lock'] = FALSE;
@@ -90,7 +90,7 @@
 	(
 		isset($_GET['test_mode']) && 
  		isset($_GET['secret_word']) && 
- 		$_GET['secret_word'] == $secret_word
+ 		$_GET['secret_word'] == $config['secret_word']
  	)
  	{
  		$test_mode = TRUE;
@@ -109,7 +109,7 @@
 	if
 	(
 		isset($_GET['recache']) &&  $_GET['recache'] == "all" &&
-		isset($_GET['secret_word']) && $_GET['secret_word'] = $secret_word
+		isset($_GET['secret_word']) && $_GET['secret_word'] = $config['secret_word']
 	)
 	{
 		$f = get_files_in_directory($config['cache_dir'], "path");
