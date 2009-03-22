@@ -1,12 +1,15 @@
 	$(document).ready(function(){
 	
+		var asset_path = "/css/assets/xml/layouts.xml";
+		
+		
 		$(".showgrid-toggle").click(function(){
 			$('#page').toggleClass('showgrid');
 		});	
 		
 		$.ajax({
         	type: "GET",
-			url: "../../assets/xml/layouts.xml",
+			url: asset_path,
 			dataType: "xml",
 			success: function(xml) {
  				$(xml).find('layout').each(function(){

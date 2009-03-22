@@ -1,0 +1,53 @@
+/**
+* Stylesheet title
+*
+* Your stylesheet description would go here.
+*
+* @project Name
+* @site http://url.com/
+* @author Name
+*
+* @version 1.0
+* @date yyyy-mm-dd
+* @lastmodified yyyy-mm-dd hh:mm
+*
+* @copyright Copyright(c) 2009
+* @license Type
+* 
+* @media screen
+* @colordef #fff; White (Background Color)
+* @fontdef Myriad Pro; Sans-serif (Headings)
+*
+* --------------------------------------------------------
+*/
+
+/**
+* --------------------------------------------------------
+* @section Snippets
+* --------------------------------------------------------
+*/
+@server import url('system/snippets/reset.css');	
+@server import url('system/snippets/html5.css');	
+@server import url('system/snippets/layout.css');
+@server import url('system/snippets/type.css');
+@server import url('system/snippets/tabs.css');
+@server import url('system/snippets/font-stacks.css');
+@server import url('system/snippets/development.css');
+
+/**
+* --------------------------------------------------------
+* @section Frameworks
+* --------------------------------------------------------
+*/
+@server import url('system/snippets/forms.css');
+@server import url('system/snippets/wireframing.css');
+
+/**
+* --------------------------------------------------------
+* @section Sections
+* --------------------------------------------------------
+*/
+@server import url('sections/content.css');
+@server import url('sections/forms.css');
+@server import url('sections/layout.css');
+@server import url('sections/typography.css');
