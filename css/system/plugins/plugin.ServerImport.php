@@ -47,6 +47,12 @@ class ServerImport extends Plugins
 				$css = str_replace($matches[0][$i], '', $css);
 			}
 		}
+		
+		// Condense it all now so that there is less to process
+		$css = trim(preg_replace('#/\*[^*]*\*+([^/*][^*]*\*+)*/#', '', $css)); // comments
+		$css = trim(preg_replace('/(\s|\t)+\:/', ':', $css)); // space after properties
+		$css = preg_replace('#\s+(\{|\})#', "$1", $css); // before
+		$css = preg_replace('#(\{|\}|:|,|;)\s+#', "$1", $css); // after
 		return $css;
 	}
 }

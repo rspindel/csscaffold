@@ -29,40 +29,40 @@ class Browsers extends Plugins
 	 **/
 	function Browsers()
 	{
-		global $UA;
+		parent::__construct();
 		
-		if($UA->browser == 'ie' && $UA->version == 7.0)
+		if($this->CORE->UA->browser == 'ie' && $this->CORE->UA->version == 7.0)
 		{
 			$this->flags['IE7'] = true;
 		}
-		elseif($UA->browser == 'ie' && $UA->version == 6.0)
+		elseif($this->CORE->UA->browser == 'ie' && $this->CORE->UA->version == 6.0)
 		{
 			$this->flags['IE7'] = true;
 		}
-		elseif($UA->browser == 'ie' && $UA->version == 8.0)
+		elseif($this->CORE->UA->browser == 'ie' && $this->CORE->UA->version == 8.0)
 		{
 			$this->flags['IE8'] = true;
 		}
 		
-		elseif($UA->browser == 'applewebkit' && $UA->version >= 525)
-		{
-			$this->flags['Safari3'] = true;
-		}
-		elseif($UA->browser == 'applewebkit' && $UA->version >= 528)
+		elseif($this->CORE->UA->browser == 'applewebkit' && $this->CORE->UA->version >= 528)
 		{
 			$this->flags['Safari4'] = true;
 		}
-		
-		elseif($UA->browser == 'firefox' && $UA->version >= 2)
+		elseif($this->CORE->UA->browser == 'applewebkit' && $this->CORE->UA->version >= 525)
+		{
+			$this->flags['Safari3'] = true;
+		}
+				
+		elseif($this->CORE->UA->browser == 'firefox' && $this->CORE->UA->version >= 2)
 		{
 			$this->flags['Firefox2'] = true;
 		}
-		elseif($UA->browser == 'firefox' && $UA->version >= 3)
+		elseif($this->CORE->UA->browser == 'firefox' && $this->CORE->UA->version >= 3)
 		{
 			$this->flags['Firefox3'] = true;
 		}
 		
-		elseif($UA->browser == 'opera')
+		elseif($this->CORE->UA->browser == 'opera')
 		{
 			$this->flags['Opera'] = true;
 		}
@@ -70,7 +70,8 @@ class Browsers extends Plugins
 		else
 		{
 			$this->flags['UnknownBrowser'] = true;
-		}		
+		}
+
 	}
 
 	/**
@@ -80,7 +81,6 @@ class Browsers extends Plugins
 	 **/
 	function pre_process($css)
 	{		
-		
 		if (isset($this->flags['IE7']) || isset($this->flags['IE6']))
 		{
 			$file 		= file_get_contents($options['Browsers']['path'] . "/ie.css");
@@ -109,5 +109,3 @@ class Browsers extends Plugins
 	}
 	
 } // END Browsers
-
-?>

@@ -136,27 +136,5 @@ class Config
 		{
 			$this->$name = $value;
 		}
-	}
-	
-	// Gets a config value. You can optionally specify a plugin
-	function get($name, $plugin = '')
-	{
-		if ($plugin == '')
-		{
-			if (!isset($this->config[$name]))
-			{
-				return false;
-			}
-			return $this->config[$name];
-		}
-		else
-		{
-			if (!isset($this->config[$plugin][$name]))
-			{
-				return false;
-			}
-			return $this->config[$name];
-		}
-	}
-	
+	}	
 }

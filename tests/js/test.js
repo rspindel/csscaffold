@@ -2,7 +2,6 @@
 	
 		var asset_path = "/css/assets/xml/layouts.xml";
 		
-		
 		$(".showgrid-toggle").click(function(){
 			$('#page').toggleClass('showgrid');
 		});	

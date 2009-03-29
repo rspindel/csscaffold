@@ -47,7 +47,8 @@
 * @section Sections
 * --------------------------------------------------------
 */
-@server import url('sections/content.css');
 @server import url('sections/forms.css');
 @server import url('sections/layout.css');
 @server import url('sections/typography.css');
+@server import url('sections/global.css');
+@server import url('sections/home.css');

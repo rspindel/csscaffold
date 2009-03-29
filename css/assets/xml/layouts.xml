@@ -1,7 +1,6 @@
 <?xml version="1.0" ?>
 <layouts>
 <layout>layout-single-column</layout>
-<layout>layout-name</layout>
 <layout>layout-3-column</layout>
 <layout>layout-2-column</layout>
 <layout>layout-default</layout>

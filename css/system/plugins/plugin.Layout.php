@@ -4,7 +4,7 @@
  * The class name
  * @var string
  */
-$plugin_class = 'Grid';
+$plugin_class = 'Layout';
 
 /**
  * The plugin settings
@@ -32,48 +32,41 @@ class Layout extends Plugins
 		
 	function process($css)
 	{
-		
 		// Create a new GridCSS object and put the css into it
-		$this->grid = new GridCSS($css);
-		
-		stop($this);
-		
+		$this->grid = new Grid($css);
+				
 		// If there are settings, keep going
-		if($this->grid->settings != FALSE)
+		if($this->grid->config != FALSE)
 		{
 			// Generate the grid.png
-			$grid -> generateGridImage($css);
+			$this->grid->generateGridImage($css);
 			
 			// Replace the grid() variables
-			$css = $grid -> replaceGridVariables($css);
+			$css = $this->grid->replaceGridVariables($css);
 			
 			// Create the layouts xml for use with the tests
-			$grid -> generateLayoutXML($css);
+			$this->grid->generateLayoutXML($css);
 		
 			// Replace the columns:; properties
-			$css = $grid -> replaceColumns($css);
+			$css = $this->grid->replaceColumns($css);
 		}
 		
 		return $css;
 	}
 	
 	function post_process($css)
-	{
-		global $grid, $CFG;
-					
+	{					
 		// If there are settings, keep going
-		if($grid->getSettings() != FALSE)
+		if($this->grid->config != FALSE)
 		{
-			if( $CFG->get('create_grid_css', 'Grid') == TRUE)
+			if($this->grid->config['create_grid_css'] == TRUE)
 			{
 				// Generate the grid.css
-				$css = $grid -> generateGridClasses($css);
+				$css = $this->grid->generateGridClasses($css);
 			}
-		
 			// Remove the settings
-			$css = $grid -> removeSettings($css);
+			$css = $this->grid->removeSettings($css);
 		}
-
 		return $css;
 	}
 }

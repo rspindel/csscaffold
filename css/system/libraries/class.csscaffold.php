@@ -10,8 +10,6 @@
  * @author Anthony Short
  **/
 class CSScaffold extends Core {
-
-	public static $instance;
 	
 	/**
 	 * The file that was requested
@@ -36,96 +34,70 @@ class CSScaffold extends Core {
 	 **/
 	public function __construct($requested_file, $recache = TRUE) 
 	{		
-		parent::__construct();
-		
-		$PLUGINS = new Plugins();
+		$this->CORE = get_instance();
 		
 		// Start the timer
-		$this->BM->mark("start");
+		$this->CORE->BM->mark("start");
 		
 		// Set the recache state
 		$this->recache = $recache;
 
 		// Get our config values
-		$this->CONFIG->set('requested_file', $requested_file); 
-		$this->CONFIG->set('requested_file_name', basename($requested_file));
-		$this->CONFIG->set('requested_dir', preg_replace('#/[^/]*$#', '', $requested_file));
-		$this->CONFIG->set('relative_file', trim_slashes(substr($requested_file, strlen(URLPATH))) );
-		$this->CONFIG->set('relative_dir', (strpos($this->CONFIG->relative_file, '/') === false) ? '' : preg_replace("/\/[^\/]*$/", '', $this->CONFIG->relative_file));
+		$this->CORE->CONFIG->set('requested_file', $requested_file); 
+		$this->CORE->CONFIG->set('requested_file_name', basename($requested_file));
+		$this->CORE->CONFIG->set('requested_dir', preg_replace('#/[^/]*$#', '', $requested_file));
+		$this->CORE->CONFIG->set('relative_file', trim_slashes(substr($requested_file, strlen(URLPATH))) );
+		$this->CORE->CONFIG->set('relative_dir', (strpos($this->CORE->CONFIG->relative_file, '/') === false) ? '' : preg_replace("/\/[^\/]*$/", '', $this->CORE->CONFIG->relative_file));
 		
 		// Get the modified time of the CSS file
-		$this->requested_mod_time = filemtime(CSSPATH . "/" . $this->CONFIG->relative_file);
+		$this->requested_mod_time = filemtime(CSSPATH . "/" . $this->CORE->CONFIG->relative_file);
 		
 		// Load the plugins and flags
+		$PLUGINS = new Plugins();
 		$plugins = $PLUGINS->load_plugins();
 		$this->loaded = $PLUGINS->loaded;
 		
 		// Send the flags to the cache and get it ready
-		$this->set_cache($PLUGINS->flags);
+		$this->CORE->CACHE->set($PLUGINS->flags, $recache);
 		
 		// Process the css
 		$this->parse_css($plugins);	
 	}
-	
-	
-	function set_cache($flags)
-	{
-		// Generate checksum based on plugin flags
-		$checksum = $this->CACHE->generate_hash($flags);
-		
-		// Determine the name of the cache file
-		$cached_file = CACHEPATH."/".preg_replace('#(.+)(\.css)$#i', "$1-{$checksum}$2", $this->CONFIG->relative_file);
-
-		// Turn off recaching if the cache is locked
-		if ($this->recache === TRUE && $this->CONFIG->cache_lock === TRUE)
-		{
-			$this->recache = FALSE;
-		}
-		
-		// Check to see if we should delete the cache file
-		if ($this->recache === TRUE && file_exists($cached_file))
-		{
-			$this->CACHE->empty_cache();
-		}
-		
-		// The set cache file to use throughout
-		$this->CACHE->set($cached_file);
-	}
-			
+				
 	/**
 	 * Loads the CSS
 	 *
-	 * @return The CSS ready to process
+	 * @return string - The unprocessed css file as a string
 	 * @author Anthony Short
 	 **/
 	public function load_css()
 	{
-		if (substr($this->CONFIG->requested_file, -4) != '.css')
+		if (substr($this->CORE->CONFIG->requested_file, -4) != '.css')
 		{
 			error("Error: Request file isn't a css file");
 			exit;
 		}
 		
-		elseif(substr($this->CONFIG->requested_file, 0, strlen(URLPATH)) != URLPATH)
+		elseif(substr($this->CORE->CONFIG->requested_file, 0, strlen(URLPATH)) != URLPATH)
 		{
 			error("Error: The file wasn't requested from the css directory");
 			exit;
 		}
 		
-		elseif(!file_exists(CSSPATH . "/" . $this->CONFIG->relative_file))
+		elseif(!file_exists(CSSPATH . "/" . $this->CORE->CONFIG->relative_file))
 		{
-			error("Error: The requested CSS file ". CSSPATH . "/" . $this->CONFIG->relative_file . " doesn't exist");
+			error("Error: The requested CSS file ". CSSPATH . "/" . $this->CORE->CONFIG->relative_file . " doesn't exist");
 			exit;
 		}
 		
-		return file_get_contents(CSSPATH . "/" . $this->CONFIG->relative_file);
+		return file_get_contents(CSSPATH . "/" . $this->CORE->CONFIG->relative_file);
 	}
 	
 	
 	public function parse_css($plugins)
 	{
 		// If the cache is stale or doesn't exist
-		if (($this->CACHE->cached_mod_time < $this->requested_mod_time))
+		if (($this->CORE->CACHE->cached_mod_time < $this->requested_mod_time))
 		{	
 			// Load the CSS file
 			$css = $this->load_css();
@@ -145,12 +117,9 @@ class CSScaffold extends Core {
 			{
 				$css = $plugin->post_process($css);
 			}
-
-			// Make sure the cache folders exist
-			$this->CACHE->cache_exists();
 			
 			// Write the css file to the cache
-			$this->CACHE->write_cache($css, $this->requested_mod_time);
+			$this->CORE->CACHE->write_cache($css, $this->requested_mod_time);
 		} 
 	}
 		
@@ -163,7 +132,7 @@ class CSScaffold extends Core {
 	public function output_css()
 	{		
 		// Stop the timer...
-		$this->BM->mark("end");
+		$this->CORE->BM->mark("end");
 			
 		if 
 		(
@@ -176,15 +145,15 @@ class CSScaffold extends Core {
 		}
 		else
 		{			
-			$css = file_get_contents($this->CACHE->cached_file);
+			$css = file_get_contents($this->CORE->CACHE->cached_file);
 			
 			$filesize = round(strlen($css) / 1024 , 2);
 			
-			if ($this->CONFIG->show_header === TRUE)
+			if ($this->CORE->CONFIG->show_header === TRUE)
 			{
 				$header  = "/* Processed and cached by Shaun Inman's CSS Cacheer. ";
 				$header .= "Cached filesize is " . $filesize . " kilobytes. ";
-				$header	.= "Processed in ".$this->BM->elapsed_time("start", "end")." seconds and rendered as " . $this->UA->browser . $this->UA->version;
+				$header	.= "Processed in ".$this->CORE->BM->elapsed_time("start", "end")." seconds and rendered as " . $this->CORE->UA->browser . $this->CORE->UA->version;
 				$header .= ' (with '.str_replace('Plugin', '', preg_replace('#,([^,]+)$#', " &$1", join(', ', $this->loaded ))).' enabled)';
 				$header .= ' on '.gmdate('r').' <http://shauninman.com/search/?q=cacheer> */'."\r\n";
 				$css = $header.$css;
@@ -192,7 +161,7 @@ class CSScaffold extends Core {
 			 
 			header('Content-Type: text/css');
 			header("Vary: User-Agent, Accept");
-			header('Last-Modified: '.gmdate('D, d M Y H:i:s', $this->requested_mod_time).' GMT');
+			header('Last-Modified: '. gmdate('D, d M Y H:i:s', $this->requested_mod_time).' GMT');
 			echo $css;
 			exit();
 		}

@@ -33,15 +33,14 @@ class NestedSelectors extends Plugins
 		$xml = preg_replace('#(/\*[^*]*\*+([^/*][^*]*\*+)*/)#', '', $xml); // Strip comments to prevent parsing errors
 		$xml = str_replace('"', '#SI-CSSC-QUOTE#', $xml);
 		$xml = preg_replace('/([-_A-Za-z]+)\s*:\s*([^;}{]+)(?:;)/ie', "'<property name=\"'.trim('$1').'\" value=\"'.trim('$2').'\" />'", $xml); // Transform properties
-				
-		$xml = preg_replace('/(\s*)([*#.A-Za-z@:][_@#.0-9A-Za-z*\(\)\[\]^\"\'=\$>:,\s-]+?)\{/me', "'$1<rule selector=\"'.preg_replace('/\s+/', ' ', trim(str_replace('>','&gt;','$2'))).'\">'", $xml); // Transform selectors
+		$xml = preg_replace('/(\s*)([*#.A-Za-z@:][_@#.0-9A-Za-z*\(\)\[\]^\"\'=\$>:,\s-]*?)\{/me', "'$1<rule selector=\"'.preg_replace('/\s+/', ' ', trim(str_replace('>','&gt;','$2'))).'\">'", $xml); // Transform selectors
 		$xml = preg_replace('/\!?\}/', '</rule>', $xml); // Close rules
 		$xml = preg_replace('/\n/', "\r\t", $xml); // Indent everything one tab
 		$xml = '<?xml version="1.0" ?'.">\r<css>\r\t$xml\r</css>\r"; // Tie it all up with a bow
 
-//		header('Content-type: text/html');
-//		echo $xml;
-//		exit();
+		//header('Content-type: text/html');
+		//echo $xml;
+		//exit();
 		
 		/******************************************************************************
 		 Parse the XML into a crawlable DOM

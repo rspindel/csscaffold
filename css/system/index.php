@@ -13,7 +13,7 @@
 /******************************************************************************
 Received request from mod_rewrite and set some vars
 ******************************************************************************/
-	  
+
 	// The file that the user requested
 	$requested_file	= isset($_GET['cssc_request']) ? $_GET['cssc_request'] : '';
 	
@@ -30,5 +30,4 @@ Received request from mod_rewrite and set some vars
 	
 	// Send it to the browser
 	$css->output_css();
-	
 

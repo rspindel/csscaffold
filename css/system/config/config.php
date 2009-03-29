@@ -1,10 +1,5 @@
 <?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
-/*
-If you're looking for the configuration for the plugins, check
-the config/plugins folder
-*/
-
 /******************************************************************************
  Path Settings
  ******************************************************************************/

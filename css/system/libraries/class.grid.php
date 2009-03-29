@@ -1,133 +1,113 @@
 <?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
-class GridCSS
+class Grid
 {
-	//Stores local options for the plugin
-	var $this->options; 
+	var $config = FALSE;
 	
 	function __construct($css)
-	{			
+	{
+		$this->CORE = get_instance();
+		$this->config =& $this->CORE->CONFIG->Layout; 
+		
 		// Make sure there are settings, if so, grab them
 		if (preg_match_all('/@grid.*?\}/sx', $css, $match)) 
 		{						
-			$this->options['Grid']['columncount'] 	= 	$this -> getParam('column-count', $match[0][0]);
-			$this->options['Grid']['columnwidth']	= 	$this -> getParam('column-width', $match[0][0]);
-			$this->options['Grid']['gutterwidth']	= 	$this -> getParam('gutter-width', $match[0][0]);
-			$this->options['Grid']['baseline']		=	$this -> getParam('baseline', $match[0][0]);
+			$this->config['columncount'] = $this->getParam('column-count', $match[0][0]);
+			$this->config['columnwidth'] = $this->getParam('column-width', $match[0][0]);
+			$this->config['gutterwidth'] = $this->getParam('gutter-width', $match[0][0]);
+			$this->config['baseline'] =	$this->getParam('baseline', $match[0][0]);
 						
 			// Check whether we should use the column width or calculate it from the grid width
-			if ($this->options['Grid']['columnwidth'] == "") 
+			if ($this->config['columnwidth'] == "") 
 			{
-				$this->options['Grid']['gridwidth']	= $this->getParam('grid-width', $match[0][0]);
-				$this->options['Grid']['columnwidth'] = $this->getColumnWidth();
+				$this->config['gridwidth']	= $this->getParam('grid-width', $match[0][0]);
+				$this->config['columnwidth'] = $this->getColumnWidth();
 			}
 			else 
 			{
-				$this->options['Grid']['columnwidth'] = $this->options['Grid']['columnwidth'] + $this->options['Grid']['gutterwidth'];
-				$this->options['Grid']['gridwidth'] = ($this->options['Grid']['columnwidth'] * $this->options['Grid']['columncount']) - $this->options['Grid']['gutterwidth'];
-			}	
-			
-			// If theres no format specified, go with 'newline'
-			if ($this->options['Grid']['format'] == "") 
-			{
-				$this->options['Grid']['format'] = "newline";
-			}		
+				$this->config['columnwidth'] = $this->config['columnwidth'] + $this->config['gutterwidth'];
+				$this->config['gridwidth'] = ($this->config['columnwidth'] * $this->config['columncount']) - $this->config['gutterwidth'];
+			}			
 		}
-		
-		else
-		{
-			$this->options['Grid']['enabled'] = FALSE;
-		}
-		
-		// Set the options in the global config
-		$CFG->set_many($options,'Grid');
-	}
-	
-	public function getSettings()
-	{
-		global $this->options;
-		return $this->options['Grid'];
 	}
 	
 	public function generateGridClasses($css)
 	{
-		global $this->options;
-		
 		$s = $pushselectors = $pullselectors = "";
 		
-		if($this->options['Grid']['columns-x'] == TRUE)
+		if($this->config['columns-x'] == TRUE)
 		{
 			// Make the .columns-x classes
-			for ($i=1; $i < $this->options['Grid']['columncount'] + 1; $i++) { 
-				$w = $this->options['Grid']['columnwidth'] * $i - $this->options['Grid']['gutterwidth'];
-				$s .= ".columns-$i{ width:".$w."px; }";
+			for ($i=1; $i < $this->config['columncount'] + 1; $i++) { 
+				$w = $this->config['columnwidth'] * $i - $this->config['gutterwidth'];
+				$s .= ".columns-$i{width:".$w."px;}";
 			}
 		}
 	
-		if($this->options['Grid']['push'] == TRUE)
+		if($this->config['push'] == TRUE)
 		{
 			// Make the .push classes
-			for ($i=1; $i < $this->options['Grid']['columncount']; $i++) { 
-				$w = $this->options['Grid']['columnwidth'] * $i;
-				$s .= ".push-$i{ margin-left: ".$w."px; }";
+			for ($i=1; $i < $this->config['columncount']; $i++) { 
+				$w = $this->config['columnwidth'] * $i;
+				$s .= ".push-$i{margin-left:".$w."px;}";
 				$pushselectors .= ".push-$i,";
 			}
-			$s .= substr_replace($pushselectors,"",-1) . "{ float:right; position:relative; }";
+			$s .= substr_replace($pushselectors,"",-1) . "{float:right;position:relative;}";
 		}
 		
-		if($this->options['Grid']['pull'] == TRUE)
+		if($this->config['pull'] == TRUE)
 		{
 			// Make the .pull classes
-			for ($i=1; $i < $this->options['Grid']['columncount']; $i++) { 
-				$w = $this->options['Grid']['columnwidth'] * $i;
+			for ($i=1; $i < $this->config['columncount']; $i++) { 
+				$w = $this->config['columnwidth'] * $i;
 				$s .= ".pull-$i{ margin-right:".$w."px; }";
 				$pullselectors .= ".pull-$i,";
 			}
-			$s .= substr_replace($pullselectors,"",-1) . "{ float:left; position:relative; }";
+			$s .= substr_replace($pullselectors,"",-1) . "{float:left;position:relative;}";
 		}
 		
-		if($this->options['Grid']['baseline-x'] == TRUE)
+		if($this->config['baseline-x'] == TRUE)
 		{
 			// Make the .baseline-x classes
 			for ($i=1; $i < 51; $i++) { 
-				$h = $this->options['Grid']['baseline'] * $i;
-				$s .= ".baseline-$i{ height:".$h."px; }";
+				$h = $this->config['baseline'] * $i;
+				$s .= ".baseline-$i{height:".$h."px;}";
 			}
 		}
 		
-		if($this->options['Grid']['baseline-pull-x'] == TRUE)
+		if($this->config['baseline-pull-x'] == TRUE)
 		{
 			// Make the .baseline-pull-x class
 			for ($i=1; $i < 51; $i++) { 
-				$h = $this->options['Grid']['baseline'] * $i;
-				$s .= ".baseline-pull-$i{ margin-top:-".$h."px; }";
+				$h = $this->config['baseline'] * $i;
+				$s .= ".baseline-pull-$i{margin-top:-".$h."px;}";
 			}
 		}
 		
-		if($this->options['Grid']['baseline-push-x'] == TRUE)
+		if($this->config['baseline-push-x'] == TRUE)
 		{
 			// Make the .baseline-push-x classes
 			for ($i=1; $i < 51; $i++) { 
-				$h = $this->options['Grid']['baseline'] * $i;
-				$s .= ".baseline-push-$i{ margin-bottom:-".$h."px;}";
+				$h = $this->config['baseline'] * $i;
+				$s .= ".baseline-push-$i{margin-bottom:-".$h."px;}";
 			}
 		}
 		
-		if($this->options['Grid']['append'] == TRUE)
+		if($this->config['append'] == TRUE)
 		{
 			// Make the .append classes
-			for ($i=1; $i < $this->options['Grid']['columncount']; $i++) { 
-				$w = $this->options['Grid']['columnwidth'] * $i;
-				$s .= ".append-$i{ padding-right:".$w."px; }";
+			for ($i=1; $i < $this->config['columncount']; $i++) { 
+				$w = $this->config['columnwidth'] * $i;
+				$s .= ".append-$i{padding-right:".$w."px;}";
 			}
 		}
 		
-		if($this->options['Grid']['prepend'] == TRUE)
+		if($this->config['prepend'] == TRUE)
 		{
 			// Make the .prepend classes
-			for ($i=1; $i < $this->options['Grid']['columncount']; $i++) { 
-				$w = $this->options['Grid']['columnwidth'] * $i;
-				$s .= ".prepend-$i{ padding-left:".$w."px; }";
+			for ($i=1; $i < $this->config['columncount']; $i++) { 
+				$w = $this->config['columnwidth'] * $i;
+				$s .= ".prepend-$i{padding-left:".$w."px;}";
 			}
 		}
 		
@@ -137,32 +117,28 @@ class GridCSS
 	}
 	
 	public function generateGridImage($css)
-	{
-		global $this->options, $config;
-				
-		$image = ImageCreate($this->options['Grid']['columnwidth'], $this->options['Grid']['gutterwidth']);
+	{				
+		$image = ImageCreate($this->config['columnwidth'], $this->config['gutterwidth']);
 		
 		$colorWhite		= ImageColorAllocate($image, 255, 255, 255);
 		$colorGrey		= ImageColorAllocate($image, 200, 200, 200);
 		$colorBlue		= ImageColorAllocate($image, 240, 240, 255);
 
 		// Draw column
-		Imagefilledrectangle($image, 0, 0, ($this->options['Grid']['columnwidth'] - $this->options['Grid']['gutterwidth'] - 1), ($this->options['Grid']['baseline'] - 1), $colorBlue);
+		Imagefilledrectangle($image, 0, 0, ($this->config['columnwidth'] - $this->config['gutterwidth'] - 1), ($this->config['baseline'] - 1), $colorBlue);
 		
 		// Draw gutter
-		Imagefilledrectangle($image, ($this->options['Grid']['columnwidth'] - $this->options['Grid']['gutter'] + 1), 0, ($this->options['Grid']['columnwidth']), ($this->options['Grid']['baseline'] - 1), $colorWhite);
+		Imagefilledrectangle($image, ($this->config['columnwidth'] - $this->config['gutter'] + 1), 0, ($this->config['columnwidth']), ($this->config['baseline'] - 1), $colorWhite);
 	
 		// Draw baseline
-		imageline($image, 0, ($this->options['Grid']['baseline'] - 1 ), $this->options['Grid']['columnwidth'], ($this->options['Grid']['baseline'] - 1 ), $colorGrey);
+		imageline($image, 0, ($this->config['baseline'] - 1 ), $this->config['columnwidth'], ($this->config['baseline'] - 1 ), $colorGrey);
 		
-	    ImagePNG($image, $config['assets_dir'] . "/backgrounds/grid.png") or die("Can't save the grid.png file");
+	    ImagePNG($image, ASSETPATH . "/backgrounds/grid.png") or die("Can't save the grid.png file");
 	    ImageDestroy($image);
 	}
 	
 	public function generateLayoutXML($css)
-	{
-		global $this->options, $config;
-		
+	{		
 		$list = "<layouts>\n";
 		$layoutnames = array();
 
@@ -186,7 +162,7 @@ class GridCSS
 		$list = "<?xml version=\"1.0\" ?>\n" . $list; 
 				
 		// Open the file
-		$file = fopen($config['assets_dir'] . "/xml/layouts.xml", "w") or die("Can't open the xml file");
+		$file = fopen(ASSETPATH . "/xml/layouts.xml", "w") or die("Can't open the xml file");
 		
 		// Write the string to the file
 		fwrite($file, $list);
@@ -195,8 +171,6 @@ class GridCSS
 	
 	public function buildGrid($css) 
 	{	
-		global $this->options;
-		
 		$css = $this -> replaceGridVariables($css);
 		$css = $this -> replaceColumns($css);
 
@@ -205,14 +179,12 @@ class GridCSS
 	 
 	
 	public function replaceColumns($css)
-	{
-		global $this->options, $flags;
-				
+	{				
 		// We'll loop through each of the columns properties by looking for each columns:x; property.
 		// This means we'll only loop through $columnscount number of times which could be better
 		// or worse depending on how many columns properties there are in your css
 		
-		for ($i=1; $i <= $this->options['Grid']['columncount']; $i++) { 
+		for ($i=1; $i <= $this->config['columncount']; $i++) { 
 		
 			// Matches all selectors (just the properties) which have a columns property
 			while (preg_match_all('/\{([^\}]*(columns\:\s*('.$i.'!?)\s*\;).*?)\}/sx', $css, $match)) {
@@ -236,7 +208,7 @@ class GridCSS
 					}
 			
 					// Calculate the width of the column
-					$width = (($this->options['Grid']['columnwidth']*$i)-$this->options['Grid']['gutterwidth']);
+					$width = (($this->config['columnwidth']*$i)-$this->config['gutterwidth']);
 										
 					// Send the properties through the functions to get the padding and border from them  
 					$padding 	= $this -> getPadding($properties);
@@ -275,9 +247,9 @@ class GridCSS
 							$styles .= "display:inline;overflow:hidden;";
 						}
 						
-						if ($numberofcolumns < $this->options['Grid']['columncount'])
+						if ($numberofcolumns < $this->config['columncount'])
 						{
-							$styles .= "margin-right:" . $this->options['Grid']['gutterwidth'] . "px;";
+							$styles .= "margin-right:" . $this->config['gutterwidth'] . "px;";
 						}
 					}
 					
@@ -319,28 +291,26 @@ class GridCSS
 	
 	public function replaceGridVariables($css) 
 	{	
-		global $this->options;
-		
 		// Replace grid(xcol)
 		if (preg_match_all('/grid\((\d+)?col\)/', $css, $matches))
 		{
 			foreach ($matches[1] as $key => $number)
 			{
-				$colw = ($number * $this->options['Grid']['columnwidth']) - $this->options['Grid']['gutterwidth'] .'px';		
+				$colw = ($number * $this->config['columnwidth']) - $this->config['gutterwidth'] .'px';		
 				$css = str_replace($matches[0][$key],$colw,$css);
 			}
 		}
 		
 		// Replace grid(max)
-		$maxw = ($this->options['Grid']['columncount'] * $this->options['Grid']['columnwidth']) - $this->options['Grid']['gutterwidth'] .'px';
+		$maxw = ($this->config['columncount'] * $this->config['columnwidth']) - $this->config['gutterwidth'] .'px';
 		$css = str_replace('grid(max)',$maxw,$css);
 		
 		// Replace grid(baseline)
-		$bl = $this->options['Grid']['baseline'].'px';		
+		$bl = $this->config['baseline'].'px';		
 		$css = str_replace('grid(baseline)', $bl, $css);
 		
 		// Replace grid(gutter)
-		$gutter = $this->options['Grid']['gutterwidth'].'px';		
+		$gutter = $this->config['gutterwidth'].'px';		
 		$css = str_replace('grid(gutter)', $gutter, $css);
 		
 		// Send it all back
@@ -350,11 +320,11 @@ class GridCSS
 	
 	private function getColumnWidth() 
 	{
-		global $this->options;
 		
-		$grossgridwidth		= $this->options['Grid']['gridwidth'] - ($this->options['Grid']['gutterwidth'] * ($this->options['Grid']['columncount']-1)); /* Width without gutters */
-		$singlecolumnwidth 	= $grossgridwidth/$this->options['Grid']['columncount'];
-		$columnwidth 		= $singlecolumnwidth + $this->options['Grid']['gutterwidth'];
+		
+		$grossgridwidth		= $this->config['gridwidth'] - ($this->config['gutterwidth'] * ($this->config['columncount']-1)); /* Width without gutters */
+		$singlecolumnwidth 	= $grossgridwidth/$this->config['columncount'];
+		$columnwidth 		= $singlecolumnwidth + $this->config['gutterwidth'];
 
 		return $columnwidth;
 	}
