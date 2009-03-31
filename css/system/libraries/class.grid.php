@@ -118,7 +118,7 @@ class Grid
 	
 	public function generateGridImage($css)
 	{				
-		$image = ImageCreate($this->config['columnwidth'], $this->config['gutterwidth']);
+		$image = ImageCreate($this->config['columnwidth'], $this->config['baseline']);
 		
 		$colorWhite		= ImageColorAllocate($image, 255, 255, 255);
 		$colorGrey		= ImageColorAllocate($image, 200, 200, 200);
