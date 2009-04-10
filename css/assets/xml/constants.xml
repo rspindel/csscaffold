@@ -2,11 +2,9 @@
 
 <constants>
 	
-	<!--
 	<constant>
 		<name>exampleConstant</name>
-		<value>100</value>
+		<val>100</val>
 	</constant> 
-	-->
 	
 </constants>

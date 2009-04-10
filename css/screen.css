@@ -1,31 +1,72 @@
 /**
+* ========================================================
 * Stylesheet title
+* ========================================================
 *
 * Your stylesheet description would go here.
 *
 * @project Name
 * @site http://url.com/
-* @author Name
-*
 * @version 1.0
 * @date yyyy-mm-dd
 * @lastmodified yyyy-mm-dd hh:mm
+* @creator Espresso by MacRabbit
+* @link
+* @style
+* @subpackage
+* @todo
 *
+* @package xhtml-css
+* @author Name
 * @copyright Copyright(c) 2009
 * @license Type
-* 
+*
 * @media screen
 * @colordef #fff; White (Background Color)
 * @fontdef Myriad Pro; Sans-serif (Headings)
 *
+* ========================================================
+*/
+
+/**
+* ========================================================
+* Snippets
+*
+* This is the description for the section
+*
+* @section Snippets
+* @see
+* @desc
+* @type
+* @where
+* @version
+* @revision
+* @affected
+* @bugfix
+* @workaround
+* @css-for 
+* @note
+* @since
+* @since-revision
+* @subsection
+* @subsubsection
+* @tested
+* @todo
+* @valid
 * --------------------------------------------------------
 */
 
 /**
-* --------------------------------------------------------
-* @section Snippets
-* --------------------------------------------------------
+* Docblock
 */
+
+/**
+* This is the title
+*
+* Larger with text coming out
+* of the ying-yang
+*/
+
 @server import url('system/snippets/reset.css');	
 @server import url('system/snippets/html5.css');	
 @server import url('system/snippets/layout.css');
@@ -33,10 +74,9 @@
 @server import url('system/snippets/tabs.css');
 @server import url('system/snippets/font-stacks.css');
 @server import url('system/snippets/development.css');
-
 /**
 * --------------------------------------------------------
-* @section Frameworks
+* @subsection Frameworks
 * --------------------------------------------------------
 */
 @server import url('system/snippets/forms.css');

@@ -1,4 +1,0 @@
-
-
- Compression Ratio = 100%
- Final CSS Size (as file before Gzip) =  bytes (0 kB)

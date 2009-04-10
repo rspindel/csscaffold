@@ -1,17 +1,63 @@
 <?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
-	
-	// Class Autoloader
-    function __autoload($class_name)
-    {
-        require 'libraries/class.' . strtolower($class_name) . '.php';
-    }
-   
+    
+/**
+* -------------------------------------------------------------------------
+*	General Functions
+* -------------------------------------------------------------------------
+*/
+
     // Round a number to the nearest multiple
 	function round_nearest($number,$multiple) 
 	{ 
 		return round($number/$multiple)*$multiple;
 	}
     
+	
+	// Quick wrapper for preg_match
+	function match($regex, $str, $i = 0)
+	{
+	    if(preg_match($regex, $str, $match) == 1)
+	        return $match[$i];
+	    else
+	        return false;
+	}
+	
+	// Displays an error message
+	function error($message) 
+	{
+		print "ERROR : $message\n";
+	}
+	
+	// Debug information
+	function dump($var)
+	{
+		var_dump($var);
+		die();
+	}
+	
+	// Print out and exit
+	function stop($var) 
+	{
+		header('Content-Type: text/plain');
+		print_r($var);
+		exit;
+	}
+	
+	// Log a message
+	function log_message($message)
+	{
+		$f = "system/logs/plugin_report.txt";
+		$log = file_get_contents($f);
+		$log .= gmdate('r') . "\n" . $message . "\n"; 
+		file_put_contents($f,$log);
+	}
+
+/**
+* -------------------------------------------------------------------------
+*	String Functions
+* -------------------------------------------------------------------------
+*/
+
 	// Removes slashes from the end of a string
 	function trim_slashes($str)
 	{
@@ -54,16 +100,7 @@
 		return preg_replace("#([^:])//+#", "\\1/", $str);
 	}
 	
-	// Quick wrapper for preg_match
-	function match($regex, $str, $i = 0)
-	{
-	    if(preg_match($regex, $str, $match) == 1)
-	        return $match[$i];
-	    else
-	        return false;
-	}
-	
-    // Ensures $str ends with a single /
+	// Ensures $str ends with a single /
     function slash($str)
     {
         return rtrim($str, '/') . '/';
@@ -74,7 +111,13 @@
     {
         return rtrim($str, '/');
     }
-    
+
+/**
+* -------------------------------------------------------------------------
+*	File Functions
+* -------------------------------------------------------------------------
+*/
+     
     // Outputs a filesize in human readable format.
     function bytes2str($val, $round = 0)
     {
@@ -179,33 +222,4 @@
 		{
 			return true;
 		}
-	}
-
-	// Displays an error message
-	function error($message) {
-		print "ERROR : $message\n";
-	}
-	
-	// Debug information
-	function dump($var)
-	{
-		var_dump($var);
-		die();
-	}
-	
-	// Print out and exit
-	function stop($var) {
-		header('Content-Type: text/plain');
-		print_r($var);
-		exit;
-	}
-	
-	// Log a message
-	function log_message($message)
-	{
-		$f = "system/logs/plugin_report.txt";
-		$log = file_get_contents($f);
-		$log .= gmdate('r') . "\n" . $message . "\n"; 
-		file_put_contents($f,$log);
-	}
-	
+	}	

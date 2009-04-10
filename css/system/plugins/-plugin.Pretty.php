@@ -1,23 +1,11 @@
 <?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
 /**
- * The class name
- * @var string
- */
-$plugin_class = 'PrettyPlugin';
-
-/**
- * The plugin settings
- * @var array
- */
-$settings = array();
-
-/**
  * PrettyPlugin class
  *
  * @package Cacheer
  **/
-class PrettyPlugin extends Plugins
+class Pretty extends Plugins
 {
 	function post_process($css)
 	{

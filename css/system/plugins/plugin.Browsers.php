@@ -1,77 +1,32 @@
 <?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
 /**
- * The class name
- * @var string
- */
-$plugin_class = 'Browsers';
-
-/**
- * The plugin settings
- * @var string
- */
-$settings = array(
-	'path' => 'specific'
-);
-
-
-/**
  * Browsers class
  *
  * @package csscaffold
  **/
 class Browsers extends Plugins
-{	
+{
+
+	/**
+	 * The plugin settings
+	 * @var string
+	 */
+	var $settings = array(
+		'path' => 'specific'
+	);
+	
 	/**
 	 * Construct function
 	 *
 	 * @return void
 	 **/
-	function Browsers()
-	{
-		parent::__construct();
-		
-		if($this->CORE->UA->browser == 'ie' && $this->CORE->UA->version == 7.0)
-		{
-			$this->flags['IE7'] = true;
-		}
-		elseif($this->CORE->UA->browser == 'ie' && $this->CORE->UA->version == 6.0)
-		{
-			$this->flags['IE7'] = true;
-		}
-		elseif($this->CORE->UA->browser == 'ie' && $this->CORE->UA->version == 8.0)
-		{
-			$this->flags['IE8'] = true;
-		}
-		
-		elseif($this->CORE->UA->browser == 'applewebkit' && $this->CORE->UA->version >= 528)
-		{
-			$this->flags['Safari4'] = true;
-		}
-		elseif($this->CORE->UA->browser == 'applewebkit' && $this->CORE->UA->version >= 525)
-		{
-			$this->flags['Safari3'] = true;
-		}
-				
-		elseif($this->CORE->UA->browser == 'firefox' && $this->CORE->UA->version >= 2)
-		{
-			$this->flags['Firefox2'] = true;
-		}
-		elseif($this->CORE->UA->browser == 'firefox' && $this->CORE->UA->version >= 3)
-		{
-			$this->flags['Firefox3'] = true;
-		}
-		
-		elseif($this->CORE->UA->browser == 'opera')
-		{
-			$this->flags['Opera'] = true;
-		}
-		
-		else
-		{
-			$this->flags['UnknownBrowser'] = true;
-		}
-
+	function __construct()
+	{	
+		// Set a flag for their browser, so it caches it for each
+		// browser. If we don't set flags, then it would only cache
+		// the css type of the first browser to request it. 
+		$this->flags[Core::user_agent('browser')] = true;
 	}
 
 	/**
@@ -81,25 +36,24 @@ class Browsers extends Plugins
 	 **/
 	function pre_process($css)
 	{		
-		if (isset($this->flags['IE7']) || isset($this->flags['IE6']))
+		if (Core::user_agent('browser') == "Internet Explorer")
 		{
-			$file 		= file_get_contents($options['Browsers']['path'] . "/ie.css");
-			$css 		= $css . $file;
-	
+			$css .= file_get_contents(CSSPATH . $this->settings['path'] . "/ie.css");
 			return $css;
 		}
-		elseif (isset($this->flags['Safari3']))
+		elseif (Core::user_agent('browser') == "Safari")
 		{
-			$file 		= file_get_contents($options['Browsers']['path'] . "/safari.css");		
-			$css 		= $css . $file;
-			
+			$css .= file_get_contents(CSSPATH . $this->settings['path'] . "/safari.css");
 			return $css;
 		}
-		elseif (isset($this->flags['Firefox3']))
+		elseif (Core::user_agent('browser') == "Firefox")
 		{
-			$file 		= file_get_contents($options['Browsers']['path'] . "/firefox.css");
-			$css 		= $css .$file;
-		
+			$css .= file_get_contents(CSSPATH . $this->settings['path'] . "/firefox.css");
+			return $css;
+		}
+		elseif (Core::user_agent('browser') == "Opera")
+		{
+			$css .= file_get_contents(CSSPATH . $this->settings['path'] . "/opera.css");
 			return $css;
 		}
 		else

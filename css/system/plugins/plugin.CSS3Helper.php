@@ -1,25 +1,13 @@
 <?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
 /**
- * The class name
- * @var string
- */
-$plugin_class = 'CSS3Helper';
-
-/**
- * The plugin settings
- * @var array
- */
-$settings = array();
-
-
-/**
  * CSS3Helper class
  *
  * @package csscaffold
  **/
 class CSS3Helper extends Plugins
 {
+
 	/**
 	 * post_process
 	 *

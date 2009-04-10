@@ -1,17 +1,6 @@
 <?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
-/**
- * The class name
- * @var string
- */
-$plugin_class = 'NestedSelectors';
-
-/**
- * The plugin settings
- * @var array
- */
-$settings = array();
-
+require BASEPATH . 'libraries/class.si_dom.php';
 
 /**
  * NestedSelectorsPlugin class
@@ -20,11 +9,13 @@ $settings = array();
  **/
 class NestedSelectors extends Plugins
 {
+	
 	var $DOM;
+	
 	function process($css)
 	{
 		/******************************************************************************
-		 Process nested selectors
+		* Process nested selectors
 		 ******************************************************************************/
 		// Transform the CSS into XML
 		// does not like the data: protocol
@@ -43,13 +34,13 @@ class NestedSelectors extends Plugins
 		//exit();
 		
 		/******************************************************************************
-		 Parse the XML into a crawlable DOM
+		* Parse the XML into a crawlable DOM
 		 ******************************************************************************/
 		$this->DOM = new SI_Dom($xml);
 		$rule_nodes =& $this->DOM->getNodesByNodeName('rule');
 		
 		/******************************************************************************
-		 Rebuild parsed CSS
+		* Rebuild parsed CSS
 		 ******************************************************************************/
 		$css = '';
 		$standard_nest = '';

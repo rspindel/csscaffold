@@ -16,41 +16,17 @@
 				<key>StateType</key>
 				<string>PreviewTab</string>
 				<key>URL</key>
-				<string>http://scaffold/tests/typography.html</string>
+				<string>http://scaffold/css/screen.css?recache</string>
 			</dict>
 			<dict>
 				<key>DocumentURL</key>
-				<string>file://localhost/Users/anthonyshort/Sites/Projects/CSScaffold/css/system/libraries/class.csscaffold.php</string>
+				<string>file://localhost/Users/anthonyshort/Sites/Projects/Public/CSScaffold/css/system/plugins/-plugin.Optimizer.php</string>
 				<key>StateType</key>
 				<string>DefaultTab</string>
 			</dict>
 			<dict>
 				<key>DocumentURL</key>
-				<string>file://localhost/Users/anthonyshort/Sites/Projects/CSScaffold/css/system/libraries/class.cache.php</string>
-				<key>StateType</key>
-				<string>DefaultTab</string>
-			</dict>
-			<dict>
-				<key>DocumentURL</key>
-				<string>file://localhost/Users/anthonyshort/Sites/Projects/CSScaffold/css/system/plugins/plugin.Browsers.php</string>
-				<key>StateType</key>
-				<string>DefaultTab</string>
-			</dict>
-			<dict>
-				<key>DocumentURL</key>
-				<string>file://localhost/Users/anthonyshort/Sites/Projects/CSScaffold/css/system/libraries/class.core.php</string>
-				<key>StateType</key>
-				<string>DefaultTab</string>
-			</dict>
-			<dict>
-				<key>DocumentURL</key>
-				<string>file://localhost/Users/anthonyshort/Sites/Projects/CSScaffold/css/system/libraries/class.plugins.php</string>
-				<key>StateType</key>
-				<string>DefaultTab</string>
-			</dict>
-			<dict>
-				<key>DocumentURL</key>
-				<string>file://localhost/Users/anthonyshort/Sites/Projects/CSScaffold/css/system/cache/.htaccess</string>
+				<string>file://localhost/Users/anthonyshort/Sites/Projects/Public/CSScaffold/css/system/plugins/plugin.Layout.php</string>
 				<key>StateType</key>
 				<string>DefaultTab</string>
 			</dict>

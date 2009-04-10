@@ -1,16 +1,6 @@
 <?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
-/**
- * The class name
- * @var string
- */
-$plugin_class = 'Optimizer';
-
-/**
- * The plugin settings
- * @var string
- */
-$settings = array();
+require BASEPATH . 'libraries/class.csstidy.php';
 
 /**
  * CSSTidyPlugin class

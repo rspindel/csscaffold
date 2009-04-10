@@ -1,25 +1,13 @@
 <?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
 /**
- * The class name
- * @var string
- */
-$plugin_class = 'BasedOn';
-
-/**
- * The plugin settings
- * @var array
- */
-$settings = array();
-
-
-/**
  * BasedOnPlugin class
  *
  * @package Cacheer
  **/
 class BasedOn extends Plugins
 {
+
 	function process($css)
 	{
 		$bases = array();
@@ -48,7 +36,7 @@ class BasedOn extends Plugins
 						
 		return $css;
 	}
-	
+
 	function replace_bases($bases, $css, $current_base_name = false)
 	{
 		// As long as there's based-on properties in the CSS string

@@ -1,31 +1,17 @@
 <?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
 /**
- * The class name
- * @var string
- */
-$plugin_class = 'AddTo';
-
-/**
- * The plugin settings
- * @var array
- */
-$settings = array();
-
-/**
  * AddTo class
  *
  * @package csscaffold
  **/
 class AddTo extends Plugins
 {
-
 	function post_process($css)
 	{				
 		// Get all selectors with the class attribute
 		if(preg_match_all("/([^{}]*)\s*\{\s*[^}]*(add\-to\s*\:([^\;]*)\;).*?\s*\}/sx", $css, $has_class_property));
 		{
-			//print_r($has_class_property);exit;
 			// Loop through each of the matched selectors
 			foreach($has_class_property[1] as $key => $selector)
 			{

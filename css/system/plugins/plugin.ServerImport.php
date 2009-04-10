@@ -1,24 +1,13 @@
 <?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
 /**
- * The class name
- * @var string
- */
-$plugin_class = 'ServerImport';
-
-/**
- * The plugin settings
- * @var array
- */
-$settings = array();
-
-/**
  * ServerImportPlugin class
  *
  * @package Cacheer
  **/
 class ServerImport extends Plugins
-{	
+{
+		
 	function pre_process($css)
 	{		
 		while (preg_match_all('#@server\s+import\s+url\(([^\)]+)+\);#i', $css, $matches))

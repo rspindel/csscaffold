@@ -1,19 +1,6 @@
 <?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
 /**
- * The class name
- * @var string
- */
-$plugin_class = 'Condenser';
-
-/**
- * The plugin settings
- * @var array
- */
-$settings = array();
-
-
-/**
  * CondenserPlugin class
  *
  * @package Cacheer

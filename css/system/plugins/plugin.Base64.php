@@ -1,36 +1,21 @@
 <?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
 /**
- * The class name
- * @var string
- */
-$plugin_class = 'Base64Plugin';
-
-/**
- * The plugin settings
- * @var array
- */
-$settings = array();
-
-
-/**
  * Base64Plugin class
  *
  * @package Cacheer
  **/
-class Base64Plugin extends Plugins
+class Base64 extends Plugins
 {
+	
 	function __construct()
 	{
-		// Fire off the parent construct first, we want the Core object
-		parent::__construct();
-		
 		// Safari (WebKit), Firefox & Opera are known to support data: urls so embed base64-encoded images
 		if
 		(
-			($this->CORE->UA->browser == 'applewebkit' && $this->CORE->UA->version >= 125) || // Safari and ilk
-			($this->CORE->UA->browser == 'firefox') || // Firefox et al
-			($this->CORE->UA->browser == 'opera' && $this->CORE->UA->version >= 7.2) // quell vociferous Opera evangelists
+			(Core::user_agent('browser') == 'Safari' && Core::user_agent('version') >= 125) || // Safari and ilk
+			(Core::user_agent('browser') == 'Firefox') || // Firefox et al
+			(Core::user_agent('browser') == 'Opera' && Core::user_agent('version') >= 7.2) // quell vociferous Opera evangelists
 		)
 		{
 			$this->flags['Base64'] = true;

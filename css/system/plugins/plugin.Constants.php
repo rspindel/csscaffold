@@ -1,25 +1,13 @@
 <?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
 
 /**
- * The class name
- * @var string
- */
-$plugin_class = 'Constants';
-
-/**
- * The plugin settings
- * @var array
- */
-$settings = array();
-
-
-/**
  * ConstantsPlugin class
  *
  * @package Cacheer
  **/
 class Constants extends Plugins
 {
+
 	function process($css)
 	{ 		
 		// Add some default constants
@@ -41,18 +29,15 @@ class Constants extends Plugins
 		}
 		
 		// Override any constants with our XML constants
-		// Get the constants from the XML
 		$xml = load(ASSETPATH . "/xml/constants.xml");
-		$this->DOM = new SI_Dom($xml);
 		
-		// Get the nodes
-		$override_name =& $this->DOM->getNodesByNodeName('name');
-		$override_value =& $this->DOM->getNodesByNodeName('value');
+		// Turn it into an xml object
+		$xml = simplexml_load_string($xml);
 		
 		// Replace the constants in the array with the XML constants		
-		foreach($override_name as $key => $value)
+		foreach($xml->constant as $key => $constant)
 		{
-			$constants["const(".$value->cdata.")"] = $override_value[$key]->cdata;
+			$constants["const(".$constant->name.")"] = (int) $constant->val;
 		}
 	
 		if (!empty($constants))
@@ -60,6 +45,10 @@ class Constants extends Plugins
 			$css = str_replace(array_keys($constants), array_values($constants), $css);
 		} 
 		
+		// Clean up
+		unset($constants);
+		
 		return $css;
 	}
+
 } // END ConstantsPlugin
