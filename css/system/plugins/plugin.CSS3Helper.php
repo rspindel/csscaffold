@@ -132,7 +132,8 @@ class CSS3Helper extends Plugins
 	 **/
 	function fontFace($css)
 	{
-	
+		if (!is_dir(ASSETPATH . "/fonts")) mkdir(ASSETPATH . "/fonts", 0777);
+		
 		// Load up all the fonts into an array
 		$fonts = read_dir(ASSETPATH . "/fonts");
 

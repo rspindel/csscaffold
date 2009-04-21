@@ -123,7 +123,28 @@
 		echo "You need to specify a css file";
 		exit;
 	}
+	
 
+/******************************************************************************
+* Make sure the files/folders are writeable
+******************************************************************************/
+
+	if (!is_writable(CACHEPATH))
+	{
+		stop("Cache path (".CACHEPATH.") is not writable");
+	}
+	elseif (!is_writable(ASSETPATH) )
+	{
+		stop("Asset path (".ASSETPATH.") is not writable");
+	}
+	
+	foreach (read_dir(ASSETPATH) as $key => $value)
+	{
+		if (!is_writable($value))
+		{
+			stop("$value is not writable");
+		}
+	}
 	
 /******************************************************************************
 * Load the required classes
