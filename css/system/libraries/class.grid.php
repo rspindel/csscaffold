@@ -1,4 +1,4 @@
-<?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
+<?php defined('BASEPATH') OR die('No direct access allowed.');
 
 /**
  * Grid
@@ -12,6 +12,13 @@
  **/
 class Grid
 {
+	/**
+	* If there are grid settings, enable this plugin.
+	*
+	* @param   boolean 
+	*/
+	var $active;
+	
 	/**
 	* Gets the grid settings from the css, and stores them.
 	*
@@ -45,7 +52,7 @@ class Grid
 			}
 			
 			// Set them in the config so other plugins can access this info
-			$config = array(
+			$this->config = array(
 				'columncount' => $cc, 
 				'columnwidth' => $cw, 
 				'gutterwidth' => $gw, 
@@ -56,8 +63,11 @@ class Grid
 			// Merge the old Layout config with this new one and save it to the core config
 			Core::config_set(
 				'Layout', 
-				array_merge($config, Core::config('Layout'))
+				array_merge($this->config, Core::config('Layout'))
 			);
+			
+			// Enable the plugin
+			$this->active = TRUE;
 
 		}
 	}
@@ -80,7 +90,7 @@ class Grid
 			// Make the .columns-x classes
 			for ($i=1; $i < $cc + 1; $i++) { 
 				$w = $cw * $i - $gw;
-				$s .= ".columns-$i{width:".$w."px;}";
+				$s .= ".columns-$i{width:".$w."px;float:left;margin-right:".$gw."px;}";
 			}
 		}
 	
@@ -92,7 +102,7 @@ class Grid
 				$s .= ".push-$i{margin-left:".$w."px;}";
 				$pushselectors .= ".push-$i,";
 			}
-			$s .= substr_replace($pushselectors,"",-1) . "{float:right;position:relative;}";
+			$s .= substr_replace($pushselectors,"",-1) . "{float:left;position:relative;}";
 		}
 		
 		if(Core::config('pull', 'Layout') == TRUE)
@@ -100,7 +110,7 @@ class Grid
 			// Make the .pull classes
 			for ($i=1; $i < $cc; $i++) { 
 				$w = $cw * $i;
-				$s .= ".pull-$i{ margin-right:".$w."px; }";
+				$s .= ".pull-$i{ margin-left:-".$w."px; }";
 				$pullselectors .= ".pull-$i,";
 			}
 			$s .= substr_replace($pullselectors,"",-1) . "{float:left;position:relative;}";
@@ -129,7 +139,7 @@ class Grid
 			// Make the .baseline-push-x classes
 			for ($i=1; $i < 51; $i++) { 
 				$h = $bl * $i;
-				$s .= ".baseline-push-$i{margin-bottom:-".$h."px;}";
+				$s .= ".baseline-push-$i{margin-top:".$h."px;}";
 			}
 		}
 		
@@ -193,7 +203,15 @@ class Grid
 	* @return  none
 	*/	
 	public function generateLayoutXML($css)
-	{		
+	{
+		global $cc, $cw, $gw, $bl, $gridw;
+		
+		// Build the initial xml string
+		$xml = "<?xml version=\"1.0\" ?>\n";
+		$xml .= "<grid>\n";
+		$xml .= "<column-width>".($cw - $gw)."</column-width>\n<column-count>$cc</column-count>\n<grid-width>$gridw</grid-width>\n<gutter-width>$gw</gutter-width>\n<baseline>$bl</baseline>\n";
+		
+		// Grab the layouts from the css
 		$list = "<layouts>\n";
 		$layoutnames = array();
 
@@ -214,14 +232,12 @@ class Grid
 		}
 		
 		$list .= "\n</layouts>";
-		$list = "<?xml version=\"1.0\" ?>\n" . $list; 
-				
-		// Open the file
-		$file = fopen(ASSETPATH . "/xml/layouts.xml", "w") or die("Can't open the xml file");
 		
-		// Write the string to the file
-		fwrite($file, $list);
-		fclose($file);
+		// Join them together
+		$xml = $xml . $list . "</grid>"; 
+				
+		// Write it to the file
+		file_put_contents(ASSETPATH . "/xml/layouts.xml", $xml);
 	}
 	
 	/**
@@ -276,40 +292,49 @@ class Grid
 					$columnsproperty 	= $match[2][0]; // Second match is just the columns property
 					$numberofcolumns	= $match[3][0]; // Third match is just number of columns
 					
-					
 					// If there is an ! after the column number, we don't want the properties included.
-					if (substr($numberofcolumns, -1) == "!") {
-						$showproperties = false;
-					}
-					else {
-						$showproperties = true;
-					}
-			
+					$showproperties = (substr($numberofcolumns, -1) == "!") ? false : true;
+
 					// Calculate the width of the column
 					$width = (($cw*$i)-$gw);
-										
-					// Send the properties through the functions to get the padding and border from them  
-					$padding = $this -> getPadding($properties);
-					$border = $this -> getBorder($properties);
 					
-					// Only factor in padding and border if it the selector has them
-					if ($padding > 0 || $border > 0)
-					{				
-						// If the browser doesn't support box-sizing, minus the padding and border
-						// We'll see if the flags have been set from the browser plugin
-						if
-						(
-							isset(CSScaffold::$flags['Internet Explorer']) ||
-							isset(CSScaffold::$flags['UnknownBrowser'])
-						)
+					// If the browser doesn't support box-sizing, minus the padding and border
+					// We'll see if the flags have been set from the browser plugin
+					if
+					(
+						(isset(CSScaffold::$flags['Internet Explorer']) && Core::user_agent('version') < 8) ||
+						Core::user_agent('version') == ""
+					)
+					{		
+						// Send the properties through the functions to get the padding and border from them  
+						$padding = $this->getPadding($properties);
+						$border = $this->getBorder($properties);
+								
+						// Calculate the width of the column with adjustments for padding and border
+						$width = $width - ($padding + $border);
+					}
+					
+					// Otherwise, the browser is a *good* browser and supports it. So we'll use that instead. 
+					else
+					{
+						if ( CSScaffold::$flags['Safari'] )
 						{
-							// Calculate the width of the column with adjustments for padding and border
-							$width = $width - ($padding + $border);
+							$styles .= "box-sizing:border-box;-webkit-box-sizing:border-box;";
 						}
-						else
+						
+						elseif ( CSScaffold::$flags['Firefox'] )
 						{
-							// Add box sizing for the browsers that support it. (Everything greater than IE7)
-							$styles .= "box-sizing:border-box;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;";
+							$styles .= "box-sizing:border-box;-moz-box-sizing:border-box;";
+						}
+						
+						elseif ( CSScaffold::$flags['Opera'] )
+						{
+							$styles .= "box-sizing:border-box;";
+						}
+						
+						elseif ( CSScaffold::$flags['Internet Explorer'] )
+						{
+							$styles .= "box-sizing:border-box;-ms-box-sizing:border-box;";
 						}
 					}
 										
@@ -320,11 +345,13 @@ class Grid
 					{
 						$styles .= "float:left;"; 
 						
-						if(CSScaffold::$flags['Internet Explorer'] === true)
+						// Fix up the retarded bugs in IE
+						if(CSScaffold::$flags['Internet Explorer'] === true && Core::user_agent('version') < 7)
 						{
 							$styles .= "display:inline;overflow:hidden;";
 						}
 						
+						// We don't ever need a margin on the full-width column
 						if ($numberofcolumns < $cc)
 						{
 							$styles .= "margin-right:" . $gw . "px;";
@@ -465,6 +492,7 @@ class Grid
 	*
 	* @param   string   All of the properties of a selector
 	* @return  string	The total amount of left and right border combined
+	* @todo Look for more variations in the border. This could still possibly break IE6/7 because they doesn't use box-sizing. 
 	*/
 	private function getBorder($properties)
 	{		

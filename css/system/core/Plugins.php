@@ -1,4 +1,4 @@
-<?php
+<?php defined('BASEPATH') OR die('No direct access allowed.');
 
 /**
  * Plugins
@@ -21,6 +21,15 @@ class Plugins
 	 * @var string
 	 */
 	var $settings = array();
+	
+	/**
+	* Place any importing here. This will happen
+	* before everything else. 
+	*
+	* @param   string   The css file as a string
+	* @return  string	The css file as a string
+	*/
+	public function import($css) { return $css; }
 
 	/**
 	* For any preprocessing of the css - like importing files.

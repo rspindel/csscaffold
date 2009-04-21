@@ -1,9 +1,16 @@
 /**
-* --------------------------------------------------------
+* ========================================================
+* Common Content
+*
+* Styles for general/common content as a starting point
+*
 * @section Common Content
+* @type Global
+* @where Global
+* @since 1.0
 * --------------------------------------------------------
 */
-
+	
 	/* eg. Post meta underneath its title */
 	.meta			{ color:#888; }
 	.sub-meta		{ color:#aaa; }
@@ -23,23 +30,54 @@
 	.small      	{ font-size: 11px; margin-bottom: grid(baseline); line-height: grid(baseline); } 
 	.large      	{ font-size: 2.2em; line-height: math('grid(baseline)*2')px; margin-bottom: grid(baseline); letter-spacing: -1px; }	
 
+
 /**
-* --------------------------------------------------------
-* @section Content Layout
-* 
-* @note Based on Jason Santa Maria's Work on 24Ways. 
+* ========================================================
+* Content Layout
+*
+* Based on Jason Santa Maria's Work on 24Ways. 
 * These aren't entirely semantic. But you don't want to 
 * fill up your CSS with id's for every figure.
 *
+* @section Content Layout
+* @type Layout
+* @where Content
+* @since 1.0
 * @see http://24ways.org/2008/making-modular-layout-systems
 * --------------------------------------------------------
-*/	
+*/
+		
+	/**
+	* Alternatively use the html5 <figure> element instead of .figure 
+	*/
+	.figure { margin:grid(baseline); float:left; }
 	
-	/* Alternatively use the html5 <figure> element instead of .pic */
-	.pic, .caption  { add-to: selector('.small'); }
+	/**
+	* Captions
+	*/
+	.figure,
+	.figure p,
+	.figure *,
+	.caption  
+	{ based-on:small-type; }
 	
-	.right 			{ float: right; margin: grid(baseline) 0 grid(baseline) grid(baseline); }
-	.left 			{ float: left;  margin: grid(baseline) grid(baseline) grid(baseline) 0; }
+	.figure p,
+	.caption { float:left; }
+	
+	.right img,  
+	.right 
+	{ 
+		float:right; 
+		margin-right:0; 
+	}
+	
+	.left img, 
+	.left
+	{ 
+		float:left;  
+		margin-left:0; 
+	}
+	
 	.solo	 		{ margin-bottom: grid(baseline); }
 	
 	.frame 			{ border: 1px solid #999; }

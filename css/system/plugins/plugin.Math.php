@@ -1,4 +1,4 @@
-<?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
+<?php defined('BASEPATH') OR die('No direct access allowed.');
 
 /**
  * Math class
@@ -20,20 +20,7 @@ class Math extends Plugins
 				$css = str_replace($matches[0][$key], $result, $css);
 			}
 		}
-		
-		// If the layout plugin is being used
-		// Then enable the round() function
-		if(isset($this->CORE->CONFIG->Layout))
-		{	
-			if(preg_match_all('/round\((\d+)\)/', $css, $matches))
-			{
-				foreach($matches[1] as $key => $match)
-				{
-					$num = round_nearest($match,$this->CORE->CONFIG->Layout['baseline']);
-					$css = str_replace($matches[0][$key],$num."px",$css);
-				}
-			}
-		}		
+
 		return $css;
 	}
 	

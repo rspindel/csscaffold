@@ -1,0 +1,35 @@
+/**
+* ========================================================
+* Test Styles
+*
+* The unique styles for the test files. This can
+* be deleted if you don't use the tests. 
+*
+* @section Test Styles
+* @since 1.0
+* --------------------------------------------------------
+*/
+
+#tests.layout #page > div { min-height: 108px; }
+#page.grid div { based-on:wireframe; }
+
+.showgrid-toggle {float:right;margin-left:10px; }
+#layout-options { float:right; }
+	
+#tests 
+{ 
+	padding: 36px;
+
+	.box { columns:24; border-top: 5px solid #ddd; padding:13px 0 0 0; }
+	.box .description {columns:8; }
+	.box h3	{ columns:4; }
+	.box pre { columns:12;margin-right:0;background:#eee;padding:grid(baseline);margin-top:0;}
+	.box code {margin:0;}
+		
+	#nav-wrap {position: fixed;left: 0;bottom: 0;width: 100%; background:#222;text-align: center; opacity: 0.9;padding:2px;} 
+	#navigation {}
+	#navigation li {list-style:none;float:left;margin-right:0px;}
+	#navigation li a {background: #111;width:100px;display:block;margin:2px; line-height:25px;color: #fff;text-decoration:none;}
+	#navigation li a:hover{background:#000;}  	
+}
+

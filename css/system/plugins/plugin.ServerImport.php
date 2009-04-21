@@ -1,4 +1,4 @@
-<?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
+<?php defined('BASEPATH') OR die('No direct access allowed.');
 
 /**
  * ServerImportPlugin class
@@ -8,7 +8,7 @@
 class ServerImport extends Plugins
 {
 		
-	function pre_process($css)
+	function import($css)
 	{		
 		while (preg_match_all('#@server\s+import\s+url\(([^\)]+)+\);#i', $css, $matches))
 		{
@@ -42,6 +42,7 @@ class ServerImport extends Plugins
 		$css = trim(preg_replace('/(\s|\t)+\:/', ':', $css)); // space after properties
 		$css = preg_replace('#\s+(\{|\})#', "$1", $css); // before
 		$css = preg_replace('#(\{|\}|:|,|;)\s+#', "$1", $css); // after
+		$css = str_replace(': ', ':', $css);
 		return $css;
 	}
 }

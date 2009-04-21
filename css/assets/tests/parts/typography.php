@@ -1,70 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-
-	<title>Typography Test Page</title>
-	
-	<link href="/css/screen.css?recache" media="screen" rel="stylesheet" type="text/css" />
-	
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
-	<script type="text/javascript" src="js/test.js"></script>
-	
-	<script type="text/javascript">
-	$(document).ready(function(){
-		
-		$("#choice").click(function(){
-			if ($("#choice:checked").length == 1)
-			{
-				$("#headings").show();
-			}
-			else
-			{
-				$("#headings").hide();
-			}
-		});
-		
-		$("#choice3").click(function(){
-			if ($("#choice:checked").length == 1)
-			{
-				$("#lists").show();
-			}
-			else
-			{
-				$("#lists").hide();
-			}
-		});
-		
-		$("#choice4").click(function(){
-			if ($("#choice:checked").length == 1)
-			{
-				$("#other").show();
-			}
-			else
-			{
-				$("#other").hide();
-			}
-		});
-		
-		$("#choice5").click(function(){
-			if ($("#choice:checked").length == 1)
-			{
-				$("#tables").show();
-			}
-			else
-			{
-				$("#tables").hide();
-			}
-		});
-		
-		
-	});
-		
-	</script>
-	
-</head>
+<?php include '../includes/head.php'; ?>
 
 <body id="tests">
 	
@@ -74,13 +8,6 @@
 			
 			
 			<h1>Typography Test Page</h1>
-			
-			
-			<p class="large"><strong>This page gives you all the typography you need to style it up before you even
-			get into doing the layout. By getting the type all correct here, it will be perfect
-			in your design, and you shouldn't have to modify it again.</strong></p>
-			
-			<hr />
 			
 			<div id="headings">
 
@@ -294,70 +221,10 @@ Not indented
 
 			
 		</div>
-		
-		<div id="secondary-content">
-			<h2>Instructions</h2>
 			
-			<p>These text style tests are based on the BlueprintCSS tests, so the majority of the elements are there</p>
-			
-			
-			<p>Everything on this page is here for you to style. There are even the utility classes, large, small, quiet etc for you to style.</p>
-			
-			<p>For example, the first paragraph to the left is "class='large'"</p> 
-			
-			<p>You can find typography.css in /css/sections/</p>
-			
-			<form>
-				<div class="checkboxes">
-					<p class="label">Choose which elements</p>
-					<ul>
-						<li class="checkbox">
-							<label for="choice">
-								<input type="checkbox" id="choice" name="choice" value="yes" checked="checked" />
-								Headings
-							</label>
-						</li>
-						<li class="checkbox">
-							<label for="choice3">
-								<input type="checkbox" id="choice3" name="choice3" value="yes" checked="checked" />
-								Lists
-							</label>
-						</li>
-						<li class="checkbox">
-							<label for="choice4">
-								<input type="checkbox" id="choice4" name="choice4" value="yes" checked="checked" />
-								Other Text Elements
-							</label>
-						</li>
-						<li class="checkbox">
-							<label for="choice5">
-								<input type="checkbox" id="choice5" name="choice5" value="yes" checked="checked" />
-								Tables
-							</label>
-						</li>
-					</ul>	
-				</div>
-			</form>
-		</div>
-		
 	</div>
 	
-	<a href="#showgrid" class="showgrid-toggle">
-		Toggle Grid View
-	</a>
-	
-	<select id="layout-options">
-		<option>Choose a Layout</option>
-	</select>
-
-	<div id="nav-wrap">
-	<ul id="navigation">
-		<li><a href="typography.html">Typography</a></li>
-		<li><a href="content.html">Content</a></li>
-		<li><a href="forms.html">Forms</a></li>
-		<li><a href="layout.html">Layouts</a></li>
-	</ul>
-	</div>
+	<?php include '../includes/nav.php'; ?>
 	
 </body>
 </html>

@@ -1,4 +1,4 @@
-<?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
+<?php defined('BASEPATH') OR die('No direct access allowed.');
 
 require BASEPATH . 'libraries/class.si_dom.php';
 
@@ -72,10 +72,10 @@ class NestedSelectors extends Plugins
 				
 				$selector = str_replace('#SI-CSSC-QUOTE#', '"', $selector);
 								
-				$css .= $selector.' {';
+				$css .= $selector.'{';
 				foreach($properties as $property)
 				{	
-					$css .= $property->name.': '.str_replace('#SI-CSSC-QUOTE#', '"', $property->value).';';
+					$css .= $property->name.':'.str_replace('#SI-CSSC-QUOTE#', '"', $property->value).';';
 				}
 				$css .= '}';
 			}	

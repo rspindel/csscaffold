@@ -1,58 +1,211 @@
 /**
-* --------------------------------------------------------
+* ========================================================
+* Grid
+*
+* The grid settings for the entire site. This uses 
+* a grid similar to that of BlueprintCSS.
+*
 * @section Grid
+* @type Layout
+* @where Global
+* @since 1.0
+* @see http://www.blueprintcss.org/
 * --------------------------------------------------------
 */
 
-	/* The grid plugin requires these settings*/
+	/**
+	* The grid plugin requires these settings 
+	*/
 	@grid 
 	{
-		column-width:23;
-		gutter-width:18;
-		column-count:24;
+		column-width:60;
+		gutter-width:20;
+		column-count:12;
 		baseline:18;
 	}
 	
-	#page 	{ add-to: selector('.container'); }
-	#header { columns: 24; margin-bottom:grid(baseline);}
-	#footer { columns: 24; }
+	/**
+	* You don't need to create a container element, CSScaffold 
+	* includes this for you based on your grid.
+	* @see line 122
+	*/
+	#page 	{ based-on:container; }
+	#header { columns:12; margin-bottom:grid(baseline); clear:clearfix; }
+	#footer { columns:12; clear:clearfix; }
+
 
 /**
-* --------------------------------------------------------
-* @section Layouts
+* ========================================================
+* Layouts
 *
-* @note All you have to do is give your body/container element a 
-* class of .layout-name. 
+* Each unique layout is prefixed with .layout- so that
+* it will appear in the css layout tests. To give a page
+* a layout, you just need to add this class to the container.
+*
+* The content block id's, primary-content, secondary-content
+* and tertiary-content are just suggested naming conventions.
+* You can use whatever you want for those. 
+*
+* @section Layouts
+* @type Layout
+* @where Global
+* @since 1.0
 * --------------------------------------------------------
 */
 
 	.layout-3-column
 	{
-		#primary-content 		{ columns:6; margin-bottom:grid(baseline);padding:20px; }
-		#secondary-content		{ columns:12; margin-bottom:grid(baseline);}
-		#tertiary-content		{ columns:6; margin-right:0;margin-bottom:grid(baseline); }
+		#primary-content 		{ columns:4; margin-bottom:grid(baseline); padding:20px; }
+		#secondary-content		{ columns:4; margin-bottom:grid(baseline); }
+		#tertiary-content		{ columns:4; margin-right:0;margin-bottom:grid(baseline); }
 	}
 	
 	.layout-2-column
 	{
-		#primary-content 		{ columns:18;margin-bottom:grid(baseline); }
-		#secondary-content		{ columns:6; margin-right:0;margin-bottom:grid(baseline); }
-		#tertiary-content 		{ columns:24;margin-bottom:grid(baseline); }
+		#primary-content 		{ columns:8;margin-bottom:grid(baseline); }
+		#secondary-content		{ columns:4; margin-right:0;margin-bottom:grid(baseline); }
+		#tertiary-content 		{ columns:12;margin-bottom:grid(baseline); }
+	}
+	
+	.layout-home
+	{
+		#primary-content 		{ columns:2;margin-bottom:grid(baseline); }
+		#secondary-content		{ columns:8;margin-bottom:grid(baseline); }
+		#tertiary-content 		{ columns:2;margin-bottom:grid(baseline); margin-right:0; }
 	}
 	
 	.layout-default
 	{
-		#primary-content 		{ columns:18;float:right;margin-right:0;margin-bottom:grid(baseline); }
-		#secondary-content		{ columns:6;margin-bottom:grid(baseline); }
-		#tertiary-content 		{ columns:24;margin-bottom:grid(baseline); }
+		#primary-content 		{ columns:12;float:right;margin-right:0;margin-bottom:grid(baseline); }
+		#secondary-content		{ columns:12;margin-bottom:grid(baseline); }
+		#tertiary-content 		{ columns:12;margin-bottom:grid(baseline); }
 	}
+
 	
 /**
-* --------------------------------------------------------
+* ========================================================
+* Navigation
+*
+* The navigation styles for the entire site. These get
+* the inline-list style from Scaffold to automatically
+* make them function as a horizontal list. 
+*
 * @section Navigation
+* @type Widget
+* @where Global
+* @since 1.0
 * --------------------------------------------------------
 */
 	
-	#navigation			{ add-to: selector('.inline-list'); }
+	#navigation			{ based-on:horizontal-list; }
 	#navigation li 		{ }
 	#navigation li a 	{ }
+
+	
+/**
+* ========================================================
+* Layout Utilities
+*
+* Utility classes for creating layouts. You can also
+* use bases as classes. eg .container or .horiztonal-list
+*
+* @section Layout Utilities
+* @type Structure
+* @where Global
+* @since 1.0
+* --------------------------------------------------------
+*/	 
+	
+	/**
+	* The page container base. Its width is calculated
+	* automatically from your grid. 
+	*/
+	@base(container)
+	{
+		width: grid(max); 
+		margin: 0 auto; 
+		clear: clearfix;
+		position: relative; 
+	!}
+	
+	/**
+	* Used for any horizontal navigation-style ul/ol 
+	*/
+	@base(horizontal-list)			
+	{ 
+		list-style:none; 
+		margin:0; 
+		padding:0; 
+		
+		li 		{ float:left; padding:0; margin-right:10px; }
+		a 		{ display:block; }
+	!}
+	
+	/**
+	* Add this to divs to make wireframing boxes
+	*/
+	@base(wireframe) 
+	{ 
+		opacity:0.7; 
+		background:lightblue; 
+		min-height:round(40);
+		margin-bottom:grid(baseline);
+	!}
+	
+	/**
+	* Add this to your container or body to show the grid. 
+	* The image is generated automatically by Scaffold to the backgrounds
+	* folder in your assets directory.
+	* You can add it as a class also - eg. <div class="showgrid">
+	*/
+	@base(showgrid) 
+	{ 
+		background: embed('assets/backgrounds/grid.png'); 
+	!}
+
+	/**
+	* Generate layout classes.
+	*/
+	.last { margin-right:0 !important; }	
+	.hide { display: none; }
+
+
+/**
+* ========================================================
+* Clears
+*
+* Clearing floats without extra markup.
+* You can add selectors to the clearfix like this:
+*
+* id {
+* 	clear:clearfix; 
+* }
+*
+* Or you can do it manually.
+*
+* @section Clears
+* @type Layout
+* @where Global
+* @since 1.0
+* @see http://www.positioniseverything.net/easyclearing.html
+* --------------------------------------------------------
+*/
+
+	.clearfix:after
+	{
+	    content: "\0020"; 
+	    display: block; 
+	    height: 0; 
+	    clear: both; 
+	    visibility: hidden; 
+	    overflow:hidden; 
+	}
+	.clearfix { display: block; }
+	
+	/**
+	* Regular Clearing
+	*
+	* Apply to column that should drop below previous ones
+	*/
+	.clear { clear:both; }
+

@@ -13,20 +13,20 @@
 		<key>Tabs</key>
 		<array>
 			<dict>
-				<key>StateType</key>
-				<string>PreviewTab</string>
-				<key>URL</key>
-				<string>http://scaffold/css/screen.css?recache</string>
-			</dict>
-			<dict>
 				<key>DocumentURL</key>
-				<string>file://localhost/Users/anthonyshort/Sites/Projects/Public/CSScaffold/css/system/plugins/-plugin.Optimizer.php</string>
+				<string>file://localhost/Users/anthonyshort/Sites/Projects/Public/CSScaffold/css/system/index.php</string>
 				<key>StateType</key>
 				<string>DefaultTab</string>
 			</dict>
 			<dict>
 				<key>DocumentURL</key>
-				<string>file://localhost/Users/anthonyshort/Sites/Projects/Public/CSScaffold/css/system/plugins/plugin.Layout.php</string>
+				<string>file://localhost/Users/anthonyshort/Sites/Projects/Public/CSScaffold/css/sections/typography.css</string>
+				<key>StateType</key>
+				<string>DefaultTab</string>
+			</dict>
+			<dict>
+				<key>DocumentURL</key>
+				<string>file://localhost/Users/anthonyshort/Sites/Projects/Public/CSScaffold/css/system/plugins/plugin.ImageReplacement.php</string>
 				<key>StateType</key>
 				<string>DefaultTab</string>
 			</dict>

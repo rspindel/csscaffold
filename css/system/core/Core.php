@@ -1,4 +1,4 @@
-<?php
+<?php defined('BASEPATH') OR die('No direct access allowed.');
 
 /**
  * Core
@@ -48,15 +48,19 @@ abstract class Core
 		unlink(self::$cached_file);
 	}
 	
-	public static function empty_cache()
+	public static function empty_cache($path = CACHEPATH)
 	{		
-		$f = read_dir(CACHEPATH);
-		
+		$f = read_dir($path);
+
 		foreach($f as $file)
 		{
 			if(substr($file, -3) == 'css')
 			{
 				unlink($file);
+			}
+			elseif(is_dir($file))
+			{
+				self::empty_cache($file);
 			}
 		}
 	}
@@ -65,13 +69,12 @@ abstract class Core
 	{
 		self::cache_exists();
 		
-		file_put_contents(self::$cached_file, $data);
+		file_put_contents(self::$cached_file, $data, 0777);
 		
-		//$css_handle = fopen(self::$cached_file, 'w');
-		//fwrite($css_handle, $data);
-		//fclose($css_handle);
-		//chmod(self::$cached_file, 0777);
+		chmod(self::$cached_file, 0777);
 		touch(self::$cached_file, $mod_time);
+		
+		self::config_set('cached_mod_time', time());
 	}
 		
 	// Create hash of query string to allow variables to be cached
@@ -84,14 +87,17 @@ abstract class Core
 	// Make sure the cache exists
 	public static function cache_exists()
 	{
-		if (self::$cached_file != CACHEPATH && !is_dir(CACHEPATH))
+		$cache_info = pathinfo(self::$cached_file);
+
+		if ($cache_info['dirname'] . "/" != CACHEPATH || !is_dir(CACHEPATH))
 		{
 			$path = CACHEPATH;
-			$dirs = explode('/', self::$relative_dir);
+			$dirs = explode('/', self::config('relative_dir'));
+
 			foreach ($dirs as $dir)
 			{
-				$path .= '/'.$dir;
-				mkdir($path, 0777);
+				$path .= $dir;
+				if (!is_dir($path)) { mkdir($path, 0777); }
 			}
 		}
 		return TRUE;
@@ -105,9 +111,12 @@ abstract class Core
 		
 		// Determine the name of the cache file
 		$cached_file = CACHEPATH.preg_replace('#(.+)(\.css)$#i', "$1-{$checksum}$2", self::config('relative_file'));
+		
+		// Save it
+		self::$cached_file = $cached_file;
 
 		// Turn off recaching if the cache is locked
-		if ($recache === TRUE && self::config('cache_lock') === TRUE)
+		if (self::config('cache_lock') === TRUE)
 		{
 			$recache = FALSE;
 		}
@@ -115,11 +124,9 @@ abstract class Core
 		// Check to see if we should delete the cache file
 		if ($recache === TRUE && file_exists($cached_file))
 		{
+			// Empty out the cache
 			self::empty_cache();
 		}
-		
-		// Save it to the member var
-		self::$cached_file = $cached_file;
 		
 		// When was the cache last modified
 		if (file_exists(self::$cached_file))
@@ -132,7 +139,7 @@ abstract class Core
 		}
 		
 		self::config_set('cached_mod_time', $cached_mod_time);
-		
+
 		return TRUE;
 	}
 	

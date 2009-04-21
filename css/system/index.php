@@ -1,4 +1,4 @@
-<?php define('CSS_CACHEER', true);
+<?php
 
 	// Turn off those ugly errors :)
 	//error_reporting(0);
@@ -10,11 +10,11 @@
 	/**
 	 * CSS DIRECTORY
 	 *
-	 * REQUIRED. URL path to you css directory. No trailing slash! eg. /themes/css
+	 * REQUIRED. URL path to you css directory. eg. /themes/css/
 	 *
 	 * @var string
 	 **/
-	$css_dir = "/css";
+	$css_dir = "/css/";
 	
 	
 	/**
@@ -60,14 +60,14 @@
 	 *
 	 * @var string
 	 **/
-	$assets_dir = "assets";
+	$assets_dir = "../assets";
 	
 
 /******************************************************************************
 * Get the common functions
 ******************************************************************************/
 	
-	// Fetch the core functions. This contains __autoload() to load our classes
+	// Fetch the core functions.
 	require 'libraries/functions.inc.php'; 
 
 
@@ -85,11 +85,9 @@
 /******************************************************************************
 * Define constants
 ******************************************************************************/
-
-	$pathinfo = pathinfo(__FILE__);
 	
 	// Define the document root
-	define('DOCROOT', slash($pathinfo['dirname']));
+	define('DOCROOT', $_SERVER['DOCUMENT_ROOT']);
 
 	// Full path to the cache folder
 	define('CACHEPATH', slash(realpath($cache_dir)));
@@ -104,7 +102,7 @@
 	define('URLPATH', slash($css_dir));
 	
 	// Url path to the asset directory
-	define('ASSETPATH', slash(realpath($css_server_path."/".$assets_dir)));
+	define('ASSETPATH', slash(realpath($assets_dir)));
 	
 	// Clean up
 	unset($cache_dir, $system_dir, $css_server_path, $css_dir, $assets_dir);
@@ -113,16 +111,19 @@
 /******************************************************************************
 * Run the install check
 ******************************************************************************/
-	
-	if (file_exists(DOCROOT.'install.php'))
+
+	if ($requested_file	== "" && file_exists(DOCROOT.'install.php'))
 	{
 		// Load the installation tests
 		include DOCROOT.'install.php';
+		exit();
 	}
-	
-	else
+	elseif ($requested_file == "")
 	{
-	
+		echo "You need to specify a css file";
+		exit;
+	}
+
 	
 /******************************************************************************
 * Load the required classes
@@ -153,6 +154,4 @@
 	
 	// Send it to the browser
 	CSScaffold::output_css();
-	
-	}
 

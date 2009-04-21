@@ -1,4 +1,4 @@
-<?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
+<?php defined('BASEPATH') OR die('No direct access allowed.');
 
 /**
  * CSS3Helper class

@@ -1,4 +1,4 @@
-<?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
+<?php defined('BASEPATH') OR die('No direct access allowed.');
 
 /**
  * BasedOnPlugin class
@@ -29,9 +29,12 @@ class BasedOn extends Plugins
 			{
 				$bases[$base_name] = $this->replace_bases($bases, $properties, $base_name);
 			}
-			
+						
 			// Now apply replaced based-on properties in our CSS
 			$css = $this->replace_bases($bases, $css);
+			
+			// Create classes for each of the bases
+			$css .= $this->create_classes($bases);
 		}
 						
 		return $css;
@@ -41,7 +44,7 @@ class BasedOn extends Plugins
 	{
 		// As long as there's based-on properties in the CSS string
 		// Get all instances
-		while (preg_match_all('#\s*based-on\s*:\s*base\(([^;]+)\);#i', $css, $matches))
+		while (preg_match_all('#\s*based-on\s*:\s*([^;]+);#i', $css, $matches))
 		{
 			// Loop through based-on instances
 			foreach ($matches[0] as $key => $based_on)
@@ -69,4 +72,19 @@ class BasedOn extends Plugins
 		}
 		return $css;
 	}
+	
+	function create_classes($bases)
+	{
+		$classes = ""; 
+
+		foreach ($bases as $key => $value)
+		{
+			// Build the class
+			$classes .= ".".$key . "{".$value."}";
+		}
+
+		return $classes;
+	}
+	
+
 } // END BasedOnPlugin

@@ -1,18 +1,19 @@
-/* @group Font Stacks */
-/* -------------------------------------------------------------- */
-	
-	/*
-	Based on the work of Nathan from Unit Interactive.
-	
-	For titles:
-	font-family: Ideal, Alternative, Common, Generic;
-	
-	For body copy:
-	font-family: Ideal, Fit, Common, Generic;
-	
-	http://unitinteractive.com/blog/2008/06/26/better-css-font-stacks/
-	
-	*/
+/**
+* ========================================================
+* Font Stacks
+*
+* Based on the work of Nathan from Unit Interactive.	
+* For titles:
+* font-family: Ideal, Alternative, Common, Generic;
+* 
+* For body copy:
+* font-family: Ideal, Fit, Common, Generic;
+*
+* @section Font Stacks
+* @see http://unitinteractive.com/blog/2008/06/26/better-css-font-stacks/
+* @since 1.0
+* --------------------------------------------------------
+*/
 	
 	@base(times)
 	{
@@ -98,5 +99,3 @@
 	{
 		font-family: Trebuchet, Tahoma, Arial, sans-serif;
 	!}
-
-/* @end */

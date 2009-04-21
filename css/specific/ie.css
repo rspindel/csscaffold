@@ -27,56 +27,50 @@ img { -ms-interpolation-mode: bicubic; }
 html { background : url(null) fixed no-repeat;  }  
 
 /**
-* -------------------------
-* @section Elements
-* -------------------------
+* Fixes incorrect styling of legend elements
+*
+* @workaround
+* @affected IE6
+* @valid no
 */
+* html legend { margin:0px -8px 16px 0; padding:0; }
 
-	/**
-	* Fixes incorrect styling of legend elements
-	*
-	* @workaround
-	* @affected IE6
-	* @valid no
-	*/
-	* html legend { margin:0px -8px 16px 0; padding:0; }
+/**
+* Fixes incorrect placement of ol numbers in IE6/7.
+*
+* @bugfix
+* @affected IE6, IE7
+* @valid yes
+*/
+ol { margin-left:2em; }
 
-	/**
-	* Fixes incorrect placement of ol numbers in IE6/7.
-	*
-	* @bugfix
-	* @affected IE6, IE7
-	* @valid yes
-	*/
-	ol { margin-left:2em; }
-	
-	/**
-	* Fixes wrong line-height on sup/sub in IE.
-	*
-	* @bugfix
-	* @affected IE
-	* @valid yes
-	*/
-	sup { vertical-align: text-top; }
-	sub { vertical-align: text-bottom; }
-	
-	/**
-	* Fixes IE7 missing wrapping of code elements.
-	*
-	* @bugfix
-	* @affected IE7
-	* @valid no
-	*/
-	html>body p code { *white-space: normal; } 
-	
-	/**
-	* Fix the padding on button elements
-	*
-	* @bugfix
-	* @affected IE6, IE7
-	* @valid yes
-	*/
-	button { padding:4px 10px 3px 7px; }
+/**
+* Fixes wrong line-height on sup/sub in IE.
+*
+* @bugfix
+* @affected IE
+* @valid yes
+*/
+sup { vertical-align: text-top; }
+sub { vertical-align: text-bottom; }
+
+/**
+* Fixes IE7 missing wrapping of code elements.
+*
+* @bugfix
+* @affected IE7
+* @valid no
+*/
+html>body p code { *white-space: normal; } 
+
+/**
+* Fix the padding on button elements
+*
+* @bugfix
+* @affected IE6, IE7
+* @valid yes
+*/
+button { padding:4px 10px 3px 7px; }
 
 
 /**
@@ -85,15 +79,15 @@ html { background : url(null) fixed no-repeat;  }
 * -------------------------
 */
 
-	/**
-	*  Makes clearfix actually work in IE
-	*
-	* @bugfix
-	* @affected IE6, IE7
-	* @valid no
-	*/
-	.clearfix {display: inline-block;}
-	* html .clearfix {height: 1%;}
+/**
+*  Makes clearfix actually work in IE
+*
+* @bugfix
+* @affected IE6, IE7
+* @valid no
+*/
+.clearfix {display: inline-block;}
+* html .clearfix {height: 1%;}
 
 
 /**
@@ -102,11 +96,11 @@ html { background : url(null) fixed no-repeat;  }
 * -------------------------
 */
 
-	/**
-	*  Fixes padding on fieldset
-	*
-	* @bugfix
-	* @affected IE6, IE7
-	* @valid yes
-	*/
-	fieldset {padding-top: 0;}
+/**
+*  Fixes padding on fieldset
+*
+* @bugfix
+* @affected IE6, IE7
+* @valid yes
+*/
+fieldset {padding-top: 0;}

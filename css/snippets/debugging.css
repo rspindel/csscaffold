@@ -1,8 +1,14 @@
-/* -------------------------------------------------------------------- */
-
-/* @group Debugging Styles */
-	
-/* -------------------------------------------------------------------- */
+/**
+* ========================================================
+* Debugging styles
+*
+* Useful debugging styles. For example, links with an empty 
+* href will have a big red border. 
+*
+* @section Debugging styles
+* @since 1.0
+* --------------------------------------------------------
+*/
 
 	div:empty, span:empty,
 	li:empty, p:empty,
@@ -25,5 +31,3 @@
 	a[title=""] 				{outline: 3px dotted red;}
 	a[href="#"] 				{background: lime;}
 	a[href=""] 				{background: fuchsia;}
-
-/* @end */

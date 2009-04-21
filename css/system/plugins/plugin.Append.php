@@ -1,4 +1,4 @@
-<?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
+<?php defined('BASEPATH') OR die('No direct access allowed.');
 
 /**
  * Append class
@@ -15,7 +15,7 @@ class Append extends Plugins
 		'path' => 'plugins/'
 	);
 
-	function pre_process($css)
+	function import($css)
 	{	
 		$path = CSSPATH . $this->settings['path'];
 		

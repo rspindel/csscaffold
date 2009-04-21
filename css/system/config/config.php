@@ -1,4 +1,4 @@
-<?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
+<?php defined('BASEPATH') OR die('No direct access allowed.');
 
 /******************************************************************************
 * System Configuration
@@ -22,13 +22,3 @@ $config['cache_lock'] = FALSE;
  * @var boolean
  **/
 $config['show_header'] = TRUE;
-	
-
-/**
- * CREATE SIZE REPORT
- *
- * Creates a size report inside your logs folder
- *
- * @var boolean
- **/
-$config['create_report'] = TRUE;

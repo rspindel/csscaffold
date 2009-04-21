@@ -1,8 +1,14 @@
 <?xml version="1.0" ?>
+<grid>
+<column-width>60</column-width>
+<column-count>12</column-count>
+<grid-width>940</grid-width>
+<gutter-width>20</gutter-width>
+<baseline>18</baseline>
 <layouts>
-<layout>layout-single-column</layout>
 <layout>layout-3-column</layout>
 <layout>layout-2-column</layout>
+<layout>layout-home</layout>
 <layout>layout-default</layout>
 
-</layouts>
+</layouts></grid>

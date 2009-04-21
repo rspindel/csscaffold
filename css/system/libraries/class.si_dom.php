@@ -1,4 +1,4 @@
-<?php 
+<?php defined('BASEPATH') OR die('No direct access allowed.');
 
 class SI_DomNode
 {

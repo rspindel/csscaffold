@@ -1,4 +1,4 @@
-<?php if (!defined('CSS_CACHEER')) { header('Location:/'); }
+<?php defined('BASEPATH') OR die('No direct access allowed.');
 
 /**
  * ImageReplacement class
@@ -10,21 +10,34 @@ class ImageReplacement extends Plugins
 	function process($css)
 	{			
 		$directory = ASSETPATH."/titles";
-		$images = read_dir($directory);
 		
-		// If we found some images in the titles directory
-		if($images != "")
+		// Find all the image-replace:; properties and replace them
+		if(preg_match_all("/image\-replace\s*\:\s*url\([\'\"](.*?)[\'\"]\)\s*\;/sx",$css, $match))
 		{
-			foreach($images as $name => $path)
+			foreach ($match[1] as $key => $value) 
 			{
-				$ext = substr($name, -3, 3);
+				$file = pathinfo($value);
+				
+				// Check it from the root or if its relative to the css directory
+				if ( file_exists(DOCROOT . $value) ) 
+				{
+					$path = DOCROOT . $value;
+				}
+				elseif ( file_exists(DOCROOT . URLPATH . $value) ) 
+				{
+					$path = DOCROOT . URLPATH . $value;
+				}
+				else
+				{
+					stop(unslash(DOCROOT) . URLPATH . $value);
+					continue;
+				}
+				 
+				$ext = $file['extension'];
 
 				// Make sure its an image file, if not, skip it
 				if( $ext == 'png' || $ext == 'jpg' || $ext == 'gif' )
-				{ 
-					// Ditch the extension
-					$name = preg_replace('/\.png|\.jpg|\.gif/', "", $name);
-																
+				{ 																
 					// Get the size of the image file
 					$size = GetImageSize($path);
 					$width = $size[0];
@@ -38,25 +51,20 @@ class ImageReplacement extends Plugins
 					
 					// Build the selector
 					$properties = "
-						background:url($path) no-repeat 0 0;
+						background:url(". $value .") no-repeat 0 0;
 						height:".$height."px;
 						width:".$width."px;
 						display:block;
 						text-indent:-9999px;
 						overflow:hidden;
-						";
-					
-					// Find all the image-replace:; properties and replace them
-					if(preg_match_all("/image\-replace\s*\:\s*[\'\"]($name)[\'\"]\s*\;/sx",$css, $match))
-					{
-						foreach ($match[0] as $key => $value) 
-						{
-							$css = str_replace($match[0][$key], $properties, $css);
-						}
-					}				
+					";		
+
 				}	
-			}	
-		}				
+				
+				$css = str_replace($match[0][$key], $properties, $css);
+			}
+		}	
+					
 		return $css;
 	}
 }

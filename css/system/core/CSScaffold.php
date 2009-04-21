@@ -1,4 +1,4 @@
-<?php
+<?php defined('BASEPATH') OR die('No direct access allowed.');
 
 /**
  * CSScaffold (aka, the controller)
@@ -46,6 +46,12 @@ class CSScaffold {
 		
 		// Start the timer
 		Benchmark::start("system");
+		
+		// Determine some paths
+		$requested_file_name 	= basename($requested_file);
+		$requested_dir 			= preg_replace('#/[^/]*$#', '', $requested_file);
+		$relative_file 			= trim_slashes(substr($requested_file, strlen(URLPATH)));
+		$relative_dir 			= (strpos($relative_file, '/') === false) ? '' : preg_replace("/\/[^\/]*$/", '', $relative_file);
 
 		// Set our config values
 		Core::config_set(
@@ -53,34 +59,23 @@ class CSScaffold {
 				'requested_file', 
 				'requested_file_name',
 				'requested_dir',
-				'relative_file'
+				'relative_file',
+				'relative_dir'
 			),
 			array(
 				$requested_file,
-				basename($requested_file),
-				preg_replace('#/[^/]*$#', '', $requested_file),
-				trim_slashes(substr($requested_file, strlen(URLPATH))) 
+				$requested_file_name,
+				$requested_dir,
+				$relative_file,
+				$relative_dir
 			)
 		);
 		
-		// Check if the relative file is just /
-		if (strpos(Core::config('relative_file'), '/') === false)
-		{
-			$relative_dir = '';
-		}
-		else
-		{
-			$relative_dir = preg_replace("/\/[^\/]*$/", '', Core::config('relative_file'));
-		}
-		
-		// Set the relative directory
-		Core::config_set('relative_dir', $relative_dir);
+		// Load the plugins and flags
+		self::load_plugins();
 		
 		// Get the modified time of the CSS file
 		Core::config_set('requested_mod_time', filemtime(CSSPATH . Core::config('relative_file')));
-		
-		// Load the plugins and flags
-		self::load_plugins();
 		
 		// Send the flags to the cache and get it ready
 		Core::set_cache(self::$flags, $recache);
@@ -112,7 +107,7 @@ class CSScaffold {
 			exit;
 		}
 		
-		return file_get_contents(CSSPATH . "/" . Core::config('relative_file'));
+		return file_get_contents(CSSPATH . Core::config('relative_file'));
 	}
 	
 	/**
@@ -165,12 +160,19 @@ class CSScaffold {
 	public function parse_css()
 	{
 		// If the cache is stale or doesn't exist
-		if ((Core::config('cached_mod_time') < Core::config('requested_mod_time')))
+		if (Core::config('cached_mod_time') < Core::config('requested_mod_time'))
 		{	
 			// Load the CSS file
 			$css = self::load_css();
 			
 			// Parse our css through the plugins
+			foreach(self::$plugins as $plugin)
+			{
+				Benchmark::start( get_class($plugin) ."_import" );
+				$css = $plugin->import($css);
+				Benchmark::stop( get_class($plugin) ."_import" );
+			}
+			
 			foreach(self::$plugins as $plugin)
 			{
 				Benchmark::start( get_class($plugin) ."_preprocess" );
@@ -193,7 +195,7 @@ class CSScaffold {
 			}
 
 			// Write the css file to the cache
-			Core::write_cache($css, Core::config('requested_mod_time'));
+			Core::write_cache($css, time());
 		} 
 	}
 		
@@ -211,7 +213,7 @@ class CSScaffold {
 		if 
 		(
 			isset($_SERVER['HTTP_IF_MODIFIED_SINCE'], $_SERVER['SERVER_PROTOCOL']) && 
-			Core::config('requested_mod_time') <= strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE'])
+			Core::config('cached_mod_time') <= strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE'])
 		)
 		{
 			header("{$_SERVER['SERVER_PROTOCOL']} 304 Not Modified");
@@ -233,20 +235,17 @@ class CSScaffold {
 				$header .= "\n\tWith plugins\n\t\t ";
 				foreach (self::$loaded as $key => $value)
 				{
-					$header .= "\n\t\t" . $value . " \n\t\t\t Pre-process(".Benchmark::get($value . '_preprocess', "time")." secs) \n\t\t\t Process(".Benchmark::get($value . '_process', "time")." secs) \n\t\t\t Post-process(".Benchmark::get($value . '_postprocess', "time")." secs)\n"; 
+					$header .= "\n\t\t" . $value . "\n\t\t\t Import(".Benchmark::get($value . '_import', "time")." secs) \n\t\t\t Pre-process(".Benchmark::get($value . '_preprocess', "time")." secs) \n\t\t\t Process(".Benchmark::get($value . '_process', "time")." secs) \n\t\t\t Post-process(".Benchmark::get($value . '_postprocess', "time")." secs)\n"; 
 				}
 				$header .= "\n*/\n";
 				$css = $header.$css;
 			}
-			 
+
 			header('Content-Type: text/css');
 			header("Vary: User-Agent, Accept");
-			header('Last-Modified: '. gmdate('D, d M Y H:i:s', Core::config('requested_mod_time')) .' GMT');
+			header('Last-Modified: '. gmdate('D, d M Y H:i:s', Core::config('cached_mod_time')) .' GMT');
 			echo $css;
 			exit();
 		}
 	}
-	
-	
-
 } // end CSScaffold

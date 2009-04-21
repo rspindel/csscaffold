@@ -5,6 +5,7 @@
 *
 * @bugfix
 * @affected Safari 2, Safari 3
-* @valid no
+* @valid yes
+* @see http://www.komodomedia.com/blog/2009/03/safari-text-shadow-anti-aliasing-css-hack/
 */
-p, li, dt, dd, label, legend, caption, td { text-shadow: 0 0 0 #fff; }
+p, li, dt, dd, label, legend, caption, td { text-shadow:rgba(0,0,0,0.01) 0 0 0; }
