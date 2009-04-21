@@ -112,10 +112,10 @@
 * Run the install check
 ******************************************************************************/
 
-	if ($requested_file	== "" && file_exists(DOCROOT.'install.php'))
+	if ($requested_file	== "" && file_exists('./install.php'))
 	{
 		// Load the installation tests
-		include DOCROOT.'install.php';
+		include './install.php';
 		exit();
 	}
 	elseif ($requested_file == "")
