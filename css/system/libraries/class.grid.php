@@ -188,6 +188,9 @@ class Grid
 		// Draw baseline
 		imageline($image, 0, ($bl - 1 ), $cw, ($bl - 1 ), $colorGrey);
 		
+		// Check the folder
+		if (!is_dir(ASSETPATH . "/backgrounds/")) mkdir(ASSETPATH . "/backgrounds/", 0777);
+		
 		// Create it
 	    ImagePNG($image, ASSETPATH . "/backgrounds/grid.png") or die("Can't save the grid.png file");
 	    
