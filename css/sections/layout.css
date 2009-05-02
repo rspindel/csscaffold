@@ -151,17 +151,6 @@
 		min-height:round(40);
 		margin-bottom:grid(baseline);
 	!}
-	
-	/**
-	* Add this to your container or body to show the grid. 
-	* The image is generated automatically by Scaffold to the backgrounds
-	* folder in your assets directory.
-	* You can add it as a class also - eg. <div class="showgrid">
-	*/
-	@base(showgrid) 
-	{ 
-		background: embed('assets/backgrounds/grid.png'); 
-	!}
 
 	/**
 	* Generate layout classes.
