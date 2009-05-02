@@ -87,7 +87,7 @@ class CSScaffold {
 	 * @return string - The unprocessed css file as a string
 	 * @author Anthony Short
 	 **/
-	public static function load_css()
+	private static function load_css()
 	{		
 		if (substr(Core::config('requested_file'), -4) != '.css')
 		{
@@ -116,7 +116,7 @@ class CSScaffold {
 	 * @return boolean
 	 * @author Anthony Short
 	 **/
-	public function load_plugins()
+	public static function load_plugins()
 	{	
 		// Load each of the plugins
 		foreach(read_dir(BASEPATH . "/plugins") as $plugin)
@@ -157,7 +157,7 @@ class CSScaffold {
 	 * @return string - The processes css file as a string
 	 * @author Anthony Short
 	 **/
-	public function parse_css()
+	public static function parse_css()
 	{
 		// If the cache is stale or doesn't exist
 		if (Core::config('cached_mod_time') < Core::config('requested_mod_time'))
@@ -205,7 +205,7 @@ class CSScaffold {
 	 * @return void
 	 * @author Anthony Short
 	 **/
-	public function output_css()
+	public static function output_css()
 	{		
 		// Stop the timer...
 		Benchmark::stop("system");
@@ -220,25 +220,13 @@ class CSScaffold {
 			exit();
 		}
 		else
-		{			
+		{	
+			// Get the css from the cache		
 			$css = file_get_contents(Core::$cached_file);
-			
-			$filesize = round(strlen($css) / 1024 , 2);
 			
 			if (Core::config('show_header') === TRUE)
 			{
-				$header  = "/* Processed and cached by CSScaffold on ".gmdate('r'). "\n";
-				$header .= "\n\tCached filesize is " . $filesize . " kilobytes. ";
-				$header	.= "\n\tProcessed in ".Benchmark::get("system", "time")." seconds.";
-				$header .= "\n\tRendered as " . Core::user_agent('browser') . " ".  Core::user_agent('version');
-				$header .= "\n\tWith flags " . join(", ", array_keys(self::$flags));
-				$header .= "\n\tWith plugins\n\t\t ";
-				foreach (self::$loaded as $key => $value)
-				{
-					$header .= "\n\t\t" . $value . "\n\t\t\t Import(".Benchmark::get($value . '_import', "time")." secs) \n\t\t\t Pre-process(".Benchmark::get($value . '_preprocess', "time")." secs) \n\t\t\t Process(".Benchmark::get($value . '_process', "time")." secs) \n\t\t\t Post-process(".Benchmark::get($value . '_postprocess', "time")." secs)\n"; 
-				}
-				$header .= "\n*/\n";
-				$css = $header.$css;
+				$css = self::generate_info($css);
 			}
 
 			header('Content-Type: text/css');
@@ -248,4 +236,34 @@ class CSScaffold {
 			exit();
 		}
 	}
+	
+	/**
+	* Generates the css information string to place at the top of the file. Super messy.
+	*
+	* @author Anthony Short
+	* @param $css
+	* @return string
+	* @todo Clean this up
+	*/
+	private function generate_info($css)
+	{
+		$filesize = round(strlen($css) / 1024 , 2);
+		
+		$header  = "/* Processed and cached by CSScaffold on ".gmdate('r'). "\n";
+		$header .= "\n\tCached filesize is " . $filesize . " kilobytes. ";
+		$header	.= "\n\tProcessed in ".Benchmark::get("system", "time")." seconds.";
+		$header .= "\n\tRendered as " . Core::user_agent('browser') . " ".  Core::user_agent('version');
+		$header .= "\n\tWith flags " . join(", ", array_keys(self::$flags));
+		$header .= "\n\tWith plugins\n\t\t ";
+		foreach (self::$loaded as $key => $value)
+		{
+			$header .= "\n\t\t" . $value . "\n\t\t\t Import(".Benchmark::get($value . '_import', "time")." secs) \n\t\t\t Pre-process(".Benchmark::get($value . '_preprocess', "time")." secs) \n\t\t\t Process(".Benchmark::get($value . '_process', "time")." secs) \n\t\t\t Post-process(".Benchmark::get($value . '_postprocess', "time")." secs)\n"; 
+		}
+		$header .= "\n*/\n";
+		
+		$css = $header . $css;
+		
+		return $css;
+	}
+		 
 } // end CSScaffold

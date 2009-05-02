@@ -8,6 +8,7 @@
 	<title>CSScaffold Tests</title>
 	
 	<link href="/css/screen.css?recache" media="screen" rel="stylesheet" type="text/css" />
+	<link href="/css/forms.css?recache" media="screen" rel="stylesheet" type="text/css" />
 	
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/test.js"></script>

@@ -32,7 +32,8 @@ class Plugins
 	public function import($css) { return $css; }
 
 	/**
-	* For any preprocessing of the css - like importing files.
+	* For any preprocessing of the css. Arranging the css,
+	* stripping comments.. etc.
 	*
 	* @param   string   The css file as a string
 	* @return  string	The css file as a string
@@ -48,7 +49,7 @@ class Plugins
 	public function process($css) { return $css; }
 	
 	/**
-	* For formatters, compressers and prettifiers
+	* For formatters, compressors and prettifiers
 	*
 	* @param   string   The css file as a string
 	* @return  string	The css file as a string

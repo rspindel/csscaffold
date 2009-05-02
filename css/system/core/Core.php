@@ -11,43 +11,81 @@
  **/
 abstract class Core
 {	
-	// The singleton instance of the controller
+	/**
+	* The singleton instance of the controller
+	*
+	* @var object
+	**/
 	public static $instance;
 	
-	// The location of the cache file
+	/**
+	* The location of the cache file
+	*
+	* @var string
+	**/
 	public static $cached_file; 
 	
-	// Configuration
+	/**
+	* Hold the configuration
+	*
+	* @var array
+	**/
 	public static $configuration;
 	
-	// The modified time of the cache file
+	/**
+	* The modified time of the cached file
+	*
+	* @var string
+	**/
 	public static $cached_mod_time;
 	
-	// Holds the user agent information of the user
+	/**
+	* Holds the user agent information of the user
+	*
+	* @var array
+	**/
 	public static $user_agent;
 
+	/**
+	* Initiates any features needed by the core
+	*
+	* @return void
+	* @author Anthony Short
+	**/
 	function setup()
 	{
 		self::$user_agent = ( ! empty($_SERVER['HTTP_USER_AGENT']) ? trim($_SERVER['HTTP_USER_AGENT']) : '');
 		//self::$instance =& $this;
 	}
 
+	/**
+	* Returns the instance of the core
+	*
+	* @return self
+	* @author Anthony Short
+	**/
 	public static function & get_instance()
 	{
 		return self::$instance;
 	}
-	
+
 	/**
-	* -------------------------------------------------------------------------
-	*	Caching
-	* -------------------------------------------------------------------------
-	*/
-	
+	* Clear the set cached file
+	*
+	* @return void
+	* @author Anthony Short
+	**/
 	public static function clear_cache()
 	{
 		unlink(self::$cached_file);
 	}
 	
+	/**
+	* Empty the entire cache, removing every cached css file.
+	*
+	* @return void
+	* @author Anthony Short
+	**/
 	public static function empty_cache($path = CACHEPATH)
 	{		
 		$f = read_dir($path);
@@ -65,6 +103,12 @@ abstract class Core
 		}
 	}
 	
+	/**
+	* Write to the set cache
+	*
+	* @return void
+	* @author Anthony Short
+	**/
 	public static function write_cache($data, $mod_time)
 	{
 		self::cache_exists();
@@ -77,14 +121,24 @@ abstract class Core
 		self::config_set('cached_mod_time', time());
 	}
 		
-	// Create hash of query string to allow variables to be cached
+	/**
+	* Create hash of query string to allow variables to be cached
+	*
+	* @return string
+	* @author Anthony Short
+	**/
 	public static function generate_hash($args = array())
 	{
 		ksort($args);
 		return md5(serialize($args));
 	}
-	
-	// Make sure the cache exists
+
+	/**
+	* Make sure the cache exists
+	*
+	* @return boolean
+	* @author Anthony Short
+	**/
 	public static function cache_exists()
 	{
 		$cache_info = pathinfo(self::$cached_file);
@@ -103,7 +157,12 @@ abstract class Core
 		return TRUE;
 	}
 	
-	// Set the cache
+	/**
+	* Set the cache file which will be used for this process
+	*
+	* @return boolean
+	* @author Anthony Short
+	**/
 	public static function set_cache($flags, $recache = FALSE)
 	{		
 		// Generate checksum based on plugin flags
@@ -142,12 +201,6 @@ abstract class Core
 
 		return TRUE;
 	}
-	
-	/**
-	* -------------------------------------------------------------------------
-	*	Config
-	* -------------------------------------------------------------------------
-	*/
 	
 	/**
 	 * Get a config item or group.

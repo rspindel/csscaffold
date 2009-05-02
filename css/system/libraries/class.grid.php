@@ -253,7 +253,7 @@ class Grid
 	public function buildGrid($css) 
 	{	
 		// Generate the grid.png
-		$this->generateGridImage();
+		//$this->generateGridImage();
 		
 		// Create the layouts xml for use with the tests
 		$this->generateLayoutXML($css);
