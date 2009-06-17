@@ -12,13 +12,7 @@
  **/
 class Grid
 {
-	/**
-	* If there are grid settings, enable this plugin.
-	*
-	* @param   boolean 
-	*/
-	var $active;
-	
+
 	/**
 	* Gets the grid settings from the css, and stores them.
 	*
@@ -47,8 +41,8 @@ class Grid
 			}
 			else 
 			{
-				$cw = $cw + $gw;
-				$gridw = ($cw * $cc) - $gw;
+				$cw = $cw + ($gw*2);
+				$gridw = ($cw * $cc);
 			}
 			
 			// Set them in the config so other plugins can access this info
@@ -89,8 +83,8 @@ class Grid
 		{
 			// Make the .columns-x classes
 			for ($i=1; $i < $cc + 1; $i++) { 
-				$w = $cw * $i - $gw;
-				$s .= ".columns-$i{width:".$w."px;float:left;margin-right:".$gw."px;}";
+				$w = $cw * $i - ($gw*2);
+				$s .= ".columns-$i{width:".$w."px;float:left;margin-right:".$gw."px;margin-left:".$gw."px;}";
 			}
 		}
 	
@@ -98,7 +92,7 @@ class Grid
 		{
 			// Make the .push classes
 			for ($i=1; $i < $cc; $i++) { 
-				$w = $cw * $i;
+				$w = $cw * $i + $gw;
 				$s .= ".push-$i{margin-left:".$w."px;}";
 				$pushselectors .= ".push-$i,";
 			}
@@ -109,7 +103,7 @@ class Grid
 		{
 			// Make the .pull classes
 			for ($i=1; $i < $cc; $i++) { 
-				$w = $cw * $i;
+				$w = $cw * $i + $gw;
 				$s .= ".pull-$i{ margin-left:-".$w."px; }";
 				$pullselectors .= ".pull-$i,";
 			}
@@ -299,7 +293,7 @@ class Grid
 					$showproperties = (substr($numberofcolumns, -1) == "!") ? false : true;
 
 					// Calculate the width of the column
-					$width = (($cw*$i)-$gw);
+					$width = (($cw*$i)-($gw*2));
 					
 					// If the browser doesn't support box-sizing, minus the padding and border
 					// We'll see if the flags have been set from the browser plugin
@@ -354,11 +348,8 @@ class Grid
 							$styles .= "display:inline;overflow:hidden;";
 						}
 						
-						// We don't ever need a margin on the full-width column
-						if ($numberofcolumns < $cc)
-						{
-							$styles .= "margin-right:" . $gw . "px;";
-						}
+						// Add the gutters
+						$styles .= "margin-right:" . $gw . "px; margin-left:".$gw."px;";
 					}
 					
 					// Insert into property string
@@ -405,8 +396,7 @@ class Grid
 		}
 		
 		// Replace grid(max)
-		$maxw = ($cc * $cw) - $gw .'px';
-		$css = str_replace('grid(max)',$maxw,$css);
+		$css = str_replace('grid(max)',$gridw ."px",$css);
 		
 		// Replace grid(baseline)	
 		$css = str_replace('grid(baseline)', $bl . "px" , $css);

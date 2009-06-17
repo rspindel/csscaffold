@@ -1,9 +1,9 @@
 <?xml version="1.0" ?>
 <grid>
-<column-width>60</column-width>
+<column-width>70</column-width>
 <column-count>12</column-count>
-<grid-width>940</grid-width>
-<gutter-width>20</gutter-width>
+<grid-width>960</grid-width>
+<gutter-width>10</gutter-width>
 <baseline>18</baseline>
 <layouts>
 <layout>layout-3-column</layout>

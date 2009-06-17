@@ -19,7 +19,7 @@
 	@grid 
 	{
 		column-width:60;
-		gutter-width:20;
+		gutter-width:10;
 		column-count:12;
 		baseline:18;
 	}
@@ -52,33 +52,37 @@
 * @since 1.0
 * --------------------------------------------------------
 */
-
+	#primary-content,
+	#secondary-content,
+	#tertiary-content 
+	{ margin-bottom:grid(baseline); }
+	
 	.layout-3-column
 	{
-		#primary-content 		{ columns:4; margin-bottom:grid(baseline); padding:20px; }
-		#secondary-content		{ columns:4; margin-bottom:grid(baseline); }
-		#tertiary-content		{ columns:4; margin-right:0;margin-bottom:grid(baseline); }
+		#primary-content 		{ columns:4; padding:20px; }
+		#secondary-content		{ columns:4; border:2px solid #555; padding:18px; }
+		#tertiary-content		{ columns:4; }
 	}
 	
 	.layout-2-column
 	{
-		#primary-content 		{ columns:8;margin-bottom:grid(baseline); }
-		#secondary-content		{ columns:4; margin-right:0;margin-bottom:grid(baseline); }
-		#tertiary-content 		{ columns:12;margin-bottom:grid(baseline); }
+		#primary-content 		{ columns:8; }
+		#secondary-content		{ columns:4; }
+		#tertiary-content 		{ columns:12;}
 	}
 	
 	.layout-home
 	{
-		#primary-content 		{ columns:2;margin-bottom:grid(baseline); }
-		#secondary-content		{ columns:8;margin-bottom:grid(baseline); }
-		#tertiary-content 		{ columns:2;margin-bottom:grid(baseline); margin-right:0; }
+		#primary-content 		{ columns:2; }
+		#secondary-content		{ columns:8; }
+		#tertiary-content 		{ columns:2; }
 	}
 	
 	.layout-default
 	{
-		#primary-content 		{ columns:12;float:right;margin-right:0;margin-bottom:grid(baseline); }
-		#secondary-content		{ columns:12;margin-bottom:grid(baseline); }
-		#tertiary-content 		{ columns:12;margin-bottom:grid(baseline); }
+		#primary-content 		{ columns:12; }
+		#secondary-content		{ columns:12; }
+		#tertiary-content 		{ columns:12; }
 	}
 
 	

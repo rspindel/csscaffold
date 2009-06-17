@@ -5,5 +5,5 @@
 	RewriteEngine	on
 	RewriteCond		%{REQUEST_FILENAME}		-f
 	RewriteCond 	%{REQUEST_URI}			\.css$
-	RewriteRule 	^(.+)$ 					system/index.php?cssc_request=%{REQUEST_URI}&%{QUERY_STRING}
+	RewriteRule 	^(.+)$ 					/csscaffold/index.php?request=%{REQUEST_URI}&%{QUERY_STRING}
 </IfModule>

@@ -5,7 +5,6 @@
 <!--	<li><a href="forms.php">Forms</a></li> -->
 		<li><a href="layout.php">Layouts</a></li>
 		<li><a href="grid.php">Grid</a></li>
-		<li><a href="#showgrid" class="showgrid-toggle">Toggle Grid View</a></li>
 	</ul>
 	<select id="layout-options">
 		<option>Choose a Layout</option>

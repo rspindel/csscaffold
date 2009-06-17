@@ -1,73 +1,11 @@
 <?php
 
-	// Turn off those ugly errors :)
-	//error_reporting(0);
-	
-/******************************************************************************
-* Path Settings
-******************************************************************************/
-	 
-	/**
-	 * CSS DIRECTORY
-	 *
-	 * REQUIRED. URL path to you css directory. eg. /themes/css/
-	 *
-	 * @var string
-	 **/
-	$css_dir = "/css/";
-	
-	
-	/**
-	 * CSS SERVER PATH
-	 *
-	 * REQUIRED. You can set it as relative to the system directory, or
-	 * use an absolute full server path
-	 *
-	 * @var string
-	 **/
-	$css_server_path = "../";
-		
-		
-	/**
-	 * SYSTEM FOLDER PATH
-	 *
-	 * Leave this unless you would like to set something other 
-	 * than the default system folder.  Use a full server path with trailing slash.
-	 * If you change this setting, you'll probably need to change the cache path below.
-	 * Remember to check your .htaccess file in your CSS directory also.
-	 *
-	 * @var string
-	 **/
-	$system_dir = "./";
-	
-	
-	/**
-	 * CACHE DIRECTORY PATH
-	 *
-	 * Leave this unless you would like to set something other 
-	 * than the default system/cache/ folder.  Use a full server path with trailing slash.
-	 *
-	 * @var string
-	 **/
-	$cache_dir = "cache";
-	
-	
-	/**
-	 * ASSET FOLDER PATH
-	 *
-	 * The name of your asset folder relative to your css directory. 
-	 * Use full server path if its out of the css directory with a trailing slash.
-	 *
-	 * @var string
-	 **/
-	$assets_dir = "../assets";
-	
-
 /******************************************************************************
 * Get the common functions
 ******************************************************************************/
 	
 	// Fetch the core functions.
+	require 'config/config.php'; 
 	require 'libraries/functions.inc.php'; 
 
 
@@ -76,12 +14,11 @@
 ******************************************************************************/
 
 	// The file that the user requested
-	$requested_file	= isset($_GET['cssc_request']) ? $_GET['cssc_request'] : '';
+	$requested_file	= isset($_GET['request']) ? $_GET['request'] : '';
 
 	// Do they want to recache
 	$recache = isset($_GET['recache']);
 
-	
 /******************************************************************************
 * Define constants
 ******************************************************************************/
@@ -124,7 +61,6 @@
 		exit;
 	}
 	
-
 /******************************************************************************
 * Make sure the files/folders are writeable
 ******************************************************************************/
