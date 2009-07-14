@@ -1,21 +1,21 @@
-## 1.1
-	## Rewritten most of the codebase so it's much faster
-	## Mixins are now available and function in a similar way to SASS mixins
-	## The math() function is now expr() as it can do more than basic math
-	## BasedOn plugin removed. It's been replaced by Mixins.
-	## Any plugin is now capable of setting constants
-	## Import plugin now includes nested imports
-	## Layout plugin was mostly rewritten but works the same way
-	## Multiple properties - you can target multiple properties at once. eg. margin,padding:0;
-	## Nested selectors plugin completely rewritten
-	## Added mixins to the framework. Any css file in /scaffold/mixins will automatically be included
-	## Tests were removed and replaced with a one page demo. Layouts were removed. It now is solely for testing the framework rather than for being used in production.
-	## CSS examples rewritten to include mixins.
-	## Example plugin is included to get you started
-	## New process - Import. This occurs before pre-process and is solely for importing files.
-	## New process - Formatting. This is solely for rearranging the css. No processing is done in this function.
-	## Config and path should be easier to setup
-	## Helper functions for manipulating css are now in Common.php. This include functions such as find_selectors_with_property etc. to make plugin development much easier
-	## Core.php has been split up into separate classes to make it more manageable.
-## 1.0
-	## Initial release
+* 1.1
+** Rewritten most of the codebase so it's much faster
+** Mixins are now available and function in a similar way to SASS mixins
+** The math() function is now expr() as it can do more than basic math
+** BasedOn plugin removed. It's been replaced by Mixins.
+** Any plugin is now capable of setting constants
+** Import plugin now includes nested imports
+** Layout plugin was mostly rewritten but works the same way
+** Multiple properties - you can target multiple properties at once. eg. margin,padding:0;
+** Nested selectors plugin completely rewritten
+** Added mixins to the framework. Any css file in /scaffold/mixins will automatically be included
+** Tests were removed and replaced with a one page demo. Layouts were removed. It now is solely for testing the framework rather than for being used in production.
+** CSS examples rewritten to include mixins.
+** Example plugin is included to get you started
+** New process - Import. This occurs before pre-process and is solely for importing files.
+** New process - Formatting. This is solely for rearranging the css. No processing is done in this function.
+** Config and path should be easier to setup
+** Helper functions for manipulating css are now in Common.php. This include functions such as find_selectors_with_property etc. to make plugin development much easier
+** Core.php has been split up into separate classes to make it more manageable.
+* 1.0
+** Initial release

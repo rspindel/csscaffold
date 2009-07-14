@@ -1,5 +1,3 @@
-h1. Minify
-
 |_.Process|_.Dependencies|_.Added|_.Updated|_.Version|
 |Post_process|None|1.1|-|1.0|
 

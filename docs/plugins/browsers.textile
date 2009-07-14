@@ -1,5 +1,3 @@
-h1. Browsers
-
 |_.Process|_.Dependencies|_.Added|_.Updated|_.Version|
 |Pre_process|User_agent, Constants|1.0|1.1|1.1|
 

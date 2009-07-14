@@ -1,5 +1,3 @@
-h1. Constants
-
 |_.Process|_.Dependencies|_.Added|_.Updated|_.Version|
 |Pre_process|None|1.0|1.1|1.1|
 

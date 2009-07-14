@@ -29,23 +29,24 @@ Unlike most other CSS frameworks, Scaffold requires a web server. You need PHP 5
 h2. Contents
 
 # Getting Started
-## Installation
-## FAQ
-## Advanced Usage
+## [[Installation]]
+## [[FAQ]]
+## [[Advanced Usage]]
 # Functionality
-## @ rules
-## Classes
-## Constants
-## Functions
-## Properties
-## Snippets
-## Other
-# Mixins
-## Layout
-## Type
-## Utilities
-## Widgets
+## [[at-rules]]
+## [[Classes]]
+## [[Predefined Constants]]
+## [[Functions]]
+## [[Properties]]
+## [[Snippets]]
+## [[Other functionality]]
+# Mixins Modules
+## [[Layout Mixins]]
+## [[Type Mixins]]
+## [[Utility Mixins]]
+## [[Widget Mixins]]
+## [[Create your own mixins]]
 # Development
-## Future Plans
-## Creating a plugin
-## Built-in Plugins
+## [[Future Plans]]
+## [[Creating a plugin]]
+## List of [[Plugins]]

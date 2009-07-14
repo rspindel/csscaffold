@@ -1,26 +1,22 @@
-h1. reset.css
+Scaffold stores some useful snippets in /scaffold/snippets/. Don't modify these snippets, as you should be able to update them if needed.
 
-A simple CSS reset based on Eric Meyers. Also includes HTML5 elements.
+h2. reset.css
 
 |_.Added|_.Updated|_.Version|
 |1.0|1.1|1.1|
 
-<hr/>
+A simple CSS reset based on Eric Meyers. Also includes HTML5 elements.
 
-h1. ie-fixes.css
-
-Generic fixes for IE bugs. Don't just slap this in your CSS. Take a look at it and make sure it won't break anything first. 
+h2. ie-fixes.css
 
 |_.Added|_.Updated|_.Version|
 |1.1|-|1.0|
 
-<hr/>
+Generic fixes for IE bugs. Don't just slap this in your CSS. Take a look at it and make sure it won't break anything first. 
 
-h1. debugging.css
-
-Based on Eric Meyers debugging css file.
+h2. debugging.css
 
 |_.Added|_.Updated|_.Version|
 |1.0|-|1.0|
 
-<hr/>
+Based on Eric Meyers debugging css file.

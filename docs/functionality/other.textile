@@ -1,63 +1,63 @@
-h1. Chained Properties
+Scaffold also provides some other functionality which doesn't fall under the other categories.
+
+h2. Chained Properties
+
+|_.Dependencies|_.Added|_.Updated|
+|Multiple_properties|1.1|-|
 
 You can chain properties together that have the same property value.
 
 *Example*
 
-<pre><code>
-	h1
-	{
-		margin,padding:0;
-	}
+<pre><code>h1
+{
+	margin,padding:0;
+}
 </code></pre>
 
+h2. Nested Selectors
+
 |_.Dependencies|_.Added|_.Updated|
-|Multiple_properties|1.1|-|
-
-<hr/>
-
-h1. Nested Selectors
+|Nested_selectors|1.0|1.1|
 
 You can nest selectors within each other rather than creating long selector names. 
 
 For example, this css:
 
-<pre><code>
-	#id { float:left; }
-	#id div { height:20px; }
-	#id div p { font-size:11px; }
-	#id div p a { color:#fff; }
-	#id div p a:hover { text-decoration:none; }
-	#body #id { float:right; }
+<pre><code>#id { float:left; }
+#id div { height:20px; }
+#id div p { font-size:11px; }
+#id div p a { color:#fff; }
+#id div p a:hover { text-decoration:none; }
+#body #id { float:right; }
 </code></pre>
 
 Is much easier to write with nested selectors.
 
-<pre><code>
-	#id
-	{
-		float:left;
-		
-		div 
-		{ 
-			height:20px;
-			p 
+<pre><code>#id
+{
+	float:left;
+	
+	div 
+	{ 
+		height:20px;
+		p 
+		{
+			font-size:11px;
+			a 
 			{
-				font-size:11px;
-				a 
+				color:#fff;
+				
+				&:hover
 				{
-					color:#fff;
-					
-					&:hover
-					{
-						text-decoration:none;
-					}
+					text-decoration:none;
 				}
-			} 
-		}
-		
-		#body & { float:right; }
-	}	
+			}
+		} 
+	}
+	
+	#body & { float:right; }
+}	
 </code></pre>
 
 That is a rather verbose and pointless example, but you can see the different functionality available.
@@ -66,40 +66,29 @@ You need to be especially careful with nested selectors to make sure you don't r
 
 You can reference the parent element above the current one by using "&" as seen in the example above.
 
+h2. CSSTidy
+
 |_.Dependencies|_.Added|_.Updated|
-|Nested_selectors|1.0|1.1|
-
-<hr/>
-
-h1. CSSTidy
+|Optimizer|1.0|-|
 
 The optimizer plugin runs your CSS through CSSTidy. This script removes all unnecessary whitespace, unneeded semi-colons, combines selectors with similar properties and more. This plugin adds the most processing time to Scaffold, but it can drastically cut down the size of your CSS. 
 
 The plugin is enabled by default and you don't need to do anything to use it, it all happens automagically.
 
+h2. Caching
+
 |_.Dependencies|_.Added|_.Updated|
-|Optimizer|1.0|-|
-
-<hr/>
-
-h1. Caching
+|Scaffold|1.0|-|
 
 Caching is all done automatically behind the scenes. You can change the location of the cache if you need to within the config.php. 
 
 Scaffold caches your CSS based on 'flags'. These flags are set by the plugins in their constructors and let Scaffold know that this particular script has conditional elements and needs to be stored separately. The most common use for flags is the user agent. It caches a separate file for IE, Safari and Firefox. 
 
+h2. Gzipping
+
 |_.Dependencies|_.Added|_.Updated|
-|Scaffold|1.0|-|
-
-<hr/>
-
-h1. Gzipping
+|Scaffold, .htaccess, Apache Gzip|1.0|-|
 
 If your server supports it, Scaffold can gzip the contents of the css before its sent to the browser. Using the default styles from the framework, which come out around 8kB, when they are gzipped, it is reduced down to 2kB. 
 
 For gzipping to work correctly you need to be able to use .htaccess files and your server must support gzipping.
-
-|_.Dependencies|_.Added|_.Updated|
-|Scaffold|1.0|-|
-
-<hr/>

@@ -8,7 +8,7 @@ h2. Step 2 - Setting up the paths in system/index.php
 
 !http://anthonyshort.com.au/images/scaffold-setup1.png!
 
-The @system/config/config.php@ file holds all of the settings and paths for Scaffold. You need to set each of them.
+The @scaffold/config/config.php@ file holds all of the settings and paths for Scaffold. You need to set each of them.
 
 h3. Cache Lock
 
@@ -42,14 +42,12 @@ h2. Step 4 - Add the file to your HTML
 
 To parse your file through Scaffold, you will need to change the links to your CSS files in your HTML to point to Scaffold instead.
 
-<pre><code>
-	<link href="screen.css" />
+<pre><code><link href="screen.css" />
 </code></pre>
 
 Becomes:
 
-<pre><code>
-	<link href="scaffold/index.php?request=screen.css" />
+<pre><code><link href="scaffold/index.php?request=screen.css" />
 </code></pre>
 
 *Important* - Scaffold will only cache the file is the screen.css file has been changed. To ALWAYS refresh, add @&recache@ to the end of the url string above. This is useful during development.

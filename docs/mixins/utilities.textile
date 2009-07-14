@@ -1,4 +1,4 @@
-h1. links
+h2. links
 
 Quickly style all the link colours
 
@@ -43,9 +43,7 @@ Code:
 	}
 </code></pre>
 
-<hr/>
-
-h1. crisp-text
+h2. crisp-text
 
 Safari text shadow (anti-aliasing) fix.
 
@@ -63,9 +61,7 @@ Code:
 	}
 </code></pre>
 
-<hr/>
-
-h1. rounded(!radius)
+h2. rounded(!radius)
 
 Adds border-radius to the element in its many forms.
 
@@ -85,9 +81,7 @@ Code:
 	}
 </code></pre>
 
-<hr/>
-
-h1. horizontal-list
+h2. horizontal-list
 
 Turns a ul into a horizontal list, ready to be used as a menu.
 
@@ -113,9 +107,7 @@ Code:
 	}
 </code></pre>
 
-<hr/>
-
-h1. no-bullet
+h2. no-bullet
 
 Removes the bullet from the list element
 
@@ -134,9 +126,7 @@ Code:
 	}
 </code></pre>
 
-<hr/>
-
-h1. no-bullets
+h2. no-bullets
 
 Removes the bullet from the entire list
 
@@ -157,9 +147,7 @@ Code:
 	}
 </code></pre>
 
-<hr/>
-
-h1. inherit
+h2. inherit
 
 Styles the element the same as its parent.
 
@@ -183,9 +171,7 @@ Code:
 	}
 </code></pre>
 
-<hr/>
-
-h1. reset
+h2. reset
 
 Resets the margin and padding.
 
@@ -203,9 +189,7 @@ Code:
 	}
 </code></pre>
 
-<hr/>
-
-h1. reset-box
+h2. reset-box
 
 Resets the box model
 
@@ -223,9 +207,7 @@ Code:
 	}
 </code></pre>
 
-<hr/>
-
-h1. reset-all
+h2. reset-all
 
 Resets almost everything
 
@@ -251,9 +233,7 @@ Code:
 	}
 </code></pre>
 
-<hr/>
-
-h1. debug
+h2. debug
 
 Adds styles to the element to make it easy to see. Requires Safari to use as it uses background-clip/origin and multiple backgrounds. Sorry everyone else!
 

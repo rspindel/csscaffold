@@ -1,33 +1,27 @@
-h1. small-type
+h2. small-type
+
+|_.Param|_.Default value|_.Description|_.Values|
+|n/a|-|-|-|
 
 Makes the text use incremental leading and decreases its size. Every 4 lines of normal type, there are 5 lines of smaller type.
 
-|_.Param|_.Default value|_.Description|_.Values|
-|n/a|-|-|-|
-
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | n/a | 1.1 | n/a |
-
 Code:
-<pre><code>
-	=small-type
-	{ 
-		line-height: eval(floor((!baseline*4)/5))px; 
-		font-size: 11px; 
-	}
+<pre><code>=small-type
+{ 
+	line-height: eval(floor((!baseline*4)/5))px; 
+	font-size: 11px; 
+}
 </code></pre>
 
-<hr/>
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | n/a | 1.1 | n/a |
 
-h1. all-caps
-
-Surround uppercase words and abbreviations with this class. Based on work by Jørgen Arnor Gårdsø Lom [http://twistedintellect.com/]
+h2. all-caps
 
 |_.Param|_.Default value|_.Description|_.Values|
 |n/a|-|-|-|
 
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | n/a | 1.1 | n/a |
+Surround uppercase words and abbreviations with this class. Based on work by Jørgen Arnor Gårdsø Lom [http://twistedintellect.com/]
 
 Code:
 <pre><code>
@@ -43,17 +37,15 @@ Code:
 	}
 </code></pre>
 
-<hr/>
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | n/a | 1.1 | n/a |
 
-h1. link-info
-
-Give this to links you want to show more information
+h2. link-info
 
 |_.Param|_.Default value|_.Description|_.Values|
 |n/a|-|-|-|
 
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | n/a | 1.1 | n/a |
+Give this to links you want to show more information
 
 Code:
 <pre><code>
@@ -70,17 +62,15 @@ Code:
 	}
 </code></pre>
 
-<hr/>
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | n/a | 1.1 | n/a |
 
-h1. drop-cap
-
-Makes the first letter a drop-cap.
+h2. drop-cap
 
 |_.Param|_.Default value|_.Description|_.Values|
 |n/a|-|-|-|
 
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | baskerville | 1.1 | n/a |
+Makes the first letter a drop-cap.
 
 Code:
 <pre><code>
@@ -98,17 +88,15 @@ Code:
 	}
 </code></pre>
 
-<hr/>
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | baskerville | 1.1 | n/a |
 
-h1. nice-amp
-
-For some nice-looking ampersands
+h2. nice-amp
 
 |_.Param|_.Default value|_.Description|_.Values|
 |n/a|-|-|-|
 
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | warnock | 1.1 | n/a |
+For some nice-looking ampersands
 
 Code:
 <pre><code>
@@ -120,9 +108,13 @@ Code:
 	}
 </code></pre>
 
-<hr/>
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | warnock | 1.1 | n/a |
 
-h1. image-replaced
+h2. image-replaced
+
+|_.Param|_.Default value|_.Description|_.Values|
+|n/a|-|-|-|
 
 Pushes the text out of view. It requires that the element also has a height, width and a background image. Remember that Scaffold comes with a built-in image replacement plugin.
 
@@ -134,12 +126,6 @@ You can image replace like so:
 	image-replace: 'image-name'; 
 }
 </code></pre>
-
-|_.Param|_.Default value|_.Description|_.Values|
-|n/a|-|-|-|
-
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | - | 1.1 | n/a |
 
 Code:
 <pre><code>
@@ -153,17 +139,15 @@ Code:
 	}
 </code></pre>
 
-<hr/>
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | - | 1.1 | n/a |
 
-h1. times
-
-Font stack  for Times
+h2. times
 
 |_.Param|_.Default value|_.Description|_.Values|
 |n/a|-|-|-|
 
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | - | 1.1 | n/a |
+Font stack  for Times
 
 Code:
 <pre><code>
@@ -173,17 +157,15 @@ Code:
 	}
 </code></pre>
 
-<hr/>
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | - | 1.1 | n/a |
 
-h1. helvetica
-
-Font stack  for Times
+h2. helvetica
 
 |_.Param|_.Default value|_.Description|_.Values|
 |n/a|-|-|-|
 
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | - | 1.1 | n/a |
+Font stack  for Times
 
 Code:
 <pre><code>
@@ -193,17 +175,15 @@ Code:
 	}
 </code></pre>
 
-<hr/>
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | - | 1.1 | n/a |
 
-h1. myriad
-
-Font stack for Myriad Pro
+h2. myriad
 
 |_.Param|_.Default value|_.Description|_.Values|
 |n/a|-|-|-|
 
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | - | 1.1 | n/a |
+Font stack for Myriad Pro
 
 Code:
 <pre><code>
@@ -213,17 +193,15 @@ Code:
 	}
 </code></pre>
 
-<hr/>
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | - | 1.1 | n/a |
 
-h1. baskerville
-
-Font stack for Baskerville
+h2. baskerville
 
 |_.Param|_.Default value|_.Description|_.Values|
 |n/a|-|-|-|
 
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | - | 1.1 | n/a |
+Font stack for Baskerville
 
 Code:
 <pre><code>
@@ -233,17 +211,15 @@ Code:
 	}
 </code></pre>
 
-<hr/>
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | - | 1.1 | n/a |
 
-h1. cambria
-
-Font stack for Cambria
+h2. cambria
 
 |_.Param|_.Default value|_.Description|_.Values|
 |n/a|-|-|-|
 
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | - | 1.1 | n/a |
+Font stack for Cambria
 
 Code:
 <pre><code>
@@ -253,17 +229,15 @@ Code:
 	}
 </code></pre>
 
-<hr/>
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | - | 1.1 | n/a |
 
-h1. centurygothic
-
-Font stack for Century Gothic
+h2. centurygothic
 
 |_.Param|_.Default value|_.Description|_.Values|
 |n/a|-|-|-|
 
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | - | 1.1 | n/a |
+Font stack for Century Gothic
 
 Code:
 <pre><code>
@@ -273,17 +247,15 @@ Code:
 	}
 </code></pre>
 
-<hr/>
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | - | 1.1 | n/a |
 
-h1. monospace
-
-Font stack for code.
+h2. monospace
 
 |_.Param|_.Default value|_.Description|_.Values|
 |n/a|-|-|-|
 
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | - | 1.1 | n/a |
+Font stack for code.
 
 Code:
 <pre><code>
@@ -293,17 +265,15 @@ Code:
 	}
 </code></pre>
 
-<hr/>
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | - | 1.1 | n/a |
 
-h1. franklingothic
-
-Font stack for Franklin Gothic.
+h2. franklingothic
 
 |_.Param|_.Default value|_.Description|_.Values|
 |n/a|-|-|-|
 
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | - | 1.1 | n/a |
+Font stack for Franklin Gothic.
 
 Code:
 <pre><code>
@@ -313,17 +283,15 @@ Code:
 	}
 </code></pre>
 
-<hr/>
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | - | 1.1 | n/a |
 
-h1. futura
-
-Font stack for Futura.
+h2. futura
 
 |_.Param|_.Default value|_.Description|_.Values|
 |n/a|-|-|-|
 
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | - | 1.1 | n/a |
+Font stack for Futura.
 
 Code:
 <pre><code>
@@ -333,17 +301,15 @@ Code:
 	}
 </code></pre>
 
-<hr/>
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | - | 1.1 | n/a |
 
-h1. garamond
-
-Font stack for Garamond.
+h2. garamond
 
 |_.Param|_.Default value|_.Description|_.Values|
 |n/a|-|-|-|
 
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | - | 1.1 | n/a |
+Font stack for Garamond.
 
 Code:
 <pre><code>
@@ -353,17 +319,15 @@ Code:
 	}
 </code></pre>
 
-<hr/>
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | - | 1.1 | n/a |
 
-h1. geneva
-
-Font stack for Geneva.
+h2. geneva
 
 |_.Param|_.Default value|_.Description|_.Values|
 |n/a|-|-|-|
 
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | - | 1.1 | n/a |
+Font stack for Geneva.
 
 Code:
 <pre><code>
@@ -373,17 +337,15 @@ Code:
 	}
 </code></pre>
 
-<hr/>
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | - | 1.1 | n/a |
 
-h1. georgia
-
-Font stack for Georgia.
+h2. georgia
 
 |_.Param|_.Default value|_.Description|_.Values|
 |n/a|-|-|-|
 
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | - | 1.1 | n/a |
+Font stack for Georgia.
 
 Code:
 <pre><code>
@@ -393,17 +355,15 @@ Code:
 	}
 </code></pre>
 
-<hr/>
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | - | 1.1 | n/a |
 
-h1. gillsans
-
-Font stack for Gill Sans.
+h2. gillsans
 
 |_.Param|_.Default value|_.Description|_.Values|
 |n/a|-|-|-|
 
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | - | 1.1 | n/a |
+Font stack for Gill Sans.
 
 Code:
 <pre><code>
@@ -413,17 +373,15 @@ Code:
 	}
 </code></pre>
 
-<hr/>
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | - | 1.1 | n/a |
 
-h1. impact
-
-Font stack for Impact.
+h2. impact
 
 |_.Param|_.Default value|_.Description|_.Values|
 |n/a|-|-|-|
 
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | - | 1.1 | n/a |
+Font stack for Impact.
 
 Code:
 <pre><code>
@@ -433,17 +391,15 @@ Code:
 	}
 </code></pre>
 
-<hr/>
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | - | 1.1 | n/a |
 
-h1. palatino
-
-Font stack for Palatino.
+h2. palatino
 
 |_.Param|_.Default value|_.Description|_.Values|
 |n/a|-|-|-|
 
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | - | 1.1 | n/a |
+Font stack for Palatino.
 
 Code:
 <pre><code>
@@ -453,17 +409,15 @@ Code:
 	}
 </code></pre>
 
-<hr/>
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | - | 1.1 | n/a |
 
-h1. tahoma
-
-Font stack for Tahoma.
+h2. tahoma
 
 |_.Param|_.Default value|_.Description|_.Values|
 |n/a|-|-|-|
 
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | - | 1.1 | n/a |
+Font stack for Tahoma.
 
 Code:
 <pre><code>
@@ -473,17 +427,15 @@ Code:
 	}
 </code></pre>
 
-<hr/>
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | - | 1.1 | n/a |
 
-h1. trebuchet
-
-Font stack for Trebuchet.
+h2. trebuchet
 
 |_.Param|_.Default value|_.Description|_.Values|
 |n/a|-|-|-|
 
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | - | 1.1 | n/a |
+Font stack for Trebuchet.
 
 Code:
 <pre><code>
@@ -493,17 +445,15 @@ Code:
 	}
 </code></pre>
 
-<hr/>
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | - | 1.1 | n/a |
 
-h1. warnock
-
-Font stack for Warnock.
+h2. warnock
 
 |_.Param|_.Default value|_.Description|_.Values|
 |n/a|-|-|-|
 
-|_.Module |_.Extends|_.Added|_.Updated|
-| Type | - | 1.1 | n/a |
+Font stack for Warnock.
 
 Code:
 <pre><code>
@@ -512,3 +462,6 @@ Code:
 		font-family: "Warnock Pro", "Goudy Old Style","Palatino","Book Antiqua", Georgia, serif;
 	}
 </code></pre>
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Type | - | 1.1 | n/a |

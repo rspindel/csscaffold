@@ -1,5 +1,3 @@
-h1. Pretty
-
 |_.Process|_.Dependencies|_.Added|_.Updated|_.Version|
 |Formatting_process|None|1.0|-|1.0|
 

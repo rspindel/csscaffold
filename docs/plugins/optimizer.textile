@@ -1,5 +1,3 @@
-h1. Minify
-
 |_.Process|_.Dependencies|_.Added|_.Updated|_.Version|
 |Formatting_process|CSSTidy Library|1.0|-|1.0|
 
