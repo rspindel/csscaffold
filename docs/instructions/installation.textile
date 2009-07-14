@@ -1,0 +1,61 @@
+To setup Scaffold on your site, it is usually just a matter of dropping the files in your css folder, setting some paths and changing some permissions.
+
+h2. Step 1 - Copy the /scaffold/ folder.
+
+You can place this folder in any location on your server. We'll need to set up some configuration variables to tell Scaffold where the CSS directory is.
+
+h2. Step 2 - Setting up the paths in system/index.php
+
+!http://anthonyshort.com.au/images/scaffold-setup1.png!
+
+The @system/config/config.php@ file holds all of the settings and paths for Scaffold. You need to set each of them.
+
+h3. Cache Lock
+
+Locks the cache so that your CSS can never be recached. This is useful for when you put the site live. 
+
+h3. Show Header
+
+Scaffold prepends a tiny bit of information to the top of the cached CSS file. You can remove that by setting this to false.
+
+h3. Debug
+
+By setting debug to true, you will get information outputted into Firebug using FirePHP. *Make sure this is turned off when you go live*
+
+h3. $css_dir
+
+This is the url path to your css folder. If your css folder was at @http://google.com/css/@ then you need to use "/css" as your path.
+
+h3. $cache_dir
+
+Leave this unless you would like to set something other than the default scaffold/cache/ folder. Use a full server path.
+
+h3. $assets_dir
+
+Leave this unless you would like to set something other than the default css/assets folder. Use a full server path.
+
+h2. Step 3 - Change permissions
+
+You need to make sure the cache folder, @scaffold/cache@ has write permissions.
+
+h2. Step 4 - Add the file to your HTML
+
+To parse your file through Scaffold, you will need to change the links to your CSS files in your HTML to point to Scaffold instead.
+
+<pre><code>
+	<link href="screen.css" />
+</code></pre>
+
+Becomes:
+
+<pre><code>
+	<link href="scaffold/index.php?request=screen.css" />
+</code></pre>
+
+*Important* - Scaffold will only cache the file is the screen.css file has been changed. To ALWAYS refresh, add @&recache@ to the end of the url string above. This is useful during development.
+
+h2. Step 5 (Optional)
+
+You can use the CSS files provided as a starting point. The typography stylesheet in particular, is a good template to use on other sites.
+
+You can also setup a .htaccess file (an example is provided inside that css directory), to allow for automatic parsing of any file inside the directory. Just open up example.htacess and change the path @/scaffold/index.php?...@ to the url path to the scaffold/index.php file. Whenever anyone makes a call to a css file in this folder, it will automatically be routed through Scaffold.

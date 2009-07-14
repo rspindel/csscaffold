@@ -1,0 +1,237 @@
+h1. grid-width
+
+The total width of your grid. Default is 960px. *Requires the @grid settings*.
+
+*Example*
+
+<pre><code>
+	#id
+	{
+		width:!grid-width;
+	}
+</code></pre>
+
+|_.Plugin|_.Default Value|_.Added|_.Updated|
+|Layout|960px|1.1|-|
+
+<hr/>
+
+h1. column-width
+
+The width of a single column. Default is 60px. *Requires the @grid settings*.
+
+*Example*
+
+<pre><code>
+	#id
+	{
+		width:!column-width;
+	}
+</code></pre>
+
+|_.Plugin|_.Default Value|_.Added|_.Updated|
+|Layout|60px|1.1|-|
+
+<hr/>
+
+h1. column-count
+
+The total number of columns. Default is 12. *Requires the @grid settings*.
+
+*Example*
+
+<pre><code>
+	#id
+	{
+		width:eval(!column-width * !column-count)px;
+	}
+</code></pre>
+
+|_.Plugin|_.Default Value|_.Added|_.Updated|
+|Layout|12|1.1|-|
+
+<hr/>
+
+h1. gutter-width
+
+The width of the gutter. Default is 10px. *Requires the @grid settings*.
+
+*Example*
+
+<pre><code>
+	#id
+	{
+		margin-top:!gutter-width;
+	}
+</code></pre>
+
+|_.Plugin|_.Default Value|_.Added|_.Updated|
+|Layout|10px|1.1|-|
+
+<hr/>
+
+h1. baseline
+
+The line-height/baseline of the grid. Default is 20px. *Requires the @grid settings*.
+
+*Example*
+
+<pre><code>
+	#id
+	{
+		height:eval(!baseline + 9)px;
+	}
+</code></pre>
+
+|_.Plugin|_.Default Value|_.Added|_.Updated|
+|Layout|20px|1.1|-|
+
+<hr/>
+
+h1. grid_image_data
+
+Special constant used by =showgrid mixin. Outputs the base64 data of the dynamically generated grid background image. *Requires the @grid settings*.
+
+*Example*
+
+<pre><code>
+	=showgrid
+	{
+		background:url(!grid_image_data);
+	}
+</code></pre>
+
+|_.Plugin|_.Default Value|_.Added|_.Updated|
+|Layout|-|1.1|-|
+
+<hr/>
+
+h1. assets_url
+
+The path to the assets folder as defined by the config.php.
+
+*Example*
+
+<pre><code>
+	#id
+	{
+		background:url(!assets_url/titles/booyah.png);
+	}
+</code></pre>
+
+|_.Plugin|_.Default Value|_.Added|_.Updated|
+|Scaffold|-|1.1|-|
+
+<hr/>
+
+h1. css_url
+
+The path to the css folder as defined by the config.php.
+
+*Example*
+
+<pre><code>
+	#id
+	{
+		background:url(!css_url/booyah.css);
+	}
+</code></pre>
+
+|_.Plugin|_.Default Value|_.Added|_.Updated|
+|Scaffold|-|1.1|-|
+
+<hr/>
+
+h1. scaffold_url
+
+The path to the scaffold folder as defined by the config.php.
+
+*Example*
+
+<pre><code>
+	#id
+	{
+		background:url(!scaffold/snippets/booyah.png);
+	}
+</code></pre>
+
+|_.Plugin|_.Default Value|_.Added|_.Updated|
+|Scaffold|-|1.1|-|
+
+<hr/>
+
+h1. span-x
+
+The width of x number of grid columns. *Requires the @grid settings*.
+
+*Example*
+
+<pre><code>
+	#id
+	{
+		width:eval(!span-10 - 10)px;
+	}
+</code></pre>
+
+|_.Plugin|_.Default Value|_.Added|_.Updated|
+|Layout|-|1.1|-|
+
+<hr/>
+
+h1. browser
+
+The name of the users browser. Can be:
+
+* Opera
+* Internet Explorer
+* Shiira
+* Firefox
+* Chimera
+* Phoenix
+* Firebird
+* Camino
+* Netscape
+* OmniWeb
+* Safari
+* Konqueror
+* Epiphany
+* Galeon
+* iCab
+* Lynx
+* Links
+* HotJava
+* Amaya
+* IBrowse
+
+*Example*
+
+<pre><code>
+	@if(!browser == "Opera")
+	{
+		width:1px;
+	}
+</code></pre>
+
+|_.Plugin|_.Default Value|_.Added|_.Updated|
+|Browsers|null|1.1|-|
+
+<hr/>
+
+h1. version
+
+The version number of the users browser.
+
+*Example*
+
+<pre><code>
+	@if(!browser == "Internet Explorer" && !version == 6)
+	{
+		#id
+		{	
+			+has-layout;
+		}
+	}
+</code></pre>
+
+|_.Plugin|_.Default Value|_.Added|_.Updated|
+|Browsers|-|1.1|-|

@@ -1,0 +1,60 @@
+h1. image-replace:url();
+
+Automatically calculates the width and height of the image and applies the +image-replaced mixin to the element. It also adds the url as the background image. Be sure to give it a full url to the image if you are having trouble.
+
+*Example*
+
+<pre><code>
+	h1
+	{
+		image-replace:url(!assets_url/titles/logo.png);
+	}
+</code></pre>
+
+|_.Dependencies|_.Added|_.Updated|
+|Image_helper|1.0|-|
+
+<hr/>
+
+h1. columns:x;
+
+Using the @grid settings, the Scaffold determines the width of the element, floats it etc. *It also factors in the padding and border* into the calculated width. But remember, it will only work for padding and border on the element itself, *not* inherited padding and border (in IE).
+
+In Internet Explorer 6-7, Scaffold reads the properties and determines the extra amount of width. In Safari, Firefox, Internet Explorer 8 and Chrome, it adds box-sizing. This allows the padding and border to not affect the width of the box. You technically *can* use it for inherited padding and border, but it will break in Internet Explorer 6 and 7. 
+
+A work-around is to use the IE8.js script to allow for box-sizing in IE6/7. This currently isn't supported by Scaffold though and might be added in a future version if enough people want it.
+
+It adds these properties:
+
+<pre><code>
+	#content
+	{
+		float:left;
+		display:inline; /* In IE */
+		overflow:hidden; /* In IE */
+		margin-left:x;
+		margin-right:x;
+		width:x;
+		-webkit-box-sizing:border-box; /* In Safari */
+		-moz-box-sizing:border-box; /* In Firefox */
+		-ms-box-sizing:border-box; /* In IE8 */
+	}
+</code></pre>
+
+*Example*
+
+<pre><code>
+	#content
+	{
+		columns:10;
+	}
+	
+	#sub-content
+	{
+		columns:2;
+		padding:10px;
+	}
+</code></pre>
+
+|_.Dependencies|_.Added|_.Updated|
+|Layout|1.0|-|

@@ -1,0 +1,46 @@
+h1. Minify
+
+|_.Process|_.Dependencies|_.Added|_.Updated|_.Version|
+|Process|None|1.0|1.1|1.1|
+
+Allows you to nest selectors within each other, and reference the parent element.
+
+h2. About this plugin
+
+h3. CSS Functions
+
+* None
+
+h3. Constants
+
+* None
+
+h3. Classes
+
+* None
+
+h3. Properties
+
+* None
+
+h3. At-rules
+
+* None
+
+h2. Flags
+
+* None
+
+h2. Class Functions
+
+* process
+* css_to_xml
+* parse_rule
+
+h2. Class Variables
+
+* None
+
+h2. Relevant Pages
+
+* None

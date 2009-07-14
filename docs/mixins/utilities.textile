@@ -1,0 +1,280 @@
+h1. links
+
+Quickly style all the link colours
+
+|_.Param|_.Default value|_.Description|_.Values|
+|!normal|-|The normal link state|color|
+|!hover|-|The hover link state|color|
+|!active|-|The active link state|color|
+|!visited|-|The visited link state|color|
+|!focus|-|The focus link state|color|
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Utilities | n/a | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=links(!normal, !hover, !active, !visited, !focus)
+	{
+		& 
+		{
+			color:!normal;
+		}
+		
+		&:hover
+		{
+			color:!hover;
+		}
+		
+		&:active
+		{
+			color:!active;
+		}
+		
+		&:visited
+		{
+			color:!visited;
+		}
+		
+		&:focus
+		{
+			color:!focus;
+		}
+	}
+</code></pre>
+
+<hr/>
+
+h1. crisp-text
+
+Safari text shadow (anti-aliasing) fix.
+
+|_.Param|_.Default value|_.Description|_.Values|
+|-|-|-|-|
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Utilities | n/a | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=crisp-text
+	{
+		text-shadow:rgba(0,0,0,0.01) 0 0 1px;
+	}
+</code></pre>
+
+<hr/>
+
+h1. rounded(!radius)
+
+Adds border-radius to the element in its many forms.
+
+|_.Param|_.Default value|_.Description|_.Values|
+|!radius|-|The amount of curve|unit|
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Utilities | n/a | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=rounded(!radius)
+	{
+		-webkit-border-radius:!radius;
+		-moz-border-radius:!radius;
+		border-radius:!radius;
+	}
+</code></pre>
+
+<hr/>
+
+h1. horizontal-list
+
+Turns a ul into a horizontal list, ready to be used as a menu.
+
+|_.Param|_.Default value|_.Description|_.Values|
+|-|-|-|-|
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Utilities | reset,clearfix,no-bullet,float | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=horizontal-list
+	{
+		+reset;
+	  	+clearfix;
+		
+		li
+		{
+			+no-bullet;
+			+float(left);
+			white-space:nowrap;
+		}
+	}
+</code></pre>
+
+<hr/>
+
+h1. no-bullet
+
+Removes the bullet from the list element
+
+|_.Param|_.Default value|_.Description|_.Values|
+|-|-|-|-|
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Utilities | - | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=no-bullet
+	{
+		list-style-type:none;
+		margin-left:0;
+	}
+</code></pre>
+
+<hr/>
+
+h1. no-bullets
+
+Removes the bullet from the entire list
+
+|_.Param|_.Default value|_.Description|_.Values|
+|-|-|-|-|
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Utilities | no-bullet | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=no-bullets
+	{
+		li
+		{
+			+no-bullet;
+		}
+	}
+</code></pre>
+
+<hr/>
+
+h1. inherit
+
+Styles the element the same as its parent.
+
+|_.Param|_.Default value|_.Description|_.Values|
+|-|-|-|-|
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Utilities | - | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=inherit
+	{
+		font:inherit;
+		color:inherit;
+		background:inherit;
+		border:inherit;
+		text-decoration:inherit;
+		text-shadow:inherit;
+		text-transform:inherit;
+	}
+</code></pre>
+
+<hr/>
+
+h1. reset
+
+Resets the margin and padding.
+
+|_.Param|_.Default value|_.Description|_.Values|
+|-|-|-|-|
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Utilities | - | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=reset
+	{
+		margin,padding:0;
+	}
+</code></pre>
+
+<hr/>
+
+h1. reset-box
+
+Resets the box model
+
+|_.Param|_.Default value|_.Description|_.Values|
+|-|-|-|-|
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Utilities | - | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=reset-box
+	{
+		margin,padding,border:0;
+	}
+</code></pre>
+
+<hr/>
+
+h1. reset-all
+
+Resets almost everything
+
+|_.Param|_.Default value|_.Description|_.Values|
+|-|-|-|-|
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Utilities | - | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=reset-all
+	{
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background: none;
+		font-weight: inherit;
+		font-style: inherit;
+		font-size: 100%;
+		font-family: inherit;
+		vertical-align: baseline;
+	}
+</code></pre>
+
+<hr/>
+
+h1. debug
+
+Adds styles to the element to make it easy to see. Requires Safari to use as it uses background-clip/origin and multiple backgrounds. Sorry everyone else!
+
+* Purple area is the padding
+* Orange area is the content
+* Green area is the border
+
+|_.Param|_.Default value|_.Description|_.Values|
+|-|-|-|-|
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Utilities | - | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=debug
+	{
+		background:
+			url('/demo/images/content.png') top left repeat content,
+			url('/demo/images/padding.png') top left repeat padding,
+			url('/demo/images/border.png') top left repeat border
+		;
+	}
+</code></pre>

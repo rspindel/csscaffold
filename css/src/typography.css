@@ -1,0 +1,244 @@
+/**
+* Typography
+*
+* The type styles for the entire site. Every text element
+* that is styled should be placed here and no where else.
+*
+*/
+
+	body 
+	{
+		+georgia;
+		
+		margin:30px;
+	  	font-size:14px;
+	  	background:!body_background; 
+	  	color:!body_color;
+	  	line-height:!baseline;
+	}
+	
+	/**
+	* Text anti-aliasing in Safari is too heavy. By making the
+	* text-shadow the same colour as the background, it 'fixes'
+	* the rendering of the text so it appears much cleaner. 
+	*
+	* @bugfix
+	* @affected Safari 2, Safari 3
+	* @valid yes
+	* @see http://www.komodomedia.com/blog/2009/03/safari-text-shadow-anti-aliasing-css-hack/
+	*/
+	@if(!browser == "Safari")
+	{
+		p, li, dt, dd, label, legend, caption, td { +crisp-text; }
+	}
+
+	/**
+	* --------------------------------------------------------
+	* @subsection Heading Styles
+	* --------------------------------------------------------
+	*/
+	
+	/*
+		We define them all as mixins so that they function as 
+		generic text styles. We may have a section title which
+		isn't important to the page content, but we want it
+		to look like a h1. 
+	*/
+	
+	=heading
+	{ 
+		+georgia;
+		+debug;
+		
+		font-size:1.2em;
+		font-weight:normal; 
+		color:!heading_color;
+		margin-bottom:!baseline;
+		margin-top:!baseline;
+		line-height:!baseline;
+		
+		img 		{ +reset; }
+		a 			{ +inherit; }
+		a:hover		{ +inherit; }
+	}
+	
+	=h1 
+	{
+		+heading;
+		font-size:3em;
+		line-height:eval(!baseline*3)px;
+		margin-top:eval(!baseline*2)px;
+	}
+	
+	=h2 
+	{
+		+heading;
+		font-size:2em;
+		line-height:eval(!baseline*2)px;
+	}
+	
+	=h3 
+	{
+		+heading;
+		font-size:1.5em;
+		based-on:helvetica;
+		line-height:eval(!baseline*2)px;
+	}
+	
+	=h4 
+	{
+		+heading;
+		font-size:1.3em;
+	}
+	
+	=h5 
+	{
+		+heading;
+	}
+	
+	=h6 
+	{
+		+heading;
+		margin-bottom:0; 
+	}
+	
+	/*
+		You shouldn't really define styles here, these just
+		assign the text styles to the elements.
+	*/
+	
+	h1, .h1 { +h1; }
+	h2, .h2 { +h2; }
+	h3, .h3 { +h3; }
+	h4, .h4 { +h4; }
+	h5, .h5 { +h5; }
+	h6, .h6 { +h6; }
+
+	/**
+	* --------------------------------------------------------
+	* @subsection Text Elements
+	* --------------------------------------------------------
+	*/
+	
+	p				{ margin:0 }
+	
+	/* Any sibling p will have a margin above it */
+	* + p			{ margin: !baseline 0 0 0; }
+	
+	blockquote  	{ margin: !baseline; font-style: italic; color: !light; }
+	cite			{}
+	q				{}
+	
+	strong      	{ font-weight:bold; }
+	em      	  	{ font-style:italic; }
+	mark 			{ background:!highlight; }
+	
+	del         	{ color:!light; }
+	ins 			{ background:#fffde2; text-decoration:none;}
+	sup, sub    	{ line-height: 0; }
+	
+	abbr			{ } 
+	acronym     	{ }
+	dfn         	{ font-weight: bold; font-style: italic; }
+	
+	abbr[title],
+	acronym[title],
+	dfn[title] 		{ border-bottom:1px dotted !light; cursor:help; }
+	
+	time			{ }
+	address     	{ margin: 0 0 !baseline; font-style: italic; }
+	
+	hr 				
+	{ 
+		clear:both; 
+		float:left; 
+		width:100%; 
+		height:1px; 
+		margin:-1px 0 !baseline 0; 
+		border:none; 
+		background:#ddd; 
+	}
+	
+	pre,
+	code,
+	kbd,
+	samp,
+	var,
+	output 
+	{ 
+		margin:!baseline 0; 
+	}
+	
+	pre,
+	code,
+	tt,
+	output,
+	pre * 			
+	{
+		+monospace; 
+		font-size: 11px; 
+		line-height: !baseline;
+		color:#0088CC;
+	}
+	
+	/**
+	* --------------------------------------------------------
+	* @subsection General Styles
+	* --------------------------------------------------------
+	*/
+	
+	.highlight  	{ background:!highlight; } /* Or use the HTML5 <mark> tag */
+	.added      	{ background:#060; color: #fff; } /* Or use <ins> */
+	.removed    	{ background:#900; color: #fff; } /* Or use <del> */
+	
+	.quiet      	{ +small-text; } 
+	.loud	      	{ font-size: 2.2em; line-height: eval(!baseline*2)px; margin-bottom: !baseline; letter-spacing: -1px; }	
+	
+	
+	/**
+	* --------------------------------------------------------
+	* @subsection Links
+	* --------------------------------------------------------
+	*/
+	
+	a 
+	{ 
+		color: #009; 
+		text-decoration: underline;
+		
+		&:focus, &:hover { color: #000; } 
+	}
+	
+	/**
+	* --------------------------------------------------------
+	* @subsection Lists
+	* --------------------------------------------------------
+	*/
+	
+	ul, ol { margin: 0 !baseline !baseline !baseline; }
+	
+	li
+	{ 
+		ol, ul { margin:0 !baseline; } 
+	}
+	
+	ul { list-style-type: disc; }
+	ol { list-style-type: decimal; }
+	
+	dl { margin: 0 0 !baseline 0; }
+	dt { font-weight: bold; }
+	dd { margin-left: !baseline;}
+
+	/**
+	* --------------------------------------------------------
+	* @subsection Tables
+	* @note You still need cellspacing="0" in your markup
+	* --------------------------------------------------------
+	*/
+	
+	table       { margin-bottom: !baseline; width:100%; border-collapse:separate; border-spacing:0; }
+	th          { font-weight: bold; background: #C3D9FF; }
+	th,td       { padding: 0; }
+	tr.alt td   { background: #E5ECF9; }
+	tfoot       { font-style: italic; }
+	caption     { background: #eee; }

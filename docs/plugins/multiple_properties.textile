@@ -1,0 +1,44 @@
+h1. Minify
+
+|_.Process|_.Dependencies|_.Added|_.Updated|_.Version|
+|Post_process|None|1.1|-|1.0|
+
+You can string together property names with the same value.
+
+h2. About this plugin
+
+h3. CSS Functions
+
+* None
+
+h3. Constants
+
+* None
+
+h3. Classes
+
+* None
+
+h3. Properties
+
+* None
+
+h3. At-rules
+
+* None
+
+h2. Flags
+
+* None
+
+h2. Class Functions
+
+* process
+
+h2. Class Variables
+
+* None
+
+h2. Relevant Pages
+
+* None

@@ -1,0 +1,13 @@
+<IfModule mod_deflate.c>
+	SetOutputFilter DEFLATE
+</IfModule>
+
+# To enable invisible parsing of your css, you need to change the path
+# below to find your scaffold/index.php file.
+
+<IfModule mod_rewrite.c> 
+	RewriteEngine	on
+	RewriteCond		%{REQUEST_FILENAME}		-f
+	RewriteCond 	%{REQUEST_URI}			\.css$
+	RewriteRule 	^(.+)$ 					/scaffold/index.php?request=%{REQUEST_URI}&%{QUERY_STRING}
+</IfModule>

@@ -1,0 +1,26 @@
+h1. reset.css
+
+A simple CSS reset based on Eric Meyers. Also includes HTML5 elements.
+
+|_.Added|_.Updated|_.Version|
+|1.0|1.1|1.1|
+
+<hr/>
+
+h1. ie-fixes.css
+
+Generic fixes for IE bugs. Don't just slap this in your CSS. Take a look at it and make sure it won't break anything first. 
+
+|_.Added|_.Updated|_.Version|
+|1.1|-|1.0|
+
+<hr/>
+
+h1. debugging.css
+
+Based on Eric Meyers debugging css file.
+
+|_.Added|_.Updated|_.Version|
+|1.0|-|1.0|
+
+<hr/>

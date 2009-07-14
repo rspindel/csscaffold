@@ -1,0 +1,104 @@
+h1. columns-x
+
+This class makes the element function as a column. It adds, floats, margins etc. See the columns property for more details.
+
+*Example*
+
+<pre><code>
+	<div class="columns-4"></div>
+</code></pre>
+
+|_.Plugin|_.Added|_.Updated|
+|Layout|1.0|1.1|
+
+<hr/>
+
+h1. span-x
+
+Gives the element a width of x number of columns.
+
+*Example*
+
+<pre><code>
+	<div class="span-4"></div>
+</code></pre>
+
+|_.Plugin|_.Added|_.Updated|
+|Layout|1.1|-|
+
+<hr/>
+
+h1. push-x
+
+Pushes a column to the right using margins.
+
+*Example*
+
+<pre><code>
+	<div class="columns-8 push-4"></div>
+</code></pre>
+
+|_.Plugin|_.Added|_.Updated|
+|Layout|1.0|1.1|
+
+<hr/>
+
+h1. pull-x
+
+Pulls a column to the left using margins.
+
+*Example*
+
+<pre><code>
+	<div class="columns-8 pull-4"></div>
+</code></pre>
+
+|_.Plugin|_.Added|_.Updated|
+|Layout|1.0|1.1|
+
+<hr/>
+
+h1. append-x
+
+Appends x number of columns using padding.
+
+*Example*
+
+<pre><code>
+	<div class="columns-8 pull-4 append-1"></div>
+</code></pre>
+
+|_.Plugin|_.Added|_.Updated|
+|Layout|1.0|-|
+
+<hr/>
+
+h1. prepend-x
+
+Prepends x number of columns using padding.
+
+*Example*
+
+<pre><code>
+	<div class="columns-8 pull-4 prepend-1"></div>
+</code></pre>
+
+|_.Plugin|_.Added|_.Updated|
+|Layout|1.0|-|
+
+<hr/>
+
+h1. baseline-x
+
+Adds the height of x number of baselines. x can be anything up to the total column-count.
+
+*Example*
+
+<pre><code>
+	<div class="baseline-2"></div>
+</code></pre>
+
+|_.Plugin|_.Added|_.Updated|
+|Layout|1.0|-|
+
+<hr/>

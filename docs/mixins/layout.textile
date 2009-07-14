@@ -1,0 +1,314 @@
+h1. float(!side)
+
+Floats the element to the designated side. Also applies @display:inline@ to the element to fix the IE6 double-margin bug.
+
+|_.Param|_.Default value|_.Description|_.Values|
+|!side|n/a|The side to float the element|"right" or "left"|
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Layout | None | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=float(!side)
+	{
+		float:!side;
+		display:inline;
+	}
+</code></pre>
+
+<hr/>
+
+h1. quick-clearfix
+
+Clears an element of its floated children. The quick way.
+
+|_.Param|_.Default value|_.Description|_.Values|
+|n/a||||
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Layout | has-layout | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=quick-clearfix
+	{
+		+has-layout; /* For IE6, the overflow is enough for IE7+ */
+		overflow:hidden;
+	}
+</code></pre>
+
+<hr/>
+
+h1. clearfix
+
+Clears an element of its floated children.
+
+|_.Param|_.Default value|_.Description|_.Values|
+|n/a||||
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Layout | has-layout | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=clearfix
+	{
+		+has-layout;
+
+		&:after 
+		{
+			content:'\\0020';
+			display:block;
+			height:0;
+			clear:both;
+			visibility:hidden;
+			overflow:hidden;
+			font-size:0;
+		}
+	}
+</code></pre>
+
+<hr/>
+
+h1. inline-block
+
+Workaround to make the element behave as inline-block
+
+|_.Param|_.Default value|_.Description|_.Values|
+|n/a||||
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Layout | n/a | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=inline-block
+	{
+		zoom:1; 
+		display:inline; 
+		display:-moz-inline-box; 
+		display:inline-block; 
+		vertical-align:top;
+	}
+</code></pre>
+
+<hr/>
+
+h1. has-layout
+
+Gives the element has-layout in IE. By switching to inline-block it will make the element haslayout, then we just switch it back. Alternatives are: zoom:1; overflow:anything; (IE7+), float, position:absolute;
+
+See http://www.satzansatz.de/cssd/onhavinglayout.html
+
+|_.Param|_.Default value|_.Description|_.Values|
+|n/a||||
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Layout | n/a | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=has-layout
+	{
+	  display:inline-block;
+
+	  &
+	  {
+	  	display:block;
+	  }
+	}
+</code></pre>
+
+<hr/>
+
+h1. container(!container-width = !grid-width)
+
+Makes an element behave as a container. Defaults to the total width of the grid. *Note: This mixin requires the @grid settings*
+
+|_.Param|_.Default value|_.Description|_.Values|
+|!container-width|!grid-width|Creates a container element for centering content. Default width is the total grid width defined in the @grid settings.|int|
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Layout | clearfix | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=container(!container-width = !grid-width)
+	{
+		+clearfix;
+
+		width:!container-width;
+		margin:0 auto;
+		position:relative;
+	}
+</code></pre>
+
+<hr/>
+
+h1. showgrid(!x = 0, !y = 0)
+
+Shows the grid background image. *Note: This will not work in IE as it embeds the image data.* It uses the special !grid_image_data constant which outputs the base64 image data for the grid png file.
+
+|_.Param|_.Default value|_.Description|_.Values|
+|!x|0|The x-offset of the background image|int|
+|!y|0|The y-offset of the background image|int|
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Layout | n/a | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=showgrid(!x = 0, !y = 0)
+	{
+		background: url(!grid_image_data) !x !y;
+	}
+</code></pre>
+
+<hr/>
+
+h1. columns(!n , !side = false)
+
+Makes the element behave like a grid column. Requires the @grid settings.
+
+|_.Param|_.Default value|_.Description|_.Values|
+|!n|-|The number of columns|int|
+|!side|false|If the column is first or last, removes some margins|"left" or "right"|
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Layout | float, clearfix | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=columns(!n , !side = false)
+	{
+		+float(left);
+		+clearfix;
+
+		@if(!side == left)
+		{
+			margin-left:0;
+			margin-right:!gutter-width;
+		}
+
+		@if(!side == right)
+		{
+			margin-right:0;
+			margin-left:!gutter-width;
+		}
+
+		@if(!side == false)
+		{
+			margin-right,margin-left:!gutter-width;
+		}
+
+		position:relative;
+		width:eval(!n * !column-width - (!gutter-width * 2))px;
+	}
+</code></pre>
+
+<hr/>
+
+h1. append(!n)
+
+Appends columns to the grid unit in the form of padding-right
+
+|_.Param|_.Default value|_.Description|_.Values|
+|!n|-|The number of columns|int|
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Layout | n/a | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=append(!n)
+	{
+		padding-right:eval(!column-width * !n)px;
+	}
+</code></pre>
+
+<hr/>
+
+h1. prepend(!n)
+
+Prepends columns to the grid unit in the form of padding-left
+
+|_.Param|_.Default value|_.Description|_.Values|
+|!n|-|The number of columns|int|
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Layout | n/a | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=prepend(!n)
+	{
+		padding-left:eval(!column-width * !n)px;
+	}
+</code></pre>
+
+<hr/>
+
+h1. baseline(!n)
+
+Adds n pixels of height to element according to the baseline.
+
+|_.Param|_.Default value|_.Description|_.Values|
+|!n|-|The number of baselines|int|
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Layout | n/a | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=baseline(!n)
+	{
+		height:eval(!baseline * !n)px;
+	}
+</code></pre>
+
+<hr/>
+
+h1. pull(!n)
+
+Pulls the element to the left n number of columns
+
+|_.Param|_.Default value|_.Description|_.Values|
+|!n|-|The number of columns|int|
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Layout | n/a | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=pull(!n)
+	{
+		+float(left);
+		margin-right: eval(!column-width * !n + !grid-width)px;
+		position:relative;
+	}
+</code></pre>
+
+<hr/>
+
+h1. push(!n)
+
+Pushes the element to the right n number of columns
+
+|_.Param|_.Default value|_.Description|_.Values|
+|!n|-|The number of columns|int|
+
+|_.Module |_.Extends|_.Added|_.Updated|
+| Layout | n/a | 1.1 | n/a |
+
+Code:
+<pre><code>
+	=push(!n)
+	{
+		+float(left);
+		margin-left: eval(!column-width * !n + !grid-width)px;
+		position:relative;
+	}
+</code></pre>
+
+

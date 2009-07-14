@@ -1,0 +1,44 @@
+h1. Expression
+
+|_.Process|_.Dependencies|_.Added|_.Updated|_.Version|
+|Post_process|None|1.0|1.1|1|
+
+*Previously known as Math*. The expression plugin allows you to perform php evaluation on a css string. 
+
+h2. About this plugin
+
+h3. CSS Functions
+
+* eval() - [[functions]]#eval
+
+h3. Constants
+
+* None
+
+h3. Classes
+
+* None
+
+h3. Properties
+
+* None
+
+h3. At-rules
+
+* None
+
+h2. Flags
+
+* None
+
+h2. Class Functions
+
+* Post_process
+
+h2. Class Variables
+
+* None
+
+h2. Relevant Pages
+
+* None

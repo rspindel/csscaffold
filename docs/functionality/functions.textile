@@ -1,0 +1,55 @@
+h1. eval()
+
+Lets you evaluate the text inside the brackets as PHP. This allows you to do things as simple as math, or you can use functions such as floor to round down your results. 
+
+This feature is currently under testing, I need to make sure it doesn't open up any vulnerabilities.
+
+*Example*
+
+<pre><code>
+	#id
+	{
+		width:eval(floor((100 / 1.5) * 4))px;
+	}
+</code></pre>
+
+|_.Plugin|_.Can include constants?|_.Added|_.Updated|
+|Expression|Yes|1.1|-|
+
+<hr/>
+
+h1. round()
+
+Rounds the number to the nearest baseline multiple.
+
+*Example*
+
+<pre><code>
+	#id
+	{
+		height:round(111)px;
+	}
+</code></pre>
+
+|_.Plugin|_.Can include constants?|_.Added|_.Updated|
+|Layout|Yes|1.0|-|
+
+<hr/>
+
+h1. embed()
+
+Embeds the image into the css using base64. This will only function for browsers other than IE6/7. For these browsers, it simply switches back to a standard url().
+
+*Example*
+
+<pre><code>
+	#id
+	{
+		background:embed(/assets/backgrounds/sprite.png);
+	}
+</code></pre>
+
+|_.Plugin|_.Can include constants?|_.Added|_.Updated|
+|Base64|Yes|1.0|-|
+
+<hr/>
