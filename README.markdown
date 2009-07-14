@@ -1,45 +1,38 @@
 #CSScaffold
 
-A dynamic CSS framework built on top of Shaun Inman's CSS Cacheer. It's aimed at experienced CSS developers - it gives you the tools to create great CSS easily. It abstracts some repetitive and annoying flaws of the language to make it easier to create and maintain, all while giving you the benefits of caching. This is based on Shaun Inman's Cacheer.
+A dynamic CSS framework inspired by Shaun Inman's CSS Cacheer. It's aimed at experienced CSS developers - it gives you the tools to create great CSS easily. It abstracts some repetitive and annoying flaws of the language to make it easier to create and maintain, all while giving you the benefits of caching.
 
 - Constants
-- Base a selector on another selector
-- Embed images in your CSS using Base64 to save http requests
-- Cached and Gzipped for speedy download
+- SASS-style mixins
+- Embed images in your CSS
+- Compressed, Cached and Gzipped for speedy download
 - Nested Selectors
-- Assign classes to selectors within your CSS
-- Easy grid layout system
-- Generated and included utility classes
-- Easy image replacement
-- Tidy and Compress your CSS on the fly
-- Form Framework for building forms quickly
-- Global reset
-- Development styles for debugging and testing
-- Module-based css, broken up into common areas.
+- Easy-to-use layout system
+- Utility classes and mixins to get you started
+- Image replace text by just linking to the image file
+- CSSTidy your CSS on the fly
+- And more... 
+- Plus easily add your own functionality using the plugin system
 
-## License
-	
-Copyright (c) 2006 - 2008, Anthony Short <anthonyshort@me.com>
+##Quick-start
+
+The main folder is the Scaffold folder. The included CSS folder includes some templates you can use and generally shows how to use Scaffold. Feel free to use these stylesheets in your projects. This is how you link to your css so that it is parsed by CSScaffold. You can also setup a .htaccess file to take care of this for you and include them as you normally would. See the example.htaccess in /css/
+
+This:
+
+	<link rel="stylesheet" href="css/screen.css" type="text/css" media="screen" />
+
+Becomes this:
+
+	<link rel="stylesheet" href="/scaffold/index.php?request=css/screen.css&recache" type="text/css" media="screen" />
+
+Note: Use 'recache' in the url to force it to recache the css everytime. This is useful during development. 
+
+##License
+
+Copyright (c) 2009, Anthony Short <anthonyshort@me.com>
 http://github.com/anthonyshort/csscaffold
 All rights reserved.
 
 This software is released under the terms of the New BSD License.
 http://www.opensource.org/licenses/bsd-license.php
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-- Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-- Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-- Neither the name of the CSScaffold nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY CSScaffold "AS IS" AND ANY
-EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL CSScaffold OR ITS CONTRIBUTORS 
-BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-THE POSSIBILITY OF SUCH DAMAGE.

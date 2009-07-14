@@ -17,23 +17,59 @@
 *
 * ========================================================
 */
-  
-/**  
-* --------------------------------------------------------
-* @subsection Snippets
-* --------------------------------------------------------
-*/
-@server import url('snippets/reset.css');
-@server import url('snippets/widgets.css');
-@server import url('snippets/font-stacks.css');
-@server import url('snippets/tests.css');
+	@import '/scaffold/snippets/reset.css';
+	@import '/css/src/layout.css';
+	@import '/css/src/typography.css';
+	
+	/**
+	* Assorted fixes for Internet Explorer 
+	*
+	* @bugfix
+	* @affected IE6, IE7
+	*/
+	@if(!browser == "Internet Explorer")
+	{
+		@import '/scaffold/snippets/ie-fixes.css';
+	}
+	
+	/**
+	* The grid plugin requires these settings 
+	*/
+	@grid 
+	{
+		column-width:60;
+		gutter-width:10;
+		column-count:12;
+		baseline:20px;
+	}
+	
+	/**
+	* We can define our colors in a single spot. 
+	* Use semantic names rather than descriptive text
+	* for a truly flexible design. 
+	*
+	* @colors is works exactly the same as constants, 
+	* except that it makes a little more sense semantically.
+	*/
+	@colors
+	{
+		body_background		:#fff;
+		body_color			:#444;
+		heading_color		:#111;
+		light				:#666;
+		highlight			:#ffffd9;
+		success				:green;
+		error				:red;
+		notice				:yellow;
+	}
+	
+	/**
+	* You can set constants as anything you want and call them
+	* using !constantname. Their position inside the css
+	* is irrelevant.
+	*/
+	@constants
+	{
+		selector_group: "table, td, tr";
+	}
 
-/**
-* --------------------------------------------------------
-* @section Sections
-* --------------------------------------------------------
-*/
-@server import url('sections/layout.css');
-@server import url('sections/typography.css');
-@server import url('sections/global.css');
-@server import url('sections/home.css');
