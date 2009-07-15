@@ -30,8 +30,7 @@
 	*
 	* @var boolean
 	**/
-	$config['debug'] = true;
-	#error_reporting(0);
+	$config['debug'] = false;
 
 
 /******************************************************************************

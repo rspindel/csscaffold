@@ -91,8 +91,17 @@
 	
 	require './libraries/FirePHPCore/FirePHP.class.php';
 	require './libraries/FirePHPCore/fb.php';
-
-	FB::setEnabled($config['debug']);
+	
+	if($config['debug'] === true)
+	{
+		FB::setEnabled(true);
+	}
+	else
+	{
+		FB::setEnabled(false);
+		error_reporting(0);
+	}
+	
 		
 /******************************************************************************
 * We've got everything we need, lets do this thing...
