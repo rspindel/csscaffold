@@ -381,7 +381,7 @@ class Layout extends Plugins
 	 * @param $properties
 	 * @return string
 	 */
-	public static function extrawidth($properties)
+	private function extrawidth($properties)
 	{
 		# Send the properties through the functions to get the padding and border from them  
 		$padding = $this->getPadding($properties);

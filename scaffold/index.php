@@ -77,18 +77,6 @@
 	{
 		stop("Cache path (".CACHEPATH.") is not writable");
 	}
-	elseif (!is_writable(ASSETPATH) )
-	{
-		stop("Asset path (".ASSETPATH.") is not writable");
-	}
-	
-	foreach (read_dir(ASSETPATH) as $key => $value)
-	{
-		if (!is_writable($value))
-		{
-			stop("$value is not writable");
-		}
-	}
 	
 /******************************************************************************
 * Load the required classes

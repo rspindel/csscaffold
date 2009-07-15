@@ -34,7 +34,7 @@ class Constants extends Plugins
 		$colors = find_at_group('colors', $css);
 		
 		# Join them together
-		$found = array_merge_recursive($found, $colors);
+		$found = @array_merge_recursive($found, $colors);
 		
 		# Add default constants here
 		self::set('asset_url', ASSETURL);
