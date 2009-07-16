@@ -133,7 +133,7 @@ class CSScaffold {
 			if ( class_exists($plugin_class) )
 			{				
 				# Initialize the plugin
-				$plugins[$plugin_class] = new $plugin_class($flags);
+				$plugins[$plugin_class] = new $plugin_class();
 				
 				# Set the flags
 				self::$flags = array_merge(self::$flags, $plugins[$plugin_class]->flags);

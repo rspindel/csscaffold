@@ -35,8 +35,8 @@ class Conditional extends Plugins
 			$logic = "if($value){ \$result = 1; } else { \$result = 0; }";
 
 			# Parse the args
-			eval($logic);
-			
+			@eval($logic);
+				
 			# When one of them is if true, replace the whole group with the contents of that if and continue
 			if($result == 1)
 			{
