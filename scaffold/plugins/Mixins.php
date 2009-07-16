@@ -184,7 +184,7 @@ class Mixins extends Plugins
 	{		
 		$parsed = array();
 		
-		if(is_array($params))
+		if($params != "")
 		{
 			$params = explode(',', $params);
 		}
@@ -192,7 +192,7 @@ class Mixins extends Plugins
 		{
 			$params = array();
 		}
-						
+
 		# Loop through each function arg and
 		# create the parsed params array
 		foreach($function_args as $key => $value)
@@ -200,7 +200,7 @@ class Mixins extends Plugins
 			if (strstr($value, '=')) $value = explode('=', $value);
 							
 			# If the user didn't include one of the
-			# params, we'll check to see if a default is available
+			# params, we'll check to see if a default is available			
 
 			if(!isset($params[$key]))
 			{
