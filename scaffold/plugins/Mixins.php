@@ -111,46 +111,53 @@ class Mixins extends Plugins
 	{
 		global $bases;
 		
-		$mixin_name 		= $mixins[2][$mixin_key];
-		$base_properties 	= $bases[$mixin_name]['properties'];
-			
-		# If there is no base for that mixin and we aren't in a recursion loop
-		if(is_array($bases[$mixin_name]) AND $current_mixin != $mixin_name)
+		$mixin_name = $mixins[2][$mixin_key];
+		
+		if(isset($bases[$mixin_name]))
 		{
-			$current_mixin = $mixin_name;
-								
-			# Parse the parameters of the mixin
-			$params = $this->parse_params($mixins[4][$mixin_key], $bases[$mixin_name]['params']);
+			$base_properties 	= $bases[$mixin_name]['properties'];
 			
-			# Create the property string
-			$new_properties = str_replace(array_keys($params),array_values($params),$base_properties);
-						
-			# Find nested mixins
-			$inner_mixins = $this->find_mixins($new_properties);
-						
-			# Loop through all the ones we found, skipping on recursion by passing
-			# through the current mixin we're working on
-			foreach($inner_mixins as $key => $value)
-			{	
-				# Prase the mixin and replace it within the property string
-				$new_properties = str_replace($inner_mixins[0][$key], $this->build_mixins($key, $inner_mixins, $current_mixin), $new_properties);
+			# If there is no base for that mixin and we aren't in a recursion loop
+			if(is_array($bases[$mixin_name]) AND $current_mixin != $mixin_name)
+			{
+				$current_mixin = $mixin_name;
+									
+				# Parse the parameters of the mixin
+				$params = $this->parse_params($mixins[4][$mixin_key], $bases[$mixin_name]['params']);
+				
+				# Create the property string
+				$new_properties = str_replace(array_keys($params),array_values($params),$base_properties);
+							
+				# Find nested mixins
+				$inner_mixins = $this->find_mixins($new_properties);
+				
+				# Loop through all the ones we found, skipping on recursion by passing
+				# through the current mixin we're working on
+				foreach($inner_mixins as $key => $value)
+				{
+					if(isset($inner_mixins[0][$key]))
+					{
+						# Prase the mixin and replace it within the property string
+						$new_properties = str_replace($inner_mixins[0][$key], $this->build_mixins($key, $inner_mixins, $current_mixin), $new_properties);
+					}
+				}		
+							
+				# Clean up memory
+				unset($inner_mixins, $params, $mixins);
+	
+				return $new_properties;
 			}
-			
-			# Clean up memory
-			unset($inner_mixins, $params, $mixins);
-
-			return $new_properties;
+			elseif($current_mixin == $mixin_name)
+			{
+				return "/* RECURSION */";
+			}
+			else
+			{
+				return '/* Mixin doesn\'t exist ' . $mixin_name . '*/';
+			}
+	
+			return false;	
 		}
-		elseif($current_mixin == $mixin_name)
-		{
-			return "/* RECURSION */";
-		}
-		else
-		{
-			return '/* Mixin doesn\'t exist ' . $mixin_name . '*/';
-		}
-
-		return false;		
 		
 	}
 	
@@ -186,7 +193,7 @@ class Mixins extends Plugins
 			
 			# If the user didn't include one of the
 			# params, we'll check to see if a default is available
-			if($params[$key] == '')
+			if(!isset($params[$key]))
 			{
 				# If there is a default value for the param			
 				if($value[1] != '')

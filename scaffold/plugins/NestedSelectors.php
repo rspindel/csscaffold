@@ -128,6 +128,8 @@ class NestedSelectors extends Plugins
 			}
 		}
 
+		$property_list = "";
+		
 		foreach($rule->property as $p)
 		{
 			$property = (array)$p->attributes(); 

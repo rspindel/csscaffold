@@ -18,7 +18,7 @@ class Layout extends Plugins
 	 * @param $css
 	 */
 	function pre_process($css)
-	{
+	{		
 		# Find the @grid - this returns an array of 'groups' and 'values'		
 		if( $settings = find_at_group('grid', $css) )
 		{
@@ -26,7 +26,7 @@ class Layout extends Plugins
 			$css = str_replace($settings['groups'], array(), $css); 
 			
 			# Store it so it's easier to grab
-			$settings = $settings['values'];
+			$settings = $settings['values'];			
 		}
 		
 		# If there's no grid settings, we'll create some default ones, just in case

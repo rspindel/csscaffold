@@ -21,16 +21,20 @@
 		if(preg_match_all('#@'.$group.'\s*\{\s*([^\}]+)\s*\}\s*#i', $css, $matches))
 		{	
 			$found['groups'] = $matches[0];
-					
+						
 			foreach($matches[1] as $key => $value)
 			{
 				$a = explode(";", substr($value, 0, -1));
-								
+									
 				foreach($a as $value)
 				{
 					$t = explode(":", $value);
-					$found['values'][trim($t[0])] = $t[1];
-				}	
+					
+					if(isset($t[1]))
+					{
+						$found['values'][trim($t[0])] = $t[1];
+					}
+				}
 			}			
 		}
 		
