@@ -470,18 +470,17 @@
 		
 		if(is_dir($directory))
 		{
-			if ($dir_handle = opendir($directory)) 
-			{
-				while (($file = readdir($dir_handle)) !== false) 
-				{
-					if (!is_installed($file))
+			if ($listing = scandir($directory)) 
+        	{
+            	foreach($listing as $file)
+            	{
+					if (!is_enabled($file))
 					{ 
 						continue; 
 					}
 					
-					$files[$file] = $directory . "/" . $file;
+					$files[$file] = join_path($directory, $file);
 				}
-				closedir($dir_handle);
 			}
 		}
 		else
@@ -489,7 +488,7 @@
 			error("Cannot read directory - ". $directory);
 			exit;
 		}
-		
+		stop($files);
 		return $files;
 	}
 
@@ -514,7 +513,7 @@
 	 * @author Anthony Short
 	 * @param $file
 	 */
-	function is_installed($file)
+	function is_enabled($file)
 	{
 		if(substr($file, 0, 1) == '.' || substr($file, 0, 1) == '-')
 		{
