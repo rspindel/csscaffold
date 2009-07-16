@@ -30,8 +30,6 @@ class NestedSelectors extends Plugins
 		$css = str_replace('#SCAFFOLD-QUOTE#', '"', $css);
 		$css = str_replace("#SCAFFOLD-IMGDATA-PNG#", "data:image/PNG;", $css);
 		
-		stop($css);
-		
 		return $css;
 	}
 	
@@ -69,7 +67,6 @@ class NestedSelectors extends Plugins
 		
 		# Tie it up with a bow
 		$xml = '<?xml version="1.0" ?'.">\r<css>\r\t$xml\r</css>\r"; 
-		
 		
 		return simplexml_load_string($xml);
 	}
