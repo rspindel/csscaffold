@@ -17,10 +17,9 @@
 *
 * ========================================================
 */
-
-	#id {
-+container;
-}
+	@import '/scaffold/snippets/reset.css';
+	@import '/css/src/layout.css';
+	@import '/css/src/typography.css';
 	
 	/**
 	* Assorted fixes for Internet Explorer 

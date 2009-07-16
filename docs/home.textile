@@ -2,9 +2,9 @@
 
 Imagine being able to recreate the 960.gs framework by adding a few settings. How about being able to control the grid of the framework within your css? You can even use dynamic variables based on this grid to enhance your Blueprint-style typography stylesheet and make it infinitely flexible. Oh and that grid.png and grid.css you need to generate every time manually - Scaffold does that for you.
 
-The main goal of Scaffold is to make you only write less CSS - and then leverage that on future projects. It makes maintaining OOCSS-style CSS much easier.
+The main goal of Scaffold is to help write less and do more - and then leverage that on future projects. It makes maintaining OOCSS-style CSS much easier.
 
-Scaffold passes your CSS through PHP scripts which process and cache it before it reaches the browser. The functionality is extended through plugins, which are simple scripts which can be easily added. It is based on Cacheer by Shaun Inman.
+It is based on Cacheer by Shaun Inman, which passes your CSS through PHP for processing and caching before it reaches the browser.
 
 h2. Features
 
@@ -32,7 +32,12 @@ h2. Contents
 ## [[Installation]]
 ## [[FAQ]]
 ## [[Advanced Usage]]
-# Functionality
+# Tutorials
+## Create a basic project
+## Using the layout module
+## Using the mixins
+## Using other functionality
+# Reference
 ## [[at-rules]]
 ## [[Classes]]
 ## [[Predefined Constants]]
