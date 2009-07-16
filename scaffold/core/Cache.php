@@ -122,10 +122,11 @@ abstract class Cache
 		{
 			$path = CACHEPATH;
 			$dirs = explode('/', Config::get('relative_dir'));
-
+						
 			foreach ($dirs as $dir)
 			{
-				$path .= $dir;
+				$path = join_path($path, $dir);
+				
 				if (!is_dir($path)) { mkdir($path, 0777); }
 			}
 		}

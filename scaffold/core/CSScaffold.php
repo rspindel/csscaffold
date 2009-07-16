@@ -41,12 +41,14 @@ class CSScaffold {
 	 **/
 	public static function run($requested_file, $recache = TRUE) 
 	{
+		$requested_file = trim_slashes($requested_file);
+		
 		# Easy access to file/directory info
 		# dirname = path to the directory containing the file
 		# basename = name of the file
 		# extension = extension of the file
 		# filename = name of the file, minus the extension
-		$request = pathinfo(trim_slashes($requested_file));
+		$request = pathinfo($requested_file );
 		
 		# Add our requested file var to the array
 		$request['requested_file'] = $requested_file;
@@ -58,7 +60,7 @@ class CSScaffold {
 		$request['relative_file'] = substr($requested_file, strlen(URLPATH));
 		
 		# Path to the directory containing the file, relative to the css directory		
-		$request['relative_dir'] = pathinfo($request['relative_file'], PATHINFO_DIRNAME);
+		$request['relative_dir'] = pathinfo($request['relative_file'], PATHINFO_DIRNAME);		
 
 		FB::log($request);
 		
