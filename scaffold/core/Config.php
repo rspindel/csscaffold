@@ -33,6 +33,36 @@ abstract class Config
 	{
 		return self::$instance;
 	}
+	
+	/**
+	 * Initializes the config
+	 *
+	 * @author Anthony Short
+	 * @return boolean
+	 */
+	private function init()
+	{
+		if (self::$configuration === NULL)
+		{
+			// Load the config file
+			require join_path(BASEPATH,'config/config.php') ; 
+			
+			// If the config file doesn't contain an array
+			if(!is_array($config) || !isset($config))
+			{
+				error("Your config file does not contain a config array");
+				return false; 
+			}
+			
+			// Set the config values in our core config
+			self::$configuration = $config;
+			
+			// Remove the config array
+			unset($config);
+			
+			return true;
+		}
+	}
 
 	/**
 	 * Get a config item or group.
@@ -89,7 +119,7 @@ abstract class Config
 	public static function set($key, $value = '')
 	{
 		// Do this to make sure that the config array is already loaded
-		self::get($key);
+		self::init();
 		
 		// Used for recursion
 		$conf =& self::$configuration;
@@ -131,7 +161,7 @@ abstract class Config
 	public static function __set($key, $value)
 	{
 		# Do this to make sure that the config array is already loaded
-		self::get($key);
+		self::init();
 		
 		# Used for recursion
 		$conf =& self::$configuration;
