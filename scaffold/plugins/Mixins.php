@@ -56,7 +56,7 @@ class Mixins extends Plugins
 			$base_names 	= $found['name'];
 			$base_args 		= $found['args'];
 			$base_props 	= $found['properties'];
-			
+						
 			# Clean up memory
 			unset($found);
 			
@@ -84,7 +84,7 @@ class Mixins extends Plugins
 			
 			# Loop through each of the found +mixins
 			foreach($mixins[2] as $mixin_key => $mixin_name)
-			{			
+			{	
 				$css = str_replace($mixins[0][$mixin_key], $this->build_mixins($mixin_key, $mixins), $css);
 			}
 			
@@ -112,16 +112,16 @@ class Mixins extends Plugins
 		global $bases;
 		
 		$mixin_name = $mixins[2][$mixin_key];
-		
+				
 		if(isset($bases[$mixin_name]))
 		{
-			$base_properties 	= $bases[$mixin_name]['properties'];
-			
+			$base_properties = $bases[$mixin_name]['properties'];		
+						
 			# If there is no base for that mixin and we aren't in a recursion loop
 			if(is_array($bases[$mixin_name]) AND $current_mixin != $mixin_name)
 			{
 				$current_mixin = $mixin_name;
-									
+				
 				# Parse the parameters of the mixin
 				$params = $this->parse_params($mixins[4][$mixin_key], $bases[$mixin_name]['params']);
 				
@@ -181,19 +181,19 @@ class Mixins extends Plugins
 	 * @return array
 	 */
 	function parse_params($params, $function_args = array())
-	{
+	{		
 		$parsed = array();
 		$params = explode(',', $params);
-		
+						
 		# Loop through each function arg and
 		# create the parsed params array
 		foreach($function_args as $key => $value)
 		{
 			if (strstr($value, '=')) $value = explode('=', $value);
-			
+						
 			# If the user didn't include one of the
 			# params, we'll check to see if a default is available
-			if(!isset($params[$key]))
+			if($params[$key] == "")
 			{
 				# If there is a default value for the param			
 				if($value[1] != '')
@@ -208,11 +208,12 @@ class Mixins extends Plugins
 					stop('Missing mixin parameter');
 				}
 			}
-			
+						
 			# If it has been exploded, make it a string again
 			if(is_array($value)) $value = $value[0];
 			
 			$parsed[trim($value)] = unquote($params[$key]);
+
 		}
 		
 		return $parsed;
