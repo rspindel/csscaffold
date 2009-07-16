@@ -488,7 +488,6 @@
 			error("Cannot read directory - ". $directory);
 			exit;
 		}
-		stop($files);
 		return $files;
 	}
 
