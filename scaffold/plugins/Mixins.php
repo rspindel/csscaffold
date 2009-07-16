@@ -183,17 +183,26 @@ class Mixins extends Plugins
 	function parse_params($params, $function_args = array())
 	{		
 		$parsed = array();
-		$params = explode(',', $params);
+		
+		if(is_array($params))
+		{
+			$params = explode(',', $params);
+		}
+		else
+		{
+			$params = array();
+		}
 						
 		# Loop through each function arg and
 		# create the parsed params array
 		foreach($function_args as $key => $value)
 		{
 			if (strstr($value, '=')) $value = explode('=', $value);
-						
+							
 			# If the user didn't include one of the
 			# params, we'll check to see if a default is available
-			if($params[$key] == "")
+
+			if(!isset($params[$key]))
 			{
 				# If there is a default value for the param			
 				if($value[1] != '')
