@@ -30,6 +30,8 @@ class NestedSelectors extends Plugins
 		$css = str_replace('#SCAFFOLD-QUOTE#', '"', $css);
 		$css = str_replace("#SCAFFOLD-IMGDATA-PNG#", "data:image/PNG;", $css);
 		
+		stop($css);
+		
 		return $css;
 	}
 	
@@ -54,7 +56,7 @@ class NestedSelectors extends Plugins
 		$xml = str_replace('data:image/PNG;', "#SCAFFOLD-IMGDATA-PNG#", $xml);
 		
 		# Transform properties
-		$xml = preg_replace('/([-_A-Za-z]+)\s*:\s*([^;}{]+)(?:;)/ie', "'<property name=\"'.trim('$1').'\" value=\"'.trim('$2').'\" />'", $xml);
+		$xml = preg_replace('/([-_A-Za-z]+)\s*:\s*([^;}{]+)(?:;?)/ie', "'<property name=\"'.trim('$1').'\" value=\"'.trim('$2').'\" />'", $xml);
 		
 		# Transform selectors
 		$xml = preg_replace('/(\s*)([_@#.0-9A-Za-z\+~*\|\(\)\[\]^\"\'=\$:,\s-]*?)\{/me', "'$1<rule selector=\"'.preg_replace('/\s+/', ' ', trim('$2')).'\">'", $xml);
@@ -68,6 +70,7 @@ class NestedSelectors extends Plugins
 		# Tie it up with a bow
 		$xml = '<?xml version="1.0" ?'.">\r<css>\r\t$xml\r</css>\r"; 
 		
+		
 		return simplexml_load_string($xml);
 	}
 	
@@ -80,7 +83,8 @@ class NestedSelectors extends Plugins
 	 */
 	private function parse_rule($rule, $parent = '')
 	{
-		$css_string = ""; 
+		$css_string = "";
+		$property_list = "";
 
 		# Get the selector and store it away
 		foreach($rule->attributes() as $type => $value)
@@ -89,7 +93,7 @@ class NestedSelectors extends Plugins
 			
 			# If the child references the parent selector
 			if (strstr($child, "#SCAFFOLD-PARENT#"))
-			{
+			{				
 				# If there are listed parents eg. #id, #id2, #id3
 				if (strstr($parent, ","))
 				{
@@ -127,9 +131,7 @@ class NestedSelectors extends Plugins
 				}
 			}
 		}
-
-		$property_list = "";
-		
+				
 		foreach($rule->property as $p)
 		{
 			$property = (array)$p->attributes(); 
