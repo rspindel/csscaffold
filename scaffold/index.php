@@ -9,16 +9,6 @@
 	require 'core/Common.php'; 
 
 /******************************************************************************
-* Received request from mod_rewrite and set some vars
-******************************************************************************/
-
-	# The file that the user requested
-	$requested_file	= isset($_GET['request']) ? $_GET['request'] : '';
-
-	# Do they want to recache
-	$recache = isset($_GET['recache']);
-
-/******************************************************************************
 * Define constants
 ******************************************************************************/
 	
@@ -108,5 +98,14 @@
 ******************************************************************************/
 	
 	# Setup CSScaffold with our CSS file
-	CSScaffold::run($requested_file, $recache);
+	# But make sure a file was requested
+	if(isset($_GET['request']))
+	{
+		CSScaffold::run($_GET);
+	}
+	else
+	{
+		stop("No CSS file requested");
+	}
+
 

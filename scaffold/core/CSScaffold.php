@@ -39,16 +39,26 @@ class CSScaffold {
 	 * @return void
 	 * @author Anthony Short
 	 **/
-	public static function run($requested_file, $recache = TRUE) 
+	public static function run($url_params) 
 	{
-		$requested_file = trim_slashes($requested_file);
+		# Get rid of those pesky slashes
+		$requested_file	= trim_slashes($url_params['request']);
+		
+		# If they've put a param in the url, consider it set to 'true'
+		foreach($url_params as $key => $value)
+		{
+			if($value == "")
+			{
+				$url_params[$key] = true;
+			}
+		}
 		
 		# Easy access to file/directory info
 		# dirname = path to the directory containing the file
 		# basename = name of the file
 		# extension = extension of the file
 		# filename = name of the file, minus the extension
-		$request = pathinfo($requested_file );
+		$request = pathinfo($requested_file);
 		
 		# Add our requested file var to the array
 		$request['requested_file'] = $requested_file;
@@ -93,6 +103,7 @@ class CSScaffold {
 	
 			# Send it off to the config
 			Config::set($request);
+			Config::set($url_params);
 			
 			# Get the modified time of the CSS file
 			Config::set('requested_mod_time', filemtime(Config::get('server_path')));
@@ -101,7 +112,7 @@ class CSScaffold {
 			self::load_plugins();
 	
 			# Send the flags to the cache and get it ready
-			Cache::set(self::$flags, $recache);
+			Cache::set(self::$flags, $url_params['recache']);
 			
 			# Parse the css
 			self::parse_css();
