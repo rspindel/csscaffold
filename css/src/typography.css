@@ -60,6 +60,14 @@
 		img 		{ +reset; }
 		a 			{ +inherit; }
 		a:hover		{ +inherit; }
+		
+		&:first-child { margin-top:0 }
+		
+	}
+	
+	myclass 
+	{
+		+heading;
 	}
 	
 	=h1 
