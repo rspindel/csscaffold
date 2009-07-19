@@ -89,7 +89,7 @@ class Mixins extends Plugins
 			}
 			
 			# Remove all of the +mixins (if they still exist)
-			CSS::replace($mixins[0], '', $css);
+			CSS::replace($mixins[0], '');
 	
 			# Clean up
 			unset($bases, $mixins);

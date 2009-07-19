@@ -105,7 +105,10 @@ abstract class Config
 		}
 		else
 		{
-			return self::$configuration[$key];
+			if(isset(self::$configuration[$key]))
+			{
+				return self::$configuration[$key];
+			} 
 		}
 	}
 

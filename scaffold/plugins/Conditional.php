@@ -40,11 +40,11 @@ class Conditional extends Plugins
 			# When one of them is if true, replace the whole group with the contents of that if and continue
 			if($result == 1)
 			{
-				CSS::replace($found[0][$key], $found['properties'][$key], $css);
+				CSS::replace($found[0][$key], $found['properties'][$key]);
 			}
 			else
 			{
-				CSS::replace($found[0][$key], '', $css);
+				CSS::replace($found[0][$key], '');
 			}	
 		}
 	}

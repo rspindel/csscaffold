@@ -21,7 +21,7 @@ class Minify extends Plugins
 	function pre_process()
 	{
 		# Remove comments
-		CSS::compress($css);
+		CSS::compress(CSS::$css);
 	}
 	
 	function formatting_process()

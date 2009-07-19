@@ -24,8 +24,8 @@ class OOCSS extends Plugins
 		foreach($found as $key => $value)
 		{
 			# Remove the property from the css
-			CSS::remove($found[2][$key]);
-			
+			CSS::remove($found[2]);
+					
 			# The selector we're going to find
 			$find =& $found[3][$key];
 			
@@ -36,17 +36,20 @@ class OOCSS extends Plugins
 			# Find all the rules we need to add our selector too.
 			# We've appended and prepended some extra regex to make sure
 			# we find all of the selectors before and after the one we're looking for
-			$rules = CSS::find_selectors("[^{}]*" . unquote($find) . "[^{]*");
+			$rules = CSS::find_selectors("[^{}]*" . unquote(preg_quote($find)) . "[^{]*");
+			
+			# If we didn't find anything
+			if(!isset($rules[1])) continue;
 			
 			# Loop through each of the rules and replace them with
 			# our new selector added to them.
-			foreach($rules as $key => $rule)
+			foreach($rules[1] as $key => $rule)
 			{
 				# We'll store our updated selector list array
 				$updated = array();
 				
 				# Put the selectors into an array
-				$exploded = explode(",", $rules[1][$key]);
+				$exploded = explode(",", $rule);
 				
 				# Loop through each selector in the list
 				foreach($exploded as $single_selector)
@@ -64,8 +67,8 @@ class OOCSS extends Plugins
 				$updated = implode(",", $updated);		
 				
 				# Replace the original selector string with our new one to add the properties
-				$updated = str_replace($rules[1][$key], $updated, $rules[0][$key]);
-				
+				$updated = str_replace($rule, $updated, $rules[0][$key]);
+								
 				# Replace the entire, original rule, with our updated
 				# rule which includes our selector added to the list
 				CSS::replace($rules[0][$key], $updated);
