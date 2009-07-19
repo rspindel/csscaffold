@@ -1,33 +1,21 @@
 	/**
-	* Quickly style all the link colours
+	* Opacity
+	* 
+	* Thanks to Chris Eppstein. Borrowed this one from Compass. 
+	* Takes a number from 0 to 1.
 	*/
-	=links(!normal, !hover, !active, !visited, !focus)
+	=opacity(!opacity = 1)
 	{
-		& 
-		{
-			color:!normal;
-		}
+		opacity: !opacity;
+		-moz-opacity: !opacity;
+		-khtml-opacity: !opacity;
 		
-		&:hover
+		@if(!browser == "Internet Explorer")
 		{
-			color:!hover;
+			-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=eval(!opacity*100))";
+			filter: "alpha(opacity=eval(!opacity*100))";
 		}
-		
-		&:active
-		{
-			color:!active;
-		}
-		
-		&:visited
-		{
-			color:!visited;
-		}
-		
-		&:focus
-		{
-			color:!focus;
-		}
-	}  
+	}
 	
 	/**
 	* Safari text shadow fix.

@@ -17,13 +17,13 @@ class Layout extends Plugins
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	function pre_process($css)
+	function pre_process()
 	{		
 		# Find the @grid - this returns an array of 'groups' and 'values'		
-		if( $settings = find_at_group('grid', $css) )
+		if( $settings = CSS::find_at_group('grid') )
 		{
 			# Remove it from the css
-			$css = str_replace($settings['groups'], array(), $css); 
+			CSS::replace($settings['groups'], array()); 
 			
 			# Store it so it's easier to grab
 			$settings = $settings['values'];			
@@ -39,39 +39,46 @@ class Layout extends Plugins
 				'baseline' => "18px"
 			);
 		}
-					
+		
+		# A lot easier to write and read
+		$cw 	=& $settings['column-width'];
+		$gw 	=& $settings['gutter-width'];
+		$cc 	=& $settings['column-count'];
+		$bl		=& $settings['baseline'];
+			
 		# Check whether we should use the column width or calculate it from the grid width
-		if(!isset($settings['column-width'])) 
+		if(isset($settings['grid-width'])) 
 		{			
 			# Our awesome column width calculation
-			$settings['column-width'] = ($settings['grid-width'] - ($settings['gutter-width'] * ($settings['column-count']-1)))/$settings['column-count'] + $$settings['gutter-width'];
+			$cw = ($grid_w - ($gw * ($cc-1)))/$cc + $gw;
 		}
 		else
 		{
-			$settings['column-width'] 	= $settings['column-width'] + ($settings['gutter-width']*2);
-			$settings['grid-width'] 	= $settings['column-width'] * $settings['column-count'];
+			$cw = $cw + ($gw*2);
+			$grid_w = $cw * $cc;
 		}
+		
+		# Add grid width to the settings
+		$settings['grid-width'] = $grid_w;
 		
 		# Set them as constants we can use in the css
 		Constants::set($settings);
 		
 		# Remove the unit 
-		$settings['baseline'] = preg_replace('/[a-zA-Z]*/', '', $settings['baseline']);
-		$settings['gutter-width'] = preg_replace('/[a-zA-Z]*/', '', $settings['gutter-width']);
+		$bl = preg_replace('/[a-zA-Z]*/', '', $bl);
+		$gw = preg_replace('/[a-zA-Z]*/', '', $gw);
 		
 		# Generate the grid.png
-		self::create_grid_image($settings['column-width'], $settings['baseline'], $settings['gutter-width']);
+		self::create_grid_image($cw, $bl, $gw);
 
 		# Create grid classes (.column-1 etc) and add them to the css		
-		$css .= $this->create_grid_classes($settings['column-width'], $settings['baseline'], $settings['gutter-width'], $settings['column-count']);
+		$this->create_grid_classes($cw, $bl, $gw, $cc);
 	
 		# Replace the columns:; properties
-		$css = $this->replaceColumns($css);
+		$this->replaceColumns($cw, $gw, $cc);
 		
 		# Round to baselines
-		$css = $this->round_to_baseline($settings['baseline'], $css);
-
-		return $css;
+		$this->round_to_baseline($bl);
 	}
 	
 	/**
@@ -81,18 +88,19 @@ class Layout extends Plugins
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	function round_to_baseline($baseline, $css)
+	function round_to_baseline($baseline)
 	{
-		if(preg_match_all('/round\((\d+)\)/', $css, $matches))
+		$found = CSS::find_functions('round');
+		
+		if($found)
 		{
-			foreach($matches[1] as $key => $match)
+			foreach($found[1] as $key => $match)
 			{
 				$num = round_nearest($match,$baseline);
-				$css = str_replace($matches[0][$key],$num."px",$css);
+				
+				CSS::replace($found[0][$key], $num."px");
 			}
 		}
-		
-		return $css;
 	}
 
 	/**
@@ -111,16 +119,19 @@ class Layout extends Plugins
 			$width = $cw * $i;
 			
 			# Make the .columns-x classes
-			$s .= ".columns-$i{width:".($width - ($gw * 2))."px;float:left;margin-right:{$gw}px;margin-left:{$gw}px;}";
+			$s .= ".columns-$i{width:".($width - ($gw * 2))."px;}";
 			
 			# Make the .span-x classes
 			$s .= ".span-$i{width:".($width - ($gw * 2))."px;}";
 			
+			# Make the row/line/group/parent class
+			$s .= ".group{padding:0 {$gw}px;margin:".($bl/2)."px 0;}";
+			
 			# Make the .push classes
-			$s .= ".push-$i{margin-right:".-($width)."px;}";
+			$s .= ".push-$i{margin-right:".-($width)."px !important;}";
 			
 			# Make the .pull classes
-			$s .= ".pull-$i{ margin-left:-".($width)."px;}";
+			$s .= ".pull-$i{ margin-left:-".($width)."px !important;}";
 			
 			# Make the .baseline-x classes
 			$s .= ".baseline-$i{height:".($bl * $i)."px;}";
@@ -133,13 +144,19 @@ class Layout extends Plugins
 			
 			$pullselectors[] = ".pull-$i";
 			$pushselectors[] = ".push-$i";
+			$columns[] = ".columns-$i";
 			Constants::set("span-".$i, ($width - ($gw * 2)));
 		}
 		
-		$s .= substr_replace(implode(",", $pushselectors),"",-1) . "{float:left;position:relative;}";
-		$s .= substr_replace(implode(",", $pullselectors),"",-1) . "{float:left;position:relative;}";
+		$s .= implode(",", $pushselectors) 	. "{float:left;position:relative;}";
+		$s .= implode(",", $pullselectors) 	. "{float:left;position:relative;}";
+		$s .= implode(",", $columns) 		. "{float:left;margin:".($bl/2)."px {$gw}px;}";
+		
+		$s .= ".first{margin-left:0 !important;} .last{margin-right:0 !important;} .solo{margin-left:0 !important;margin-right:0 !important;}";
+		$s .= ".group{margin-left:0 !important; margin-right:0 !important; } .group.last {padding-right:0 !important;} .group.first{padding-left:0 !important;} .unit{}";
 
-		return $s;
+		# Append it to the css
+		CSS::append($s);
 	}
 
 	/**
@@ -194,12 +211,8 @@ class Layout extends Plugins
 	* @param   string   css file string
 	* @return  string	css file string
 	*/
-	public function replaceColumns($css)
-	{
-		$cw 		= Constants::get('column-width');
-		$gw 		= Constants::get('gutter-width');
-		$cc 		= Constants::get('column-count');
-		
+	private function replaceColumns($cw, $gw, $cc)
+	{		
 		# We'll loop through each of the columns properties by looking for each columns:x; property.
 		# This means we'll only loop through $columnscount number of times which could be better
 		# or worse depending on how many columns properties there are in your css
@@ -207,7 +220,7 @@ class Layout extends Plugins
 		for ($i=1; $i <= $cc; $i++) 
 		{ 
 			# Matches all selectors (just the properties) which have a columns property
-			while($match = find_properties_with_value('columns', $i, $css)) 
+			while($match = CSS::find_properties_with_value('columns', $i)) 
 			{
 				# For each of the selectors with columns properties...
 				foreach ($match[0] as $key => $properties)
@@ -225,22 +238,7 @@ class Layout extends Plugins
 					# We'll see if the flags have been set from the browser plugin
 					if($this->can_boxsize())
 					{		
-						$styles .= "box-sizing:border-box;";
-						
-						switch (User_agent::$browser)
-						{
-						    case 'Safari':
-						    	$styles .= "-webkit-box-sizing:border-box;";
-						    break;
-						        
-						    case 'Firefox':
-						    	$styles .= "-moz-box-sizing:border-box;";
-						    break;
-						    
-						    case 'Internet Explorer':
-						    	$styles .= "-ms-box-sizing:border-box;";
-						    break;
-						}
+						$styles .= "+border-box;";
 					} 
 					else
 					{	
@@ -261,12 +259,11 @@ class Layout extends Plugins
 					$newproperties = str_replace($columnsproperty, $styles, $properties);
 
 					# Insert this new string into CSS string
-					$css = str_replace($properties, $newproperties, $css);
+					CSS::replace($properties, $newproperties);
 				
 				}
 			}
 		}
-		return $css;
 	}
 
 	/**

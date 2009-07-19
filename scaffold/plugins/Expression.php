@@ -17,10 +17,10 @@ class Expression extends Plugins
 	 * @author Anthony Short
 	 * @param $css
 	*/
-	function post_process($css)
+	function post_process()
 	{	
 		# Find all of the math() functions
-		if(preg_match_all('/eval\([\'\"]?((?:[^);]++|\))*)[\'\"]?\)/', $css, $matches))
+		if(preg_match_all('/eval\([\'\"]?((?:[^);]++|\))*)[\'\"]?\)/', CSS::$css, $matches))
 		{			
 			# Loop through them, stripping out anything but simple math
 			# executing it and replacing it within the css	
@@ -33,7 +33,7 @@ class Expression extends Plugins
 				
 				if ($result)
 				{
-					$css = str_replace($matches[0][$key], $result, $css);
+					CSS::replace($matches[0][$key], $result);
 				}
 				else
 				{
@@ -41,10 +41,6 @@ class Expression extends Plugins
 				}
 			}
 		}
-
-		return $css;
 	}
 	
 }
-
-?>

@@ -170,21 +170,22 @@ class CSScaffold {
 		# If the cache is stale or doesn't exist
 		if (Config::get('cached_mod_time') < Config::get('requested_mod_time'))
 		{    
-			# Load the CSS file
-			$css = file_get_contents(Config::get('server_path'));
+			# Load the CSS file in the object
+			#$css = new CSS($css);
+			CSS::load(file_get_contents(Config::get('server_path')));
 										
 			# Parse our css through the plugins
 			foreach(self::$plugins as $plugin)
 			{
 				Benchmark::start( get_class($plugin) ."_import" );
-				$css = $plugin->import_process($css);
+				$plugin->import_process();
 				Benchmark::stop( get_class($plugin) ."_import" );
 			}
 							
 			foreach(self::$plugins as $plugin)
 			{
 				Benchmark::start( get_class($plugin) ."_preprocess" );
-				$css = $plugin->pre_process($css);
+				$plugin->pre_process();
 				Benchmark::stop( get_class($plugin) ."_preprocess" );
 			}
 			
@@ -193,32 +194,32 @@ class CSScaffold {
 			# process just for this, I'll do it manually.
 			if (class_exists('Constants'))
 			{
-				$css = Constants::replace($css);
+				Constants::replace();
 			}
 			
 			foreach(self::$plugins as $plugin)
 			{
 				Benchmark::start( get_class($plugin) ."_process" );
-				$css = $plugin->process($css);
+				$plugin->process();
 				Benchmark::stop( get_class($plugin) ."_process" );
 			}
 			
 			foreach(self::$plugins as $plugin)
 			{
 				Benchmark::start( get_class($plugin) ."_postprocess" );
-				$css = $plugin->post_process($css);
+				$plugin->post_process();
 				Benchmark::stop( get_class($plugin) ."_postprocess" );
 			}
 			
 			foreach(self::$plugins as $plugin)
 			{
 				Benchmark::start( get_class($plugin) ."_formatting" );
-				$css = $plugin->formatting_process($css);
+				$plugin->formatting_process();
 				Benchmark::stop( get_class($plugin) ."_formatting" );
 			}
 			
 			# Write the css file to the cache
-			Cache::write($css);
+			Cache::write(CSS::$css);
 		} 
 	}
 		

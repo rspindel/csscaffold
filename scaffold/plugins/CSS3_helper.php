@@ -20,14 +20,12 @@ class CSS3_helper extends Plugins
 	 * @author Anthony Short
 	 * @param $css
 	*/
-	function post_process($css)
+	function post_process()
 	{		
 		/**
 		* @todo @font-face helper. Any font you put in assets/fonts you 
 		* can just use in your css without any @font-face rules
 		*/
-		
-		return $css;
 	}
 	
 }

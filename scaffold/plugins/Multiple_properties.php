@@ -18,10 +18,10 @@ class Multiple_properties extends Plugins
 	 * @param $css
 	 * @return string
 	 */
-	function process($css)
+	function process()
 	{
 		# Find all selectors with properties with commas in them
-		if ( preg_match_all('/(((?:[a-zA-Z-]++\,\s*)|(?3))+[a-zA-Z-]++\s*)\:([^{]*)\;/', $css, $matches) )
+		if ( preg_match_all('/(((?:[a-zA-Z-]++\,\s*)|(?3))+[a-zA-Z-]++\s*)\:([^{;]*)\;/', CSS::$css, $matches) )
 		{
 			foreach($matches[0] as $key => $value)
 			{
@@ -33,10 +33,8 @@ class Multiple_properties extends Plugins
 				$properties = implode($values, $properties) . $values;
 				
 				# String replace the old comma'd property name with the new properties
-				$css = str_replace($value, $properties, $css);
+				CSS::replace($value, $properties);
 			}
 		}
-		
-		return $css;
 	}
 }

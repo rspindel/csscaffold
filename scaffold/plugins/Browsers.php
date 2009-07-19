@@ -8,7 +8,6 @@
  **/
 class Browsers extends Plugins
 {
-
 	/**
 	 * The construct is important for plugins. It is where flags MUST 
 	 * be set. For each flag that exists, a seperate file will be cached
@@ -20,7 +19,8 @@ class Browsers extends Plugins
 	{	
 		# Set a flag for their browser, so it caches it for each
 		# browser. If we don't set flags, then it would only cache
-		# the css type of the first browser to request it. 
+		# the css once, using the first browser to request it as the
+		# user agent.  
 		$this->flags[User_agent::$browser] = true;
 		$this->flags[User_agent::$version] = true;
 	}
@@ -34,12 +34,10 @@ class Browsers extends Plugins
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	function pre_process($css)
+	function pre_process()
 	{
 		Constants::set('browser', User_agent::$browser);
 		Constants::set('version', User_agent::$version);
-		
-		return $css;
 	}
 	
 }

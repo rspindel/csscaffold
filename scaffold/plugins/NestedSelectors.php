@@ -15,9 +15,9 @@ class NestedSelectors extends Plugins
 	 * @author Anthony Short
 	 * @return $css string
 	 */
-	function process($css)
+	function process()
 	{
-		$xml = self::css_to_xml($css);
+		$xml = CSS::to_xml();
 		
 		$css = "";
 		
@@ -29,46 +29,9 @@ class NestedSelectors extends Plugins
 		$css = str_replace('#SCAFFOLD-GREATER#', '>', $css);
 		$css = str_replace('#SCAFFOLD-QUOTE#', '"', $css);
 		$css = str_replace("#SCAFFOLD-IMGDATA-PNG#", "data:image/PNG;", $css);
+		$css = str_replace("#SCAFFOLD-IMGDATA-JPG#", "data:image/JPG;", $css);
 		
-		return $css;
-	}
-	
-	/**
-	 * Transforms CSS into XML
-	 *
-	 * @author Shaun Inman
-	 * @param $css
-	 * @return string
-	 */
-	private function css_to_xml($css)
-	{
-		$xml = trim($css);
-		
-		# Strip comments to prevent parsing errors
-		$xml = preg_replace('#(/\*[^*]*\*+([^/*][^*]*\*+)*/)#', '', $xml);
-		
-		# These will break the xml, so we'll transform them for now
-		$xml = str_replace('"', '#SCAFFOLD-QUOTE#', $xml);
-		$xml = str_replace('>','#SCAFFOLD-GREATER#', $xml);
-		$xml = str_replace('&','#SCAFFOLD-PARENT#', $xml);
-		$xml = str_replace('data:image/PNG;', "#SCAFFOLD-IMGDATA-PNG#", $xml);
-		
-		# Transform properties
-		$xml = preg_replace('/([-_A-Za-z]+)\s*:\s*([^;}{]+)(?:;)/ie', "'<property name=\"'.trim('$1').'\" value=\"'.trim('$2').'\" />'", $xml);
-		
-		# Transform selectors
-		$xml = preg_replace('/(\s*)([_@#.0-9A-Za-z\+~*\|\(\)\[\]^\"\'=\$:,\s-]*?)\{/me', "'$1<rule selector=\"'.preg_replace('/\s+/', ' ', trim('$2')).'\">'", $xml);
-		
-		# Close rules
-		$xml = preg_replace('/\!?\}/', '</rule>', $xml);
-		
-		# Indent everything one tab
-		$xml = preg_replace('/\n/', "\r\t", $xml);
-		
-		# Tie it up with a bow
-		$xml = '<?xml version="1.0" ?'.">\r<css>\r\t$xml\r</css>\r"; 
-		
-		return simplexml_load_string($xml);
+		CSS::$css = $css;
 	}
 	
 	/**

@@ -78,6 +78,7 @@
 	require './core/User_agent.php';
 	require './core/Config.php';
 	require './core/CSScaffold.php';
+	require './core/CSS.php';
 	
 	require './libraries/FirePHPCore/FirePHP.class.php';
 	require './libraries/FirePHPCore/fb.php';

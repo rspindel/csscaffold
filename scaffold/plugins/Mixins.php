@@ -26,9 +26,9 @@ class Mixins extends Plugins
 	 * @param $css
 	 * @return string
 	 */
-	function import_process($css)
+	function import_process()
 	{
-		return $this->import_mixins($css);
+		$this->import_mixins();
 	}
 
 	/**
@@ -37,7 +37,7 @@ class Mixins extends Plugins
 	 * @author Anthony Short
 	 * @return $css string
 	 */
-	function process($css)
+	function process()
 	{
 		global $bases;
 	
@@ -48,7 +48,7 @@ class Mixins extends Plugins
 		$bases = array();
 		
 		# Finds any selectors starting with =mixin-name
-		if( $found = find_selectors('\=(?P<name>[0-9a-zA-Z_-]*)(\((?P<args>.*?)\))?', $css, 4) )
+		if( $found = CSS::find_selectors('\=(?P<name>[0-9a-zA-Z_-]*)(\((?P<args>.*?)\))?', 5) )
 		{
 		
 			# Just to make life a little easier
@@ -73,30 +73,28 @@ class Mixins extends Plugins
 			self::$mixins 	= $bases;
 			
 			# Remove all of the mixin bases
-			$css = str_replace($full_base, '', $css);
+			CSS::remove($full_base);
 			
 			# Clean up memory
 			unset($full_base, $base_names, $base_args, $base_props);
 			
 			# Find the mixins
 			# match('/\+(([0-9a-zA-Z_-]*?)(\((.*?)\))?)\;/', $css);
-			$mixins = $this->find_mixins($css);
+			$mixins = $this->find_mixins(CSS::$css);
 			
 			# Loop through each of the found +mixins
 			foreach($mixins[2] as $mixin_key => $mixin_name)
 			{	
-				$css = str_replace($mixins[0][$mixin_key], $this->build_mixins($mixin_key, $mixins), $css);
+				CSS::replace($mixins[0][$mixin_key], $this->build_mixins($mixin_key, $mixins));
 			}
 			
 			# Remove all of the +mixins (if they still exist)
-			$css = str_replace($mixins[0], '', $css);
+			CSS::replace($mixins[0], '', $css);
 	
 			# Clean up
 			unset($bases, $mixins);
 		
 		}
-
-		return $css;
 	}
 	
 	/**
@@ -234,7 +232,7 @@ class Mixins extends Plugins
 	 * @author Anthony Short
 	 * @return string
 	 */
-	function import_mixins($css)
+	function import_mixins()
 	{
 		$mixins = join_path(BASEPATH, 'mixins');
 		
@@ -243,10 +241,8 @@ class Mixins extends Plugins
 			if (!is_css($file)) { continue; }
 			
 			# Add it to our css
-			$css .= file_get_contents(join_path($mixins, $file));
+			CSS::append(file_get_contents(join_path($mixins, $file)));
 		}
-
-		return $css;
 	}
 
 }

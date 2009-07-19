@@ -23,10 +23,10 @@ class Conditional extends Plugins
 	 * @author Anthony Short
 	 * @param $css
 	*/
-	function process($css)
+	function process()
 	{
 		# Find all @if, @else, and @elseif's groups
-		$found = find_selectors('(?P<name>@if)(\((?P<args>.*?)\))?', $css, 4);
+		$found = CSS::find_selectors('(?P<name>@if)(\((?P<args>.*?)\))?', 5);
 		$args = $found['args'];
 		
 		# Go through each one
@@ -40,15 +40,13 @@ class Conditional extends Plugins
 			# When one of them is if true, replace the whole group with the contents of that if and continue
 			if($result == 1)
 			{
-				$css = str_replace($found[0][$key], $found['properties'][$key], $css);
+				CSS::replace($found[0][$key], $found['properties'][$key], $css);
 			}
 			else
 			{
-				$css = str_replace($found[0][$key], '', $css);
+				CSS::replace($found[0][$key], '', $css);
 			}	
 		}
-		
-		return $css;
 	}
 	
 }

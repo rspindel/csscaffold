@@ -27,11 +27,11 @@ class Constants extends Plugins
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	function pre_process($css)
+	function pre_process()
 	{				
 		# Find the constants group and values
-		$found = find_at_group('constants', $css);
-		$colors = find_at_group('colors', $css);
+		$found 	= CSS::find_at_group('constants');
+		$colors = CSS::find_at_group('colors');
 		
 		# Join them together
 		$found = @array_merge_recursive($found, $colors);
@@ -50,9 +50,7 @@ class Constants extends Plugins
 		#self::get_xml_constants();
 		
 		# Remove the @constants groups
-		$css = str_replace($found['groups'], array(), $css);
-		
-		return $css;
+		CSS::replace($found['groups'], array());
 	}
 	
 	/**
@@ -99,7 +97,7 @@ class Constants extends Plugins
 	 * @param $
 	 * @return return type
 	 */
-	public static function replace($css)
+	public static function replace()
 	{
 		if (!empty(self::$constants))
 		{
@@ -107,12 +105,10 @@ class Constants extends Plugins
 			{
 				if($value != "")
 				{
-					$css = str_replace( "!" . $key, unquote($value), $css);
+					CSS::replace( "!{$key}", unquote($value));
 				}
 			}
 		}
-		
-		return $css;
 	}
 	
 	/**

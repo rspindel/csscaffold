@@ -7,10 +7,12 @@
  **/
 class Pretty extends Plugins
 {
-	function formatting_process($css)
+	function formatting_process()
 	{
 		if(Config::get('pretty') === true)
-		{		
+		{
+			$css =& CSS::$css;
+			
 			$css = preg_replace('#(/\*[^*]*\*+([^/*][^*]*\*+)*/|url\(data:[^\)]+\))#e', "'esc('.base64_encode('$1').')'", $css); // escape comments, data protocol to prevent processing
 			
 			$css = str_replace(';', ";\r\r", $css); // line break after semi-colons (for @import)
@@ -34,7 +36,5 @@ class Pretty extends Plugins
 				$css = str_replace($m[0], str_replace($m[1], "\r\t".preg_replace("#\r#", "\r\t", trim($m[1]))."\r", $m[0]), $css);
 			}
 		}
-		
-		return $css;
 	}
 }

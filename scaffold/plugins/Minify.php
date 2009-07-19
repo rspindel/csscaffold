@@ -18,23 +18,14 @@ class Minify extends Plugins
 	 * @param $css
 	 * @return string
 	 */
-	function pre_process($css)
+	function pre_process()
 	{
 		# Remove comments
-		$css = remove_css_comments($css);
-		
-		# Remove extra white space
-		$css = preg_replace('/\s+/', ' ', $css);
-		
-		# Remove line breaks
-		$css = preg_replace('/\n|\r/', '', $css);
-		
-		return $css;
+		CSS::compress($css);
 	}
 	
-	function formatting_process($css)
+	function formatting_process()
 	{		
 		#return Minify_CSS_Compressor::process($css);
-		return $css;
 	}
 }

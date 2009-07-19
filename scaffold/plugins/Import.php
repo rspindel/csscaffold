@@ -18,16 +18,14 @@ class Import extends Plugins
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	function import_process($css)
+	function import_process()
 	{
 		
 		# Find all the @server imports
-		$css = $this->server_import($css);
+		CSS::$css = $this->server_import(CSS::$css);
 			
 		# Append any css in the plugins folder
-		# $css = $this->add_plugins($css);
-
-		return $css;
+		# $css = $this->add_plugins();
 	}
 	
 	/**
@@ -65,7 +63,7 @@ class Import extends Plugins
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	function add_plugins($css)
+	function add_plugins()
 	{		
 		foreach(scandir(CSSPATH . 'plugins') as $file)
 		{
