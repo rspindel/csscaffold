@@ -20,16 +20,34 @@ class Expression extends Plugins
 	function post_process()
 	{	
 		# Find all of the math() functions
-		if(preg_match_all('/eval\([\'\"]?((?:[^);]++|\))*)[\'\"]?\)/', CSS::$css, $matches))
-		{			
+		if(preg_match_all('/
+		
+			eval
+			\(
+				[\'\"]?
+				
+				(([^);]++\)?|(?:2))*?)
+				
+				[\'\"]?
+			\)
+			
+			/sx',
+			CSS::$css, $matches)
+		)
+		{
 			# Loop through them, stripping out anything but simple math
 			# executing it and replacing it within the css	
-			foreach($matches[1] as $key => $match)
-			{
-				$match = preg_replace('/[a-zA-Z]*/','',$match); # Only include the simple math operators
-				$match = remove_all_quotes($match);
+			foreach($matches[0] as $key => $match)
+			{				
+				$expr =& $matches[1][$key];
 				
-				eval("\$result = ".$match.";");
+				# Remove units
+				$expr = preg_replace('/(px|em|%)/','',$expr); 
+				
+				# Remove quotes
+				$expr = remove_all_quotes($expr);
+				
+				eval("\$result = ".$expr.";");
 				
 				if ($result)
 				{
