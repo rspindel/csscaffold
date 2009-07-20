@@ -17,9 +17,9 @@ class Image_helper extends Plugins
 	 */
 	function __construct()
 	{
-		if( $this->can_base64( User_agent::$browser, User_agent::$version ) ) 
+		if(User_agent::can_base64()) 
 		{
-			$this->flags['Base64'] = true;	
+			Cache::flag('Base64');	
 		}
 	}
 	
@@ -36,16 +36,7 @@ class Image_helper extends Plugins
 		$this->image_replace();
 			
 		# If we can do Base64, replace the embed() functions
-		if (isset($this->flags['Base64']))
-		{
-			$this->embed_images();
-		}
-		
-		# Otherwise the browser can't do base64 images, change them to plain urls
-		else
-		{
-			CSS::replace("embed(", "url(");
-		}
+		$this->embed_images();
 	}
 	
 	/**
@@ -64,14 +55,7 @@ class Image_helper extends Plugins
 			{
 				$path =& $value;
 								
-				if(substr($path, 0, 1) != "/")
-				{
-					$absolute_img = $this->find_absolute_path($path);
-				}
-				else
-				{
-					$absolute_img = join_path(DOCROOT,$path);
-				}
+				$absolute_img = find_absolute_path($path);
 													
 				# Check if it exists
 				if (!file_exists($absolute_img) || !is_image($absolute_img)) 
@@ -118,65 +102,30 @@ class Image_helper extends Plugins
 	 */
 	function embed_images()
 	{
-		$images = array();
-		$embeds = CSS::find_functions('embed');
-
-		foreach($embeds as $key => $value)
+		if (User_agent::can_base64())
 		{
-			$relative_img =& $embeds[1][$key];
-			$relative_img = unquote($relative_img);
-						
-			if(!is_image($relative_img)) continue;
-			
-			if(substr($relative_img, 0, 1) != "/")
-			{
-				$absolute_img = $this->find_absolute_path($relative_img);
-			}
-			else
-			{
-				$absolute_img = join_path(DOCROOT,$relative_img);
-			}
+			$images = array();
+			$embeds = CSS::find_functions('embed');
 
-			if (file_exists($absolute_img))
+			foreach($embeds as $key => $value)
 			{
-				$img_data = 'url(data:image/'.extension($relative_img).';base64,'.base64_encode(file_get_contents($absolute_img)) . ')';		
-				CSS::replace($embeds[0][$key], $img_data);
+				$relative_img =& $embeds[1][$key];
+				$relative_img = unquote($relative_img);
+						
+				if(!is_image($relative_img)) continue;
+			
+				$absolute_img = find_absolute_path($relative_img);
+
+				if (file_exists($absolute_img))
+				{
+					$img_data = 'url(data:image/'.extension($relative_img).';base64,'.base64_encode(file_get_contents($absolute_img)) . ')';		
+					CSS::replace($embeds[0][$key], $img_data);
+				}
 			}
 		}
-	}
-	
-	/**
-	 * Finds the absolute path of an image in a url()
-	 *
-	 * @author Anthony Short
-	 * @param $relative_img
-	 * @return string
-	 */
-	function find_absolute_path($relative)
-	{
-		$up = substr_count($relative, '../');
-		$image_path = preg_replace('#([^/]+/){'.$up.'}(\.\./){'.$up.'}#', '', join_path(Config::get('requested_dir'), unquote($relative)) );
-
-		return  join_path(CSSPATH, $image_path);
-	}
-	
-	/**
-	 * Determine if the browser can do Base64
-	 *
-	 * @author Anthony Short
-	 * @return boolean
-	 */
-	function can_base64($browser, $version)
-	{		
-		// Safari (WebKit), Firefox & Opera are known to support data: urls so embed base64-encoded images
-		if
-		(
-			($browser == 'Safari' && $version >= 125) ||
-			($browser == 'Firefox') ||
-			($browser == 'Opera' && $version >= 7.2)
-		)
+		else
 		{
-			return true;
+			CSS::replace("/embed\s*\(/", "url(", true);
 		}
 	}
 }

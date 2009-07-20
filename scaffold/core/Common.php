@@ -344,3 +344,31 @@
 		}
 	}
 	
+	/**
+	 * Finds the absolute path from a relative path
+	 *
+	 * @author Anthony Short
+	 * @param $relative_img
+	 * @return string
+	 */
+	function find_absolute_path($path)
+	{
+		if(substr($path, 0, 1) != "/")
+		{
+			# Count the number of up folder references
+			$up = substr_count($path, '../');
+
+			# Join the CSS directory with the requested directory
+			$path = join_path(DOCROOT, URLPATH, unquote($path));
+
+			# Get the full server path to the file
+			$absolute = realpath($path);
+		}
+		else
+		{
+			$absolute = join_path(DOCROOT,$path);
+		}
+
+		return $absolute; 
+	}
+	

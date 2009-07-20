@@ -7,7 +7,26 @@
  * @dependencies User_agent, Constants, CSS3_helper
  **/
 class Layout extends Plugins
-{	
+{
+	/**
+	 * The construct is important for plugins. It is where flags MUST 
+	 * be set. For each flag that exists, a seperate file will be cached
+	 * and only be sent to users that meet the conditions of those flags
+	 *
+	 * @author Anthony Short
+	 */
+	function __construct()
+	{	
+		# Set a flag for their browser, so it caches it for each
+		# browser. If we don't set flags, then it would only cache
+		# the css once, using the first browser to request it as the
+		# user agent.  
+		if(User_agent::can_boxsize()) 
+		{
+			Cache::flag('Box-sizing');	
+		}
+	}
+	
 	/**
 	 * The pre-processing function occurs after the importing,
 	 * but before any real processing. This is usually the stage
@@ -59,7 +78,7 @@ class Layout extends Plugins
 		}
 		
 		# Add grid width to the settings
-		$settings['grid-width'] = $grid_w;
+		$settings['grid-width'] = $grid_w . "px";
 		
 		# Set them as constants we can use in the css
 		Constants::set($settings);
@@ -92,14 +111,9 @@ class Layout extends Plugins
 	{
 		$found = CSS::find_functions('round');
 		
-		if($found)
+		foreach($found as $key => $match)
 		{
-			foreach($found[1] as $key => $match)
-			{
-				$num = round_nearest($match,$baseline);
-				
-				CSS::replace($found[0][$key], $num."px");
-			}
+			CSS::replace($match, round_nearest($found[1][$key],$baseline)."px");
 		}
 	}
 
@@ -119,7 +133,7 @@ class Layout extends Plugins
 			$width = $cw * $i;
 			
 			# Make the .columns-x classes
-			$s .= ".columns-$i{width:".($width - ($gw * 2))."px;}";
+			$s .= ".columns-$i {width:".($width - ($gw * 2))."px;}";
 			
 			# Make the .span-x classes
 			$s .= ".span-$i{width:".($width - ($gw * 2))."px;}";
@@ -128,10 +142,16 @@ class Layout extends Plugins
 			$s .= ".group{padding:0 {$gw}px;margin:".($bl/2)."px 0;}";
 			
 			# Make the .push classes
-			$s .= ".push-$i{margin-right:".-($width)."px !important;}";
+			$s .= ".push-$i{left:{$width}px;margin-right:".($width + $gw)."px;}";
 			
 			# Make the .pull classes
-			$s .= ".pull-$i{ margin-left:-".($width)."px !important;}";
+			$s .= ".pull-$i{left:-".($width)."px;margin-right:".-($width - $gw)."px;}";
+			
+			# Make the .shift-down classes
+			$s .= ".baseline-down-$i {top:".($bl * $i).";}";
+			
+			# Make the .shift-up classes
+			$s .= ".baseline-up-$i {top:".-($bl * $i).";}";
 			
 			# Make the .baseline-x classes
 			$s .= ".baseline-$i{height:".($bl * $i)."px;}";
@@ -148,12 +168,16 @@ class Layout extends Plugins
 			Constants::set("span-".$i, ($width - ($gw * 2)));
 		}
 		
-		$s .= implode(",", $pushselectors) 	. "{float:left;position:relative;}";
-		$s .= implode(",", $pullselectors) 	. "{float:left;position:relative;}";
-		$s .= implode(",", $columns) 		. "{float:left;margin:".($bl/2)."px {$gw}px;}";
-		
-		$s .= ".first{margin-left:0 !important;} .last{margin-right:0 !important;} .solo{margin-left:0 !important;margin-right:0 !important;}";
-		$s .= ".group{margin-left:0 !important; margin-right:0 !important; } .group.last {padding-right:0 !important;} .group.first{padding-left:0 !important;} .unit{}";
+		# If we add our classes here they are more managable and won't
+		# be added until the very end, saving memory. 
+		CSS::add('.first', 			'margin-left:0 !important;');
+		CSS::add('.last', 			'margin-right:0 !important;');
+		CSS::add('.solo', 			'margin-left:0 !important;margin-right:0 !important;');
+		CSS::add('.group', 			'margin-left:0 !important; margin-right:0 !important;');
+		CSS::add('.group.last', 	'padding-right:0 !important;');
+		CSS::add('.group.first', 	'padding-left:0 !important;');
+	
+		CSS::add(implode(",", $columns), "float:left;margin:".($bl/2)."px {$gw}px;position:relative;");
 
 		# Append it to the css
 		CSS::append($s);
@@ -236,14 +260,19 @@ class Layout extends Plugins
 					
 					# If the browser doesn't support box-sizing, minus the padding and border
 					# We'll see if the flags have been set from the browser plugin
-					if($this->can_boxsize())
-					{		
-						$styles .= "+border-box;";
-					} 
+					if(User_agent::can_boxsize())
+					{
+						$styles .= "	
+							-moz-box-sizing:border-box;
+							-webkit-box-sizing:border-box;
+							-ms-box-sizing:border-box;
+							box-sizing:border-box;
+							behavior:url(\"".BASEURL."/behaviours/boxsizing.htc\");";
+					}
 					else
-					{	
+					{
 						# Calculate the width of the column with adjustments for padding and border
-						$width = $width - $this->extrawidth($properties);
+						$width = $width - (CSS::get_padding($properties) + CSS::get_border($properties));
 					}
 										
 					# Add the rest of the properties
@@ -265,126 +294,4 @@ class Layout extends Plugins
 			}
 		}
 	}
-
-	/**
-	* Calculates the total amount of padding present
-	* in a selector. This doesn't factor in cascading.
-	*
-	* @param   string   All of the properties of a selector
-	* @return  string	The total amount of left and right padding combined
-	*/
-	public function getPadding($properties)
-	{
-		$padding = $paddingleft = $paddingright = 0;
-		
-		# Get the padding (in its many different forms)
-
-		if (preg_match_all('/padding\:(.+?)\;/x', $properties, $matches))
-		{
-			$padding = preg_split('/\s/', $matches[1][0]);
-			$padding = str_replace("px", "", $padding);
-			
-			if (sizeof($padding) == 1)
-			{
-				$paddingright = $paddingleft = $padding[0];
-			} 
-			elseif (sizeof($padding) == 2 || sizeof($padding) == 3)
-			{
-				$paddingleft = $paddingright = $padding[1];
-			}
-			elseif (sizeof($padding) == 4)
-			{
-				$paddingright = $padding[1];
-				$paddingleft = $padding[3];
-			}
-		}
-	
-		if (preg_match_all('/padding\-left\:(.+?)\;/x', $properties, $paddingl))
-		{
-			$paddingleft = str_replace('px', '', $paddingl[1][0]);
-		}
-		
-		if (preg_match_all('/padding\-right\:(.+?)\;/x', $properties, $paddingr))
-		{
-			$paddingright = str_replace('px', '', $paddingr[1][0]);
-		}
-
-		return $paddingleft + $paddingright;
-		
-	}
-
-	/**
-	* Calculates the total amount of border present
-	* in a selector. This doesn't factor in cascading.
-	*
-	* @param   string   All of the properties of a selector
-	* @return  string	The total amount of left and right border combined
-	*/
-	public function getBorder($properties)
-	{		
-		$border = $borderleft = $borderright = 0;
-
-		if (preg_match_all('/border\:.+?\;/x', $properties, $matches))
-		{
-			if (preg_match_all('/\d.?px/', $matches[0][0], $match))
-			{
-				$borderw = str_replace('px','',$match[0][0]);
-				
-				$borderleft = $borderright = $borderw;
-			}
-		}	
-		if (preg_match_all('/border\-left\:.+?\;/x', $properties, $matches))
-		{
-			if (preg_match_all('/\d.?px/', $matches[0][0], $match))
-			{
-				$borderleft = str_replace('px','',$match[0][0]);
-			}
-		}
-		
-		if (preg_match_all('/border\-right\:.+?\;/x', $properties, $matches))
-		{
-			if (preg_match_all('/\d.?px/', $matches[0][0], $match))
-			{
-				$borderright = str_replace('px','',$match[0][0]);
-			}
-		}
-			
-		return $borderleft + $borderright;
-		
-	}
-	
-	/**
-	 * Determines if the user agent is capable of using box-sixing
-	 *
-	 * @author Anthony Short
-	 * @return boolen
-	 */
-	public static function can_boxsize()
-	{
-		if (( User_agent::$browser == 'Internet Explorer' && User_agent::$version < 8 ) || User_agent::$version == "" )
-		{
-			return false;
-		}
-		else
-		{
-			return true;
-		}
-	}
-	
-	/**
-	 * Quicker way to get the extra width of an element
-	 *
-	 * @author Anthony Short
-	 * @param $properties
-	 * @return string
-	 */
-	private function extrawidth($properties)
-	{
-		# Send the properties through the functions to get the padding and border from them  
-		$padding = $this->getPadding($properties);
-		$border = $this->getBorder($properties);
-		
-		return $padding + $border;
-	}
-
 }

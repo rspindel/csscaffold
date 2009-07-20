@@ -20,9 +20,9 @@ class Browsers extends Plugins
 		# Set a flag for their browser, so it caches it for each
 		# browser. If we don't set flags, then it would only cache
 		# the css once, using the first browser to request it as the
-		# user agent.  
-		$this->flags[User_agent::$browser] = true;
-		$this->flags[User_agent::$version] = true;
+		# user agent. 
+		Cache::flag(User_agent::$browser);
+		Cache::flag(User_agent::$version);
 	}
 	
 	/**
