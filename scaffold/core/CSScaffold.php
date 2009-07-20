@@ -53,6 +53,8 @@ class CSScaffold {
 			}
 		}
 		
+		$recache = (isset($url_params['recache'])) ? true : false;
+		
 		# Easy access to file/directory info
 		# dirname = path to the directory containing the file
 		# basename = name of the file
@@ -112,7 +114,7 @@ class CSScaffold {
 			self::load_plugins();
 	
 			# Send the flags to the cache and get it ready
-			Cache::set(self::$flags, $url_params['recache']);
+			Cache::set(self::$flags, $recache);
 			
 			# Parse the css
 			self::parse_css();
