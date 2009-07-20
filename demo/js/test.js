@@ -18,7 +18,7 @@ $(document).ready(function(){
 		for(i=1; i<= (cc/2); i++)
 		{
 			
-			$(this).append("<div class='unit columns-"+i+"'>"+((i * (cw+(gw*2))) - (gw*2)) +"px</div>");
+			$(this).append("<div class='unit columns-"+i+" clear'>"+((i * (cw+(gw*2))) - (gw*2)) +"px</div>");
 			if(i != cc)
 			{
 				$(this).append("<div class='unit columns-"+(cc - i)+"'>"+ (((cc - i) * (cw+(gw*2))) - (gw*2))+"px</div>");
@@ -28,26 +28,32 @@ $(document).ready(function(){
 		// Create the pushed columns
 //		for(i=1; i<cc/2; i++)
 //		{
-//			$(this).append("<div class='unit columns-1 push-"+i+" clear'>Column pushed "+i+"</div>");
+//			$(this).append("<div class='unit columns-1 push-"+i+"'>Column pushed "+i+"</div>");
 //		}
-//		
-		// Create the appended columns
+		
+		// Create the pushed columns
+//		for(i=1; i<cc/2; i++)
+//		{
+//			$(this).append("<div class='unit columns-1 pull-"+i+"'>Column pulled "+i+"</div>");
+//		}
+		
+		 //Create the appended columns
 //		for(i=1; i<cc/2; i++)
 //		{
 //			$(this).append("<div class='unit columns-1 append-"+i+" clear'>Column with "+i+" columns appended as padding</div>");
 //		}
 //		
-		// Create the prepended columns
+		 //Create the prepended columns
 //		for(i=1; i<cc/2; i++)
 //		{
 //			$(this).append("<div class='unit columns-1 prepend-"+i+" clear'>Column with "+i+" columns prepended as padding</div>");
 //		}
 	
-		// Create the columns with baseline heights
-		//for(i=1; i<=10; i++)
-		//{
-		//	$(this).append("<div class='columns-"+cc+" baseline-"+i+" clear'>Height is "+i+" baselines</div>");
-		//}
+//		 Create the columns with baseline heights
+//		for(i=1; i<=10; i++)
+//		{
+//			$(this).append("<div class='columns-"+cc+" baseline-"+i+" clear'>Height is "+i+" baselines</div>");
+//		}
 
 	});
 		

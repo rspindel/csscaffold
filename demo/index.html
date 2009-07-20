@@ -244,20 +244,33 @@ Not indented
 	
 	<div class="container">
 		<h2>Grid tests</h2>
-		<div id="generate" class="grid wireframe"></div>
+		<div id="generate" class="grid wireframe">
+		
+		<h4>Push and pull tests</h4>
+		<div class="columns-3 push-1"></div>
+		<div class="columns-5 push-3"></div>
+		<div class="columns-6 push-6"></div>
+		<div class="columns-2 append-3">Appended with 3</div>
+		<div class="columns-4 pull-2 baseline-down-2">Pulled back over the previous column and baseline shift down</div>
+		<div class="columns-5 last baseline-up-1">Baseline shift up one</div>
+		
+		<hr/>
+		<h4>Columns tests</h4>
+		
+		</div>
 	</div>
 	
 	<hr/>
 	
-	<div class="container">
+	<div id="content-test" class="container">
 	
+		<div class="columns-12">
+		
 		<h2>Content tests</h2>
-	
-		<div class="columns-7 prepend-3 append-2">
-			<h4>Example Layout Guidelines</h4>
+		<h4>Example Layout Guidelines</h4>
 			
-		<div class="figure span-3 left pull-3 top">
-			<img src="images/sample-image.png" class="span-3 baseline-6" alt="" />
+		<div class="figure columns-3 top first">
+			<img src="images/sample-image.png" class="baseline-6" alt="" />
 			<p>Images go in a div with the classes &#8220;<code>figure size direction</code>&#8221;. &#8220;<code>size</code>&#8221; can be <code>one</code>, <code>two</code>, <code>three</code>, <code>four</code>, <code>five</code>, <code>six</code>, or <code>seven</code>, direction can be <code>right</code> or <code>left</code>. Captions go in a <code>p</code>.</p>
 		</div>
 
@@ -265,29 +278,28 @@ Not indented
 
 		<h4>Lorem Ipsum Dolor</h4>
 		
-		<div class="figure span-2 right push-2 top">
-			<img src="images/sample-image.png" class="span-2 baseline-6" alt="" />
+		<div class="figure columns-2 right top">
+			<img src="images/sample-image.png" class="columns-2 baseline-6" alt="" />
 			<p>Right outset image.</p>
-
 		</div>
 	
 		<p>Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
 
-		<div class="figure span-2 left">
-			<img src="images/sample-image.png" class="span-2 baseline-6" alt="" />
+		<div class="figure columns-2 left">
+			<img src="images/sample-image.png" class="columns-2 baseline-6" alt="" />
 			<p>For inset images, add the class <code>inset</code> to the <code>figure</code> div.</p>
 
 		</div>
 
 		<p>Consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata.</p>
 	
-		<img src="images/sample-image.png" alt="" class="figure span-12 pull-3 solo baseline-6" />
-		<p class="caption span-3 left pull-3 top">For images without captions, or captions set apart, add <code>solo</code> to the <code>figure</code> div, and move the caption <code>p</code> directly outside it using similar styles (e.g., &#8220;<code>caption two left</code>&#8221;).</p>
+		<img src="images/sample-image.png" alt="" class="figure columns-12 solo baseline-6" />
+		<p class="caption columns-3 top">For images without captions, or captions set apart, add <code>solo</code> to the <code>figure</code> div, and move the caption <code>p</code> directly outside it using similar styles (e.g., &#8220;<code>caption two left</code>&#8221;).</p>
 
 	
 		<p>Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum.</p>
 
-			<img src="images/sample-image.png" class="figure span-6 pull-3 frame baseline-6" />
+		<img src="images/sample-image.png" class="figure columns-6 frame baseline-6" />
 
 		<p>Consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</p>
 

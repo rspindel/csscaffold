@@ -139,45 +139,45 @@
 }
 
 /**
-* Columns
-*
-* Makes the element behave as a column.
-*
-* @type Mixin
-* @param !number The number of columns
-*/
-=columns(!n, !side = false)
+ * Span a certain number of columns
+ * @param !number The number of columns
+ */
+=span(!n)
+{
+	width:eval(!n * !column-width - (!gutter-width * 2))px;
+}
+
+/**
+ * Columns
+ *
+ * Makes the element behave as a column.
+ * @param !number The number of columns
+ */
+=columns(!n)
 {
 	+float(left);
 	+clearfix;
+	+boxsizing;
+	+span(!n)
 	
-	@if(!side == left)
-	{
-		margin-left:0;
-		margin-right:!gutter-width;
-	}
-	
-	@if(!side == right)
-	{
-		margin-right:0;
-		margin-left:!gutter-width;
-	}
-	
-	@if(!side == false)
-	{
-		margin-right,margin-left:!gutter-width;
-	}
-	
-	position:relative;
-	width:eval(!n * !column-width - (!gutter-width * 2))px;
+	margin-right,margin-left:!gutter-width;	
+}
+
+/**
+ * Group a bunch of columns, using the padding
+ * as the margin. This allows you to create
+ * backgrounds and borders
+ */
+=group
+{
+	padding:0 !gutter-width;
+	margin:!baseline 0;
 }
 
 /**
 * Layout Utilities
 *
 * Various layout utilities for manipulating columns
-*
-* @type Mixin
 */
 
 =append(!n)
@@ -204,7 +204,9 @@
 
 =push(!n)
 {
-	+float(left);
-	margin-left: eval(!column-width * !n + !grid-width)px;
+	+float(right);
 	position:relative;
+	
+	margin-left: eval( -(!column-width * !n + !grid-width) )px;
+	margin-right: eval(!column-width * !n + !grid-width)px;
 }
