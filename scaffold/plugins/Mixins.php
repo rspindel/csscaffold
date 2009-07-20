@@ -93,7 +93,6 @@ class Mixins extends Plugins
 	
 			# Clean up
 			unset($bases, $mixins);
-		
 		}
 	}
 	

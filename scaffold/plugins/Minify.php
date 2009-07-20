@@ -26,6 +26,6 @@ class Minify extends Plugins
 	
 	function formatting_process()
 	{		
-		#return Minify_CSS_Compressor::process($css);
+		#CSS::$css = Minify_CSS_Compressor::process(CSS::$css);
 	}
 }

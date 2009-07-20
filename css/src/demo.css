@@ -9,6 +9,15 @@
 /* @group Common */ 
 /* ------------------------------------------------------------------------ */
 
+#content-test 
+{
+	p,h1,h2,h3,h4,h5,h6,ul,ol
+	{
+		+prepend(4);
+		+append(2);
+	}
+}
+
 #plugin-tests .group > div
 {
 	+border-box;
@@ -16,6 +25,8 @@
 	padding:20px;
 	background:#f8f8f8;
 }
+
+
 
 /* @end */
 /* @group Base64 */
@@ -153,7 +164,7 @@
 
 .image-replacement-relative
 {
-	image-replace:url(assets/titles/none.png);
+	image-replace:url('assets/titles/none.png');
 }
 
 /* @end */

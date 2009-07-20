@@ -18,14 +18,13 @@
 	* based on your grid settings
 	* @see mixins/layout.css
 	*/
-	#page,
 	.container { +container; }
 	
 	/**
 	* Mainly for debugging purposes
 	*/
 	.showgrid { +showgrid; }
-	.wireframe div { background:rgba(255,0,0,0.4); min-height:eval(!baseline*3); }
+	.wireframe div { background:rgba(255,0,0,0.4); min-height:eval(!baseline*3)px; }
 	.clear { clear:left; }
 	.clearfix { +clearfix; }
 	
@@ -113,16 +112,20 @@
 	.figure
 	{ 
 		margin:!baseline; 
-		float:left; 
+		float:left;
+		overflow:hidden;
 		
 		img 		{ float:left; margin-bottom:!baseline; }
 	}
 	
 	.caption, .figure, figure { +small-type; line-height:20px; }
 	
-	.caption 
+	.figure img { width:100%; }
+	
+	.figure p 
 	{ 
 		clear:left;
+		padding:0 !important;
 	}
 	
 	.right 
