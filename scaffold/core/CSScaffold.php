@@ -10,13 +10,6 @@
  * @author Anthony Short
  **/
 class CSScaffold {
-	
-	/**
-	 * The file that was requested
-	 *
-	 * @var array
-	 **/
-	 public static $flags = array();
 	 
 	/**
 	 * Holds the array of plugin objects
@@ -113,8 +106,8 @@ class CSScaffold {
 			# Load the plugins and flags
 			self::load_plugins();
 	
-			# Send the flags to the cache and get it ready
-			Cache::set(self::$flags, $recache);
+			# Prepare the cache, and tell it if we want to recache
+			Cache::set($recache);
 			
 			# Parse the css
 			self::parse_css();
@@ -145,13 +138,10 @@ class CSScaffold {
 			
 			$plugin_class = pathinfo($plugin, PATHINFO_FILENAME);
 									
-			if ( class_exists($plugin_class) )
+			if(class_exists($plugin_class))
 			{				
 				# Initialize the plugin
 				$plugins[$plugin_class] = new $plugin_class();
-				
-				# Set the flags
-				self::$flags = array_merge(self::$flags, $plugins[$plugin_class]->flags);
 				
 				# Add the plugin to the loaded array
 				self::$loaded[] = $plugin_class;
@@ -274,7 +264,7 @@ class CSScaffold {
 			FB::log("Filesize - " . $filesize = round(strlen($css) / 1024 , 2) . "kB");
 			FB::log("Processed in ".Benchmark::get("system", "time")." seconds");
 			FB::log("Rendered as ".User_agent::$browser." ".User_agent::$version);
-			FB::log("With flags ".join(", ", array_keys(self::$flags)));
+			FB::log("With flags ".join(", ", array_keys(Cache::$flags)));
 			FB::log("Memory usage " . readable_size(Benchmark::memory_usage()));
 		FB::groupEnd();
 
