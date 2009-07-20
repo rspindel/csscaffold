@@ -117,9 +117,11 @@ abstract class CSS
 	 * @param $capture_group
 	 * @return null
 	 */
-	public static function find_functions($name, $capture_group = "")
+	public static function find_functions($name, $capture_group = "", $css = "")
 	{
-		if(preg_match_all('/'.$name.'\(([^\)]+)\)/', self::$css, $match))
+		if($css == "") $css =& self::$css;
+		
+		if(preg_match_all('/'.$name.'\(([^\)]+)\)/', $css, $match))
 		{
 			return ($capture_group == "") ? $match : $match[$capture_group];
 		}
@@ -137,11 +139,13 @@ abstract class CSS
 	 * @param $group string
 	 * @param $css string
 	 */
-	public static function find_at_group($group)
-	{	
+	public static function find_at_group($group, $css = "")
+	{
+		if($css == "") $css =& self::$css;
+		
 		$found['values'] = $found['groups'] = array();
 		
-		if(preg_match_all('#@'.$group.'\s*\{\s*([^\}]+)\s*\}\s*#i', self::$css, $matches))
+		if(preg_match_all('#@'.$group.'\s*\{\s*([^\}]+)\s*\}\s*#i', $css, $matches))
 		{	
 			$found['groups'] = $matches[0];
 						
@@ -174,9 +178,11 @@ abstract class CSS
 	 * @param $property string
 	 * @param $value string
 	 */
-	public static function find_selectors_with_property($property, $value = ".*?")
+	public static function find_selectors_with_property($property, $value = ".*?", $css = "")
 	{
-		if(preg_match_all("/([^{}]*)\s*\{\s*[^}]*(".$property."\s*\:\s*(".$value.")\s*\;).*?\s*\}/sx", self::$css, $match))
+		if($css == "") $css =& self::$css;
+		
+		if(preg_match_all("/([^{}]*)\s*\{\s*[^}]*(".$property."\s*\:\s*(".$value.")\s*\;).*?\s*\}/sx", $css, $match))
 		{
 			return $match;
 		}
@@ -195,12 +201,14 @@ abstract class CSS
 	 * @param $css
 	 * @return array
 	 */
-	public static function find_properties_with_value($property, $value = ".*?")
+	public static function find_properties_with_value($property, $value = ".*?", $css = "")
 	{
+		if($css == "") $css =& self::$css;
+		
 		# Make the property name regex-friendly
 		$property = str_replace('-', '\-', preg_quote($property));
 		
-		if(preg_match_all("/\{([^\}]*({$property}\:\s*({$value})\s*\;).*?)\}/sx", self::$css, $match))
+		if(preg_match_all("/\{([^\}]*({$property}\:\s*({$value})\s*\;).*?)\}/sx", $css, $match))
 		{
 			return $match;
 		}
@@ -216,9 +224,10 @@ abstract class CSS
 	 * @author Anthony Short
 	 * @return array
 	 */
-	public static function find_property_with_value($property, $value)
+	public static function find_property_with_value($property, $value, $css = "")
 	{
-		return self::find_properties_with_value($property, $value);
+		if($css == "") $css =& self::$css;
+		return self::find_properties_with_value($property, $value, $css);
 	}
 		
 	/**
@@ -230,8 +239,10 @@ abstract class CSS
 	 * @param $selector string
 	 * @param $css string
 	 */
-	public static function find_selectors($selector, $recursive = 1)
+	public static function find_selectors($selector, $recursive = 1, $css = "")
 	{
+		if($css == "") $css =& self::$css;
+		
 		$regex = 
 			"/
 				
@@ -250,7 +261,7 @@ abstract class CSS
 			
 		# /($selector)\s*\{(([^{}]+)|(?R))*\}/sx
 		
-		if(preg_match_all($regex, self::$css, $match))
+		if(preg_match_all($regex, $css, $match))
 		{
 			return $match;
 		}
@@ -269,9 +280,11 @@ abstract class CSS
 	 * @param $property string
 	 * @param $css string
 	 */
-	public static function find_property($property)
+	public static function find_property($property, $css = "")
 	{
-		if(preg_match_all('/(?P<property_name>'.str_replace('-', '\-', preg_quote($property)).')\s*\:\s*(?P<property_value>.*?)\s*\;/', self::$css, $matches))
+		if($css == "") $css =& self::$css;
+		
+		if(preg_match_all('/(?P<property_name>'.str_replace('-', '\-', preg_quote($property)).')\s*\:\s*(?P<property_value>.*?)\s*\;/', $css, $matches))
 		{
 			return (array)$matches;
 		}
@@ -289,9 +302,10 @@ abstract class CSS
 	 * @param $css
 	 * @return array
 	 */
-	public static function find_properties($property)
+	public static function find_properties($property, $css = "")
 	{
-		return find_property($property);
+		if($css == "") $css =& self::$css;
+		return find_property($property, $css);
 	}
 	
 	/**
@@ -304,9 +318,10 @@ abstract class CSS
 	 * @param $value string
 	 * @param $css string
 	 */
-	public static function remove_properties($property, $value)
+	public static function remove_properties($property, $value, $css = "")
 	{
-		return preg_replace('/'.$property.'\s*\:\s*'.$value.'\s*\;/', '', self::$css);
+		if($css == "") $css =& self::$css;
+		return preg_replace('/'.$property.'\s*\:\s*'.$value.'\s*\;/', '', $css);
 	}
 	
 	/**
@@ -317,8 +332,9 @@ abstract class CSS
 	 * @author Anthony Short
 	 * @param $css string
 	 */
-	public static function remove_comments($css)
+	public static function remove_comments($css = "")
 	{
+		if($css == "") $css =& self::$css;
 		return trim(preg_replace('#/\*[^*]*\*+([^/*][^*]*\*+)*/#', '', $css));
 	}
 
@@ -329,9 +345,11 @@ abstract class CSS
 	 * @param $css
 	 * @return string
 	 */
-	public static function to_xml()
+	public static function to_xml($css = "")
 	{
-		$xml = trim(self::$css);
+		if($css == "") $css =& self::$css;
+		
+		$xml = trim($css);
 		
 		# Strip comments to prevent parsing errors
 		$xml = preg_replace('#(/\*[^*]*\*+([^/*][^*]*\*+)*/)#', '', $xml);

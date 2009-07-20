@@ -120,7 +120,7 @@ class Mixins extends Plugins
 				$current_mixin = $mixin_name;
 				
 				# Parse the parameters of the mixin
-				$params = $this->parse_params($mixins[4][$mixin_key], $bases[$mixin_name]['params']);
+				$params = $this->parse_params($mixins[4][$mixin_key], $bases[$mixin_name]['params']); 
 				
 				# Create the property string
 				$new_properties = str_replace(array_keys($params),array_values($params),$base_properties);
@@ -189,12 +189,18 @@ class Mixins extends Plugins
 		{
 			$params = array();
 		}
-
+		
 		# Loop through each function arg and
 		# create the parsed params array
 		foreach($function_args as $key => $value)
-		{
+		{		
 			if (strstr($value, '=')) $value = explode('=', $value);
+			
+			#$value[0] = str_replace("!", "", $value[0]);
+			#$value[0] = str_replace("-", "_", trim($value[0]));
+			#$$value[0] = trim($value[1]);
+			#
+			#stop($container_width);
 							
 			# If the user didn't include one of the
 			# params, we'll check to see if a default is available			
@@ -219,7 +225,6 @@ class Mixins extends Plugins
 			if(is_array($value)) $value = $value[0];
 			
 			$parsed[trim($value)] = unquote($params[$key]);
-
 		}
 		
 		return $parsed;

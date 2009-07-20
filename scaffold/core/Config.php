@@ -33,7 +33,7 @@ abstract class Config
 	{
 		return self::$instance;
 	}
-	
+
 	/**
 	 * Initializes the config
 	 *
@@ -153,25 +153,4 @@ abstract class Config
 
 		return true;
 	}
-	
-	/**
-	 * Sets a group configuration
-	 *
-	 * @param   string   config key string
-	 * @param   string   config value
-	 * @return  boolean
-	 */
-	public static function __set($key, $value)
-	{
-		# Do this to make sure that the config array is already loaded
-		self::init();
-		
-		# Used for recursion
-		$conf =& self::$configuration;
-		
-		# Store it away
-		$conf[$key] = $value;
-	}
-
-
 }

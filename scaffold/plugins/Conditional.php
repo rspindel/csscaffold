@@ -26,7 +26,8 @@ class Conditional extends Plugins
 	function process()
 	{
 		# Find all @if, @else, and @elseif's groups
-		$found = CSS::find_selectors('(?P<name>@if)(\((?P<args>.*?)\))?', 5);
+		$found = self::find_conditionals();
+		
 		$args = $found['args'];
 		
 		# Go through each one
@@ -46,6 +47,25 @@ class Conditional extends Plugins
 			{
 				CSS::replace($found[0][$key], '');
 			}	
+		}
+	}
+	
+	/**
+	 * Finds if statements in a string
+	 *
+	 * @author Anthony Short
+	 * @param $string
+	 * @return array
+	 */
+	public static function find_conditionals($string = "")
+	{
+		if($string == "")
+		{
+			return CSS::find_selectors('(?P<name>@if)(\((?P<args>.*?)\))?', 5);
+		}
+		else
+		{
+			return CSS::find_selectors('(?P<name>@if)(\((?P<args>.*?)\))?', 5, $string);
 		}
 	}
 	
