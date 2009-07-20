@@ -51,47 +51,46 @@ class NestedSelectors extends Plugins
 		{
 			$child = (string)$value;
 			
-			# If the child references the parent selector
-			if (strstr($child, "#SCAFFOLD-PARENT#"))
-			{				
-				# If there are listed parents eg. #id, #id2, #id3
-				if (strstr($parent, ","))
+			# If there are multiple parents, split them, and reparse each of them
+			if(strstr($parent, ","))
+			{
+				$parent = explode(",", $parent);
+				
+				foreach($parent as $parent_key => $parent_value)
 				{
-					$single_parents = explode(",", $parent);
-										
-					foreach($single_parents as $single_parent_key => $single_parent)
-					{
-						$single_parents[$single_parent_key] = str_replace("#SCAFFOLD-PARENT#", $single_parent, $child);
-					}
-					
-					$parent = implode(",",$single_parents);
-				}
-				else
-				{
-					$parent = str_replace("#SCAFFOLD-PARENT#", $parent, $child);
+					$css_string .= self::parse_rule($rule, trim($parent_value));
 				}
 			}
-			else
+			
+			# Otherwise, if its NOT a root selector and has parents
+			elseif($parent != "")
 			{
 				# If there are listed parents eg. #id, #id2, #id3
-				if (strstr($parent, ","))
+				if(strstr($child, ","))
 				{
-					$single_parents = explode(",", $parent);
-											
-					foreach($single_parents as $single_parent_key => $single_parent)
-					{
-						$single_parents[$single_parent_key] = "$single_parent $child";
-					}
-					
-					$parent = implode(",",$single_parents);
+					$parent = $this->split_children($child, $parent);
 				}
+				
+				# If the child references the parent selector
+				elseif (strstr($child, "#SCAFFOLD-PARENT#"))
+				{						
+					$parent = str_replace("#SCAFFOLD-PARENT#", $parent, $child);	
+				}
+				
+				# Otherwise, do it normally
 				else
 				{
 					$parent = "$parent $child";
 				}
 			}
+			
+			# Otherwise it's a root selector with no parents at all
+			else
+			{
+				$parent = $child;
+			}
 		}
-				
+	
 		foreach($rule->property as $p)
 		{
 			$property = (array)$p->attributes(); 
@@ -100,7 +99,11 @@ class NestedSelectors extends Plugins
 			$property_list .= $property['name'].":".$property['value'].";";
 		}
 		
-		$css_string .= $parent . "{" . $property_list . "}";
+		# Just in case...
+		if(!is_array($parent))
+		{
+			$css_string .= $parent . "{" . $property_list . "}";
+		}
 
 		foreach($rule->rule as $inner_rule)
 		{
@@ -108,6 +111,34 @@ class NestedSelectors extends Plugins
 		}
 		
 		return $css_string;
+	}
+	
+	/**
+	 * Splits selectors with , and adds the parent to each
+	 *
+	 * @author Anthony Short
+	 * @param $children
+	 * @param $parent
+	 * @return string
+	 */
+	private function split_children($children, $parent)
+	{
+		$children = explode(",", $children);
+												
+		foreach($children as $key => $child)
+		{
+			# If the child references the parent selector
+			if (strstr($child, "#SCAFFOLD-PARENT#"))
+			{
+				$children[$key] = str_replace("#SCAFFOLD-PARENT#", $parent, $child);	
+			}
+			else
+			{
+				$children[$key] = "$parent $child";
+			}
+		}
+		
+		return implode(",",$children);
 	}
 
 }
