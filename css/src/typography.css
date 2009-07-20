@@ -5,7 +5,6 @@
 * that is styled should be placed here and no where else.
 *
 */
-
 	body 
 	{
 		+georgia;
@@ -38,13 +37,6 @@
 	* --------------------------------------------------------
 	*/
 	
-	/*
-		We define them all as mixins so that they function as 
-		generic text styles. We may have a section title which
-		isn't important to the page content, but we want it
-		to look like a h1. 
-	*/
-	
 	=heading
 	{ 
 		+georgia;
@@ -63,13 +55,8 @@
 		&:first-child { margin-top:0; }
 		
 	}
-	
-	myclass 
-	{
-		+heading;
-	}
-	
-	=h1 
+
+	h1 
 	{
 		+heading;
 		font-size:3em;
@@ -77,14 +64,14 @@
 		margin-top:eval(!baseline*2)px;
 	}
 	
-	=h2 
+	h2 
 	{
 		+heading;
 		font-size:2em;
 		line-height:eval(!baseline*2)px;
 	}
 	
-	=h3 
+	h3 
 	{
 		+heading;
 		font-size:1.5em;
@@ -92,34 +79,22 @@
 		line-height:eval(!baseline*2)px;
 	}
 	
-	=h4 
+	h4 
 	{
 		+heading;
 		font-size:1.3em;
 	}
 	
-	=h5 
+	h5 
 	{
 		+heading;
 	}
 	
-	=h6 
+	h6 
 	{
 		+heading;
 		margin-bottom:0; 
 	}
-	
-	/*
-		You shouldn't really define styles here, these just
-		assign the text styles to the elements.
-	*/
-	
-	h1, .h1 { +h1; }
-	h2, .h2 { +h2; }
-	h3, .h3 { +h3; }
-	h4, .h4 { +h4; }
-	h5, .h5 { +h5; }
-	h6, .h6 { +h6; }
 
 	/**
 	* --------------------------------------------------------
@@ -132,39 +107,40 @@
 	/* Any sibling p will have a margin above it */
 	* + p			{ margin: !baseline 0 0 0; }
 	
-	blockquote  	{ margin: !baseline; font-style: italic; color: !light; }
-	cite			{}
-	q				{}
+	blockquote  	{ margin:!baseline; font-style:italic; color:!light; }
+	cite			{ }
+	q				{ }
 	
-	strong      	{ font-weight:bold; }
-	em      	  	{ font-style:italic; }
+	strong      	{ }
+	em      	  	{ }
 	mark 			{ background:!highlight; }
 	
 	del         	{ color:!light; }
-	ins 			{ background:#fffde2; text-decoration:none;}
-	sup, sub    	{ line-height: 0; }
+	ins 			{ background:#fffde2; }
+	sup, sub    	{ line-height:0; }
 	
 	abbr			{ } 
 	acronym     	{ }
-	dfn         	{ font-weight: bold; font-style: italic; }
+	dfn         	{ font-weight:bold; font-style:italic; }
 	
 	abbr[title],
 	acronym[title],
 	dfn[title] 		{ border-bottom:1px dotted !light; cursor:help; }
 	
 	time			{ }
-	address     	{ margin: 0 0 !baseline; font-style: italic; }
+	address     	{ margin: 0 0 !baseline; font-style:italic; }
 	
 	hr 				
 	{ 
 		clear:both; 
 		float:left; 
 		width:100%; 
-		height:2px; 
+		height:0px; 
 		margin:eval(!baseline-2) 0 !baseline 0; 
 		border:none; 
 		background:#ddd;
 		border-bottom:1px solid #fff;
+		padding-bottom:1px;
 	}
 	
 	pre,
@@ -172,17 +148,10 @@
 	kbd,
 	samp,
 	var,
-	output 
-	{ 
-		margin:!baseline 0; 
-	}
-	
-	pre,
-	code,
-	tt,
 	output,
-	pre * 			
-	{
+	tt 
+	{ 
+		margin:!baseline 0;
 		+monospace; 
 		font-size: 11px; 
 		line-height: !baseline;
@@ -195,12 +164,12 @@
 	* --------------------------------------------------------
 	*/
 	
-	.highlight  	{ background:!highlight; } /* Or use the HTML5 <mark> tag */
-	.added      	{ background:#060; color: #fff; } /* Or use <ins> */
-	.removed    	{ background:#900; color: #fff; } /* Or use <del> */
+	.mark		  	{ background:!highlight; }
+	.added      	{ background:#060; color: #fff; }
+	.removed    	{ background:#900; color: #fff; }
 	
 	.quiet      	{ +small-text; } 
-	.loud	      	{ font-size: 2.2em; line-height: eval(!baseline*2)px; margin-bottom: !baseline; letter-spacing: -1px; }	
+	.loud	      	{ +all-caps; }	
 	
 	
 	/**
@@ -214,7 +183,7 @@
 		color: #009; 
 		text-decoration: underline;
 		
-		&:focus, &:hover { color: #000; } 
+		&:focus, &:hover, &:active { color:#000; } 
 	}
 	
 	/**
@@ -244,8 +213,8 @@
 	* --------------------------------------------------------
 	*/
 	
-	table       { margin-bottom: !baseline; width:100%; border-collapse:separate; border-spacing:0; }
-	th          { font-weight: bold; background: #C3D9FF; }
+	table       { margin-bottom: !baseline; width:100%; }
+	th          { font-weight:bold; background: #C3D9FF; }
 	th,td       { padding: 0; }
 	tr.alt td   { background: #E5ECF9; }
 	tfoot       { font-style: italic; }

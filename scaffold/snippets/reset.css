@@ -24,6 +24,7 @@
 		font-family: inherit;
 		vertical-align: baseline;
 	}
+	body { line-height:1; }
 	table 
 	{
 		border-collapse: separate;
@@ -40,13 +41,21 @@
 	}
 	blockquote:before, blockquote:after, q:before, q:after 
 	{
-		content: "";
+		content:"";
 	}
 	blockquote, q 
 	{
-		quotes: "" "";
+		quotes:none;
 	}
-	a img {border: none;}
+	
+	ins { text-decoration: none; }
+	del { text-decoration: line-through; }
+		
+	a:focus {outline:none;}
+	a img {border:none;}
+	
+	strong { font-weight:bold; }
+	em  { font-style:italic; }
 	
 	pre,
 	code,
