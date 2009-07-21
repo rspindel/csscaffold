@@ -124,6 +124,9 @@ class Mixins extends Plugins
 				
 				# Create the property string
 				$new_properties = str_replace(array_keys($params),array_values($params),$base_properties);
+				
+				# Parse conditionals if there are any in there
+				$new_properties = Conditional::parse($new_properties);
 							
 				# Find nested mixins
 				$inner_mixins = $this->find_mixins($new_properties);

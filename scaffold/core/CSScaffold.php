@@ -173,7 +173,7 @@ class CSScaffold {
 				$plugin->import_process();
 				Benchmark::stop( get_class($plugin) ."_import" );
 			}
-							
+
 			foreach(self::$plugins as $plugin)
 			{
 				Benchmark::start( get_class($plugin) ."_preprocess" );
@@ -182,8 +182,7 @@ class CSScaffold {
 			}
 			
 			# This HAS to happen AFTER they are set, but 
-			# before they are used. Rather than creating another
-			# process just for this, I'll do it manually.
+			# before they are used.
 			if (class_exists('Constants'))
 			{
 				Constants::replace();
@@ -194,6 +193,12 @@ class CSScaffold {
 				Benchmark::start( get_class($plugin) ."_process" );
 				$plugin->process();
 				Benchmark::stop( get_class($plugin) ."_process" );
+			}
+			
+			# This needs its own process so it's easier to control
+			if (class_exists('Conditional'))
+			{
+				CSS::$css = Conditional::parse();
 			}
 			
 			foreach(self::$plugins as $plugin)

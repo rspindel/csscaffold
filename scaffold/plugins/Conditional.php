@@ -18,36 +18,43 @@
 class Conditional extends Plugins
 {
 	/**
-	 * Process
+	 * Parses a string for CSS-style conditionals
 	 *
-	 * @author Anthony Short
-	 * @param $css
-	*/
-	function process()
+	 * @param $string A string of css
+	 * @return void
+	 **/
+	public static function parse($string = "")
 	{
+		if($string == "") $string =& CSS::$css;
+		
 		# Find all @if, @else, and @elseif's groups
-		$found = self::find_conditionals();
-		
-		$args = $found['args'];
-		
-		# Go through each one
-		foreach($args as $key => $value)
+		if($found = self::find_conditionals($string))
 		{
-			$logic = "if($value){ \$result = 1; } else { \$result = 0; }";
+			# Go through each one
+			foreach($found[1] as $key => $value)
+			{
+				$logic = "if($value){ \$result = 1; } else { \$result = 0; }";
 
-			# Parse the args
-			@eval($logic);
+				# Parse the args
+				@eval($logic);
 				
-			# When one of them is if true, replace the whole group with the contents of that if and continue
-			if($result == 1)
-			{
-				CSS::replace($found[0][$key], $found['properties'][$key]);
+				# When one of them is if true, replace the whole group with the contents of that if and continue
+				if($result == 1)
+				{
+					$string = str_replace($found[0][$key], $found[3][$key], $string);
+				}
+				# If there is an @else
+				elseif($found[5] != "")
+				{
+					$string = str_replace($found[0][$key], $found[7][$key], $string);
+				}
+				else
+				{
+					$string = str_replace($found[0][$key], '', $string);
+				}	
 			}
-			else
-			{
-				CSS::replace($found[0][$key], '');
-			}	
 		}
+		return $string;
 	}
 	
 	/**
@@ -59,14 +66,49 @@ class Conditional extends Plugins
 	 */
 	public static function find_conditionals($string = "")
 	{
-		if($string == "")
+		$recursive = 2; 
+		
+		$regex = 
+			"/
+				
+				# Find the @if's
+				(?:@(?:if|elseif))\((.*?)\)
+				
+				# Return all inner selectors and properties
+				(
+					(?:[0-9a-zA-Z\_\-\*&]*?)\s*
+					\{	
+						((?:[^{}]+|(?{$recursive}))*)
+					\}
+				)
+				
+				\s*
+				
+				(
+					# Find the @elses if they exist
+					(@else)
+
+					# Return all inner selectors and properties
+					(
+						(?:[0-9a-zA-Z\_\-\*&]*?)\s*
+						\{	
+							((?:[^{}]+|(?{$recursive}))*)
+						\}
+					)
+				)?
+				
+			/xs";
+		
+		if(preg_match_all($regex, $string, $match))
 		{
-			return CSS::find_selectors('(?P<name>@if)(\((?P<args>.*?)\))?', 5);
+			return $match;
 		}
 		else
 		{
-			return CSS::find_selectors('(?P<name>@if)(\((?P<args>.*?)\))?', 5, $string);
+			return array();
 		}
+
+		#return CSS::find_selectors('(?P<name>@if)(\((?P<args>.*?)\))?', 5, $string);
 	}
 	
 }
