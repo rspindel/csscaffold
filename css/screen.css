@@ -16,12 +16,11 @@
 * @copyright Copyright(c) 2009 
 *
 * ========================================================
-*/
-
-	@import '/scaffold/snippets/reset.css';
-	@import '/css/src/layout.css';
-	@import '/css/src/typography.css';
-	@import '/css/src/demo.css';
+*/	
+	@include '/scaffold/snippets/reset.css';
+	@include '/css/src/typography.css';
+	@include '/css/src/layout.css';
+	@include '/css/src/demo.css';
 	
 	/**
 	* Assorted fixes for Internet Explorer 

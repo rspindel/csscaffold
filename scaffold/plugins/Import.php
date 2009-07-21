@@ -19,8 +19,7 @@ class Import extends Plugins
 	 * @param $css
 	 */
 	function import_process()
-	{
-		
+	{		
 		# Find all the @server imports
 		CSS::$css = $this->server_import(CSS::$css);
 			
@@ -36,7 +35,7 @@ class Import extends Plugins
 	 */
 	function server_import($css, $previous = "")
 	{		
-		if (preg_match_all('/\@import\s+(?:\'|\")([^\'\"]+)(?:\'|\")\;/', $css, $matches))
+		if (preg_match_all('/\@include\s+(?:\'|\")([^\'\"]+)(?:\'|\")\;/', $css, $matches))
 		{
 			$unique = array_unique($matches[1]);
 			$include = $unique[0];
@@ -45,10 +44,16 @@ class Import extends Plugins
 			{
 				stop("Error: Recursion in imports. You are importing the css file into itself");
 			}
+			
+			$path = join_path(DOCROOT,$include);
 						
-			if(is_css($include))
+			if(is_css($include) AND file_exists($path))
 			{
-				$css = str_replace($matches[0][0], file_get_contents(join_path(DOCROOT,$include)), $css);
+				$css = str_replace($matches[0][0], file_get_contents($path), $css);
+			}
+			else
+			{
+				stop("Error: Import > File is not a css file, or cannot be found - " . $path);
 			}
 			
 			$css = $this->server_import($css, $include);
