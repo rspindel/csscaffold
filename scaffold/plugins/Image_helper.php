@@ -24,17 +24,27 @@ class Image_helper extends Plugins
 	}
 	
 	/**
+	 * The second last process, should only be getting everything
+	 * syntaxically correct, rather than doing any heavy processing
+	 *
+	 * @author Anthony Short
+	 * @return $css string
+	 */
+	function post_process()
+	{
+		# Replace the image-replace properties
+		$this->image_replace();
+	}
+	
+	/**
 	 * The final process before it is cached. This is usually just
 	 * formatting of css or anything else just before it's cached
 	 *
 	 * @author Anthony Short
 	 * @param $css
 	*/
-	function post_process()
-	{
-		# Replace the image-replace properties
-		$this->image_replace();
-			
+	function formatting_process()
+	{	
 		# If we can do Base64, replace the embed() functions
 		$this->embed_images();
 	}
