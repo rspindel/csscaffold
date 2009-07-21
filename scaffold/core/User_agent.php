@@ -24,6 +24,13 @@ abstract class User_agent
 	public static $version = null;
 	
 	/**
+	 * The rendering engine of the browser
+	 *
+	 * @var string
+	 */
+	public static $engine = null;
+	
+	/**
 	 * Is the browser able to use box-sizing:; natively?
 	 *
 	 * @var string
@@ -73,6 +80,22 @@ abstract class User_agent
 			'IBrowse'           => 'IBrowse',
 		);
 		
+		$config['engine'] = array
+		(
+			'Opera'             => 'Presto',
+			'MSIE'              => 'Trident',
+			'Internet Explorer' => 'Trident',
+			'Shiira'            => 'Webkit',
+			'Firefox'           => 'Gecko',
+			'Chimera'           => 'Gecko',
+			'Phoenix'           => 'Gecko',
+			'Firebird'          => 'Gecko',
+			'Camino'            => 'Gecko',
+			'OmniWeb'           => 'Webkit',
+			'Safari'            => 'Webkit',
+			'Konqueror'         => 'KHTML'
+		);
+		
 		$config['mobile'] = array
 		(
 			'mobileexplorer' => 'Mobile Explorer',
@@ -113,6 +136,7 @@ abstract class User_agent
 		
 		self::$browser = $info['browser'];
 		self::$version = $info['version'];
+		self::$engine = $info['engine'];
 		
 		unset($info);
 	}

@@ -23,6 +23,7 @@ class Browsers extends Plugins
 		# user agent. 
 		Cache::flag(User_agent::$browser);
 		Cache::flag(User_agent::$version);
+		Cache::flag(User_agent::$engine);
 	}
 	
 	/**
@@ -38,6 +39,7 @@ class Browsers extends Plugins
 	{
 		Constants::set('browser', User_agent::$browser);
 		Constants::set('version', User_agent::$version);
+		Constants::set('engine', User_agent::$engine);
 	}
 	
 }
