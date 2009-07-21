@@ -58,7 +58,7 @@ class NestedSelectors extends Plugins
 				
 				foreach($parent as $parent_key => $parent_value)
 				{
-					$css_string .= self::parse_rule($rule, trim($parent_value));
+					$css_string .= self::parse_rule($rule, $parent_value);
 				}
 			}
 			

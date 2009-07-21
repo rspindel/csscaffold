@@ -103,8 +103,7 @@
 	{
 		border:3px solid #eee;
 	}
-	
-	@if(!bg != false)
+	@else
 	{
 		background:#eee;
 	}
