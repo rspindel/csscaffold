@@ -137,10 +137,10 @@ class Layout extends Plugins
 			$s .= ".pull-$i{left:-".($width)."px;margin-right:".-($width - $gw)."px;}";
 			
 			# Make the .shift-down classes
-			$s .= ".baseline-down-$i {top:".($bl * $i).";}";
+			$s .= ".baseline-down-$i {top:".($bl * $i)."px;}";
 			
 			# Make the .shift-up classes
-			$s .= ".baseline-up-$i {top:".-($bl * $i).";}";
+			$s .= ".baseline-up-$i {top:".-($bl * $i)."px;}";
 			
 			# Make the .baseline-x classes
 			$s .= ".baseline-$i{height:".($bl * $i)."px;}";
