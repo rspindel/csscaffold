@@ -84,7 +84,7 @@ class Image_helper extends Plugins
 					$width = $height = 0;
 				}
 				
-				$url = str_replace(DOCROOT, '/', $absolute_img);
+				$url = str_replace(DOCROOT, '', $absolute_img);
 				
 				// Build the selector
 				$properties = "
