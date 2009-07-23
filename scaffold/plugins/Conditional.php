@@ -10,8 +10,6 @@
  *	@elseif() {} 
  *	@else {}
  *
- * Currently only works with browser testing
- *
  * @author Anthony Short
  * @dependencies none
  **/
