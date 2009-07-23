@@ -37,7 +37,7 @@
 	* --------------------------------------------------------
 	*/
 	
-	=heading
+	.heading
 	{ 
 		+georgia;
 		
@@ -55,10 +55,10 @@
 		&:first-child { margin-top:0; }
 		
 	}
-
+	
 	h1 
 	{
-		+heading;
+		extends:".heading";
 		font-size:3em;
 		line-height:eval(!baseline*3)px;
 		margin-top:eval(!baseline*2)px;
@@ -66,14 +66,14 @@
 	
 	h2 
 	{
-		+heading;
+		extends:".heading";
 		font-size:2em;
 		line-height:eval(!baseline*2)px;
 	}
 	
 	h3 
 	{
-		+heading;
+		extends:".heading";
 		font-size:1.5em;
 		based-on:helvetica;
 		line-height:eval(!baseline*2)px;
@@ -81,18 +81,18 @@
 	
 	h4 
 	{
-		+heading;
+		extends:".heading";
 		font-size:1.3em;
 	}
 	
 	h5 
 	{
-		+heading;
+		extends:".heading";
 	}
 	
 	h6 
 	{
-		+heading;
+		extends:".heading";
 		margin-bottom:0; 
 	}
 
