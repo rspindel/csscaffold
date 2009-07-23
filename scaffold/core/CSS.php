@@ -399,8 +399,8 @@ abstract class CSS
 		$xml = str_replace('data:image/JPG;', "#SCAFFOLD-IMGDATA-JPG#", $xml);
 		
 		# Transform properties
-		$xml = preg_replace('/([-_A-Za-z]+)\s*:\s*([^;}{]+)(?:;)/ie', "'<property name=\"'.trim('$1').'\" value=\"'.trim('$2').'\" />'", $xml);
-		
+		$xml = preg_replace('/([-_A-Za-z]+)\s*:\s*([^;}{]+)(?:;)?/ie', "'<property name=\"'.trim('$1').'\" value=\"'.trim('$2').'\" />'", $xml);
+
 		# Transform selectors
 		$xml = preg_replace('/(\s*)([_@#.0-9A-Za-z\+~*\|\(\)\[\]^\"\'=\$:,\s-]*?)\{/me', "'$1<rule selector=\"'.preg_replace('/\s+/', ' ', trim('$2')).'\">'", $xml);
 		

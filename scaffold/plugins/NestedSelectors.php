@@ -45,7 +45,7 @@ class NestedSelectors extends Plugins
 	{
 		$css_string = "";
 		$property_list = "";
-
+	
 		# Get the selector and store it away
 		foreach($rule->attributes() as $type => $value)
 		{
@@ -90,7 +90,7 @@ class NestedSelectors extends Plugins
 				$parent = $child;
 			}
 		}
-	
+
 		foreach($rule->property as $p)
 		{
 			$property = (array)$p->attributes(); 
