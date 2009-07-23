@@ -80,17 +80,18 @@ class Mixins extends Plugins
 			
 			# Find the mixins
 			# match('/\+(([0-9a-zA-Z_-]*?)(\((.*?)\))?)\;/', $css);
-			$mixins = $this->find_mixins(CSS::$css);
-			
-			# Loop through each of the found +mixins
-			foreach($mixins[2] as $mixin_key => $mixin_name)
-			{	
-				CSS::replace($mixins[0][$mixin_key], $this->build_mixins($mixin_key, $mixins));
+			if($mixins = $this->find_mixins(CSS::$css))
+			{
+				# Loop through each of the found +mixins
+				foreach($mixins[2] as $mixin_key => $mixin_name)
+				{	
+					CSS::replace($mixins[0][$mixin_key], $this->build_mixins($mixin_key, $mixins));
+				}
+				
+				# Remove all of the +mixins (if they still exist)
+				CSS::replace($mixins[0], '');
 			}
 			
-			# Remove all of the +mixins (if they still exist)
-			CSS::replace($mixins[0], '');
-	
 			# Clean up
 			unset($bases, $mixins);
 		}
@@ -129,18 +130,19 @@ class Mixins extends Plugins
 				$new_properties = Conditional::parse($new_properties);
 							
 				# Find nested mixins
-				$inner_mixins = $this->find_mixins($new_properties);
-				
-				# Loop through all the ones we found, skipping on recursion by passing
-				# through the current mixin we're working on
-				foreach($inner_mixins as $key => $value)
+				if($inner_mixins = $this->find_mixins($new_properties))
 				{
-					if(isset($inner_mixins[0][$key]))
+					# Loop through all the ones we found, skipping on recursion by passing
+					# through the current mixin we're working on
+					foreach($inner_mixins as $key => $value)
 					{
-						# Prase the mixin and replace it within the property string
-						$new_properties = str_replace($inner_mixins[0][$key], $this->build_mixins($key, $inner_mixins, $current_mixin), $new_properties);
+						if(isset($inner_mixins[0][$key]))
+						{
+							# Prase the mixin and replace it within the property string
+							$new_properties = str_replace($inner_mixins[0][$key], $this->build_mixins($key, $inner_mixins, $current_mixin), $new_properties);
+						}
 					}
-				}		
+				}	
 							
 				# Clean up memory
 				unset($inner_mixins, $params, $mixins);
@@ -168,8 +170,8 @@ class Mixins extends Plugins
 	 * @param $string
 	 * @return array
 	 */
-	function find_mixins($string)
-	{
+	private function find_mixins($string)
+	{	
 		return match('/\+(([0-9a-zA-Z_-]*?)(\((.*?)\))?)\;/', $string);
 	}
 	

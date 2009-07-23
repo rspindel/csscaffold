@@ -33,24 +33,35 @@ class Constants extends Plugins
 		$found 	= CSS::find_at_group('constants');
 		$colors = CSS::find_at_group('colors');
 		
-		# Join them together
-		$found = @array_merge_recursive($found, $colors);
+		if($found !== false AND $colors !== false)
+		{
+			# Join them together
+			$found = @array_merge_recursive($found, $colors);
+		}
+		
+		# If there is colors but no constants
+		elseif($found === false)
+		{
+			$found = $colors;
+		}
 		
 		# Add default constants here
 		self::set('asset_url', ASSETURL);
 		self::set('scaffold_url', BASEURL);
 		
-		# Create our template style constants
-		foreach($found['values'] as $key => $value)
+		# If there are some constants, let do it.
+		if($found !== false)
 		{
-			unset(self::$constants[$key]);
-			self::set($key, $value);
+			# Create our template style constants
+			foreach($found['values'] as $key => $value)
+			{
+				unset(self::$constants[$key]);
+				self::set($key, $value);
+			}
+	
+			# Remove the @constants groups
+			CSS::replace($found['groups'], array());		
 		}
-		
-		#self::get_xml_constants();
-		
-		# Remove the @constants groups
-		CSS::replace($found['groups'], array());
 	}
 	
 	/**

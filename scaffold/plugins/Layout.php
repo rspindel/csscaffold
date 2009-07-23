@@ -45,59 +45,48 @@ class Layout extends Plugins
 			CSS::replace($settings['groups'], array()); 
 			
 			# Store it so it's easier to grab
-			$settings = $settings['values'];			
-		}
-		
-		# If there's no grid settings, we'll create some default ones, just in case
-		else
-		{
-			$settings = array(
-				'column-width' => 60,
-				'gutter-width' => 10,
-				'column-count' => 12,
-				'baseline' => "18px"
-			);
-		}
-		
-		# A lot easier to write and read
-		$cw 	=& $settings['column-width'];
-		$gw 	=& $settings['gutter-width'];
-		$cc 	=& $settings['column-count'];
-		$bl		=& $settings['baseline'];
+			$settings = $settings['values'];
 			
-		# Check whether we should use the column width or calculate it from the grid width
-		if(isset($settings['grid-width'])) 
-		{			
-			# Our awesome column width calculation
-			$cw = ($grid_w - ($gw * ($cc-1)))/$cc + $gw;
-		}
-		else
-		{
-			$cw = $cw + ($gw*2);
-			$grid_w = $cw * $cc;
-		}
-		
-		# Add grid width to the settings
-		$settings['grid-width'] = $grid_w . "px";
-		
-		# Set them as constants we can use in the css
-		Constants::set($settings);
-		
-		# Remove the unit 
-		$bl = preg_replace('/[a-zA-Z]*/', '', $bl);
-		$gw = preg_replace('/[a-zA-Z]*/', '', $gw);
-		
-		# Generate the grid.png
-		self::create_grid_image($cw, $bl, $gw);
-
-		# Create grid classes (.column-1 etc) and add them to the css		
-		$this->create_grid_classes($cw, $bl, $gw, $cc);
+			# A lot easier to write and read
+			$cw 	=& $settings['column-width'];
+			$gw 	=& $settings['gutter-width'];
+			$cc 	=& $settings['column-count'];
+			$bl		=& $settings['baseline'];
+				
+			# Check whether we should use the column width or calculate it from the grid width
+			if(isset($settings['grid-width'])) 
+			{			
+				# Our awesome column width calculation
+				$cw = ($grid_w - ($gw * ($cc-1)))/$cc + $gw;
+			}
+			else
+			{
+				$cw = $cw + ($gw*2);
+				$grid_w = $cw * $cc;
+			}
+			
+			# Add grid width to the settings
+			$settings['grid-width'] = $grid_w . "px";
+			
+			# Set them as constants we can use in the css
+			Constants::set($settings);
+			
+			# Remove the unit 
+			$bl = preg_replace('/[a-zA-Z]*/', '', $bl);
+			$gw = preg_replace('/[a-zA-Z]*/', '', $gw);
+			
+			# Generate the grid.png
+			self::create_grid_image($cw, $bl, $gw);
 	
-		# Replace the columns:; properties
-		$this->replaceColumns($cw, $gw, $cc);
+			# Create grid classes (.column-1 etc) and add them to the css		
+			$this->create_grid_classes($cw, $bl, $gw, $cc);
 		
-		# Round to baselines
-		$this->round_to_baseline($bl);
+			# Replace the columns:; properties
+			$this->replaceColumns($cw, $gw, $cc);
+			
+			# Round to baselines
+			$this->round_to_baseline($bl);
+		}
 	}
 	
 	/**
