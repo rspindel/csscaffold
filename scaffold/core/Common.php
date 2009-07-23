@@ -359,7 +359,7 @@
 			$up = substr_count($path, '../');
 
 			# Join the CSS directory with the requested directory
-			$path = join_path(DOCROOT, URLPATH, unquote($path));
+			$path = join_path(CSSPATH, unquote($path));
 
 			# Get the full server path to the file
 			$absolute = realpath($path);

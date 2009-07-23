@@ -162,10 +162,12 @@ abstract class CSS
 						$found['values'][trim($t[0])] = $t[1];
 					}
 				}
-			}			
+			}
+			
+			return $found;		
 		}
 		
-		return $found;
+		return false;
 	}
 	
 	/**
@@ -239,10 +241,15 @@ abstract class CSS
 	 * @param $selector string
 	 * @param $css string
 	 */
-	public static function find_selectors($selector, $recursive = 1, $css = "")
+	public static function find_selectors($selector, $recursive = "", $css = "")
 	{
 		if($css == "") $css =& self::$css;
 		
+		if($recursive != "")
+		{
+			$recursive = "|(?{$recursive})";
+		}
+
 		$regex = 
 			"/
 				
@@ -253,13 +260,11 @@ abstract class CSS
 				(
 					([0-9a-zA-Z\_\-\*&]*?)\s*
 					\{	
-						(?P<properties>(?:[^{}]+|(?{$recursive}))*)
+						(?P<properties>(?:[^{}]+{$recursive})*)
 					\}
 				)
 				
 			/xs";
-			
-		# /($selector)\s*\{(([^{}]+)|(?R))*\}/sx
 		
 		if(preg_match_all($regex, $css, $match))
 		{
@@ -268,6 +273,38 @@ abstract class CSS
 		else
 		{
 			return array();
+		}
+	}
+	
+	/**
+	 * Finds all selectors of a certain name in the css. This finds
+	 * the selector in any context. eg #id or .class, #id, .class etc.
+	 *
+	 * @author Anthony Short
+	 * @param $selector
+	 * @param $css
+	 * @return array
+	 */
+	public static function find_selector_names($selector, $css = "")
+	{
+		if($css == "") $css =& self::$css;
+		
+		# Get it ready to be put in regex
+		$selector = preg_quote($selector);
+		
+		$regex = "/
+			[^}]*
+			{$selector}
+			[^{]*
+		/sx";
+
+		if(preg_match_all($regex, $css, $match))
+		{
+			return $match;
+		}
+		else
+		{
+			return false;
 		}
 	}
 	
