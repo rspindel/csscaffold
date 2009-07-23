@@ -45,7 +45,11 @@ class Import extends Plugins
 				stop("Error: Recursion in imports. You are importing the css file into itself");
 			}
 			
-			$path = join_path(DOCROOT,$include);
+			# This is the path of the css file that requested the 
+			$requested_dir = pathinfo(Config::get('server_path'), PATHINFO_DIRNAME);
+			
+			# Get the file path to the include
+			$path = find_absolute_path($include);
 						
 			if(is_css($include) AND file_exists($path))
 			{
