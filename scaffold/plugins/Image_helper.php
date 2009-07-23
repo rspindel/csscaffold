@@ -63,7 +63,7 @@ class Image_helper extends Plugins
 		{
 			foreach ($found[4] as $key => $value) 
 			{
-				$path =& $value;
+				$path = unquote($value);
 								
 				$absolute_img = find_absolute_path($path);
 													
@@ -84,7 +84,7 @@ class Image_helper extends Plugins
 					$width = $height = 0;
 				}
 				
-				$url = str_replace(DOCROOT, '', $absolute_img);
+				$url = str_replace(DOCROOT, '/', $absolute_img);
 				
 				// Build the selector
 				$properties = "
