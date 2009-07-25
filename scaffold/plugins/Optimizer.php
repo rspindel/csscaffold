@@ -11,7 +11,7 @@ require join_path(BASEPATH,'libraries/CSSTidy.php');
 class Optimizer extends Plugins
 {
 	function formatting_process()
-	{
+	{				
 		if(Config::get('tidy') === true)
 		{
 			$tidy = new csstidy();
@@ -33,7 +33,7 @@ class Optimizer extends Plugins
 			
 			$tidy->load_template('highest_compression');
 			
-			$result = $tidy->parse(CSS::$css);
+			$result = @$tidy->parse(CSS::$css);
 					
 			CSS::$css = $tidy->print->plain(); 
 		}
