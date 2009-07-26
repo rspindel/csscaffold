@@ -96,12 +96,7 @@
 */
 =has-layout
 {
-  display:inline-block;
-  
-  &
-  {
-  	display:block;
-  }
+	overflow:auto;
 }
 
 
@@ -142,7 +137,7 @@
  */
 =span(!n)
 {
-	width:eval(!n * !column-width - (!gutter-width * 2))px;
+	width:[!n * !column-width - (!gutter-width * 2)]px;
 }
 
 /**
@@ -151,14 +146,26 @@
  * Makes the element behave as a column.
  * @param !number The number of columns
  */
-=columns(!n)
+=columns(!n, !side = "both")
 {
-	+float(left);
-	+clearfix;
 	+boxsizing;
-	+span(!n)
+	+span(!n);
+	+clearfix;
 	
-	margin-right,margin-left:!gutter-width;	
+	float:left;
+	
+	@if(!side == "first")
+	{
+		margin-right:!gutter-width;	
+	}
+	@elseif(!side == "last")
+	{
+		margin-left:!gutter-width;	
+	}
+	@elseif(!side == "both")
+	{
+		margin-right,margin-left:!gutter-width;	
+	}
 }
 
 /**
@@ -180,23 +187,23 @@
 
 =append(!n)
 {
-	padding-right:eval(!column-width * !n)px;
+	padding-right:[!column-width * !n]px;
 }
 
 =prepend(!n)
 {
-	padding-left:eval(!column-width * !n)px;
+	padding-left:[!column-width * !n]px;
 }
 
 =baseline(!n)
 {
-	height:eval(!baseline * !n)px;
+	height:[!baseline * !n]px;
 }
 
 =pull(!n)
 {
 	+float(left);
-	margin-right: eval(!column-width * !n + !grid-width)px;
+	margin-right: [!column-width * !n + !grid-width]px;
 	position:relative;
 }
 
@@ -205,6 +212,6 @@
 	+float(right);
 	position:relative;
 	
-	margin-left: eval( -(!column-width * !n + !grid-width) )px;
-	margin-right: eval(!column-width * !n + !grid-width)px;
+	margin-left: [ -(!column-width * !n + !grid-width)]px;
+	margin-right: [!column-width * !n + !grid-width]px;
 }

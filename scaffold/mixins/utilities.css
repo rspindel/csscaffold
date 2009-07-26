@@ -12,8 +12,8 @@
 		
 		@if(!browser == "Internet Explorer")
 		{
-			-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=eval(!opacity*100))";
-			filter: "alpha(opacity=eval(!opacity*100))";
+			-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=[!opacity*100])";
+			filter: "alpha(opacity=[!opacity*100])";
 		}
 	}
 	
