@@ -208,7 +208,7 @@ abstract class CSS
 		if($css == "") $css =& self::$css;
 		
 		# Make the property name regex-friendly
-		$property = str_replace('-', '\-', preg_quote($property));
+		#$property = str_replace('-', '\-', preg_quote($property));
 		
 		if(preg_match_all("/\{([^\}]*({$property}\:\s*({$value})\s*\;).*?)\}/sx", $css, $match))
 		{
@@ -392,20 +392,16 @@ abstract class CSS
 		$xml = preg_replace('#(/\*[^*]*\*+([^/*][^*]*\*+)*/)#', '', $xml);
 		
 		# These will break the xml, so we'll transform them for now
-		$xml = str_replace('"', '#SCAFFOLD-QUOTE#', $xml);
-		$xml = str_replace('>','#SCAFFOLD-GREATER#', $xml);
-		$xml = str_replace('&','#SCAFFOLD-PARENT#', $xml);
-		$xml = str_replace('data:image/PNG;', "#SCAFFOLD-IMGDATA-PNG#", $xml);
-		$xml = str_replace('data:image/JPG;', "#SCAFFOLD-IMGDATA-JPG#", $xml);
+		$xml = self::convert_entities('encode', $xml);
 		
 		# Transform properties
-		$xml = preg_replace('/([-_A-Za-z]+)\s*:\s*([^;}{]+)(?:;)?/ie', "'<property name=\"'.trim('$1').'\" value=\"'.trim('$2').'\" />'", $xml);
+		$xml = preg_replace('/([-_A-Za-z]+)\s*:\s*([^;}{]+)(?:;)/ie', "'<property name=\"'.trim('$1').'\" value=\"'.trim('$2').'\" />\n'", $xml);
 
 		# Transform selectors
-		$xml = preg_replace('/(\s*)([_@#.0-9A-Za-z\+~*\|\(\)\[\]^\"\'=\$:,\s-]*?)\{/me', "'$1<rule selector=\"'.preg_replace('/\s+/', ' ', trim('$2')).'\">'", $xml);
+		$xml = preg_replace('/(\s*)([_@#.0-9A-Za-z\+~*\|\(\)\[\]^\"\'=\$:,\s-]*?)\{/me', "'$1\n<rule selector=\"'.preg_replace('/\s+/', ' ', trim('$2')).'\">\n'", $xml);
 		
 		# Close rules
-		$xml = preg_replace('/\!?\}/', '</rule>', $xml);
+		$xml = preg_replace('/\}/', "\n</rule>", $xml);
 		
 		# Indent everything one tab
 		$xml = preg_replace('/\n/', "\r\t", $xml);
@@ -414,6 +410,51 @@ abstract class CSS
 		$xml = '<?xml version="1.0" ?'.">\r<css>\r\t$xml\r</css>\r"; 
 		
 		return simplexml_load_string($xml);
+	}
+		
+	/**
+	 * Encodes or decodes parts of the css that break the xml
+	 *
+	 * @author Anthony Short
+	 * @param $css
+	 * @return string
+	 */
+	public static function convert_entities($action = 'encode', $css)
+	{
+		$css_replacements = array(
+			'"' => '#SCAFFOLD-QUOTE#',
+			'>' => '#SCAFFOLD-GREATER#',
+			'&' => '#SCAFFOLD-PARENT#',
+			'data:image/PNG;' => '#SCAFFOLD-IMGDATA-PNG#',
+			'data:image/JPG;' => "#SCAFFOLD-IMGDATA-JPG#",
+			
+			/*
+			':hover' => '#SCAFFOLD-HOVER#',
+			':root' => '#SCAFFOLD-ROOT#',
+			':nth-child' => '#SCAFFOLD-NTH#',
+			':nth-last-child' => '#SCAFFOLD-NTHLAST#',
+			':nth-of-type' => '#SCAFFOLD-NTHOFTYPE',
+			':nth-last-of-type' => '#SCAFFOLD-NTHLASTTYPE',
+			':first-child' => '#SCAFFOLD-FIRSTCHILD',
+			':last-child' => '#SCAFFOLD-LASTCHILD',
+			':first-of-type' => '#SCAFFOLD-FIRSTTYPE',
+			':last-of-type' => '#SCAFFOLD-LASTTYPE',
+			':only-child' => '#SCAFFOLD-ONLYCHILD',
+			*/
+		);
+		
+		switch ($action)
+		{
+		    case 'decode':
+		        $css = str_replace(array_values($css_replacements),array_keys($css_replacements), $css);
+		        break;
+		    
+		    case 'encode':
+		        $css = str_replace(array_keys($css_replacements),array_values($css_replacements), $css);
+		        break;  
+		}
+        
+		return $css;
 	}
 	
 	/**

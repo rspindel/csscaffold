@@ -14,21 +14,21 @@ abstract class User_agent
 	 *
 	 * @var string
 	 */
-	public static $browser = null;
+	public static $browser = "unknown";
 	
 	/**
 	 * The version of the browser
 	 *
 	 * @var string
 	 */
-	public static $version = null;
+	public static $version = "unknown";
 	
 	/**
 	 * The rendering engine of the browser
 	 *
 	 * @var string
 	 */
-	public static $engine = null;
+	public static $engine = "unknown";
 	
 	/**
 	 * Is the browser able to use box-sizing:; natively?
@@ -134,9 +134,12 @@ abstract class User_agent
 			}
 		}
 		
-		self::$browser = $info['browser'];
-		self::$version = $info['version'];
-		self::$engine = $info['engine'];
+		if(isset($info))
+		{
+			self::$browser = $info['browser'];
+			self::$version = $info['version'];
+			self::$engine = $info['engine'];
+		}
 		
 		unset($info);
 	}
