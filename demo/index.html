@@ -244,19 +244,28 @@ Not indented
 	
 	<div class="container">
 		<h2>Grid tests</h2>
+		
 		<div id="generate" class="grid wireframe">
+			<h4>Push and pull tests</h4>
+			<div class="columns-3 push-1"></div>
+			<div class="columns-5 push-3"></div>
+			<div class="columns-6 push-6"></div>
+			<div class="columns-2 append-3">Appended with 3</div>
+			<div class="columns-4 pull-2 baseline-down-2">Pulled back over the previous column and baseline shift down</div>
+			<div class="columns-5 last baseline-up-1">Baseline shift up one</div>
+			
+			<hr/>
+			<h4>Columns tests</h4>
+		</div>
 		
-		<h4>Push and pull tests</h4>
-		<div class="columns-3 push-1"></div>
-		<div class="columns-5 push-3"></div>
-		<div class="columns-6 push-6"></div>
-		<div class="columns-2 append-3">Appended with 3</div>
-		<div class="columns-4 pull-2 baseline-down-2">Pulled back over the previous column and baseline shift down</div>
-		<div class="columns-5 last baseline-up-1">Baseline shift up one</div>
-		
-		<hr/>
-		<h4>Columns tests</h4>
-		
+		<div id="custom-content">
+			
+			<div id="header">Head</div>
+			<div id="content">Content</div>
+			<div id="sub-content">Sub Content</div>
+			<div id="aside">Aside</div>
+			<div id="footer">Footer</div>
+			
 		</div>
 	</div>
 	

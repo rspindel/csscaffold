@@ -28,12 +28,13 @@
 
 #custom-content
 {
-	div { extends:".wireframe"; }
-	#header { +columns(12); }
-	#content { +columns(6); }
-	#sub-content { +columns(6); }
-	#aside { +columns(6); }
-	#footer { +columns(6); }
+	div { extends:".wireframe"; margin-top:[!baseline / 2]px; margin-bottom:[!baseline / 2]px; }
+	
+	#header 		{ +columns(12); }
+	#content 		{ +columns(6); }
+	#sub-content 	{ +columns(3); }
+	#aside 			{ +columns(3); }
+	#footer 		{ +columns(12); }
 }
 
 

@@ -40,7 +40,7 @@
 	@grid 
 	{
 		column-width:60;
-		gutter-width:10;
+		gutter-width:10px;
 		column-count:12;
 		baseline:20px;
 	}
