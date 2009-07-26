@@ -24,7 +24,7 @@
 	* Mainly for debugging purposes
 	*/
 	.showgrid { +showgrid; }
-	.wireframe div { background:rgba(255,0,0,0.4); min-height:eval(!baseline*3)px; }
+	.wireframe div { background:rgba(255,0,0,0.4); min-height:[!baseline*3]px; }
 	.clear { clear:left; }
 	.clearfix { +clearfix; }
 	

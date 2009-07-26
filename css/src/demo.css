@@ -26,6 +26,15 @@
 	background:#f8f8f8;
 }
 
+#custom-content
+{
+	div { extends:".wireframe"; }
+	#header { +columns(12); }
+	#content { +columns(6); }
+	#sub-content { +columns(6); }
+	#aside { +columns(6); }
+	#footer { +columns(6); }
+}
 
 
 /* @end */
@@ -141,13 +150,13 @@
 
 .expression
 {
-	height:eval((100*1.5) - 10 / 20)px;
+	height:[(100*1.5) - 10 / 20]px;
 	background:#eee;
 }
 
 .expression-2
 {
-	padding:eval(floor(!baseline * 1.5))px;
+	padding:[floor(!baseline * 1.5)]px;
 	border:1px solid #eee;
 	margin-top:!baseline;
 }
@@ -220,7 +229,7 @@
 {
 	+border-box;
 	float:left;
-	margin-right:eval(!gutter-width*2)px;
+	margin-right:[!gutter-width*2]px;
 	width:210px;
 	margin-top:0;
 }
