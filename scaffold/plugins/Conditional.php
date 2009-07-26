@@ -31,13 +31,15 @@ class Conditional extends Plugins
 			# Go through each one
 			foreach($found[1] as $key => $value)
 			{
-				$logic = "if($value){ \$result = 1; } else { \$result = 0; }";
+				$result = false;
+				
+				$logic = "if($value){ \$result = true; }";
 
 				# Parse the args
 				@eval($logic);
 				
 				# When one of them is if true, replace the whole group with the contents of that if and continue
-				if($result == 1)
+				if($result === true)
 				{
 					$string = str_replace($found[0][$key], $found[3][$key], $string);
 				}

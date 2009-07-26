@@ -26,12 +26,7 @@ class NestedSelectors extends Plugins
 			$css .= self::parse_rule($value);
 		}
 
-		$css = str_replace('#SCAFFOLD-GREATER#', '>', $css);
-		$css = str_replace('#SCAFFOLD-QUOTE#', '"', $css);
-		$css = str_replace("#SCAFFOLD-IMGDATA-PNG#", "data:image/PNG;", $css);
-		$css = str_replace("#SCAFFOLD-IMGDATA-JPG#", "data:image/JPG;", $css);
-		
-		CSS::$css = $css;
+		CSS::$css = CSS::convert_entities('decode', $css);
 	}
 	
 	/**
@@ -45,6 +40,7 @@ class NestedSelectors extends Plugins
 	{
 		$css_string = "";
 		$property_list = "";
+		$parent = trim($parent);
 	
 		# Get the selector and store it away
 		foreach($rule->attributes() as $type => $value)
