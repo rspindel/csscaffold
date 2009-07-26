@@ -18,28 +18,41 @@ class Expression extends Plugins
 	 * @param $css
 	*/
 	function post_process()
-	{	
-		# Find all of the math() functions
-		if(preg_match_all('/
+	{
+		CSS::$css = $this->parse_expressions();
+	}
+	
+	/**
+	 * Finds eval chunks in property values
+	 *
+	 * @author Anthony Short
+	 * @return null
+	 */
+	public static function find_expressions($css)
+	{
+		return CSS::find_properties_with_value('[a-zA-Z-]++','[^;]*?(\[[\'\"]?([^]]*?)[\'\"]?\])[^;]*?', $css);
+		#preg_match_all('/\:[^;]*?(\[[\'\"]?([^]]*?)[\'\"]?\])[^;]*?\;/', $css, $found);
+		#stop($found);
+	}
+	
+	/**
+	 * Parses the expressions in an array from find_expressions
+	 *
+	 * @author Anthony Short
+	 * @return null
+	 */
+	public static function parse_expressions($css = "")
+	{
+		# If theres no css string given, use the master css
+		if($css == "") $css = CSS::$css;
 		
-			eval
-			\(
-				[\'\"]?
-				
-				(([^);]++\)?|(?:2))*?)
-				
-				[\'\"]?
-			\)
-			
-			/sx',
-			CSS::$css, $matches)
-		)
-		{
-			# Loop through them, stripping out anything but simple math
-			# executing it and replacing it within the css	
-			foreach($matches[0] as $key => $match)
-			{				
-				$expr =& $matches[1][$key];
+		# Find all of the property values which have [] in them.
+		if($matches = self::find_expressions($css))
+		{			
+			foreach($matches[0] as $key => $value)
+			{
+				stop($matches);
+				$expr =& $matches[5][0];
 				
 				# Remove units
 				$expr = preg_replace('/(px|em|%)/','',$expr); 
@@ -49,16 +62,23 @@ class Expression extends Plugins
 				
 				eval("\$result = ".$expr.";");
 				
-				if ($result)
+				if($result)
 				{
-					CSS::replace($matches[0][$key], $result);
+					# Replace the string in the css
+					$updated 	= str_replace($matches[4][0], $result, $value);
+					$css 		= str_replace($matches[0][0], $updated, $css);
 				}
 				else
 				{
-					stop("Error: Eval: Can't process this function - " . $match);
+					stop("Error: Eval: Can't process this function - " . $value);
 				}
+								
+				# If we can find more expressions in this selector, parse them.
+				$css = self::parse_expressions($css);
 			}
 		}
+		
+		return $css;
 	}
 	
 }
