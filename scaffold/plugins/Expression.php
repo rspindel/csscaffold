@@ -30,9 +30,7 @@ class Expression extends Plugins
 	 */
 	public static function find_expressions($css)
 	{
-		return CSS::find_properties_with_value('[a-zA-Z-]++','[^;]*?(\[[\'\"]?([^]]*?)[\'\"]?\])[^;]*?', $css);
-		#preg_match_all('/\:[^;]*?(\[[\'\"]?([^]]*?)[\'\"]?\])[^;]*?\;/', $css, $found);
-		#stop($found);
+		return match('/\:[^;]*?(\[[\'\"]?([^]]*?)[\'\"]?\])[^;]*?\;/', $css);
 	}
 	
 	/**
@@ -48,33 +46,27 @@ class Expression extends Plugins
 		
 		# Find all of the property values which have [] in them.
 		if($matches = self::find_expressions($css))
-		{			
-			foreach($matches[0] as $key => $value)
-			{
-				stop($matches);
-				$expr =& $matches[5][0];
+		{
+			# So we don't double up on the same expression
+			$originals 		= array_unique($matches[1]);
+			$expressions 	= array_unique($matches[2]);
+					
+			foreach($expressions as $key => $expression)
+			{								
+				# Remove units and quotes
+				$expression = preg_replace('/(px|em|%)/','', remove_all_quotes($expression)); 
 				
-				# Remove units
-				$expr = preg_replace('/(px|em|%)/','',$expr); 
-				
-				# Remove quotes
-				$expr = remove_all_quotes($expr);
-				
-				eval("\$result = ".$expr.";");
+				eval("\$result = ".$expression.";");
 				
 				if($result)
 				{
 					# Replace the string in the css
-					$updated 	= str_replace($matches[4][0], $result, $value);
-					$css 		= str_replace($matches[0][0], $updated, $css);
+					$css = str_replace($originals[$key], $result, $css);
 				}
 				else
 				{
-					stop("Error: Eval: Can't process this function - " . $value);
+					stop("Error: Eval: Can't process this function - " . $expression);
 				}
-								
-				# If we can find more expressions in this selector, parse them.
-				$css = self::parse_expressions($css);
 			}
 		}
 		
