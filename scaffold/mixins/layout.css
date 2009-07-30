@@ -148,7 +148,7 @@
  */
 =columns(!n, !side = "both")
 {
-	+boxsizing;
+	+border-box;
 	+span(!n);
 	+clearfix;
 	
