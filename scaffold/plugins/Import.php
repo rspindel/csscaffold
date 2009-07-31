@@ -22,9 +22,6 @@ class Import extends Plugins
 	{		
 		# Find all the @server imports
 		CSS::$css = $this->server_import(CSS::$css);
-			
-		# Append any css in the plugins folder
-		# $css = $this->add_plugins();
 	}
 	
 	/**
@@ -65,24 +62,4 @@ class Import extends Plugins
 		
 		return $css;
 	}
-	
-	/**
-	 * Automatically appends files in a folder to the css
-	 *
-	 * @author Anthony Short
-	 * @param $css
-	 */
-	function add_plugins()
-	{		
-		foreach(scandir(CSSPATH . 'plugins') as $file)
-		{
-			if (!is_css($file)) { continue; }
-			
-			// Add it to our css
-			$css .= file_get_contents($file);
-		}
-		
-		return $css;
-	}
-
 }
