@@ -15,6 +15,7 @@
 	# Fix up any weird slash issues. We'll just ditch them
 	# and let our join path function fix it
 	$css_dir = trim_slashes($css_dir);
+	$css_dir = str_replace(DOCROOT, '', realpath(join_path(DOCROOT,$css_dir)));
 	
 	# The full server path to this directory
 	$system_dir = realpath('./');

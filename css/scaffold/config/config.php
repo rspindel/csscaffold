@@ -44,7 +44,7 @@
 	 *
 	 * @var string
 	 **/
-	$css_dir = "/css";
+	$css_dir = "../";
 	
 	/**
 	 * ASSET FOLDER PATH
