@@ -1,9 +1,6 @@
 /**
-* ========================================================
-* Screen.css
-* ========================================================
-*
 * The main stylesheet which imports all of the others
+* and sets up constants, grid etc.
 *
 * @media screen
 * @project Name
@@ -15,7 +12,8 @@
 * @lastmodified yyyy-mm-dd hh:mm
 * @copyright Copyright(c) 2009 
 *
-* ========================================================
+* --------------------------------------------
+*
 */
  
 	@include '/scaffold/snippets/reset.css';
