@@ -31,24 +31,7 @@ class Constants extends Plugins
 	{				
 		# Find the constants group and values
 		$found 	= CSS::find_at_group('constants');
-		$colors = CSS::find_at_group('colors');
-		
-		if($found !== false AND $colors !== false)
-		{
-			# Join them together
-			$found = @array_merge_recursive($found, $colors);
-		}
-		
-		# If there is colors but no constants
-		elseif($found === false)
-		{
-			$found = $colors;
-		}
-		
-		# Add default constants here
-		self::set('asset_url', ASSETURL);
-		self::set('scaffold_url', BASEURL);
-		
+
 		# If there are some constants, let do it.
 		if($found !== false)
 		{
@@ -120,27 +103,6 @@ class Constants extends Plugins
 				}
 			}
 		}
-	}
-	
-	/**
-	 * Opens the constants.xml and builds an
-	 * array of constants from it which we can add to our own
-	 *
-	 * @author Anthony Short
-	 * @param $css
-	 */
-	function get_xml_constants()
-	{		
-		# Override any constants with our XML constants
-		$xml = load_xml(ASSETPATH . '/xml/constants.xml');
-		
-		# Replace the constants in the array with the XML constants		
-		foreach($xml->constant as $key => $constant)
-		{
-			self::set((string)$constant->name, (string) $constant->val);
-		}
-		
-		unset($xml);
 	}
 
 }
