@@ -1,4 +1,0 @@
-ExpiresActive on
-ExpiresDefault "access plus 10 years"
- 
-Deny from all
