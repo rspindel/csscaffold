@@ -17,9 +17,9 @@
 */
  
 	@include '/scaffold/snippets/reset.css';
-	@include '/css/src/typography.css';
-	@include '/css/src/layout.css';
-	@include '/css/src/demo.css';
+	@include 'typography.css';
+	@include 'layout.css';
+	@include 'demo.css';
 	
 	/**
 	* Assorted fixes for Internet Explorer 
