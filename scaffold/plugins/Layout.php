@@ -9,25 +9,6 @@
 class Layout extends Plugins
 {
 	/**
-	 * The construct is important for plugins. It is where flags MUST 
-	 * be set. For each flag that exists, a seperate file will be cached
-	 * and only be sent to users that meet the conditions of those flags
-	 *
-	 * @author Anthony Short
-	 */
-	function __construct()
-	{	
-		# Set a flag for their browser, so it caches it for each
-		# browser. If we don't set flags, then it would only cache
-		# the css once, using the first browser to request it as the
-		# user agent.  
-		if(User_agent::can_boxsize()) 
-		{
-			Cache::flag('Box-sizing');	
-		}
-	}
-	
-	/**
 	 * The pre-processing function occurs after the importing,
 	 * but before any real processing. This is usually the stage
 	 * where we set variables and the like, getting the css ready
@@ -52,6 +33,14 @@ class Layout extends Plugins
 			$gw 	=& $settings['gutter-width'];
 			$cc 	=& $settings['column-count'];
 			$bl		=& $settings['baseline'];
+			
+			# Set them as constants we can use in the css
+			Constants::set($settings);
+			
+			# Remove the unit 
+			$bl = preg_replace('/[a-zA-Z]*/', '', $bl);
+			$gw = preg_replace('/[a-zA-Z]*/', '', $gw);
+			$cw = preg_replace('/[a-zA-Z]*/', '', $cw);
 				
 			# Check whether we should use the column width or calculate it from the grid width
 			if(isset($settings['grid-width'])) 
@@ -67,13 +56,7 @@ class Layout extends Plugins
 			
 			# Add grid width to the settings
 			$settings['grid-width'] = $grid_w . "px";
-			
-			# Set them as constants we can use in the css
-			Constants::set($settings);
-			
-			# Remove the unit 
-			$bl = preg_replace('/[a-zA-Z]*/', '', $bl);
-			$gw = preg_replace('/[a-zA-Z]*/', '', $gw);
+			Constants::set('grid-width', $settings['grid-width']);
 			
 			# Generate the grid.png
 			self::create_grid_image($cw, $bl, $gw);
@@ -82,7 +65,7 @@ class Layout extends Plugins
 			$this->create_grid_classes($cw, $bl, $gw, $cc);
 		
 			# Replace the columns:; properties
-			$this->replaceColumns($cw, $gw, $cc);
+			# $this->replaceColumns($cw, $gw, $cc);
 			
 			# Round to baselines
 			$this->round_to_baseline($bl);
@@ -98,11 +81,12 @@ class Layout extends Plugins
 	 */
 	function round_to_baseline($baseline)
 	{
-		$found = CSS::find_functions('round');
-		
-		foreach($found as $key => $match)
+		if($found = CSS::find_functions('round'))
 		{
-			CSS::replace($match, round_nearest($found[1][$key],$baseline)."px");
+			foreach($found[0] as $key => $match)
+			{
+				CSS::replace($match, round_nearest($found[1][$key],$baseline)."px");
+			}
 		}
 	}
 
@@ -216,71 +200,5 @@ class Layout extends Plugins
 	    
 	    # Kill it
 	    ImageDestroy($image);
-	}
-	 
-	/**
-	* Builds the columns:x; properties
-	*
-	* @param   string   css file string
-	* @return  string	css file string
-	*/
-	private function replaceColumns($cw, $gw, $cc)
-	{		
-		# We'll loop through each of the columns properties by looking for each columns:x; property.
-		# This means we'll only loop through $columnscount number of times which could be better
-		# or worse depending on how many columns properties there are in your css
-		
-		for ($i=1; $i <= $cc; $i++) 
-		{ 
-			# Matches all selectors (just the properties) which have a columns property
-			while($match = CSS::find_properties_with_value('columns', $i)) 
-			{
-				# For each of the selectors with columns properties...
-				foreach ($match[0] as $key => $properties)
-				{
-					$styles = "";
-					
-					$properties 		= $match[1][0]; # First match is all the properties				
-					$columnsproperty 	= $match[2][0]; # Second match is just the columns property
-					$numberofcolumns	= $match[3][0]; # Third match is just number of columns
-
-					# Calculate the width of the column
-					$width = ($cw*$i)-($gw*2);
-					
-					# If the browser doesn't support box-sizing, minus the padding and border
-					# We'll see if the flags have been set from the browser plugin
-					if(User_agent::can_boxsize())
-					{
-						$styles .= "	
-							-moz-box-sizing:border-box;
-							-webkit-box-sizing:border-box;
-							-ms-box-sizing:border-box;
-							box-sizing:border-box;
-							behavior:url(\"".BASEURL."/behaviours/boxsizing.htc\");";
-					}
-					else
-					{
-						# Calculate the width of the column with adjustments for padding and border
-						$width = $width - (CSS::get_padding($properties) + CSS::get_border($properties));
-					}
-										
-					# Add the rest of the properties
-					$styles .= "width:{$width}px;float:left;margin-right:{$gw}px; margin-left:{$gw}px;";
-						
-					# Fix up the retarded bugs in IE
-					if( User_agent::$browser == 'Internet Explorer' && User_agent::$version < 7 )
-					{
-						$styles .= "display:inline;overflow:hidden;";
-					}
-					
-					# Insert into property string
-					$newproperties = str_replace($columnsproperty, $styles, $properties);
-
-					# Insert this new string into CSS string
-					CSS::replace($properties, $newproperties);
-				
-				}
-			}
-		}
 	}
 }
