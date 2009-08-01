@@ -26,7 +26,7 @@
 	-ms-box-sizing:border-box;
 	box-sizing:border-box;
 	
-	@if(!browser == "Internet Explorer" && !version <= 7)
+	@browser lte IE 7
 	{
 		behavior:url("!scaffold_url/behaviours/boxsizing.htc");
 	}
@@ -55,6 +55,7 @@
 =clearfix
 {
 	+has-layout;
+	display:block;
 	
 	&:after 
 	{
@@ -77,7 +78,11 @@
 */
 =inline-block
 {
-	zoom:1; 
+	@browser lte IE 7
+	{
+		zoom:1;
+	}
+	 
 	display:inline; 
 	display:-moz-inline-box; 
 	display:inline-block; 
@@ -96,7 +101,10 @@
 */
 =has-layout
 {
-	overflow:auto;
+	@browser lte IE 7
+	{
+		zoom:1;
+	}
 }
 
 
