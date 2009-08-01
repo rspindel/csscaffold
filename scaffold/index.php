@@ -19,7 +19,7 @@
 	 *
 	 * @var string
 	 **/
-	$css_dir = "../";
+	$css_dir = "./";
 	
 	/**
 	 * ASSET FOLDER PATH
@@ -48,10 +48,13 @@
 * Define constants
 ******************************************************************************/
 	
+	$css_dir = join_path($_SERVER['DOCUMENT_ROOT'],$css_dir);
+	$css_dir = realpath($css_dir);
+	$css_dir = str_replace($_SERVER['DOCUMENT_ROOT'], "/", $css_dir);
+	
 	# Fix up any weird slash issues. We'll just ditch them
 	# and let our join path function fix it
 	$css_dir = trim_slashes($css_dir);
-	$css_dir = str_replace(DOCROOT, '', realpath(join_path(DOCROOT,$css_dir)));
 	
 	# The full server path to this directory
 	$system_dir = realpath('./');
@@ -112,7 +115,6 @@
 	require './core/Benchmark.php';
 	require './core/Plugins.php';
 	require './core/Cache.php';
-	require './core/User_agent.php';
 	require './core/Config.php';
 	require './core/CSScaffold.php';
 	require './core/CSS.php';
