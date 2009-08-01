@@ -1,0 +1,20 @@
+/* ------------------------------------------------------------------
+
+	Using the alternative box model
+	
+	The W3C box model is annoying for creating layouts. The padding
+	extends the width of the element, forcing you to recalculate the 
+	width element. The original box model didn't do this. You can do
+	this now using the +border-box mixin.
+	
+	To see how this renders, open up this stylesheet using scaffold,
+	eg. http://localhost/scaffold/index.php?request=stylesheets/demo/box-sizing.css
+	
+------------------------------------------------------------------ */
+
+.box-sizing
+{
+	+border-box;
+	float:left;
+	width:210px;
+}

@@ -1,0 +1,23 @@
+/* ------------------------------------------------------------------
+
+	Multiple properties
+	
+	A simple plugin, this lets you use multiple properties to give
+	the same property value.
+	
+	To see how this renders, open up this stylesheet using scaffold,
+	eg. http://localhost/scaffold/index.php?request=stylesheets/demo/image-replace.css
+	
+------------------------------------------------------------------ */
+
+.multiple-properties
+{
+	border, background-color, color: #000;
+	border:1px solid;
+}
+
+.multiple-properties-2
+{
+	margin,padding:0;
+	list-style,background:none;
+}

@@ -1,0 +1,91 @@
+/* ------------------------------------------------------------------
+
+	Targetting Internet Explorer
+		
+	You can target chunks of your css to particular versions of IE by
+	using @browser. It works just like the html conditional tests
+	for IE.
+	
+	Browser targetting is generally considered bad. So you can only
+	targeting your css at IE.
+	
+	The syntax is:
+	
+	@browser {condition} {browser} {version}
+	
+	The condition can be:
+	
+	lt 	- Less than
+	lte - Less than or equal too
+	gt 	- Greater than
+	gte	- Greater than or equal too
+	!	- NOT equal too
+		- Nothing will target it only at that browser
+		
+	Test this stylesheet using Safari 4 and change the user agent to
+	see the effects easily.
+	
+	To see how this renders, open up this stylesheet using scaffold,
+	eg. http://localhost/scaffold/index.php?request=stylesheets/demo/browser-tests.css
+	
+------------------------------------------------------------------ */
+
+	@browser IE 
+	{
+		#id { content: 'This is ie'; }
+	}
+	
+	@browser IE 6
+	{
+		#id { content: 'This is ie6'; }
+	}
+	
+	@browser gt IE 6
+	{
+		#id { content: 'This is greater than IE 6'; }
+	}
+	
+	@browser gte IE 6
+	{
+		#id { content: 'This is greater than or equal to IE 6'; }
+	}
+	
+	@browser IE 7
+	{
+		#id { content: 'This is ie7'; }
+	}
+	
+	@browser gt IE 7
+	{
+		#id { content: 'This is greater than IE 7'; }
+	}
+	
+	@browser gte IE 7
+	{
+		#id { content: 'This is greater than or equal to IE 7'; }
+	}
+	
+	@browser lt IE 7
+	{
+		#id { content: 'This is less than IE 7'; }
+	}
+	
+	@browser lte IE 7
+	{
+		#id { content: 'This is less than or equal to IE 7'; }
+	}
+	
+	@browser !IE 6
+	{
+		#id { content: 'This is NOT ie6'; }
+	}
+	
+	@browser !IE 7
+	{
+		#id { content: 'This is NOT ie7'; }
+	}
+	
+	@browser !IE
+	{
+		#id { content: 'This is NOT ie'; }
+	}

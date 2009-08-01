@@ -1,0 +1,39 @@
+/* ------------------------------------------------------------------
+
+	Setting constants
+		
+	Constants can reduce the amount of reused code within your
+	css. They are mostly useful for colors, but they can come
+	in handy for other things, such as selector groups.
+	
+	You set constants using @constants and set them like normal CSS
+	properties. See the example below.
+	
+	It's important to know that there is no logic involved in these
+	constants. It doesn't matter where they are positioned in the css,
+	as they are all pulled out at the start.
+	
+	You access the constants using:
+	
+	!constant-name
+	
+	To see how this renders, open up this stylesheet using scaffold,
+	eg. http://localhost/scaffold/index.php?request=stylesheets/demo/constants.css
+	
+------------------------------------------------------------------ */
+
+@constants
+{
+	test-constant:red;
+	selector-group:".constants-1,.constants-2,.constants-3";
+}
+
+.constants
+{
+	color:!test-constant;
+}
+
+!selector-group
+{
+	color:pink;
+}

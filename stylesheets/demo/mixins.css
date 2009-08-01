@@ -1,0 +1,116 @@
+/* ------------------------------------------------------------------
+
+	Mixins
+	
+	Mixins are a concept originally developed by the makers of SASS.
+	They work like CSS functions and are easily the most valuable
+	addition to css.
+	
+	You define an mixin like a normal selector, except that you
+	prefix it will and equals sign (=). 
+	
+	You call the mixin in your selectors using the format:
+	
+	+mixin-name;
+	
+	Mixins can optionally take parameters:
+	
+	+mixin-name(true, #eee);
+	
+	There are many mixins which come built into Scaffold and don't
+	even need including in your css. Check out the /scaffold/mixins/
+	folder to see all of the built-in mixins.
+	
+	To see how this renders, open up this stylesheet using scaffold,
+	eg. http://localhost/scaffold/index.php?request=stylesheets/demo/mixins.css
+	
+------------------------------------------------------------------ */
+
+
+/*
+
+This is the mixin definition.
+You can add parameters if you want to as well. Here, we're
+passing through the !bg variable, which has a default value of
+false if we don't give it a parameter.
+
+You can use if statements within your mixins to tests
+for different conditions. This is usually done in conjunction
+with the parameters.
+
+They work very similar to functions in normal programming languages.
+
+*/
+=conditional-test(!bg = false)
+{
+	/* 
+	This is an if statement. If the user
+	doesn't pass through a parameter, it has defaulted to false.
+	If its false, it has a border, if the !bg parameter isn't false,
+	it gets a background.
+	*/
+	@if(!bg == false)
+	{
+		border:3px solid #eee;
+	}
+	@else
+	{
+		background:#eee;
+	}
+}
+
+/*
+This mixin doesn't have parameters.
+*/
+=another-mixin
+{
+	color:#fff;
+}
+
+/*
+This mixin has a required parameter. if you don't
+give the mixin a parameter when you call it, you'll
+get an error, unlike the mixin above which has 
+a default value for the param if it isn't set.
+*/
+=yet-another-mixin(!param)
+{
+	background:!param;
+}
+
+
+.mixin-test-1
+{
+	/*
+	This is how you call a mixin within a selector. 
+	This particular mixin is a built-in mixin.
+	*/
+	+no-bullets;
+	+reset;
+}
+
+.mixin-test-2
+{
+	+helvetica;
+}
+
+.mixin-test-3
+{
+	+all-caps;
+	.amp { +nice-amp; }
+}
+
+/*
+These selectors use the mixin we defined at the top. Notice 
+how they can take parameters if the mixin accepts them. 
+*/
+.mixin-conditional 
+{
+	+conditional-test(true);
+}
+
+.mixin-conditional-2
+{
+	+conditional-test;
+}
+
