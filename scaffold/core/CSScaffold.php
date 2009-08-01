@@ -26,6 +26,20 @@ class CSScaffold {
 	 public static $loaded = array();
 	 
 	/**
+	 * The browser of the user
+	 *
+	 * @var string
+	 */
+	public static $browser = "Other";
+	
+	/**
+	 * The version of the browser
+	 *
+	 * @var string
+	 */
+	public static $version = null;
+	 
+	/**
 	 * Sets the initial variables, checks if we need to process the css
 	 * and then sends whichever file to the browser.
 	 *
@@ -92,9 +106,6 @@ class CSScaffold {
 		{
 			# Start the timer
 			Benchmark::start("system");
-		
-			# Parse the user agent
-			User_agent::setup();
 	
 			# Send it off to the config
 			Config::set($request);
@@ -215,6 +226,11 @@ class CSScaffold {
 				Benchmark::stop( get_class($plugin) ."_formatting" );
 			}
 			
+			if (Config::get('show_header') === TRUE)
+			{		
+				CSS::$css  = "/* Processed and cached by CSScaffold on ". gmdate('r') . "*/\n\n" . CSS::$css;
+			}
+			
 			# Write the css file to the cache
 			Cache::write(CSS::$css);
 		} 
@@ -236,11 +252,6 @@ class CSScaffold {
 		else
 		{			
 			$css = file_get_contents(Cache::$cached_file);
-			
-			if (Config::get('show_header') === TRUE)
-			{		
-				$css  = "/* Processed and cached by CSScaffold on ". gmdate('r') . "*/\n\n" . $css;
-			}
 			
 			if (Config::get('debug') === true)
 			{
