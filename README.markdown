@@ -15,13 +15,13 @@ A dynamic CSS framework inspired by Shaun Inman's CSS Cacheer. It's aimed at exp
 
 ##Quick-start
 
-The main folder is the Scaffold folder. The included CSS folder includes some templates you can use and generally shows how to use Scaffold. Feel free to use these stylesheets in your projects. 
+The main folder is the Scaffold folder. The included stylesheets folder includes some templates and examples you can use and shows how to use Scaffold. Feel free to use these stylesheets in your projects. 
 
 Scaffold works inside your CSS directory, so take the /scaffold folder and drop it in your css directory. Also take the .htaccess if you want it.
 
 The @stylesheets@ folder and @master.css@ are examples for you to work from. Remember, Scaffold only works from within your css directory.
 
-This is how you link to your css so that it is parsed by CSScaffold. You can also setup a .htaccess file to take care of this for you and include them as you normally would. See the example.htaccess in /css/
+This is how you link to your css so that it is parsed by CSScaffold. You can also setup a .htaccess file to take care of this for you and include them as you normally would. See the .htaccess in the root folder.
 
 This:
 
