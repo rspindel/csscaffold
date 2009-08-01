@@ -51,9 +51,12 @@ class Browsers extends Plugins
 			self::$version = substr(self::$version, 0, $i+2);
 		}
 		
-		# Flag them
-		Cache::flag(self::$browser);
-		Cache::flag(self::$version);
+		# Flag them if it's IE
+		if(self::$browser == "IE")
+		{
+			Cache::flag(self::$browser);
+			Cache::flag(self::$version);
+		}
 	}
 	
 	/**
@@ -68,7 +71,7 @@ class Browsers extends Plugins
 	public function process()
 	{
 		# Find all @browsers
-		if($found = CSS::find_selectors("@browser\s*(!|lte|lt|gt|gte)?\s*(IE|Webkit|Gecko|Other|iPhone)\s*(\d+)?", 5))
+		if($found = CSS::find_selectors("@browser\s*(!|lte|lt|gt|gte)?\s*(IE)\s*(\d+)?", 5))
 		{	
 			# parse them
 			foreach($found[0] as $key => $value)
