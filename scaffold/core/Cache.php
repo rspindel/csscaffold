@@ -35,7 +35,7 @@ abstract class Cache
 	 *
 	 * @var array
 	 */
-	public static $flags = array();
+	public static $flags = null;
 
 	/**
 	* Returns the instance of the core
@@ -159,31 +159,37 @@ abstract class Cache
 	* @author Anthony Short
 	**/
 	public static function set($recache = FALSE)
-	{		
-		# Generate checksum based on plugin flags
-		$checksum = self::generate_hash(self::$flags);
+	{
+		$checksum = "";
+		
+		if(self::$flags != null)
+		{
+			# Generate checksum based on plugin flags
+			# $checksum = self::generate_hash(self::$flags);
+			$checksum = "-" . implode("_", array_keys(self::$flags));
+		}
 		
 		# Determine the name of the cache file
-		$cached_file = CACHEPATH.preg_replace('#(.+)(\.css)$#i', "$1-{$checksum}$2", Config::get('relative_file'));
+		$cached_file = join_path(CACHEPATH,preg_replace('#(.+)(\.css)$#i', "$1{$checksum}$2", Config::get('relative_file')));
 		
 		# Save it
 		self::$cached_file = $cached_file;
 
 		# Turn off recaching if the cache is locked
-		if (Config::get('cache_lock') === TRUE)
+		if(Config::get('cache_lock') === TRUE)
 		{
 			$recache = FALSE;
 		}
 		
 		# Check to see if we should delete the cache file
-		if ($recache === TRUE && file_exists($cached_file))
+		if($recache === TRUE && file_exists($cached_file))
 		{
-			// Empty out the cache
+			# Empty out the cache
 			self::empty_cache();
 		}
 		
 		# When was the cache last modified
-		if (file_exists(self::$cached_file))
+		if(file_exists(self::$cached_file))
 		{
 			$cached_mod_time =  (int) filemtime(self::$cached_file);
 		}
