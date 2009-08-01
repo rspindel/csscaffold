@@ -1,0 +1,54 @@
+/* ------------------------------------------------------------------
+
+	Nested Selectors
+	
+	You can nest selectors to clean up your code. It borrows the syntax
+	from SASS for referencing the parent element also.
+	
+	Using nested selectors isn't hard, and works just like you would expect.
+	
+	Remember, Mixins can also include nested selectors.
+	
+	To see how this renders, open up this stylesheet using scaffold,
+	eg. http://localhost/scaffold/index.php?request=stylesheets/demo/nested-selectors.css
+	
+------------------------------------------------------------------ */
+
+#id
+{
+	height:200px;
+	width:100px;
+	
+	a 
+	{
+		color:#fff;
+		border-bottom:1px solid #eee;
+		
+		/*
+		The ampersand here is referencing the parent element,
+		which is the a
+		*/
+		&:hover { border-color:#000; }
+	}
+	
+	/*
+	We're referencing the parent element again,
+	but in a different way. Remember, the parent element
+	is always the next highest parent of the current selector.
+	*/
+	.class & #content
+	{
+		background:#000;
+	}
+}
+
+/*
+
+This will output something like this:
+
+#id { height:200px; width:100px; }
+#id a { color:#fff; border-bottom:1px solid #eee; }
+#id a:hover { border-color:#000; }
+.class #id #content { background:#000; }
+
+*/

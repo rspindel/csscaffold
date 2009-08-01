@@ -22,18 +22,30 @@
 	
 ------------------------------------------------------------------ */
 
-@constants
-{
-	test-constant:red;
-	selector-group:".constants-1,.constants-2,.constants-3";
-}
-
-.constants
-{
-	color:!test-constant;
-}
-
-!selector-group
-{
-	color:pink;
-}
+	
+	/**
+	* You can set constants as anything you want and call them
+	* using !constantname. Their position inside the css
+	* is irrelevant.
+	*/
+	@constants
+	{
+		body_background		:#fff;
+		body_color			:#444;
+		heading_color		:#111;
+		light				:#666;
+		highlight			:#ffffd9;
+		success				:green;
+		error				:red;
+		notice				:yellow;
+	}
+	
+	.constants
+	{
+		color:!light;
+	}
+	
+	.constants
+	{
+		background:!error;
+	}

@@ -21,6 +21,10 @@
 	even need including in your css. Check out the /scaffold/mixins/
 	folder to see all of the built-in mixins.
 	
+	IMPORTANT: Mixins can also include other mixins. This lets 
+	you extend particular mixins with other mixins, making them
+	extremely powerful.
+	
 	To see how this renders, open up this stylesheet using scaffold,
 	eg. http://localhost/scaffold/index.php?request=stylesheets/demo/mixins.css
 	

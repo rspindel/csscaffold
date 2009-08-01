@@ -1,25 +1,10 @@
 /**
 * The main stylesheet which imports all of the others
 * and sets up constants, grid etc.
-*
-* @media screen
-* @project Name
-* @site http://url.com/
-* @version 1.0
-* @author Name
-*
-* @date yyyy-mm-dd
-* @lastmodified yyyy-mm-dd hh:mm
-* @copyright Copyright(c) 2009 
-*
 * --------------------------------------------
-*
 */
  
 	@include '/scaffold/snippets/reset.css';
-	@include 'typography.css';
-	@include 'layout.css';
-	@include 'demo.css';
 	
 	/**
 	* Assorted fixes for Internet Explorer 
@@ -31,31 +16,40 @@
 	{
 		@import '/scaffold/snippets/ie-fixes.css';
 	}
-	
+
 	/**
-	* The grid plugin requires these settings 
+	* Demos
+	*
+	* These are styles for the demo. They test out every plugin and make
+	* sure they are all functioning the way they should be.
+	*
 	*/
-	@grid 
+	
+	#content-test 
 	{
-		column-width:60;
-		gutter-width:10px;
-		column-count:12;
-		baseline:20px;
+		p,h1,h2,h3,h4,h5,h6,ul,ol
+		{
+			+prepend(4);
+			+append(2);
+		}
 	}
 	
-	/**
-	* You can set constants as anything you want and call them
-	* using !constantname. Their position inside the css
-	* is irrelevant.
-	*/
-	@constants
+	#plugin-tests .group > div
 	{
-		body_background		:#fff;
-		body_color			:#444;
-		heading_color		:#111;
-		light				:#666;
-		highlight			:#ffffd9;
-		success				:green;
-		error				:red;
-		notice				:yellow;
+		+border-box;
+		+rounded(10px);
+		padding:20px;
+		background:#f8f8f8;
 	}
+	
+	#custom-content
+	{
+		div { extends:".wireframe"; margin-top:[!baseline / 2]px; margin-bottom:[!baseline / 2]px; }
+		
+		#header 		{ +columns(12); }
+		#content 		{ +columns(6); }
+		#sub-content 	{ +columns(3); }
+		#aside 			{ +columns(3); }
+		#footer 		{ +columns(12); }
+	}
+
