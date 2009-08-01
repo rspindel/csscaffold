@@ -16,7 +16,7 @@ class Image_replace extends Plugins
 	 * @author Anthony Short
 	 * @return $css string
 	 */
-	function post_process()
+	public function post_process()
 	{
 		# Replace the image-replace properties
 		$this->image_replace();
@@ -28,7 +28,7 @@ class Image_replace extends Plugins
 	 * @author Anthony Short
 	 * @return null
 	 */
-	private function image_replace()
+	public function image_replace()
 	{	
 		$found = CSS::find_properties_with_value('image-replace', 'url\([\'\"]?([^)]+)[\'\"]?\)');
 		
