@@ -353,13 +353,13 @@
 	 */
 	function find_absolute_path($path)
 	{
-		if(substr($path, 0, 1) != "/")
+		if($path[0] != "/")
 		{
 			# Count the number of up folder references
 			$up = substr_count($path, '../');
 
 			# Join the CSS directory with the requested directory
-			$path = join_path(CSSPATH, unquote($path));
+			$path = join_path(CSSPATH, Config::get('relative_dir'), unquote($path));
 
 			# Get the full server path to the file
 			$absolute = realpath($path);
