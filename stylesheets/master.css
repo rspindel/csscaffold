@@ -27,7 +27,7 @@
 	* @bugfix
 	* @affected IE6, IE7
 	*/
-	@browser IE 6, IE 7
+	@browser gte IE 6
 	{
 		@import '/scaffold/snippets/ie-fixes.css';
 	}
@@ -44,14 +44,11 @@
 	}
 	
 	/**
-	* We can define our colors in a single spot. 
-	* Use semantic names rather than descriptive text
-	* for a truly flexible design. 
-	*
-	* @colors is works exactly the same as constants, 
-	* except that it makes a little more sense semantically.
+	* You can set constants as anything you want and call them
+	* using !constantname. Their position inside the css
+	* is irrelevant.
 	*/
-	@colors
+	@constants
 	{
 		body_background		:#fff;
 		body_color			:#444;
@@ -62,14 +59,3 @@
 		error				:red;
 		notice				:yellow;
 	}
-	
-	/**
-	* You can set constants as anything you want and call them
-	* using !constantname. Their position inside the css
-	* is irrelevant.
-	*/
-	@constants
-	{
-		selector_group: "table, td, tr";
-	}
-
