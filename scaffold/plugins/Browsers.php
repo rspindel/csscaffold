@@ -31,20 +31,29 @@ class Browsers extends Plugins
 	 */
 	public function __construct()
 	{	
+		# Get the user agent
 		$user_agent = ( !empty($_SERVER['HTTP_USER_AGENT']) ? trim($_SERVER['HTTP_USER_AGENT']) : '');
-		
+	
 		# Set the browser
-		$this->get_browser($user_agent);
+		self::get_browser($user_agent);
 		
 		# If it's set as a url param, override it
-		if(Config::$configuration['browser'])
+		if(isset(Config::$configuration['agent']) && isset(Config::$configuration['agent_version']))
 		{
-			$this->browser = Config::get('browser');
+			self::$browser = Config::get('agent');
+			self::$version = Config::get('agent_version');
 		}
 		
-		# Set cache flags
-		Cache::flag($this->browser);
-		Cache::flag($this->version);
+		# Round the version number to one decimal place
+		$i = strpos(self::$version, '.');
+		if($i > 0)
+		{
+			self::$version = substr(self::$version, 0, $i+2);
+		}
+		
+		# Flag them
+		Cache::flag(self::$browser);
+		Cache::flag(self::$version);
 	}
 	
 	/**
@@ -56,12 +65,69 @@ class Browsers extends Plugins
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	public function pre_process()
+	public function process()
 	{
 		# Find all @browsers
-		# parse them
-		# Replace them with the properties if it is that browser
-		# Otherwise remove it.
+		if($found = CSS::find_selectors("@browser\s*(!|lte|lt|gt|gte)?\s*(IE|Webkit|Gecko|Other|iPhone)\s*(\d+)?", 5))
+		{	
+			# parse them
+			foreach($found[0] as $key => $value)
+			{
+				$scope 			= $found[2][$key];
+				$browser 		= $found[3][$key];
+				$version 		= $found[4][$key];
+				$properties 	= $found['properties'][$key];
+				
+				# @browser !name
+				if($scope == "!")
+				{
+					if(self::$browser != $browser)
+					{
+						CSS::replace($value, $properties);
+					}
+					else
+					{
+						CSS::replace($value, '');
+					}
+				}
+				
+				# @browser name
+				elseif($version == "")
+				{
+					if(self::$browser == $browser)
+					{
+						CSS::replace($value, $properties);
+					}
+					else
+					{
+						CSS::replace($value, '');
+					}
+				}
+				
+				# @browser condition name version
+				elseif(self::$browser == $browser && $version != "")
+				{
+					if(
+						($scope == "lt" && self::$version < $version)		||
+						($scope == "lte" && self::$version <= $version)		||
+						($scope == "gt" && self::$version > $version)		||
+						($scope == "gte" && self::$version >= $version)		||
+						($scope == "" && self::$version == $version)
+					)
+					{
+						CSS::replace($value, $properties);
+					}
+					else
+					{
+						CSS::replace($value, '');
+					}
+				}
+				else
+				{					
+					CSS::replace($value, '');
+				}
+			}
+		}
 	}
 
 	/**
@@ -76,37 +142,37 @@ class Browsers extends Plugins
 		# Safari Mobile
 		if ( preg_match( '/mozilla.*applewebkit\/([0-9a-z\+\-\.]+).*mobile.*/si', $user_agent, $match ) )
 		{
-			$this->browser = "iPhone";
-			$this->version = $match[1];
+			self::$browser = "iPhone";
+			self::$version = $match[1];
 		}
 		
 		# Webkit (Safari, Shiira etc)
 		else if ( preg_match( '/mozilla.*applewebkit\/([0-9a-z\+\-\.]+).*/si', $user_agent, $match ) )
 		{
-			$this->browser = "Webkit";
-			$this->version = $match[1];
+			self::$browser = "Webkit";
+			self::$version = $match[1];
 		}
 		
 		# Opera
 		else if ( preg_match( '/mozilla.*opera ([0-9a-z\+\-\.]+).*/si', $user_agent, $match ) 
 		  || preg_match( '/^opera\/([0-9a-z\+\-\.]+).*/si', $user_agent, $match ) )
 		{
-			$this->browser = "Opera";
-			$this->version = $match[1];
+			self::$browser = "Opera";
+			self::$version = $match[1];
     	}
 		
 		# Gecko (Firefox, Mozilla, Camino etc)
 		else if ( preg_match( '/mozilla.*rv:([0-9a-z\+\-\.]+).*gecko.*/si', $user_agent, $match ) )
 		{
-			$this->browser = "Gecko";
-			$this->version = $match[1];
+			self::$browser = "Gecko";
+			self::$version = $match[1];
 		}
 		
 		# MSIE
 		else if( preg_match( '/mozilla.*MSIE ([0-9a-z\+\-\.]+).*/si', $user_agent, $match ) )
 		{
-			$this->browser = "IE";
-			$this->version = $match[1];
+			self::$browser = "IE";
+			self::$version = $match[1];
 		}
 	}
 }
