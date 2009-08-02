@@ -5,7 +5,7 @@
 ******************************************************************************/
 	
 	# Fetch the core functions.
-	require 'config/config.php'; 
+	require 'config.php'; 
 	require 'core/Common.php'; 
 	
 /******************************************************************************
@@ -15,21 +15,11 @@
 	/**
 	 * CSS DIRECTORY
 	 *
-	 * REQUIRED. Absolute path to your css directory. eg. /themes/css/
+	 * Path to your css directory. eg. /themes/css/
 	 *
 	 * @var string
 	 **/
 	$css_dir = "./";
-	
-	/**
-	 * ASSET FOLDER PATH
-	 *
-	 * Leave this blank unless you want to use a folder other than
-	 * css/assets. Make sure you use an absolute path.
-	 *
-	 * @var string
-	 **/
-	$assets_dir = "";
 	
 	/**
 	 * CACHE DIRECTORY PATH
@@ -42,7 +32,8 @@
 	 *
 	 * @var string
 	 **/
-	$cache_dir = "";	
+	$cache_dir = "";
+
 
 /******************************************************************************
 * Define constants
@@ -145,7 +136,7 @@
 	}
 	else
 	{
-		stop("No CSS file requested");
+		stop("/* No CSS file requested */");
 	}
 
 
