@@ -1,0 +1,108 @@
+/**
+* Float
+*
+* Floats and element, while applying the IE
+* fix to the float to prevent the double-margin bug
+*
+* @type Mixin
+* @param !side The direction of the float
+*/
+=float(!side)
+{
+	float:!side;
+	display:inline;
+}
+
+/**
+* Border-box
+*
+* CSS3 box-sizing:border-box for the browsers that support it
+* @type Mixin
+*/
+=border-box 
+{
+	-moz-box-sizing:border-box;
+	-webkit-box-sizing:border-box;
+	-ms-box-sizing:border-box;
+	box-sizing:border-box;
+	
+	@browser lte IE 7
+	{
+		behavior:url("!scaffold_url/behaviours/boxsizing.htc");
+	}
+}
+
+/**
+* Quick Clearfix
+*
+* Clears an element of its floated children. The quick way.
+*
+* @type Mixin
+*/
+=quick-clearfix
+{
+	+has-layout; /* For IE6, the overflow is enough for IE7+ */
+	overflow:hidden;
+}
+
+/**
+* Clearfix
+*
+* Clears an element of its floated children.
+*
+* @type Mixin
+*/
+=clearfix
+{
+	+has-layout;
+	display:block;
+	
+	&:after 
+	{
+		content:'\\0020';
+		display:block;
+		height:0;
+		clear:both;
+		visibility:hidden;
+		overflow:hidden;
+		font-size:0;
+	}
+}
+
+/**
+* Inline-block
+*
+* Workaround to make the element behave as inline-block
+*
+* @type Mixin
+*/
+=inline-block
+{
+	@browser lte IE 7
+	{
+		zoom:1;
+	}
+	 
+	display:inline; 
+	display:-moz-inline-box; 
+	display:inline-block; 
+	vertical-align:top;
+}
+
+/**
+* HasLayout
+*
+* Gives the element has-layout in IE. By switching to inline-block
+* it will make the element haslayout, then we just switch it back.
+* Alternatives are: zoom:1; overflow:anything; (IE7+), float, position:absolute;
+*
+* @see http://www.satzansatz.de/cssd/onhavinglayout.html
+* @type Mixin
+*/
+=has-layout
+{
+	@browser lte IE 7
+	{
+		zoom:1;
+	}
+}
