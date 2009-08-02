@@ -101,6 +101,11 @@ class CSScaffold {
 			stop('Error: The file wasn\'t requested from the css directory. Check your css path in your config, or the path to the css file you just requested');
 		}
 		
+		elseif(isset($url_params['raw']))
+		{
+			self::output_raw($request['server_path']);
+		}
+		
 		# Otherwise, we're all good. Let's get started!
 		else
 		{
@@ -110,7 +115,7 @@ class CSScaffold {
 			# Send it off to the config
 			Config::set($request);
 			Config::set($url_params);
-			
+						
 			# Get the modified time of the CSS file
 			Config::set('requested_mod_time', filemtime(Config::get('server_path')));
 			
@@ -130,7 +135,19 @@ class CSScaffold {
 			self::output_css();
 		}
 	}
-	
+
+	/**
+	 * Shows the raw CSS file
+	 *
+	 * @author Anthony Short
+	 * @param $css
+	 * @return null
+	 */
+	public function output_raw($css)
+	{
+		stop(file_get_contents($css));
+	}
+		
 	/**
 	 * Loads the Plugins
 	 *
@@ -140,22 +157,48 @@ class CSScaffold {
 	private static function load_plugins()
 	{	
 		# Load each of the plugins
-		$plugin_files = read_dir(BASEPATH . "/plugins");
+		$plugin_folders = read_dir(BASEPATH . "/plugins");
 		$plugins = array();
 		
-		foreach($plugin_files as $plugin)
+		foreach($plugin_folders as $plugin_folder)
 		{
-			include($plugin);
+			$plugin_files = read_dir($plugin_folder);
 			
-			$plugin_class = pathinfo($plugin, PATHINFO_FILENAME);
-									
-			if(class_exists($plugin_class))
-			{				
-				# Initialize the plugin
-				$plugins[$plugin_class] = new $plugin_class();
+			foreach($plugin_files as $plugin_file)
+			{
+				$library_path = join_path($plugin_folder, "libraries");
 				
-				# Add the plugin to the loaded array
-				self::$loaded[] = $plugin_class;
+				# Include the libraries
+				if($libraries = read_dir($library_path))
+				{
+					foreach($libraries as $library)
+					{
+						require_once($library);
+					}
+				}
+				
+				if(extension($plugin_file) == "php" && pathinfo($plugin_file, PATHINFO_FILENAME) != "config")
+				{					
+					require_once($plugin_file);
+					
+					$plugin_class = pathinfo($plugin_file, PATHINFO_FILENAME);
+					
+					$config = join_path($plugin_folder, 'config.php');
+					
+					if(file_exists($config))
+					{
+						Config::load($config, $plugin_class);
+					}
+										
+					if(class_exists($plugin_class))
+					{				
+						# Initialize the plugin
+						$plugins[$plugin_class] = new $plugin_class();
+						
+						# Add the plugin to the loaded array
+						self::$loaded[] = $plugin_class;
+					}
+				}			
 			}
 		}
 		
@@ -169,14 +212,13 @@ class CSScaffold {
 	 * @author Anthony Short
 	 **/
 	private static function parse_css()
-	{			
+	{						
 		# If the cache is stale or doesn't exist
 		if (Config::get('cached_mod_time') < Config::get('requested_mod_time'))
 		{    
 			# Load the CSS file in the object
-			#$css = new CSS($css);
 			CSS::load(file_get_contents(Config::get('server_path')));
-										
+													
 			# Parse our css through the plugins
 			foreach(self::$plugins as $plugin)
 			{
@@ -184,6 +226,9 @@ class CSScaffold {
 				$plugin->import_process();
 				Benchmark::stop( get_class($plugin) ."_import" );
 			}
+			
+			# Compress it before parsing
+			CSS::compress(CSS::$css);
 
 			foreach(self::$plugins as $plugin)
 			{
@@ -204,12 +249,6 @@ class CSScaffold {
 				Benchmark::start( get_class($plugin) ."_process" );
 				$plugin->process();
 				Benchmark::stop( get_class($plugin) ."_process" );
-			}
-			
-			# This needs its own process so it's easier to control
-			if (class_exists('Conditional'))
-			{
-				CSS::$css = Conditional::parse();
 			}
 			
 			foreach(self::$plugins as $plugin)
