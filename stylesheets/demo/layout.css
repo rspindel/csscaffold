@@ -1,98 +1,50 @@
-/**
-* ========================================================
-* Basic Layout Elements
-*
-* The grid settings for the entire site. This uses 
-* a grid similar to that of BlueprintCSS.
-*
-* @section Grid
-* @type Layout
-* @where Global
-* @since 1.0
-* @see http://www.blueprintcss.org/
-* --------------------------------------------------------
-*/	
+/* --------------------------------------------------------
+
+	This stylesheet shows you how you might 
+	structure the layout file of your design.
+
+-------------------------------------------------------- */	
 	
 	/**
-	* Scaffold automatically creates the container class
-	* based on your grid settings
-	* @see mixins/layout.css
+	* +container is a mixin built into Scaffold.
+	* It functions the same as the blueprint or 960.gs container
 	*/
 	.container { +container; }
-	
-	/**
-	* Mainly for debugging purposes
-	*/
 	.wireframe div { background:rgba(255,0,0,0.4); min-height:[!baseline*3]px; }
 	.clear { clear:left; }
 	.clearfix { +clearfix; }
 	
-	header  { columns:12; margin-bottom:!baseline; }
-	footer  { columns:12; }
-	
-/**
-* ========================================================
-* Navigation
-*
-* The navigation styles for the entire site. These get
-* the inline-list style from Scaffold to automatically
-* make them function as a horizontal list. 
-*
-* @section Navigation
-* @type Widget
-* @where Global
-* @since 1.0
-* --------------------------------------------------------
-*/
-	
-	nav
-	{ 
-		ul 		{ +horizontal-list; }
-		li 		{ }
-		li a 	{ }
-	}
-	
-/**
-* ========================================================
-* HTML5 Elements
-*
-* So we can use the HTML5 elements as much as possible,
-* we will create both the element and a class of the same
-* name so we can use them today. 
-*
-* @section html5
-* --------------------------------------------------------
-*/
-
-	article 	{}
-	section 	{ margin-bottom:!baseline; }
-	aside 		{}
-	
-
-/**
-* ========================================================
-* Layouts
-*
-* Each unique layout is prefixed with 'layout' so that it
-* can be identified as a layout. This isn't a requirement. 
-*
-* @section Layouts
-* @type Layout
-* @where Global
-* @since 1.0
-* --------------------------------------------------------
-*/
-	
-	.layout-3-column
+	/**
+	 * This is the content we layout with mixins instead of classes (the second grid)
+	 * We use nested selectors to make it neater, and the columns mixin. The number
+	 * is the number of columns.
+	 */
+	#custom-content
 	{
-		#primary		 		{ +columns(4); padding:20px; }
-		#secondary				{ +columns(4); border:2px solid #555; padding:18px; }
-		#tertiary				{ +columns(4); }
+		div { margin-bottom:!baseline; }
+		#header 		{ +columns(12); }
+		#content 		{ +columns(6); }
+		#sub-content 	{ +columns(3); }
+		#aside 			{ +columns(3); }
+		#footer 		{ +columns(12); }
+	}
+	
+	/**
+	 * This is the styled content down the bottom.
+	 * We want to push everything in on both sides, so we
+	 * use the append and prepend mixins.
+	 */
+	#content-test 
+	{
+		p,h1,h2,h3,h4,h5,h6,ul,ol
+		{
+			+prepend(4);
+			+append(2);
+		}
 	}
 
 
 /**
-* ========================================================
 * Content Layout
 *
 * Based on Jason Santa Maria's Work on 24Ways. 
@@ -100,50 +52,28 @@
 * fill up your CSS with id's for every figure.
 *
 * @section Content Layout
-* @type Layout
-* @where Content
-* @since 1.0
 * @see http://24ways.org/2008/making-modular-layout-systems
 * --------------------------------------------------------
 */
 
-	figure,
 	.figure
-	{ 
-		margin:!baseline; 
-		float:left;
-		overflow:hidden;
-		
-		img 		{ float:left; margin-bottom:!baseline; }
-	}
-	
-	.caption, .figure, figure { +small-type; line-height:20px; }
-	
-	.figure img { width:100%; }
-	
-	.figure p 
-	{ 
-		clear:left;
-		padding:0 !important;
-	}
-	
-	.right 
 	{
-		float:right !important; 
-		margin-right:0; 	
-	}
+		+small-type;
 
-	.left
-	{ 
-		float:left !important;  
-		margin-left:0;
+		overflow:hidden;
+		line-height:!baseline;
+		margin-bottom:!baseline;
+		
+		img 		{ float:left; margin:0 0 !baseline; width:100%; }
+		p  			{ clear:left; padding:0 !important; }
 	}
 	
-	.frame { border: 1px solid #999; }
-	.solo { margin:!baseline 0; }
+	.caption	{ float:left; padding:0 !important; +small-type; line-height:!baseline; }
+	.right 		{ float:right; margin-left:!baseline; }
+	.left 		{ float:left; margin-right:!baseline; }
 	
-	/* If the figure isn't sitting flush to the paragraph or sides use these */
-	.top      { margin-top:0; }
-	.bottom   { margin-bottom:0;}
-	.first	  { margin-left:0 !important; }
-	.last 	  { margin-right:0 !important; }
+	.first		{margin-left:0 !important;}
+	.last 		{margin-right:0 !important;}
+	.solo 		{margin-left:0 !important;margin-right:0 !important;}
+
+

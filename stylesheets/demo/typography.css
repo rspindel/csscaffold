@@ -7,7 +7,7 @@
 */
 	body 
 	{
-		+georgia;
+		+helvetica;
 		
 		margin:30px;
 	  	font-size:14px;
@@ -46,8 +46,8 @@
 		line-height:!baseline;
 		
 		img 		{ +reset; }
-		a 			{ +inherit; }
-		a:hover		{ +inherit; }
+		a 			{ text-decoration:none; }
+		a:hover:after { content: '\2192'; }
 		
 		&:first-child { margin-top:0; }
 		
@@ -55,6 +55,8 @@
 	
 	h1
 	{
+		+beveled;
+		
 		extends:".heading";
 		font-size:3em;
 		line-height:[!baseline*3]px;
@@ -64,8 +66,9 @@
 	h2 
 	{
 		extends:".heading";
-		font-size:2em;
-		line-height:[!baseline*2]px;
+		font-size:1.6em;
+		line-height:[!baseline]px;
+		color:#333;
 	}
 	
 	h3 
@@ -99,10 +102,8 @@
 	* --------------------------------------------------------
 	*/
 	
-	p				{ margin:0 }
-	
-	/* Any sibling p will have a margin above it */
-	* + p			{ margin: !baseline 0 0 0; }
+	p				{ margin:0 0 !baseline; }
+	p:last-child	{ margin-bottom:0; }
 	
 	blockquote  	{ margin:!baseline; font-style:italic; color:!light; }
 	cite			{ }
@@ -113,7 +114,7 @@
 	mark 			{ background:!highlight; }
 	
 	del         	{ color:!light; }
-	ins 			{ background:#fffde2; }
+	ins 			{ background:#fffde2; text-decoration:none; }
 	sup, sub    	{ line-height:0; }
 	
 	abbr			{ } 
@@ -154,6 +155,7 @@
 		line-height: !baseline;
 		color:#0088CC;
 	}
+
 	
 	/**
 	* --------------------------------------------------------
@@ -177,7 +179,7 @@
 	
 	a 
 	{ 
-		color: #009; 
+		color: #0088CC; 
 		text-decoration: underline;
 		
 		&:focus, &:hover, &:active { color:#000; } 
@@ -189,7 +191,7 @@
 	* --------------------------------------------------------
 	*/
 	
-	ul, ol { margin: 0 !baseline !baseline !baseline; }
+	ul, ol { margin: !baseline; }
 	
 	li
 	{ 

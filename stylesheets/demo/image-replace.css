@@ -7,7 +7,7 @@
 	
 	The url is relative to the master css, or the file which was
 	originally called by Scaffold. This is important to remember.
-	If you get stuck, use an absolute path to the image
+	If you get stuck, use an absolute path to the image.
 	
 	To see how this renders, open up this stylesheet using scaffold,
 	eg. http://localhost/scaffold/index.php?request=stylesheets/demo/image-replace.css
