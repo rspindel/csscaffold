@@ -9,19 +9,7 @@
  * @author Anthony Short
  **/
 class Plugins
-{
-	/**
-	 * The plugin flags
-	 * @var array
-	 */
-	var $flags = array();
-	
-	/**
-	 * The plugin settings
-	 * @var string
-	 */
-	var $settings = array();
-	
+{	
 	/**
 	* Place any importing here. This will happen
 	* before everything else. 
