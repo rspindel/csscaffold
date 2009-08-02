@@ -44,24 +44,43 @@ abstract class Config
 	{
 		if (self::$configuration === NULL)
 		{
-			// Load the config file
-			require join_path(BASEPATH,'config/config.php') ; 
-			
-			// If the config file doesn't contain an array
-			if(!is_array($config) || !isset($config))
-			{
-				error("Your config file does not contain a config array");
-				return false; 
-			}
-			
-			// Set the config values in our core config
-			self::$configuration = $config;
-			
-			// Remove the config array
-			unset($config);
-			
-			return true;
+			# Load the config file
+			self::load(join_path(BASEPATH,'config.php'));
 		}
+	}
+	
+	/**
+	 * Loads a config file into the global configuration
+	 *
+	 * @author Anthony Short
+	 * @param $path
+	 * @return boolean
+	 */
+	public static function load($path, $sub_array = "")
+	{
+		require($path);
+
+		# If the config file doesn't contain an array
+		if(!isset($config) || !is_array($config))
+		{
+			stop("Your config file does not contain a config array - $path");
+			return false; 
+		}
+		
+		# Set the config values in our core config
+		if($sub_array == "")
+		{
+			self::$configuration = $config;
+		}
+		else
+		{
+			self::$configuration[$sub_array] = $config;
+		}
+		
+		# Remove the config array
+		unset($config);
+		
+		return true;
 	}
 
 	/**
