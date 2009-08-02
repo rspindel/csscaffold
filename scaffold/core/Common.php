@@ -305,8 +305,7 @@
 		}
 		else
 		{
-			error("Cannot read directory - ". $directory);
-			exit;
+			return false;
 		}
 		return $files;
 	}
