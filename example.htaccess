@@ -1,3 +1,9 @@
+######################################################################
+# 
+#	THIS FILE SHOULD BE IN THE SAME DIRECTORY AS THE SCAFFOLD FOLDER
+#
+######################################################################
+
 <IfModule mod_deflate.c>
 	SetOutputFilter DEFLATE
 </IfModule>
