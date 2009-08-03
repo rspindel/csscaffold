@@ -16,8 +16,8 @@
 /**
 * Border-box
 *
+* REQUIRES the Browsers and Constants plugins
 * CSS3 box-sizing:border-box for the browsers that support it
-* @type Mixin
 */
 =border-box 
 {
@@ -28,7 +28,7 @@
 	
 	@browser lte IE 7
 	{
-		behavior:url("!scaffold_url/behaviours/boxsizing.htc");
+		behavior:url("!scaffold_url/plugins/Mixins/support/behaviours/boxsizing.htc");
 	}
 }
 
