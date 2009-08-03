@@ -94,9 +94,9 @@
 * Make sure the files/folders are writeable
 ******************************************************************************/
 
-	if (!is_writable(CACHEPATH))
+	if (!is_dir(CACHEPATH) || !is_writable(CACHEPATH))
 	{
-		stop("Cache path (".CACHEPATH.") is not writable");
+		stop("Cache path (".CACHEPATH.") is not writable or does not exist");
 	}
 	
 /******************************************************************************

@@ -247,7 +247,7 @@ class Mixins extends Plugins
 
 		foreach($plugin_folders as $plugin_folder)
 		{
-			if($mixins = read_dir(join_path($plugin_folder, 'mixins')))
+			if($mixins = read_dir(join_path($plugin_folder, 'support', 'mixins')))
 			{
 				foreach($mixins as $file)
 				{

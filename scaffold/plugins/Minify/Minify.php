@@ -9,7 +9,7 @@
 class Minify extends Plugins
 {	
 	function formatting_process()
-	{				
+	{					
 		if(Config::get('pretty') === true)
 		{
 			$css =& CSS::$css;

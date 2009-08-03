@@ -5,6 +5,7 @@
 * sure they are all functioning the way they should be.
 *
 */
+
 body
 {
 	+reset;
@@ -16,7 +17,10 @@ body
 	padding-bottom:30px;
 }
 
-#page { +container; }
+#page 
+{ 
+	+container; 
+}
 
 .box 
 {
@@ -28,25 +32,29 @@ body
 	background:#fff !important;
 	margin-top:!baseline;
 	border:1px solid #bbc;
+	
+	&:nth-child(odd)
+	{
+		float:right;
+	}
 }
 
-.box:nth-child(odd)
-{
-	float:right;
+pre 
+{ 
+	background:#fafafa; 
+	padding:10px; 
+	border:1px solid #eee; 
 }
-
-pre { background:#fafafa; padding:10px; border:1px solid #eee; }
-
-
 
 #intro 
 {
 	border-bottom: 1px solid #bbc;
 	padding-bottom:!baseline;
 }
+
 .page-intro 
 {
-	+helvetica;
+	+helvetica;	
 	font-size:18px;
 	line-height:24px;
 	color:#444;

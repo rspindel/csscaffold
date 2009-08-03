@@ -17,7 +17,7 @@ class Layout extends Plugins
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	function pre_process()
+	public function pre_process()
 	{		
 		# Find the @grid - this returns an array of 'groups' and 'values'		
 		if( $settings = CSS::find_at_group('grid') )

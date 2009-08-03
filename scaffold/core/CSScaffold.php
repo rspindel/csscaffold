@@ -195,6 +195,9 @@ class CSScaffold {
 						# Initialize the plugin
 						$plugins[$plugin_class] = new $plugin_class();
 						
+						# Set the member paths
+						$plugins[$plugin_class]->set_paths($plugin_folder);
+						
 						# Add the plugin to the loaded array
 						self::$loaded[] = $plugin_class;
 					}
