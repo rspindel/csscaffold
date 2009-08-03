@@ -1,0 +1,21 @@
+<IfModule mod_deflate.c>
+	SetOutputFilter DEFLATE
+</IfModule>
+
+# To enable invisible parsing of your css, you need to change the path
+# below to find your scaffold/index.php file.
+#
+# By default, Scaffold should be placed in your CSS directory. You should
+# place this .htaccess file in the same directory. If you're setup is 
+# fairly average, this should work out of the box.
+#
+# Now, rather than calling http://site.com/css/scaffold/index.php?request=css/master.css
+# you can just call http://site.com/css/master.css and this htaccess file will
+# take care of the routing for you.
+
+<IfModule mod_rewrite.c> 
+	RewriteEngine	on
+	RewriteCond		%{REQUEST_FILENAME}		-f
+	RewriteCond 	%{REQUEST_URI}			\.css$
+	RewriteRule 	^(.+)$ 					scaffold/index.php?request=%{REQUEST_URI}&%{QUERY_STRING}
+</IfModule>

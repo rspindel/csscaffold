@@ -1,3 +1,4 @@
 CSScaffold.esproj
 scaffold/cache/*
 */.DS_STORE
+.htaccess
