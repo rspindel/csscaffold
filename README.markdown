@@ -13,29 +13,22 @@ A dynamic CSS framework inspired by Shaun Inman's CSS Cacheer. It's aimed at exp
 - And more... 
 - Plus easily add your own functionality using the plugin system
 
-##Quick-start
+##Requirements
 
-The main folder is the Scaffold folder. The included stylesheets folder includes some templates and examples you can use and shows how to use Scaffold. Feel free to use these stylesheets in your projects. 
+- PHP5+
+- modrewrite enabled in Apache (optional)
 
-Scaffold works inside your CSS directory, so take the /scaffold folder and drop it in your css directory. Also take the .htaccess if you want it.
+##Quick Installation
 
-The @stylesheets@ folder and @master.css@ are examples for you to work from. Remember, Scaffold only works from within your css directory.
+Download the latest release of Scaffold. Place all the files **inside your css directory on your webserver**. Navigate to examples/stylesheets/master.css to ensure that Scaffold is working correctly. It should compress the css and add a timestamp to the top of the file. Any css files within this css directory will now be parsed by Scaffold automatically. Have a look through the demos in examples/ to get a basic understanding of its different features and read the wiki.
 
-This is how you link to your css so that it is parsed by CSScaffold. You can also setup a .htaccess file to take care of this for you and include them as you normally would. See the .htaccess in the root folder.
+##Having trouble?
 
-This:
-
-	<link rel="stylesheet" href="css/master.css" type="text/css" media="screen" />
-
-Becomes this:
-
-	<link rel="stylesheet" href="/scaffold/index.php?request=css/master.css&recache" type="text/css" media="screen" />
-
-Note: Use 'recache' in the url to force it to recache the css everytime. This is useful during development. 
+Make sure you read the documentation on the wiki. If you find a bug, put it in the issues section on Github. If you're still having trouble, feel free to contact me at csscaffold@me.com. 
 
 ##License
 
-Copyright (c) 2009, Anthony Short <anthonyshort@me.com>
+Copyright (c) 2009, Anthony Short <csscaffold@me.com>
 http://github.com/anthonyshort/csscaffold
 All rights reserved.
 
