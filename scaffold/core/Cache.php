@@ -89,6 +89,7 @@ abstract class Cache
 			elseif(is_dir($file))
 			{
 				self::empty_cache($file);
+				rmdir($file);
 			}
 		}
 	}

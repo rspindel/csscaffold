@@ -145,7 +145,26 @@ class CSScaffold {
 	 */
 	public function output_raw($css)
 	{
-		stop(file_get_contents($css));
+		$this->set_headers();
+		echo(file_get_contents($css));
+		exit;
+	}
+		
+	/**
+	 * Sets the headers
+	 *
+	 * @author Anthony Short
+	 * @return null
+	 */
+	private function set_headers($last_mod = "")
+	{
+		header('Content-Type: text/css');
+		header("Vary: User-Agent, Accept");
+		
+		if($last_mod != "")
+		{
+			header('Last-Modified: '. gmdate('D, d M Y H:i:s', $last_mod) .' GMT');
+		}
 	}
 		
 	/**
@@ -284,7 +303,7 @@ class CSScaffold {
 	 * @return void
 	 * @author Anthony Short
 	 **/
-	private static function output_css()
+	private function output_css()
 	{		
 		if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'], $_SERVER['SERVER_PROTOCOL']) && Config::get('cached_mod_time') <= strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']))
 		{
@@ -299,10 +318,8 @@ class CSScaffold {
 			{
 				self::debug($css);
 			}
-
-			header('Content-Type: text/css');
-			header("Vary: User-Agent, Accept");
-			header('Last-Modified: '. gmdate('D, d M Y H:i:s', Config::get('cached_mod_time')) .' GMT');
+			
+			self::set_headers(Config::get('cached_mod_time'));
 			echo $css;
 			exit();
 		}
