@@ -166,9 +166,8 @@
 	=debug
 	{
 		background:
-			url('/demo/images/content.png') top left repeat content,
-			url('/demo/images/padding.png') top left repeat padding,
-			url('/demo/images/border.png') top left repeat border
+			url(data:image/PNG;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpi/vvfACDAAAU1AjAmqz/GAAAAAElFTkSuQmCC) top left repeat content,
+			url(data:image/PNG;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpi8Iv+DxBgAAKjAam59iVwAAAAAElFTkSuQmCC) top left repeat padding
 		;
 	}
 	
