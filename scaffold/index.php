@@ -38,10 +38,13 @@
 /******************************************************************************
 * Define constants
 ******************************************************************************/
-	
-	$css_dir = join_path($_SERVER['DOCUMENT_ROOT'],$css_dir);
+
+	# Define the document root
+	define('DOCROOT', $_SERVER['DOCUMENT_ROOT']);
+		
+	$css_dir = join_path(DOCROOT,$css_dir);
 	$css_dir = realpath($css_dir);
-	$css_dir = str_replace($_SERVER['DOCUMENT_ROOT'], "/", $css_dir);
+	$css_dir = str_replace(DOCROOT, "/", $css_dir);
 	
 	# Fix up any weird slash issues. We'll just ditch them
 	# and let our join path function fix it
@@ -56,15 +59,6 @@
 		$cache_dir = join_path($system_dir, 'cache');
 	}
 	
-	# If asset dir is blank, use the default
-	if ($assets_dir == "")
-	{
-		$assets_dir = join_path($css_dir, 'assets');
-	}
-	
-	# Define the document root
-	define('DOCROOT', $_SERVER['DOCUMENT_ROOT']);
-
 	# Full path to the cache folder
 	define('CACHEPATH', $cache_dir);
 		
@@ -80,14 +74,8 @@
 	# Url path to the css directory
 	define('URLPATH', $css_dir);
 	
-	# Url to the assets folder
-	define('ASSETURL', trim_slashes($assets_dir));
-	
-	# Url path to the asset directory
-	define('ASSETPATH', join_path(DOCROOT,$assets_dir));
-	
 	# Clean up
-	unset($cache_dir, $css_dir, $assets_dir, $system_dir);
+	unset($cache_dir, $css_dir, $system_dir);
 	
 
 /******************************************************************************
