@@ -176,10 +176,14 @@ class CSScaffold {
 	private static function load_plugins()
 	{	
 		# Load each of the plugins
+		$module_folders = read_dir(BASEPATH . "/modules");
 		$plugin_folders = read_dir(BASEPATH . "/plugins");
+		
+		$extensions = array_merge($module_folders, $plugin_folders);
+		
 		$plugins = array();
 		
-		foreach($plugin_folders as $plugin_folder)
+		foreach($extensions as $plugin_folder)
 		{
 			$plugin_files = read_dir($plugin_folder);
 			
