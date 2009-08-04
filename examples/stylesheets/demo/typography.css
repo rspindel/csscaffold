@@ -35,7 +35,7 @@
 	*/
 	
 	.heading
-	{ 
+	{
 		+georgia;
 		
 		font-size:1.2em;
@@ -50,7 +50,6 @@
 		a:hover:after { content: '\2192'; }
 		
 		&:first-child { margin-top:0; }
-		
 	}
 	
 	h1
@@ -154,6 +153,13 @@
 		font-size: 11px; 
 		line-height: !baseline;
 		color:#0088CC;
+	}
+	
+	pre 
+	{ 
+		background:#fafafa; 
+		padding:[(!baseline / 2) - 1]px; 
+		border:1px solid #eee; 
 	}
 
 	
