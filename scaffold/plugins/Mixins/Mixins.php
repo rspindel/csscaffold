@@ -317,7 +317,7 @@ class Mixins extends Plugins
 			"/
 				
 				# Find the @if's
-				(?:@(?:if|elseif))\((.*?)\)
+				(?:@(?:if))\((.*?)\)
 				
 				# Return all inner selectors and properties
 				(
