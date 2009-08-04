@@ -145,7 +145,7 @@ class CSScaffold {
 	 */
 	public function output_raw($css)
 	{
-		$this->set_headers();
+		self::set_headers();
 		echo(file_get_contents($css));
 		exit;
 	}

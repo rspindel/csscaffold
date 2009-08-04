@@ -10,7 +10,7 @@
 		-moz-opacity: !opacity;
 		-khtml-opacity: !opacity;
 		
-		@if(!browser == "Internet Explorer")
+		@browser lte IE 7
 		{
 			-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=[!opacity*100])";
 			filter: "alpha(opacity=[!opacity*100])";

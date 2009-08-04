@@ -41,7 +41,6 @@
 	baseline:20px;
 }</code></pre>
 
-		<p>See the <a href="">example css file</a> for a more detailed example.</p>
 		</div>
 	
 	<hr/>
@@ -66,7 +65,7 @@
 				<li>.prepend-x</li>
 			</ul>
 			
-			<p>See the <a href="">wiki page about layout classes</a> for more information.</p>
+			<p>See the <a href="http://wiki.github.com/anthonyshort/csscaffold/layout">wiki page about layout classes</a> for more information.</p>
 		</div>
 		<div class="columns-1"></div>
 		<div class="columns-11"></div>
@@ -87,7 +86,7 @@
  	<div id="custom-content" class="wireframe">
 		<div class="box columns-12">
 			<h2>Layout Method 2 - Using Mixins</h2>
-			<p><a href="">Mixins</a> are a really great way to create dynamic CSS and reduce the number of classes in your markup. In this example, I've named 
+			<p><a href="http://wiki.github.com/anthonyshort/csscaffold/mixins">Mixins</a> are a really great way to create dynamic CSS and reduce the number of classes in your markup. In this example, I've named 
 			the elements for what they are - #header, #content, #sub-content etc - so they are semantically correct. Now I can use Mixins in the CSS
 			to lay them out:</p>
 			<pre><code>#header		{ +columns(12); }
@@ -97,7 +96,7 @@
 #footer 	{ +columns(12); }</code></pre>
 
 			<p><code>+columns</code> is a Mixin which is built-in to Scaffold, but will only function when you have the Layout plugin enabled and 
-			setup your grid using <code>@grid</code>. You can check out the <a href="">documentation for Mixins</a> and the <a href="">mixins that the Layout plugin provides</a>.</p>
+			setup your grid using <code>@grid</code>. You can check out the <a href="http://wiki.github.com/anthonyshort/csscaffold/mixins">documentation for Mixins</a>.</p>
 		</div>
 		<div id="header"></div>
 		<div id="content"></div>
@@ -113,7 +112,7 @@
  		<p>You can move grid units around by using the <code>.push</code> and <code>.pull</code> classes. This example may look broken, 
  		but all of these units have been pushed, pulled and shifted on the baseline.</p>
  		
- 		<p>See the <a href="">documentation</a> for the layout classes for more information.</p>
+ 		<p>See the <a href="http://wiki.github.com/anthonyshort/csscaffold/layout">documentation</a> for the layout classes for more information.</p>
  	</div>
  	
 	<div class="wireframe">
@@ -133,7 +132,7 @@
 		<p>This example shows how you can style up your content using classes in the markup. It's based on Jason Santa Maria's Modular Layout System. Most of the 
 		classes here have been generated for you.</p>
 		
-		<p>Take a look at the <a href="">markup for this section</a> or <a href="">view the css</a>.</p>
+		<p>Take a look at the markup for this section or <a href="../stylesheets/demo/layout.css?raw">view the css</a>.</p>
 	</div>
 	
 	<div id="content-test" class="columns-12">
@@ -142,7 +141,7 @@
  
 		<div class="figure span-4 left">
 			<img src="image.png" class="baseline-6" alt="" />
-			<p>Images go in a div with the classes &#8220;<code>figure size direction</code>&#8221;. &#8220;<code>size</code>&#8221; can be <code>one</code>, <code>two</code>, <code>three</code>, <code>four</code>, <code>five</code>, <code>six</code>, or <code>seven</code>, direction can be <code>right</code> or <code>left</code>. Captions go in a <code>p</code>.</p>
+			<p>Images go in a div with the classes &#8220;<code>figure size direction</code>&#8221;. &#8220;<code>size</code>&#8221; can be <code>span-x</code> where x is the number of columns. Captions go in a <code>p</code>.</p>
 		</div>
  
 		<p>Consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
@@ -151,14 +150,14 @@
  
 		<div class="figure span-2 right">
 			<img src="image.png" class="baseline-6" alt="" />
-			<p>Right outset image.</p>
+			<p>Right image.</p>
 		</div>
  
 		<p>Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
  
 		<div class="figure span-2 push-2 left">
 			<img src="image.png" class="baseline-6" alt="" />
-			<p>For inset images, add the class <code>inset</code> to the <code>figure</code> div.</p>
+			<p>For inset images, add the class <code>push-x</code> to push it x-number of columns to the <code>figure</code> div.</p>
 		</div>
  
 		<p>Consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata.</p>
@@ -166,7 +165,7 @@
 		<p>Consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata.</p>
  
 		<img src="image.png" alt="" class="figure span-12 solo baseline-10" />
-		<p class="caption span-3">For images without captions, or captions set apart, add <code>solo</code> to the <code>figure</code> div, and move the caption <code>p</code> directly outside it using similar styles (e.g., &#8220;<code>caption two left</code>&#8221;).</p>
+		<p class="caption span-3">For images without captions, or captions set apart, add <code>solo</code> to the <code>figure</code> div, and move the caption <code>p</code> directly outside it using similar styles (e.g., &#8220;<code>caption span-2 left</code>&#8221;).</p>
  
  
 		<p>Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum.</p>
