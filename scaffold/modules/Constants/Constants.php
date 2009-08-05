@@ -27,7 +27,7 @@ class Constants extends Plugins
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	function pre_process()
+	public static function parse()
 	{				
 		# Find the constants group and values
 		$found 	= CSS::find_at_group('constants');

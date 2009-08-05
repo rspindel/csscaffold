@@ -15,7 +15,7 @@ class NestedSelectors extends Plugins
 	 * @author Anthony Short
 	 * @return $css string
 	 */
-	function process()
+	function parse()
 	{
 		$xml = CSS::to_xml();
 		

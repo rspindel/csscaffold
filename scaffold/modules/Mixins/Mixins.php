@@ -18,18 +18,6 @@ class Mixins extends Plugins
 	 * @var array
 	 */
 	public static $mixins = array();
-	
-	/**
-	 * Imports happen before everything else.
-	 *
-	 * @author Anthony Short
-	 * @param $css
-	 * @return string
-	 */
-	function import_process()
-	{
-		$this->import_mixins();
-	}
 
 	/**
 	 * The main processing function called by Scaffold. MUST return $css!
@@ -37,7 +25,7 @@ class Mixins extends Plugins
 	 * @author Anthony Short
 	 * @return $css string
 	 */
-	function process()
+	public static function parse()
 	{
 		global $bases;
 	
@@ -80,12 +68,12 @@ class Mixins extends Plugins
 			
 			# Find the mixins
 			# match('/\+(([0-9a-zA-Z_-]*?)(\((.*?)\))?)\;/', $css);
-			if($mixins = $this->find_mixins(CSS::$css))
+			if($mixins = self::find_mixins(CSS::$css))
 			{
 				# Loop through each of the found +mixins
 				foreach($mixins[2] as $mixin_key => $mixin_name)
 				{	
-					CSS::replace($mixins[0][$mixin_key], $this->build_mixins($mixin_key, $mixins));
+					CSS::replace($mixins[0][$mixin_key], self::build_mixins($mixin_key, $mixins));
 				}
 				
 				# Remove all of the +mixins (if they still exist)
@@ -121,7 +109,7 @@ class Mixins extends Plugins
 				$current_mixin = $mixin_name;
 				
 				# Parse the parameters of the mixin
-				$params = $this->parse_params($mixins[4][$mixin_key], $bases[$mixin_name]['params']); 
+				$params = self::parse_params($mixins[4][$mixin_key], $bases[$mixin_name]['params']); 
 				
 				# Create the property string
 				$new_properties = str_replace(array_keys($params),array_values($params),$base_properties);
@@ -130,7 +118,7 @@ class Mixins extends Plugins
 				$new_properties = self::parse_conditionals($new_properties);
 							
 				# Find nested mixins
-				if($inner_mixins = $this->find_mixins($new_properties))
+				if($inner_mixins = self::find_mixins($new_properties))
 				{
 					# Loop through all the ones we found, skipping on recursion by passing
 					# through the current mixin we're working on
@@ -139,7 +127,7 @@ class Mixins extends Plugins
 						if(isset($inner_mixins[0][$key]))
 						{
 							# Prase the mixin and replace it within the property string
-							$new_properties = str_replace($inner_mixins[0][$key], $this->build_mixins($key, $inner_mixins, $current_mixin), $new_properties);
+							$new_properties = str_replace($inner_mixins[0][$key], self::build_mixins($key, $inner_mixins, $current_mixin), $new_properties);
 						}
 					}
 				}	
@@ -244,6 +232,9 @@ class Mixins extends Plugins
 	function import_mixins()
 	{
 		$plugin_folders = read_dir(join_path(BASEPATH, 'plugins'));
+		$module_folders = read_dir(join_path(BASEPATH, 'modules'));
+		
+		$plugin_folders = array_merge($plugin_folders, $module_folders);
 
 		foreach($plugin_folders as $plugin_folder)
 		{

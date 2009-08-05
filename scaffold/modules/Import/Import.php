@@ -18,10 +18,10 @@ class Import extends Plugins
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	function import_process()
+	public static function parse()
 	{		
 		# Find all the @server imports
-		CSS::$css = $this->server_import(CSS::$css);
+		CSS::$css = self::server_import(CSS::$css);
 	}
 	
 	/**
@@ -57,7 +57,7 @@ class Import extends Plugins
 				stop("Error: Import > File is not a css file, or cannot be found - " . $path);
 			}
 			
-			$css = $this->server_import($css, $include);
+			$css = self::server_import($css, $include);
 		}
 		
 		return $css;

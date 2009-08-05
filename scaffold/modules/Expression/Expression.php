@@ -17,9 +17,9 @@ class Expression extends Plugins
 	 * @author Anthony Short
 	 * @param $css
 	*/
-	function post_process()
+	public static function parse()
 	{
-		CSS::$css = $this->parse_expressions();
+		CSS::$css = self::parse_expressions();
 	}
 	
 	/**

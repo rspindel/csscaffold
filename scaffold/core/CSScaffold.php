@@ -18,6 +18,14 @@ class CSScaffold {
 	 **/ 
 	 public static $plugins;
 	 
+	 
+	/**
+	 * Holds the array of module objects
+	 *
+	 * @var array
+	 **/ 
+	 public static $modules;
+	 
 	 /**
 	 * What plugins have been loaded (Just their name)
 	 *
@@ -120,8 +128,9 @@ class CSScaffold {
 			Config::set('requested_mod_time', filemtime(Config::get('server_path')));
 			
 			# Load the plugins and flags
-			self::load_plugins();
-	
+			self::$modules = self::load_addons(read_dir(BASEPATH . "/modules"));
+			self::$plugins = self::load_addons(read_dir(BASEPATH . "/plugins"));
+
 			# Prepare the cache, and tell it if we want to recache
 			Cache::set($recache);
 			
@@ -173,17 +182,11 @@ class CSScaffold {
 	 * @return boolean
 	 * @author Anthony Short
 	 **/
-	private static function load_plugins()
-	{	
-		# Load each of the plugins
-		$module_folders = read_dir(BASEPATH . "/modules");
-		$plugin_folders = read_dir(BASEPATH . "/plugins");
-		
-		$extensions = array_merge($module_folders, $plugin_folders);
-		
+	private static function load_addons($folders)
+	{			
 		$plugins = array();
 		
-		foreach($extensions as $plugin_folder)
+		foreach($folders as $plugin_folder)
 		{
 			$plugin_files = read_dir($plugin_folder);
 			
@@ -220,15 +223,15 @@ class CSScaffold {
 						
 						# Set the member paths
 						$plugins[$plugin_class]->set_paths($plugin_folder);
-						
-						# Add the plugin to the loaded array
-						self::$loaded[] = $plugin_class;
 					}
+					
+					# Add the plugin to the loaded array
+					self::$loaded[] = $plugin_class;
 				}			
 			}
 		}
 		
-		self::$plugins = $plugins;
+		return $plugins;
 	}
 	
 	/**
@@ -241,54 +244,59 @@ class CSScaffold {
 	{						
 		# If the cache is stale or doesn't exist
 		if (Config::get('cached_mod_time') < Config::get('requested_mod_time'))
-		{    
+		{
 			# Load the CSS file in the object
 			CSS::load(file_get_contents(Config::get('server_path')));
-													
+			
+			# Import CSS files
+			Import::parse();
+			
+			# Import the mixins in the plugin folders
+			Mixins::import_mixins();
+														
 			# Parse our css through the plugins
 			foreach(self::$plugins as $plugin)
 			{
-				Benchmark::start( get_class($plugin) ."_import" );
 				$plugin->import_process();
-				Benchmark::stop( get_class($plugin) ."_import" );
 			}
 			
 			# Compress it before parsing
 			CSS::compress(CSS::$css);
 
+			# Parse the constants
+			Constants::parse();
+
 			foreach(self::$plugins as $plugin)
 			{
-				Benchmark::start( get_class($plugin) ."_preprocess" );
 				$plugin->pre_process();
-				Benchmark::stop( get_class($plugin) ."_preprocess" );
 			}
 			
 			# This HAS to happen AFTER they are set, but 
 			# before they are used.
-			if (class_exists('Constants'))
-			{
-				Constants::replace();
-			}
+			Constants::replace();
 			
 			foreach(self::$plugins as $plugin)
 			{
-				Benchmark::start( get_class($plugin) ."_process" );
 				$plugin->process();
-				Benchmark::stop( get_class($plugin) ."_process" );
 			}
+			
+			# Parse the mixins
+			Mixins::parse();
 			
 			foreach(self::$plugins as $plugin)
 			{
-				Benchmark::start( get_class($plugin) ."_postprocess" );
 				$plugin->post_process();
-				Benchmark::stop( get_class($plugin) ."_postprocess" );
 			}
+			
+			# Parse the expressions
+			Expression::parse();
+			
+			# Parse the nested selectors
+			NestedSelectors::parse();
 			
 			foreach(self::$plugins as $plugin)
 			{
-				Benchmark::start( get_class($plugin) ."_formatting" );
 				$plugin->formatting_process();
-				Benchmark::stop( get_class($plugin) ."_formatting" );
 			}
 			
 			if (Config::get('show_header') === TRUE)

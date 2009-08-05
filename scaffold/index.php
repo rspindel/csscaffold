@@ -44,7 +44,7 @@
 		
 	$css_dir = join_path(DOCROOT,$css_dir);
 	$css_dir = realpath($css_dir);
-	$css_dir = str_replace(DOCROOT, "/", $css_dir);
+	$css_dir = str_replace(trim_slashes(DOCROOT), "/", $css_dir);
 	
 	# Fix up any weird slash issues. We'll just ditch them
 	# and let our join path function fix it
