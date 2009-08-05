@@ -82,14 +82,14 @@ abstract class Cache
 
 		foreach($f as $file)
 		{
-			if(substr($file, -3) == 'css')
-			{
-				unlink($file);
-			}
-			elseif(is_dir($file))
+			if(is_dir($file))
 			{
 				self::empty_cache($file);
 				rmdir($file);
+			}
+			elseif(substr($file, -3) == 'css')
+			{
+				unlink($file);
 			}
 		}
 	}
