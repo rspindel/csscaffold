@@ -45,7 +45,7 @@ class For_loops extends Plugins
 				$s .= str_replace("!{$var}", $i, $found[5][$key]);	
 			}
 			
-			stop($s);
+			CSS::append($s);
 		}
 	}
 	
