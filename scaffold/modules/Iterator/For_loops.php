@@ -18,7 +18,7 @@ class For_loops extends Plugins
 	public static function parse()
 	{		
 		# Find all the @server imports
-		CSS::$css = self::parse_fors(CSS::$css);
+		self::parse_fors(CSS::$css);
 	}
 	
 	/**
@@ -34,6 +34,8 @@ class For_loops extends Plugins
 		
 		foreach($found as $key => $value)
 		{
+			CSS::replace($found[0][$key], "");
+			
 			$s = "";
 			
 			$from = $found[2][$key];
