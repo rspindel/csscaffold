@@ -11,7 +11,7 @@
 	
 	@grid
 	{
-		column-width:50;
+		column-width:60;
 		column-count:12;
 		gutter-width:10px;
 		baseline:20px;
@@ -70,6 +70,3 @@
 		line-height:24px;
 		color:#444;
 	}
-
-
-

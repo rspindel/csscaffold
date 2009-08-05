@@ -30,24 +30,25 @@ class For_loops extends Plugins
 	 */
 	private function parse_fors($string)
 	{
-		$found = self::find_fors($string);
-		
-		foreach($found as $key => $value)
+		if($found = self::find_fors($string))
 		{
-			CSS::replace($found[0][$key], "");
-			
-			$s = "";
-			
-			$from = $found[2][$key];
-			$to = $found[3][$key];
-			$var = $found[1][$key];
-			
-			for ($i = $from; $i <= $to; $i++)
+			foreach($found[0] as $key => $value)
 			{
-				$s .= str_replace("!{$var}", $i, $found[5][$key]);	
+				CSS::replace($value, "");
+				
+				$s = "";
+				
+				$from = $found[2][$key];
+				$to = $found[3][$key];
+				$var = $found[1][$key];
+				
+				for ($i = $from; $i <= $to; $i++)
+				{
+					$s .= str_replace("!{$var}", $i, $found[5][$key]);	
+				}
+				
+				CSS::append($s);
 			}
-			
-			CSS::append($s);
 		}
 	}
 	

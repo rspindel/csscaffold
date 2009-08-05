@@ -1,3 +1,15 @@
+@for !i from 1 to !column-count
+{
+	.columns-!i 		{ +columns(!i); }
+	.push-!i 			{ +push(!i); }
+	.pull-!i 			{ +pull(!i); }
+	.append-!i 			{ +append(!i); }
+	.prepend-!i 		{ +prepend(!i); }
+	.group				{ +group; }
+	.baseline-up-!i		{ +baseline-up(!i); }
+	.baseline-down-!i	{ +baseline-down(!i); }
+}
+
 /**
 * Container
 *
@@ -47,22 +59,31 @@
 =columns(!n, !side = "both")
 {
 	+span(!n);
-	+clearfix;
 	
+	position:relative;
 	float:left;
-	
-	@if(!side == "first")
-	{
-		margin-right:!gutter-width;	
-	}
-	@elseif(!side == "last")
-	{
-		margin-left:!gutter-width;	
-	}
-	@elseif(!side == "both")
-	{
-		margin-right,margin-left:!gutter-width;	
-	}
+	margin-right:!gutter-width;
+	margin-left:!gutter-width;	
+}
+
+=first
+{
+	margin-left:0;
+}
+
+=last
+{
+	margin-right:0;
+}
+
+=baseline-up(!n)
+{
+	top:[-(!baseline * !n)]px;
+}
+
+=baseline-down(!n)
+{
+	top:[!baseline * !n]px;
 }
 
 /**
@@ -73,7 +94,7 @@
 =group
 {
 	padding:0 !gutter-width;
-	margin:!baseline 0;
+	margin:[!baseline / 2]px 0;
 }
 
 /**
@@ -100,7 +121,7 @@
 =pull(!n)
 {
 	+float(left);
-	margin-right: [!column-width * !n + !grid-width]px;
+	margin-right: [!column-width * !n + !gutter-width]px;
 	position:relative;
 }
 
@@ -108,7 +129,6 @@
 {
 	+float(right);
 	position:relative;
-	
-	margin-left: [ -(!column-width * !n + !grid-width)]px;
-	margin-right: [!column-width * !n + !grid-width]px;
+	margin-left: [ -((!column-width * !n) + !gutter-width)]px;
+	margin-right: [!column-width * !n + !gutter-width]px;
 }

@@ -64,7 +64,7 @@ class NestedSelectors extends Plugins
 				# If there are listed parents eg. #id, #id2, #id3
 				if(strstr($child, ","))
 				{
-					$parent = $this->split_children($child, $parent);
+					$parent = self::split_children($child, $parent);
 				}
 				
 				# If the child references the parent selector

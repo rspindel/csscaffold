@@ -69,7 +69,7 @@ class Layout extends Plugins
 			self::create_grid_image($cw, $bl, $gw);
 	
 			# Create grid classes (.column-1 etc) and add them to the css		
-			$this->create_grid_classes($cw, $bl, $gw, $cc);
+			# $this->create_grid_classes($cw, $bl, $gw, $cc);
 			
 			# Round to baselines
 			$this->round_to_baseline($bl);
@@ -92,54 +92,6 @@ class Layout extends Plugins
 				CSS::replace($match, round_nearest($found[1][$key],$baseline)."px");
 			}
 		}
-	}
-
-	/**
-	* Generates the grid classes similar to Blueprints grid.css
-	* and appends them to the css string.
-	*
-	* @param   string   css file string
-	* @return  string	css file string
-	*/	
-	public function create_grid_classes($cw, $bl, $gw, $cc)
-	{
-		$s = "";
-		
-		for ($i=1; $i <= $cc; $i++) 
-		{
-			$width = $cw * $i;
-			
-			# Make the .columns-x classes
-			$s .= "
-
-				.columns-$i 		{width:".($width - ($gw * 2))."px;}
-				.span-$i			{width:".($width - ($gw * 2))."px;}
-				.group				{padding:0 {$gw}px;margin:".($bl/2)."px 0;}
-				.push-$i			{left:{$width}px;margin-right:".($width + $gw)."px !important;}
-				.pull-$i			{left:-".($width)."px;margin-right:".-($width - $gw)."px !important;}
-				.baseline-down-$i 	{top:".($bl * $i)."px;}
-				.baseline-up-$i 	{top:".-($bl * $i)."px;}
-				.baseline-$i		{height:".($bl * $i)."px;}
-				.append-$i			{padding-right:{$width}px;}
-				.prepend-$i			{padding-left:{$width}px;}
-			
-			";
-			
-			$pullselectors[] 	= ".pull-$i";
-			$pushselectors[] 	= ".push-$i";
-			$columns[] 			= ".columns-$i";
-		}
-		
-		# If we add our classes here they are more managable and won't
-		# be added until the very end, saving memory. 
-		$s .= 
-			implode(",", $columns)."{float:left;margin:0 {$gw}px {$bl}px;position:relative;}
-			".implode(",", $pullselectors)."{position:relative;}
-			".implode(",", $pushselectors)."{position:relative;}
-		";
-
-		# Append it to the css
-		CSS::append($s);
 	}
 
 	/**
