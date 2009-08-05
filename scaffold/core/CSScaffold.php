@@ -34,20 +34,6 @@ class CSScaffold {
 	 public static $loaded = array();
 	 
 	/**
-	 * The browser of the user
-	 *
-	 * @var string
-	 */
-	public static $browser = "Other";
-	
-	/**
-	 * The version of the browser
-	 *
-	 * @var string
-	 */
-	public static $version = null;
-	 
-	/**
 	 * Sets the initial variables, checks if we need to process the css
 	 * and then sends whichever file to the browser.
 	 *
@@ -274,6 +260,9 @@ class CSScaffold {
 			# This HAS to happen AFTER they are set, but 
 			# before they are used.
 			Constants::replace();
+			
+			# Parse @for loops
+			For_loops::parse();
 			
 			foreach(self::$plugins as $plugin)
 			{
