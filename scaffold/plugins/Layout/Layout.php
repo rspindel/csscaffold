@@ -75,8 +75,7 @@ class Layout extends Plugins
 			$this->round_to_baseline($bl);
 			
 			# Import the mixins
-			$mixins = join_path($this->path['support'], 'mixins', 'grid.css');
-			CSS::append(file_get_contents($mixins));
+			Mixins::import_mixins($this->path['support']);
 		}
 	}
 	

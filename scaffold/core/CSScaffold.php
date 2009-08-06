@@ -238,7 +238,10 @@ class CSScaffold {
 			Import::parse();
 			
 			# Import the mixins in the plugin folders
-			Mixins::import_mixins();
+			$plugin_folders = read_dir(join_path(BASEPATH, 'plugins'));
+			$module_folders = read_dir(join_path(BASEPATH, 'modules'));
+
+			Mixins::import_mixins(array_merge($plugin_folders, $module_folders));
 														
 			# Parse our css through the plugins
 			foreach(self::$plugins as $plugin)
