@@ -427,6 +427,7 @@ abstract class CSS
 			'&' => '#SCAFFOLD-PARENT#',
 			'data:image/PNG;' => '#SCAFFOLD-IMGDATA-PNG#',
 			'data:image/JPG;' => "#SCAFFOLD-IMGDATA-JPG#",
+			'http://' => "#SCAFFOLD-HTTP",
 			
 			/*
 			':hover' => '#SCAFFOLD-HOVER#',

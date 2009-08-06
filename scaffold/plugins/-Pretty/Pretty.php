@@ -1,40 +1,12 @@
 <?php defined('BASEPATH') OR die('No direct access allowed.');
 
 /**
- * CSSTidyPlugin
- *
- * @package csscaffold
- * @dependencies CSSTidy
+ * Pretty
  **/
-class Optimizer extends Plugins
+class Pretty extends Plugins
 {
 	function formatting_process()
 	{
-		$css =& CSS::$css;
-					
-		$tidy = new csstidy();
-							
-		$tidy->set_cfg('preserve_css',false);
-		$tidy->set_cfg('sort_selectors',false);
-		$tidy->set_cfg('sort_properties',true);
-		$tidy->set_cfg('merge_selectors',2);
-		$tidy->set_cfg('optimise_shorthands',1);
-		$tidy->set_cfg('compress_colors',true);
-		$tidy->set_cfg('compress_font-weight',false);
-		$tidy->set_cfg('lowercase_s',true);
-		$tidy->set_cfg('case_properties',1);
-		$tidy->set_cfg('remove_bslash',false);
-		$tidy->set_cfg('remove_last_;',true);
-		$tidy->set_cfg('discard_invalid_properties',false);
-		$tidy->set_cfg('css_level','CSS2.1');
-		$tidy->set_cfg('time_stamp','false');
-		
-		$tidy->load_template('highest_compression');
-		
-		$result = @$tidy->parse($css);
-				
-		$css = $tidy->print->plain();
-		
 		if(Config::get('pretty') === true)
 		{
 			$css = preg_replace('#(/\*[^*]*\*+([^/*][^*]*\*+)*/|url\(data:[^\)]+\))#e', "'esc('.base64_encode('$1').')'", $css); // escape comments, data protocol to prevent processing
@@ -59,10 +31,6 @@ class Optimizer extends Plugins
 			{
 				$css = str_replace($m[0], str_replace($m[1], "\r\t".preg_replace("#\r#", "\r\t", trim($m[1]))."\r", $m[0]), $css);
 			}
-		}
-		else
-		{
-			CSS::$css = Minify_CSS_Compressor::process(CSS::$css);
 		}
 	}
 } 
