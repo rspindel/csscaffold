@@ -88,5 +88,5 @@
 	
 	@browser !IE
 	{
-		 #browsers #notie { background:green; }
+		 #browsers #notice { background:green; }
 	}
