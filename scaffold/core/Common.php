@@ -127,6 +127,11 @@
 	{
 		return preg_replace('#^("|\')|("|\')$#', '', $str);
 	}
+	
+	function quote($str)
+	{
+		return '"' . $str . '"';
+	}
 	    
      /**
 	  * Outputs a filesize in a human readable format

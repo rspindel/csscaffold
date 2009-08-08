@@ -263,52 +263,21 @@ class Mixins extends Plugins
 			foreach($found[1] as $key => $value)
 			{
 				$result = false;
-
-				# Find out what equals sign they used
-				if(strstr($value, "!="))
-				{
-					$explode_at = "!=";
-				}
-				elseif(strstr($value, "!=="))
-				{
-					$explode_at = "!==";
-				}
-				elseif(strstr($value, "==="))
-				{
-					$explode_at = "===";
-				}
-				else
-				{
-					$explode_at = "==";
-				}
+				
+				# Find which equals sign was used and explode it
+				preg_match("/\!=|\!==|===|==/", $value, $match); 
 				
 				# Explode it out so we can test it.
-				$exploded = explode($explode_at, $value);
-				$exploded[0] = trim($exploded[0]);
+				$exploded = explode($match[0], $value);
+				$val = trim($exploded[0]);
 				
-				if(strtolower($exploded[0]) == "false")
+				if(preg_match('/[a-zA-Z]/', $val) && (strtolower($val) != "true" && strtolower($val) != "false") )
 				{
-					$exploded[0] = false;
+					$value = str_replace($val, quote($val), $value);
 				}
-				elseif(strtolower($exploded[0]) == "true")
-				{
-					$exploded[0] = true;
-				}
-				elseif(preg_match('/[a-zA-Z]/', $exploded[0]))
-				{
-					$exploded[0] = '"' . $exploded[0] . '"';
-				}
-				
-				$value = implode($explode_at, $exploded);
-								
-				$logic = "
-					if($value)
-					{ 
-						\$result = true; 
-					}";
 
 				# Parse the args
-				@eval($logic);
+				@eval("if($value){ \$result = true;}");
 				
 				# When one of them is if true, replace the whole group with the contents of that if and continue
 				if($result === true)

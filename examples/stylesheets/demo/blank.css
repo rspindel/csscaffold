@@ -4,5 +4,5 @@
  
 #id
 {
-	+absolute(-10px);
+	+absolute(false, 10px);
 }
