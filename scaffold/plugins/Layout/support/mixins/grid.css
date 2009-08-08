@@ -123,19 +123,21 @@
 =pull(!n)
 {
 	position:relative;
-	left:[-((!column-width + !gutter-width * 2) * !n)]px;margin-right:[-((!column-width + !gutter-width * 2) * !n - !gutter-width)]px !important;
+	left:[-((!column-width + !gutter-width * 2) * !n)]px;
+	margin-right:[-((!column-width + !gutter-width * 2) * !n - !gutter-width)]px !important;
 }
 
 =push(!n)
 {
 	position:relative;
-	left:[(!column-width + !gutter-width * 2) * !n]px;margin-right:[(!column-width + !gutter-width * 2) * !n + !gutter-width]px !important;
+	left:[(!column-width + !gutter-width * 2) * !n]px;
+	margin-right:[(!column-width + !gutter-width * 2) * !n + !gutter-width]px !important;
 }
 
 =column-border(!side = "right", !color = #eee, !type = "solid", !thickness = "1px")
 {
 	outline:!color !type;
-	outline-offet:!gutter-width;
+	outline-offset:!gutter-width;
 	
 	@if(!side == "right")
 	{
