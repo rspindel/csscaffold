@@ -47,51 +47,18 @@ class NestedSelectors extends Plugins
 		{
 			$child = (string)$value;
 			
-			# If there are multiple parents, split them, and reparse each of them
-			if(strstr($parent, ","))
+			# if its NOT a root selector and has parents
+			if($parent != "")
 			{
 				$parent = explode(",", $parent);
 				
 				foreach($parent as $parent_key => $parent_value)
 				{
 					$parent_value = trim($parent_value);
-									
-					# If the child references the parent selector
-					if (strstr($child, "#SCAFFOLD-PARENT#"))
-					{						
-						$parent[$parent_key] = str_replace("#SCAFFOLD-PARENT#", $parent_value, $child);	
-					}
-					
-					# Otherwise, do it normally
-					else
-					{
-						$parent[$parent_key] = "$parent_value $child";
-					}
+					$parent[$parent_key] = self::parse_selector($parent_value, $child);
 				}
 				
 				$parent = implode(",", $parent);
-			}
-			
-			# Otherwise, if its NOT a root selector and has parents
-			elseif($parent != "")
-			{
-				# If there are listed parents eg. #id, #id2, #id3
-				if(strstr($child, ","))
-				{
-					$parent = self::split_children($child, $parent);
-				}
-				
-				# If the child references the parent selector
-				elseif (strstr($child, "#SCAFFOLD-PARENT#"))
-				{						
-					$parent = str_replace("#SCAFFOLD-PARENT#", $parent, $child);	
-				}
-				
-				# Otherwise, do it normally
-				else
-				{
-					$parent = "$parent $child";
-				}
 			}
 			
 			# Otherwise it's a root selector
@@ -121,6 +88,38 @@ class NestedSelectors extends Plugins
 		}
 		
 		return $css_string;
+	}
+	
+	/**
+	 * Parses the parent and child to find the next parent
+	 * to pass on to the function
+	 *
+	 * @author Anthony Short
+	 * @param $parent
+	 * @param $child
+	 * @return string
+	 */
+	public function parse_selector($parent, $child)
+	{
+		# If there are listed parents eg. #id, #id2, #id3
+		if(strstr($child, ","))
+		{
+			$parent = self::split_children($child, $parent);
+		}
+		
+		# If the child references the parent selector
+		elseif (strstr($child, "#SCAFFOLD-PARENT#"))
+		{						
+			$parent = str_replace("#SCAFFOLD-PARENT#", $parent, $child);	
+		}
+		
+		# Otherwise, do it normally
+		else
+		{
+			$parent = "$parent $child";
+		}
+		
+		return $parent;
 	}
 	
 	/**
