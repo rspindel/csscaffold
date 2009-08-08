@@ -125,7 +125,7 @@
 *
 * @type Mixin
 */
-=reset-box
+=reset-box-model
 {
 	margin:0;
 	padding:0;
@@ -173,5 +173,12 @@
 	;
 }
 
-
-
+/**
+ * Hides an elements off the page, but keeps it visible for accessibility
+ */
+=hide
+{
+	position:absolute;
+	top:-9999px;
+	left:-9999px;
+}
