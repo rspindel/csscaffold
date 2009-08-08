@@ -1,0 +1,8 @@
+/**
+ * I use this for random css testing
+ */
+ 
+#id
+{
+	+absolute(false, 300px, 100px);
+}

@@ -100,23 +100,23 @@ class Mixins extends Plugins
 		$mixin_name = $mixins[2][$mixin_key];
 				
 		if(isset($bases[$mixin_name]))
-		{
-			$base_properties = $bases[$mixin_name]['properties'];		
-						
+		{	
+			$base_properties = $bases[$mixin_name]['properties'];
+							
 			# If there is no base for that mixin and we aren't in a recursion loop
 			if(is_array($bases[$mixin_name]) AND $current_mixin != $mixin_name)
 			{
 				$current_mixin = $mixin_name;
 				
 				# Parse the parameters of the mixin
-				$params = self::parse_params($mixins[4][$mixin_key], $bases[$mixin_name]['params']); 
+				$params = self::parse_params($mixins[4][$mixin_key], $bases[$mixin_name]['params']);
 				
 				# Create the property string
 				$new_properties = str_replace(array_keys($params),array_values($params),$base_properties);
 				
 				# Parse conditionals if there are any in there
 				$new_properties = self::parse_conditionals($new_properties);
-							
+	
 				# Find nested mixins
 				if($inner_mixins = self::find_mixins($new_properties))
 				{
@@ -255,9 +255,7 @@ class Mixins extends Plugins
 	 * @return void
 	 **/
 	public static function parse_conditionals($string = "")
-	{
-		if($string == "") $string =& CSS::$css;
-		
+	{		
 		# Find all @if, @else, and @elseif's groups
 		if($found = self::find_conditionals($string))
 		{
@@ -265,8 +263,49 @@ class Mixins extends Plugins
 			foreach($found[1] as $key => $value)
 			{
 				$result = false;
+
+				# Find out what equals sign they used
+				if(strstr($value, "!="))
+				{
+					$explode_at = "!=";
+				}
+				elseif(strstr($value, "!=="))
+				{
+					$explode_at = "!==";
+				}
+				elseif(strstr($value, "==="))
+				{
+					$explode_at = "===";
+				}
+				else
+				{
+					$explode_at = "==";
+				}
 				
-				$logic = "if($value){ \$result = true; }";
+				# Explode it out so we can test it.
+				$exploded = explode($explode_at, $value);
+				$exploded[0] = trim($exploded[0]);
+				
+				if(strtolower($exploded[0]) == "false")
+				{
+					$exploded[0] = false;
+				}
+				elseif(strtolower($exploded[0]) == "true")
+				{
+					$exploded[0] = true;
+				}
+				elseif(preg_match('/[a-zA-Z]/', $exploded[0]))
+				{
+					$exploded[0] = '"' . $exploded[0] . '"';
+				}
+				
+				$value = implode($explode_at, $exploded);
+								
+				$logic = "
+					if($value)
+					{ 
+						\$result = true; 
+					}";
 
 				# Parse the args
 				@eval($logic);

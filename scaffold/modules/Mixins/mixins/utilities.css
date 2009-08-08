@@ -6,25 +6,25 @@
 {
 	position:!mode;
 	
-	@if(!top) 		{ top:!top; }
-	@if(!left) 		{ left:!left; }
-	@if(!right) 	{ right:!right; }
-	@if(!bottom)	{ bottom:!bottom; }
+	@if(!top != false) 		{ top:!top; }
+	@if(!left != false) 	{ left:!left; }
+	@if(!right != false) 	{ right:!right; }
+	@if(!bottom != false)	{ bottom:!bottom; }
 }
 
 =absolute(!top = false, !right = false, !bottom = false, !left = false)
 {
-	+position("absolute", !top, !right, !bottom, !left)
+	+position("absolute", !top, !right, !bottom, !left);
 }
 
 =relative(!top = false, !right = false, !bottom = false, !left = false)
 {
-	+position("relative", !top, !right, !bottom, !left)
+	+position("relative", !top, !right, !bottom, !left);
 }
 
 =move(!top = false, !right = false, !bottom = false, !left = false)
 {
-	+relative(!top = false, !right = false, !bottom = false, !left = false);
+	+relative(!top, !right, !bottom, !left);
 }
 
 =move-up(!up = 0)
