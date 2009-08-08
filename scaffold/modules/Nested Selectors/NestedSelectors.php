@@ -54,8 +54,22 @@ class NestedSelectors extends Plugins
 				
 				foreach($parent as $parent_key => $parent_value)
 				{
-					$css_string .= self::parse_rule($rule, $parent_value);
+					$parent_value = trim($parent_value);
+									
+					# If the child references the parent selector
+					if (strstr($child, "#SCAFFOLD-PARENT#"))
+					{						
+						$parent[$parent_key] = str_replace("#SCAFFOLD-PARENT#", $parent_value, $child);	
+					}
+					
+					# Otherwise, do it normally
+					else
+					{
+						$parent[$parent_key] = "$parent_value $child";
+					}
 				}
+				
+				$parent = implode(",", $parent);
 			}
 			
 			# Otherwise, if its NOT a root selector and has parents
@@ -80,7 +94,7 @@ class NestedSelectors extends Plugins
 				}
 			}
 			
-			# Otherwise it's a root selector with no parents at all
+			# Otherwise it's a root selector
 			else
 			{
 				$parent = $child;

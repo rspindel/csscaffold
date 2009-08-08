@@ -122,17 +122,14 @@
 
 =pull(!n)
 {
-	+float(left);
-	margin-right: [!column-width * !n + !gutter-width]px;
 	position:relative;
+	left:[-((!column-width + !gutter-width * 2) * !n)]px;margin-right:[-((!column-width + !gutter-width * 2) * !n - !gutter-width)]px !important;
 }
 
 =push(!n)
 {
-	+float(right);
 	position:relative;
-	margin-left: [ -((!column-width * !n) + !gutter-width)]px;
-	margin-right: [!column-width * !n + !gutter-width]px;
+	left:[(!column-width + !gutter-width * 2) * !n]px;margin-right:[(!column-width + !gutter-width * 2) * !n + !gutter-width]px !important;
 }
 
 =column-border(!side = "right", !color = #eee, !type = "solid", !thickness = "1px")
@@ -145,7 +142,7 @@
 		border-width:0 !thickness 0 0;
 	}
 	
-	@if(!size == "left")
+	@if(!side == "left")
 	{
 		border-width:0 0 !thickness;
 	}

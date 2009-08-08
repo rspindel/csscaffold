@@ -10,8 +10,6 @@
 	* It functions the same as the blueprint or 960.gs container
 	*/
 	.container 		{ +container; }
-	.wireframe div 	{ background:rgba(255,0,0,0.4); min-height:[!baseline*3]px; }
-	.clear 			{ clear:left; }
 	
 	/**
 	 * This is the content we layout with mixins instead of classes (the second grid)
