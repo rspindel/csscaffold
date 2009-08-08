@@ -3,7 +3,7 @@
 /**
  * Minify Plugin
  **/
-class Optimizer extends Plugins
+class Minify extends Plugins
 {
 	function formatting_process()
 	{

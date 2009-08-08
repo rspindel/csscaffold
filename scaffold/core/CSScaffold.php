@@ -286,6 +286,9 @@ class CSScaffold {
 			# Parse the nested selectors
 			NestedSelectors::parse();
 			
+			# Add the extra string we've been storing
+			CSS::$css .= CSS::$append;
+			
 			foreach(self::$plugins as $plugin)
 			{
 				$plugin->formatting_process();

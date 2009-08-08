@@ -4,8 +4,11 @@
 * --------------------------------------------
 */
  
+ 	@include '/templates/reset.css';
+	@include '/templates/typography.css';
+	@include '/templates/content.css';
+	
 	@include 'demo/constants.css';
-	@include 'demo/typography.css';
 	@include 'demo/layout.css';
 	@include 'demo/browser-test.css';
 	

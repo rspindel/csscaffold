@@ -18,6 +18,12 @@ abstract class CSS
 	public static $css;
 	
 	/**
+	 * This string is added to the css at the very end
+	 * @var string
+	 */
+	public static $append;
+	
+	/**
 	 * The constructor
 	 *
 	 * @author Anthony Short
@@ -36,9 +42,16 @@ abstract class CSS
 	 * @param $string
 	 * @return null
 	 */
-	public static function append($string)
+	public static function append($string, $later = false)
 	{
-		self::$css .= $string;
+		if($later === false)
+		{
+			self::$css .= $string;
+		}
+		elseif($later === true)
+		{
+			self::$append .= $string;
+		}
 	}
 	
 	/**
@@ -468,7 +481,7 @@ abstract class CSS
 	 */
 	public static function add($selector, $properties)
 	{
-		CSS::append($selector ."{". $properties . "}");
+		self::$css .= $selector ."{". $properties . "}";
 	}
 	
 	/**
