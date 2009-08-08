@@ -45,7 +45,7 @@
 	
 	.box 
 	{
-		+rounded(5px);
+		+border-radius(5px);
 		+border-box;
 		+columns(6);
 		

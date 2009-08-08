@@ -57,7 +57,7 @@
 		+beveled;
 		
 		extends:".heading";
-		font-size:3em;
+		font-size:36px;
 		line-height:[!baseline*3]px;
 		margin-top:[!baseline*2]px;
 	}
@@ -65,7 +65,7 @@
 	h2 
 	{
 		extends:".heading";
-		font-size:1.6em;
+		font-size:30px;
 		line-height:[!baseline]px;
 		color:#333;
 	}
@@ -73,25 +73,27 @@
 	h3 
 	{
 		extends:".heading";
-		font-size:1.5em;
+		font-size:24px;
 		based-on:helvetica;
 		line-height:[!baseline*2]px;
 	}
 	
 	h4 
 	{
+		font-size:18px;
 		extends:".heading";
-		font-size:1.3em;
 	}
 	
 	h5 
 	{
+		font-size:14px;
 		extends:".heading";
 	}
 	
 	h6 
 	{
 		extends:".heading";
+		font-size:12px;
 		margin-bottom:0; 
 	}
 
