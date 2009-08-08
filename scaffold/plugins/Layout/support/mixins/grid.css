@@ -132,3 +132,19 @@
 	margin-left: [ -((!column-width * !n) + !gutter-width)]px;
 	margin-right: [!column-width * !n + !gutter-width]px;
 }
+
+=column-border(!side = "right", !color = #eee, !type = "solid", !thickness = "1px")
+{
+	outline:!color !type;
+	outline-offet:!gutter-width;
+	
+	@if(!side == "right")
+	{
+		border-width:0 !thickness 0 0;
+	}
+	
+	@if(!size == "left")
+	{
+		border-width:0 0 !thickness;
+	}
+}

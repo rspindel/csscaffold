@@ -14,25 +14,6 @@
 }
 
 /**
-* Border-box
-*
-* REQUIRES the Browsers and Constants plugins
-* CSS3 box-sizing:border-box for the browsers that support it
-*/
-=border-box 
-{
-	-moz-box-sizing:border-box;
-	-webkit-box-sizing:border-box;
-	-ms-box-sizing:border-box;
-	box-sizing:border-box;
-	
-	@browser lte IE 7
-	{
-		behavior:url("!scaffold_url/plugins/Mixins/support/behaviours/boxsizing.htc");
-	}
-}
-
-/**
 * Quick Clearfix
 *
 * Clears an element of its floated children. The quick way.
