@@ -16,7 +16,16 @@
 { 
 	line-height: [floor(!baseline*4/5)]px; 
 	font-size: 11px; 
-} 
+}
+
+/**
+ * Resets the type back to normal
+ */
+=regular
+{
+	font-weight:normal;
+	font-style:normal;
+}
 
 
 /* Surround uppercase words and abbreviations with this class.
