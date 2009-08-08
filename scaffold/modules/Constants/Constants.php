@@ -31,6 +31,9 @@ class Constants extends Plugins
 	{				
 		# Find the constants group and values
 		$found 	= CSS::find_at_group('constants');
+		
+		self::set("scaffold_url", BASEURL);
+		self::set("css_url", URLPATH);
 
 		# If there are some constants, let do it.
 		if($found !== false)
