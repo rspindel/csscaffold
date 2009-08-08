@@ -44,7 +44,7 @@ class Mixins extends Plugins
 			$base_names 	= $found['name'];
 			$base_args 		= $found['args'];
 			$base_props 	= $found['properties'];
-						
+			
 			# Clean up memory
 			unset($found);
 			
@@ -56,7 +56,7 @@ class Mixins extends Plugins
 				# If there are mixin arguments, add them
 				$bases[$value]['params'] = ( $base_args[$key] != "" ) ? explode(',', $base_args[$key]) : array();
 			}
-			
+						
 			# Store this away for debugging
 			self::$mixins 	= $bases;
 			
@@ -72,7 +72,7 @@ class Mixins extends Plugins
 			{
 				# Loop through each of the found +mixins
 				foreach($mixins[2] as $mixin_key => $mixin_name)
-				{	
+				{
 					CSS::replace($mixins[0][$mixin_key], self::build_mixins($mixin_key, $mixins));
 				}
 				
@@ -122,13 +122,10 @@ class Mixins extends Plugins
 				{
 					# Loop through all the ones we found, skipping on recursion by passing
 					# through the current mixin we're working on
-					foreach($inner_mixins as $key => $value)
+					foreach($inner_mixins[0] as $key => $value)
 					{
-						if(isset($inner_mixins[0][$key]))
-						{
-							# Prase the mixin and replace it within the property string
-							$new_properties = str_replace($inner_mixins[0][$key], self::build_mixins($key, $inner_mixins, $current_mixin), $new_properties);
-						}
+						# Prase the mixin and replace it within the property string
+						$new_properties = str_replace($value, self::build_mixins($key, $inner_mixins, $current_mixin), $new_properties);
 					}
 				}	
 							
