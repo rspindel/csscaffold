@@ -3,7 +3,6 @@
 * and sets up constants, grid etc.
 * --------------------------------------------
 */
-	+grid-classes;
  
  	@include '/templates/reset.css';
 	@include '/templates/typography.css';
@@ -21,7 +20,7 @@
 		baseline:20px;
 	}
 	
-	
+	+grid-classes;
 	
 	/**
 	* Demos

@@ -102,10 +102,7 @@ class CSScaffold {
 		
 		# Otherwise, we're all good. Let's get started!
 		else
-		{
-			# Start the timer
-			Benchmark::start("system");
-	
+		{	
 			# Send it off to the config
 			Config::set($request);
 			Config::set($url_params);
@@ -122,9 +119,6 @@ class CSScaffold {
 			
 			# Parse the css
 			self::parse_css();
-			
-			# Stop the timer...
-			Benchmark::stop("system");
 	
 			# Send it to the browser
 			self::output_css();
@@ -231,6 +225,9 @@ class CSScaffold {
 		# If the cache is stale or doesn't exist
 		if (Config::get('cached_mod_time') < Config::get('requested_mod_time'))
 		{
+			# Start the timer
+			Benchmark::start("system");
+			
 			# Load the CSS file in the object
 			CSS::load(file_get_contents(Config::get('server_path')));
 			
@@ -267,6 +264,9 @@ class CSScaffold {
 			# Parse @for loops
 			For_loops::parse();
 			
+			# Compress it before parsing
+			CSS::compress(CSS::$css);
+			
 			foreach(self::$plugins as $plugin)
 			{
 				$plugin->process();
@@ -274,6 +274,9 @@ class CSScaffold {
 			
 			# Parse the mixins
 			Mixins::parse();
+			
+			# Compress it before parsing
+			CSS::compress(CSS::$css);
 			
 			foreach(self::$plugins as $plugin)
 			{
@@ -294,9 +297,12 @@ class CSScaffold {
 				$plugin->formatting_process();
 			}
 			
+			# Stop the timer...
+			Benchmark::stop("system");
+			
 			if (Config::get('show_header') === TRUE)
 			{		
-				CSS::$css  = "/* Processed and cached by CSScaffold on ". gmdate('r') . "*/\n\n" . CSS::$css;
+				CSS::$css  = "/* Processed by CSScaffold on ". gmdate('r') . " in ".Benchmark::get("system", "time")." seconds */\n\n" . CSS::$css;
 			}
 			
 			# Write the css file to the cache
