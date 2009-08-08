@@ -1,13 +1,15 @@
-@for !i from 1 to !column-count
+=grid-classes
 {
-	.columns-!i 		{ +columns(!i); }
-	.push-!i 			{ +push(!i); }
-	.pull-!i 			{ +pull(!i); }
-	.append-!i 			{ +append(!i); }
-	.prepend-!i 		{ +prepend(!i); }
-	.group				{ +group; }
-	.baseline-up-!i		{ +baseline-up(!i); }
-	.baseline-down-!i	{ +baseline-down(!i); }
+	@for !i from 1 to !column-count
+	{
+		.columns-!i 		{ +columns(!i); }
+		.push-!i 			{ +push(!i); }
+		.pull-!i 			{ +pull(!i); }
+		.append-!i 			{ +append(!i); }
+		.prepend-!i 		{ +prepend(!i); }
+		.baseline-up-!i		{ +baseline-up(!i); }
+		.baseline-down-!i	{ +baseline-down(!i); }
+	}
 }
 
 /**

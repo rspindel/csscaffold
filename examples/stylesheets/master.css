@@ -3,6 +3,7 @@
 * and sets up constants, grid etc.
 * --------------------------------------------
 */
+	+grid-classes;
  
  	@include '/templates/reset.css';
 	@include '/templates/typography.css';
@@ -19,6 +20,8 @@
 		gutter-width:10px;
 		baseline:20px;
 	}
+	
+	
 	
 	/**
 	* Demos
