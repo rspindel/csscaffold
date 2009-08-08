@@ -31,11 +31,9 @@ class For_loops extends Plugins
 	private function parse_fors($string)
 	{
 		if($found = self::find_fors($string))
-		{
+		{			
 			foreach($found[0] as $key => $value)
-			{
-				CSS::replace($value, "");
-				
+			{				
 				$s = "";
 				
 				$from = $found[2][$key];
@@ -47,7 +45,7 @@ class For_loops extends Plugins
 					$s .= str_replace("!{$var}", $i, $found[5][$key]);	
 				}
 				
-				CSS::append($s);
+				CSS::replace($found[0][$key], $s);				
 			}
 		}
 	}
