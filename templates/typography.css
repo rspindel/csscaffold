@@ -161,21 +161,6 @@
 		padding:[(!baseline / 2) - 1]px; 
 		border:1px solid #eee; 
 	}
-
-	
-	/**
-	* --------------------------------------------------------
-	* @subsection General Styles
-	* --------------------------------------------------------
-	*/
-	
-	.mark		  	{ background:!highlight; }
-	.added      	{ background:#060; color: #fff; }
-	.removed    	{ background:#900; color: #fff; }
-	
-	.quiet      	{ +small-text; } 
-	.loud	      	{ +all-caps; }	
-	
 	
 	/**
 	* --------------------------------------------------------
@@ -210,7 +195,7 @@
 	dl { margin: 0 0 !baseline 0; }
 	dt { font-weight: bold; }
 	dd { margin-left: !baseline;}
-
+	
 	/**
 	* --------------------------------------------------------
 	* @subsection Tables
