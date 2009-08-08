@@ -108,9 +108,9 @@
 	cite			{ }
 	q				{ }
 	
-	strong      	{ }
-	em      	  	{ }
-	mark 			{ background:!highlight; }
+	strong      	{ font-weigh:bold; }
+	em      	  	{ font-style:italic; line-height:0.5; }
+	mark 			{ }
 	
 	del         	{ color:!light; }
 	ins 			{ background:#fffde2; text-decoration:none; }
