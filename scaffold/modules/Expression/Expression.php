@@ -30,7 +30,7 @@ class Expression extends Plugins
 	 */
 	public static function find_expressions($css)
 	{
-		return match('/\:[^;]*?(\[[\'\"]?([^]]*?)[\'\"]?\])[^;]*?\;/', $css);
+		return match('/(\#\[[\'\"]?([^]]*?)[\'\"]?\])/', $css);
 	}
 	
 	/**
@@ -54,7 +54,7 @@ class Expression extends Plugins
 			foreach($expressions as $key => $expression)
 			{								
 				# Remove units and quotes
-				$expression = preg_replace('/(px|em|%)/','', remove_all_quotes($expression)); 
+				$expression = preg_replace('/(px|em|%)/','', $expression); 
 				
 				eval("\$result = ".$expression.";");
 				
