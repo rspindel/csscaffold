@@ -19,7 +19,7 @@
 	height:200px;
 	width:100px;
 	
-	a 
+	a, div, span
 	{
 		color:#fff;
 		border-bottom:1px solid #eee;
@@ -29,6 +29,11 @@
 		which is the a
 		*/
 		&:hover { border-color:#000; }
+		
+		em, strong, mark
+		{
+			font-weight:normal;
+		}
 	}
 	
 	/*

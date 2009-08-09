@@ -15,15 +15,25 @@
 	
 ------------------------------------------------------------------ */
 
+@constants
+{
+	test:20;
+}
+
 .expression
 {
-	height:[(100*1.5) - 10 / 20]px;
+	height:#[(100*1.5) - 10 / 20]px;
 	background:#eee;
 }
 
-.expression-2
+#[enumerate("columns-",1,12)]
 {
-	padding:[floor(!baseline * 1.5)]px;
+	padding:#[floor(!test * 1.5)]px;
 	border:1px solid #eee;
-	margin-top:!baseline;
+	margin-top:#[!test]px;
+}
+
+[accesskey]:after 
+{
+	content: "[" attr(accesskey) "]";
 }

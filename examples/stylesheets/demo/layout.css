@@ -6,10 +6,28 @@
 -------------------------------------------------------- */	
 	
 	/**
+	 * Create our grid. Fairly self-explanatory. This is required
+	 * to use any of the layout plugins features.
+	 */
+	@grid
+	{
+		column-width:60;
+		column-count:12;
+		gutter-width:10px;
+		baseline:20px;
+	}
+
+	/**
 	* +container is a mixin built into Scaffold.
 	* It functions the same as the blueprint or 960.gs container
 	*/
 	.container 		{ +container; }
+	
+	/**
+	 * This mixin will generate all of the grid classes, .columns-1 etc
+	 * You can find the file for this in scaffold/plugins/layout/support/mixins/
+	 */
+	+grid-classes;
 	
 	/**
 	 * This is the content we layout with mixins instead of classes (the second grid)

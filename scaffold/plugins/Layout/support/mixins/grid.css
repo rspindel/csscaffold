@@ -2,13 +2,18 @@
 {
 	@for !i from 1 to !column-count
 	{
-		.columns-!i 		{ +columns(!i); }
+		.columns-!i 		{ +span(!i); }
 		.push-!i 			{ +push(!i); }
 		.pull-!i 			{ +pull(!i); }
 		.append-!i 			{ +append(!i); }
 		.prepend-!i 		{ +prepend(!i); }
 		.baseline-up-!i		{ +baseline-up(!i); }
 		.baseline-down-!i	{ +baseline-down(!i); }
+	}
+	
+	#[enumerate('.columns-', 1, !column-count)]
+	{
+		+columns-base;
 	}
 }
 
@@ -47,9 +52,9 @@
  * Span a certain number of columns
  * @param !number The number of columns
  */
-=span(!n)
+=span(!n, !override = true)
 {
-	width:[(!n * !column-width) + (!n * (!gutter-width * 2) - (!gutter-width * 2))]px;
+	width:#[(!n * !column-width) + (!n * (!gutter-width * 2) - (!gutter-width * 2))]px;
 }
 
 /**
@@ -58,10 +63,14 @@
  * Makes the element behave as a column.
  * @param !number The number of columns
  */
-=columns(!n, !side = "both")
+=columns(!n)
 {
 	+span(!n);
-	
+	+columns-base;
+}
+
+=columns-base
+{
 	position:relative;
 	float:left;
 	margin-right:!gutter-width;
@@ -80,12 +89,12 @@
 
 =baseline-up(!n)
 {
-	top:[-(!baseline * !n)]px;
+	top:#[-(!baseline * !n)]px;
 }
 
 =baseline-down(!n)
 {
-	top:[!baseline * !n]px;
+	top:#[!baseline * !n]px;
 }
 
 /**
@@ -96,7 +105,7 @@
 =group
 {
 	padding:0 !gutter-width;
-	margin:[!baseline / 2]px 0;
+	margin:#[!baseline / 2]px 0;
 }
 
 /**
@@ -107,31 +116,29 @@
 
 =append(!n)
 {
-	padding-right:[(!column-width + (!gutter-width * 2)) * !n]px;
+	padding-right:#[(!column-width + (!gutter-width * 2)) * !n]px;
 }
 
 =prepend(!n)
 {
-	padding-left:[(!column-width + (!gutter-width * 2)) * !n]px;
+	padding-left:#[(!column-width + (!gutter-width * 2)) * !n]px;
 }
 
 =baseline(!n)
 {
-	height:[!baseline * !n]px;
+	height:#[!baseline * !n]px;
 }
 
 =pull(!n)
 {
-	position:relative;
-	left:[-((!column-width + !gutter-width * 2) * !n)]px;
-	margin-right:[-((!column-width + !gutter-width * 2) * !n - !gutter-width)]px !important;
+	left:#[-((!column-width + !gutter-width * 2) * !n)]px;
+	margin-right:#[-((!column-width + !gutter-width * 2) * !n - !gutter-width)]px !important;
 }
 
 =push(!n)
 {
-	position:relative;
-	left:[(!column-width + !gutter-width * 2) * !n]px;
-	margin-right:[(!column-width + !gutter-width * 2) * !n + !gutter-width]px !important;
+	left:#[(!column-width + !gutter-width * 2) * !n]px;
+	margin-right:#[(!column-width + !gutter-width * 2) * !n + !gutter-width]px !important;
 }
 
 =column-border(!side = "right", !color = #eee, !type = "solid", !thickness = "1px")
