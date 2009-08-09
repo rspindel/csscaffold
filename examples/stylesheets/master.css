@@ -70,3 +70,4 @@
 	@include 'demo/constants.css';
 	@include 'demo/layout.css';
 	@include 'demo/browser-test.css';
+	@include 'demo/box-sizing.css';

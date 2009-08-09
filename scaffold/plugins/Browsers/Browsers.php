@@ -13,14 +13,14 @@ class Browsers extends Plugins
 	 *
 	 * @var string
 	 */
-	public static $browser = "Other";
+	public static $browser = false;
 	
 	/**
 	 * The version of the browser
 	 *
 	 * @var string
 	 */
-	public static $version = "";
+	public static $version = false;
 
 	/**
 	 * The construct is important for plugins. It is where flags MUST 
@@ -70,64 +70,67 @@ class Browsers extends Plugins
 	 */
 	public function process()
 	{
-		# Find all @browsers
-		if($found = CSS::find_selectors("@browser\s*(!|lte|lt|gt|gte)?\s*(IE)\s*(\d+)?", 5))
-		{	
-			# parse them
-			foreach($found[0] as $key => $value)
-			{
-				$scope 			= $found[2][$key];
-				$browser 		= $found[3][$key];
-				$version 		= $found[4][$key];
-				$properties 	= $found['properties'][$key];
-				
-				# @browser !name
-				if($scope == "!")
+		if(self::$browser = "IE")
+		{
+			# Find all @browsers
+			if($found = CSS::find_selectors("@browser\s*(!|lte|lt|gt|gte)?\s*(IE)\s*(\d+)?", 5))
+			{	
+				# parse them
+				foreach($found[0] as $key => $value)
 				{
-					if(self::$browser != $browser)
+					$scope 			= $found[2][$key];
+					$browser 		= $found[3][$key];
+					$version 		= $found[4][$key];
+					$properties 	= $found['properties'][$key];
+					
+					# @browser !name
+					if($scope == "!")
 					{
-						CSS::replace($value, $properties);
+						if(self::$browser != $browser)
+						{
+							CSS::replace($value, $properties);
+						}
+						else
+						{
+							CSS::replace($value, '');
+						}
+					}
+					
+					# @browser name
+					elseif($version == "")
+					{
+						if(self::$browser == $browser)
+						{
+							CSS::replace($value, $properties);
+						}
+						else
+						{
+							CSS::replace($value, '');
+						}
+					}
+					
+					# @browser condition name version
+					elseif(self::$browser == $browser && $version != "")
+					{
+						if(
+							($scope == "lt" && self::$version < $version)		||
+							($scope == "lte" && self::$version <= $version)		||
+							($scope == "gt" && self::$version > $version)		||
+							($scope == "gte" && self::$version >= $version)		||
+							($scope == "" && self::$version == $version)
+						)
+						{
+							CSS::replace($value, $properties);
+						}
+						else
+						{
+							CSS::replace($value, '');
+						}
 					}
 					else
-					{
+					{					
 						CSS::replace($value, '');
 					}
-				}
-				
-				# @browser name
-				elseif($version == "")
-				{
-					if(self::$browser == $browser)
-					{
-						CSS::replace($value, $properties);
-					}
-					else
-					{
-						CSS::replace($value, '');
-					}
-				}
-				
-				# @browser condition name version
-				elseif(self::$browser == $browser && $version != "")
-				{
-					if(
-						($scope == "lt" && self::$version < $version)		||
-						($scope == "lte" && self::$version <= $version)		||
-						($scope == "gt" && self::$version > $version)		||
-						($scope == "gte" && self::$version >= $version)		||
-						($scope == "" && self::$version == $version)
-					)
-					{
-						CSS::replace($value, $properties);
-					}
-					else
-					{
-						CSS::replace($value, '');
-					}
-				}
-				else
-				{					
-					CSS::replace($value, '');
 				}
 			}
 		}
@@ -142,40 +145,47 @@ class Browsers extends Plugins
 	 */
 	private function get_browser($user_agent)
 	{
-		# Safari Mobile
-		if ( preg_match( '/mozilla.*applewebkit\/([0-9a-z\+\-\.]+).*mobile.*/si', $user_agent, $match ) )
-		{
-			self::$browser = "iPhone";
-			self::$version = $match[1];
-		}
-		
-		# Webkit (Safari, Shiira etc)
-		else if ( preg_match( '/mozilla.*applewebkit\/([0-9a-z\+\-\.]+).*/si', $user_agent, $match ) )
-		{
-			self::$browser = "Webkit";
-			self::$version = $match[1];
-		}
-		
-		# Opera
-		else if ( preg_match( '/mozilla.*opera ([0-9a-z\+\-\.]+).*/si', $user_agent, $match ) 
-		  || preg_match( '/^opera\/([0-9a-z\+\-\.]+).*/si', $user_agent, $match ) )
-		{
-			self::$browser = "Opera";
-			self::$version = $match[1];
-    	}
-		
-		# Gecko (Firefox, Mozilla, Camino etc)
-		else if ( preg_match( '/mozilla.*rv:([0-9a-z\+\-\.]+).*gecko.*/si', $user_agent, $match ) )
-		{
-			self::$browser = "Gecko";
-			self::$version = $match[1];
-		}
-		
-		# MSIE
-		else if( preg_match( '/mozilla.*MSIE ([0-9a-z\+\-\.]+).*/si', $user_agent, $match ) )
-		{
+		if(self::$version = Config::get('ie')) 
+		{ 
 			self::$browser = "IE";
-			self::$version = $match[1];
+		}
+		else
+		{		
+			# Safari Mobile
+			if ( preg_match( '/mozilla.*applewebkit\/([0-9a-z\+\-\.]+).*mobile.*/si', $user_agent, $match ) )
+			{
+				self::$browser = "iPhone";
+				self::$version = $match[1];
+			}
+			
+			# Webkit (Safari, Shiira etc)
+			else if ( preg_match( '/mozilla.*applewebkit\/([0-9a-z\+\-\.]+).*/si', $user_agent, $match ) )
+			{
+				self::$browser = "Webkit";
+				self::$version = $match[1];
+			}
+			
+			# Opera
+			else if ( preg_match( '/mozilla.*opera ([0-9a-z\+\-\.]+).*/si', $user_agent, $match ) 
+			  || preg_match( '/^opera\/([0-9a-z\+\-\.]+).*/si', $user_agent, $match ) )
+			{
+				self::$browser = "Opera";
+				self::$version = $match[1];
+	    	}
+			
+			# Gecko (Firefox, Mozilla, Camino etc)
+			else if ( preg_match( '/mozilla.*rv:([0-9a-z\+\-\.]+).*gecko.*/si', $user_agent, $match ) )
+			{
+				self::$browser = "Gecko";
+				self::$version = $match[1];
+			}
+			
+			# MSIE
+			else if( preg_match( '/mozilla.*MSIE ([0-9a-z\+\-\.]+).*/si', $user_agent, $match ) )
+			{
+				self::$browser = "IE";
+				self::$version = $match[1];
+			}
 		}
 	}
 }

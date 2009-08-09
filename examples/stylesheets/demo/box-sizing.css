@@ -17,5 +17,16 @@
 	+border-box;
 	padding:20px;
 	float:left;
-	width:210px;
+	width:100px;
+	height:100px;
+	background:#fff;
+	border:1px solid #000;
+}
+
+#box-container
+{
+	+clearfix;
+	background:#aaa;
+	width:500px;
+	padding:20px;
 }

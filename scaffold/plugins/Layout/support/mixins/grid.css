@@ -52,7 +52,7 @@
  * Span a certain number of columns
  * @param !number The number of columns
  */
-=span(!n, !override = true)
+=span(!n)
 {
 	width:#[(!n * !column-width) + (!n * (!gutter-width * 2) - (!gutter-width * 2))]px;
 }
