@@ -42,6 +42,26 @@
 * -------------------------------------------------------------------------
 */
 
+	/**
+	 * Takes a string, a seperator and a max number and generates
+	 * a long string from them
+	 *
+	 * @author Anthony Short
+	 * @param $string
+	 * @return string
+	 */
+	function enumerate($string, $min, $max, $sep = ",")
+	{
+		$ret = array();
+		
+		for ($i = $min; $i <= $max; $i++)
+		{
+			$ret[] = $string . $i;
+		}
+		
+		return implode($sep, $ret);
+	}
+
     /**
 	 * Rounds a number to the nearest multiple of another number
 	 *
