@@ -3,6 +3,7 @@
 	Targetting Internet Explorer
 	
 	REQUIRES THE BROWSERS PLUGIN
+	http://github.com/anthonyshort/Browsers/tree/master
 		
 	You can target chunks of your css to particular versions of IE by
 	using @browser. It works just like the html conditional tests

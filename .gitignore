@@ -3,3 +3,5 @@ scaffold/cache/*
 */.DS_STORE
 .htaccess
 /misc
+/examples/index.html
+/examples/pages

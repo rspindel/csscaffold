@@ -4,9 +4,9 @@
 * --------------------------------------------
 */
  
- 	@include '/templates/reset.css';
-	@include '/templates/typography.css';
-	@include '/templates/content.css';
+ 	@include 'templates/reset.css';
+	@include 'templates/typography.css';
+	@include 'templates/content.css';
 	
 	/**
 	* Demo styles
