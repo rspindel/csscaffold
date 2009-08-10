@@ -59,11 +59,7 @@
 */
 =inline-block
 {
-	@browser lte IE 7
-	{
-		zoom:1;
-	}
-	 
+	zoom:1;
 	display:inline; 
 	display:-moz-inline-box; 
 	display:inline-block; 
@@ -82,8 +78,5 @@
 */
 =has-layout
 {
-	@browser lte IE 7
-	{
-		zoom:1;
-	}
+	zoom:1;
 }

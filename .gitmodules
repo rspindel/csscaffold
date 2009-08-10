@@ -1,0 +1,3 @@
+[submodule "scaffold/plugins/Layout"]
+	path = scaffold/plugins/Layout
+	url = git@github.com:anthonyshort/Layout.git

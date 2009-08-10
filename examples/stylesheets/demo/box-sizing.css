@@ -14,7 +14,8 @@
 
 .box-sizing
 {
-	+border-box;
+	+border-box;	
+	
 	padding:20px;
 	float:left;
 	width:100px;

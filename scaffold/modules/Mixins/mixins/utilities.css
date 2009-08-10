@@ -61,11 +61,7 @@
 =sharpen
 {
 	image-rendering:-moz-crisp-edges;
-	
-	@browser gte IE 7 
-	{
-		-ms-interpolation-mode:nearest-neighbor;  /* IE 7+ */
-	} 
+	-ms-interpolation-mode:nearest-neighbor;  /* IE 7+ */
 }
 
 /**
@@ -77,11 +73,7 @@
 =high-quality
 {
 	image-rendering:optimizeQuality;
-	
-	@browser gte IE 7 
-	{
-		-ms-interpolation-mode:bicubic;  /* IE 7+ */
-	}
+	-ms-interpolation-mode:bicubic;  /* IE 7+ */
 }
 
 /**
