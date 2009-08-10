@@ -2,6 +2,8 @@
 
 	Object-oriented CSS using 'extends'
 	
+	REQUIRES THE OOCSS PLUGIN
+	
 	You can extend a selector by using the property "extends". This
 	allows the selector to mimic the parent and extend its properties.
 	

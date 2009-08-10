@@ -67,7 +67,7 @@
 	 * Including these last for a reason. The layout classes should
 	 * really come after everything else so they override everything.
 	 */
-	@include 'demo/constants.css';
-	@include 'demo/layout.css';
-	@include 'demo/browser-test.css';
-	@include 'demo/box-sizing.css';
+	@include 'stylesheets/constants.css';
+	@include 'stylesheets/layout.css';
+	@include 'stylesheets/browser-test.css';
+	@include 'stylesheets/box-sizing.css';
