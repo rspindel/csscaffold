@@ -20,7 +20,20 @@ A dynamic CSS framework inspired by Shaun Inman's CSS Cacheer. It's aimed at exp
 
 ##Quick Installation
 
-Download the latest release of Scaffold. Place all the files **inside your css directory on your webserver**. Navigate to examples/stylesheets/master.css to ensure that Scaffold is working correctly. It should compress the css and add a timestamp to the top of the file. Any css files within this css directory will now be parsed by Scaffold automatically. Have a look through the demos in examples/ to get a basic understanding of its different features and read the wiki.
+1. Download the latest release of Scaffold. 
+2. Place all the files **inside your css directory on your webserver**. 
+3. Navigate to examples/master.css to ensure that Scaffold is working correctly. It should compress the css and add a timestamp to the top of the file. 
+
+Any css files within this css directory will now be parsed by Scaffold automatically. Have a look through the demos in examples/ to get a basic understanding of its different features and read the wiki.
+
+##Available Plugins
+
+Some of the plugins available are:
+
+- [Layout](http://github.com/anthonyshort/Layout/tree/master) - Create 960.gs style grids with Mixins and classes.
+- [OOCSS](http://github.com/anthonyshort/Extends/tree/master) - Extend one selector using another selector
+- [Browsers](http://github.com/anthonyshort/Browsers/tree/master) - Target specific browsers
+- [Icy Compressor](http://github.com/anthonyshort/Icy/tree/master) -  An alternative to Minify
 
 ##Having trouble?
 
