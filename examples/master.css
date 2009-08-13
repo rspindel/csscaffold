@@ -69,5 +69,4 @@
 	 */
 	@include 'stylesheets/constants.css';
 	@include 'stylesheets/layout.css';
-	@include 'stylesheets/browser-test.css';
 	@include 'stylesheets/box-sizing.css';

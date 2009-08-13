@@ -11,6 +11,12 @@
  **/
 class Import extends Plugins
 {
+	/**
+	 * Stores which files have already been included
+	 *
+	 * @var array
+	 */
+	private static $loaded = array();
 	
 	/**
 	 * This function occurs before everything else
@@ -48,13 +54,14 @@ class Import extends Plugins
 			# Get the file path to the include
 			$path = find_absolute_path($include);
 						
-			if(is_css($include) AND file_exists($path))
+			if(is_css($include) AND file_exists($path) AND !in_array($path, self::$loaded))
 			{
+				self::$loaded[] = $path;
 				$css = str_replace($matches[0][0], file_get_contents($path), $css);
 			}
 			else
 			{
-				stop("Error: Import > File is not a css file, or cannot be found - " . $path);
+				stop("Error: Import > File is not a css file, or cannot be found, or has alreadt been included - " . $path);
 			}
 			
 			$css = self::server_import($css, $include);

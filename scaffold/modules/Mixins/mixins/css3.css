@@ -14,6 +14,16 @@
 }
 
 /**
+ * Rotate an element
+ */
+=rotate(!angle)
+{
+	-webkit-transform: rotate(#[!angle]deg);
+	-moz-transform: rotate(#[!angle]deg);
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=#[90 / !angle]);
+}
+
+/**
  * Adds a drop shadow
  */
 =box-shadow(!blur, !color, !x, !y)

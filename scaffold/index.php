@@ -54,7 +54,7 @@
 	$system_dir = realpath('./');
 	
 	# If cache dir is blank, use the default
-	if ($cache_dir == "")
+	if($cache_dir == "")
 	{
 		$cache_dir = join_path($system_dir, 'cache');
 	}
