@@ -19,7 +19,8 @@ A dynamic CSS framework inspired by Shaun Inman's CSS Cacheer. It's aimed at exp
 
 1. Download the latest release of Scaffold. 
 2. Place all the files **inside your css directory on your webserver**. 
-3. Change any configuration vs in scaffold/config.php
+3. Rename example.htaccess to just .htaccess
+4. Change any configuration options in scaffold/config.php
 
 Any css files within this css directory will now be parsed by Scaffold automatically. 
 
