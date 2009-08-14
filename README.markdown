@@ -23,6 +23,10 @@ A dynamic CSS framework inspired by Shaun Inman's CSS Cacheer. It's aimed at exp
 
 Any css files within this css directory will now be parsed by Scaffold automatically. Have a look through the demos in examples/ to get a basic understanding of its different features and read the wiki.
 
+##Examples and Tests
+
+You can have a look at some working examples in the [CSScaffold templates and tests](http://github.com/anthonyshort/csscaffold-templates/tree/master) project.
+
 ##Available Plugins
 
 Some of the plugins available are:
@@ -31,10 +35,6 @@ Some of the plugins available are:
 - [OOCSS](http://github.com/anthonyshort/Extends/tree/master) - Extend one selector using another selector
 - [Browsers](http://github.com/anthonyshort/Browsers/tree/master) - Target specific browsers
 - [Icy Compressor](http://github.com/anthonyshort/Icy/tree/master) -  An alternative to Minify
-
-##Templates
-
-Most projects start the same way - create a typography, layout, elements, reset etc stylesheet and go. To skip the steps of rewriting all of that, you can just use some of the templates.
 
 ##Having trouble?
 
