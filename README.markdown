@@ -4,16 +4,13 @@ A dynamic CSS framework inspired by Shaun Inman's CSS Cacheer. It's aimed at exp
 
 - Constants
 - SASS-style mixins
-- Compressed, Cached and Gzipped for speedy download
+- Compressed, Cached and Gzipped on-the-fly
 - Nested Selectors
-- Easy-to-use layout system
-- Utility classes and mixins to get you started
+- Perform PHP operationså
 - Image replace text by just linking to the image file
-- CSSTidy your CSS on the fly
-- And more... 
 - Plus easily add your own functionality using the plugin system
 
-##Requirements
+##What you need
 
 - PHP5+
 - modrewrite enabled in Apache (optional)
@@ -34,6 +31,10 @@ Some of the plugins available are:
 - [OOCSS](http://github.com/anthonyshort/Extends/tree/master) - Extend one selector using another selector
 - [Browsers](http://github.com/anthonyshort/Browsers/tree/master) - Target specific browsers
 - [Icy Compressor](http://github.com/anthonyshort/Icy/tree/master) -  An alternative to Minify
+
+##Templates
+
+Most projects start the same way - create a typography, layout, elements, reset etc stylesheet and go. To skip the steps of rewriting all of that, you can just use some of the templates.
 
 ##Having trouble?
 

@@ -14,7 +14,7 @@
 }
 
 /**
- * Rotate an element
+ * Rotate an element 90, 180 or 270 degrees
  */
 =rotate(!angle)
 {
