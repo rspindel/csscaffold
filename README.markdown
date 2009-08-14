@@ -19,9 +19,9 @@ A dynamic CSS framework inspired by Shaun Inman's CSS Cacheer. It's aimed at exp
 
 1. Download the latest release of Scaffold. 
 2. Place all the files **inside your css directory on your webserver**. 
-3. Navigate to examples/master.css to ensure that Scaffold is working correctly. It should compress the css and add a timestamp to the top of the file. 
+3. Change any configuration vs in scaffold/config.php
 
-Any css files within this css directory will now be parsed by Scaffold automatically. Have a look through the demos in examples/ to get a basic understanding of its different features and read the wiki.
+Any css files within this css directory will now be parsed by Scaffold automatically. 
 
 ##Examples and Tests
 
