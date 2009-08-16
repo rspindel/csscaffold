@@ -2,7 +2,7 @@ CSScaffold.esproj
 */.DS_STORE
 
 .htaccess
-examples
+tests
 
 scaffold/cache/*
 scaffold/plugins/Layout

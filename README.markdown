@@ -24,10 +24,6 @@ A dynamic CSS framework inspired by Shaun Inman's CSS Cacheer. It's aimed at exp
 
 Any css files within this css directory will now be parsed by Scaffold automatically. 
 
-##Examples and Tests
-
-You can have a look at some working examples in the [CSScaffold templates and tests](http://github.com/anthonyshort/csscaffold-templates/tree/master) project.
-
 ##Available Plugins
 
 Some of the plugins available are:
