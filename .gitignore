@@ -1,7 +1,13 @@
 CSScaffold.esproj
-scaffold/cache/*
 */.DS_STORE
+
 .htaccess
-/misc
-/examples/index.html
-/examples/pages
+examples
+
+scaffold/cache/*
+scaffold/plugins/Layout
+scaffold/plugins/OOCSS
+scaffold/plugins/Browsers
+scaffold/plugins/Icy
+
+
