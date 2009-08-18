@@ -125,7 +125,7 @@ error_reporting(E_ALL);
 	}
 	else
 	{
-		stop("/* No CSS file requested */");
+		require './install.php';
 	}
 
 
