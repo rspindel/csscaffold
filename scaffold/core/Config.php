@@ -95,23 +95,7 @@ abstract class Config
 	{
 		if (self::$configuration === NULL)
 		{			
-			// Load the config file
-			require join_path(BASEPATH,'config/config.php') ; 
-			
-			// If the config file doesn't contain an array
-			if(!is_array($config) || !isset($config))
-			{
-				error("Your config file does not contain a config array");
-				return false; 
-			}
-			
-			// Set the config values in our core config
-			self::$configuration = $config;
-			
-			// Remove the config array
-			unset($config);
-			
-			return TRUE;
+			self::init();
 		}
 		
 		if ($group != "")

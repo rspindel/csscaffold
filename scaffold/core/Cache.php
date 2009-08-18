@@ -175,12 +175,6 @@ abstract class Cache
 		
 		# Save it
 		self::$cached_file = $cached_file;
-
-		# Turn off recaching if the cache is locked
-		if(Config::get('cache_lock') === TRUE)
-		{
-			$recache = FALSE;
-		}
 		
 		# Check to see if we should delete the cache file
 		if($recache === TRUE && file_exists($cached_file))

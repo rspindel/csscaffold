@@ -14,6 +14,16 @@
 	$config['cache_lock'] = false;
 	
 	/**
+	 * ALWAYS RECACHE
+	 *
+	 * If true, it will recache the css every time. This means
+	 * you don't need to do ?recache during development.
+	 *
+	 * @var boolean
+	 **/	
+	$config['always_recache'] = false;
+	
+	/**
 	 * SHOW CSS HEADER INFORMATION
 	 *
 	 * Output information at the top of your cached file for debugging

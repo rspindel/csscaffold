@@ -18,7 +18,6 @@ class CSScaffold {
 	 **/ 
 	 public static $plugins;
 	 
-	 
 	/**
 	 * Holds the array of module objects
 	 *
@@ -53,9 +52,7 @@ class CSScaffold {
 				$url_params[$key] = true;
 			}
 		}
-		
-		$recache = (isset($url_params['recache'])) ? true : false;
-		
+
 		# Easy access to file/directory info
 		# dirname = path to the directory containing the file
 		# basename = name of the file
@@ -113,6 +110,24 @@ class CSScaffold {
 			# Load the plugins and flags
 			self::$modules = self::load_addons(read_dir(BASEPATH . "/modules"));
 			self::$plugins = self::load_addons(read_dir(BASEPATH . "/plugins"));
+						
+			if(Config::get('always_recache'))
+			{
+				$recache = true;
+			}
+			elseif(isset($url_params['recache']))
+			{
+				$recache = true;
+			}
+			else
+			{
+				$recache = false;
+			}
+			
+			if(Config::get('cache_lock') === true)
+			{
+				$recache = false;
+			}
 
 			# Prepare the cache, and tell it if we want to recache
 			Cache::set($recache);
@@ -371,7 +386,8 @@ class CSScaffold {
 		FB::group('Plugins');
 			FB::log(self::$plugins);
 		FB::groupEnd();
-	
+		
+		/*
 		FB::group('Benchmark');
 		foreach (self::$loaded as $key => $value)
 		{
@@ -383,6 +399,7 @@ class CSScaffold {
 			FB::groupEnd();
 		}
 		FB::groupEnd();
+		*/
 	}
 		 
 }
