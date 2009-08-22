@@ -39,7 +39,7 @@ class CSScaffold {
 	 * @return void
 	 * @author Anthony Short
 	 **/
-	public static function run($url_params) 
+	public static function setup($url_params) 
 	{
 		# Get rid of those pesky slashes
 		$requested_file	= trim_slashes($url_params['request']);
@@ -53,11 +53,6 @@ class CSScaffold {
 			}
 		}
 
-		# Easy access to file/directory info
-		# dirname = path to the directory containing the file
-		# basename = name of the file
-		# extension = extension of the file
-		# filename = name of the file, minus the extension
 		$request = pathinfo($requested_file);
 		
 		# Add our requested file var to the array
@@ -70,10 +65,8 @@ class CSScaffold {
 		$request['relative_file'] = substr($requested_file, strlen(URLPATH));
 		
 		# Path to the directory containing the file, relative to the css directory		
-		$request['relative_dir'] = pathinfo($request['relative_file'], PATHINFO_DIRNAME);		
+		$request['relative_dir'] = pathinfo($request['relative_file'], PATHINFO_DIRNAME);	
 
-		FB::log($request);
-		
 		# If the file doesn't exist
 		if(!file_exists($request['server_path']))
 		{
@@ -87,7 +80,7 @@ class CSScaffold {
 		}
 		
 		# or if the requested file wasn't from the css directory
-		elseif(substr($request['dirname'], 0, strlen(URLPATH)) != URLPATH)
+		elseif(!substr(pathinfo($request['server_path'], PATHINFO_DIRNAME), 0, strlen(CSSPATH)))
 		{
 			stop('Error: The file wasn\'t requested from the css directory. Check your css path in your config, or the path to the css file you just requested');
 		}
@@ -97,47 +90,58 @@ class CSScaffold {
 			self::output_raw($request['server_path']);
 		}
 		
-		# Otherwise, we're all good. Let's get started!
-		else
-		{	
-			# Send it off to the config
-			Config::set($request);
-			Config::set($url_params);
-						
-			# Get the modified time of the CSS file
-			Config::set('requested_mod_time', filemtime(Config::get('server_path')));
-			
-			# Load the plugins and flags
-			self::$modules = self::load_addons(read_dir(BASEPATH . "/modules"));
-			self::$plugins = self::load_addons(read_dir(BASEPATH . "/plugins"));
-						
-			if(Config::get('always_recache'))
-			{
-				$recache = true;
-			}
-			elseif(isset($url_params['recache']))
-			{
-				$recache = true;
-			}
-			else
-			{
-				$recache = false;
-			}
-			
-			if(Config::get('cache_lock') === true)
-			{
-				$recache = false;
-			}
-
-			# Prepare the cache, and tell it if we want to recache
-			Cache::set($recache);
-			
-			# Parse the css
-			self::parse_css();
-	
-			# Send it to the browser
-			self::output_css();
+		# Make sure the files/folders are writeable
+		if (!is_dir(CACHEPATH) || !is_writable(CACHEPATH))
+		{
+			stop("Cache path (".CACHEPATH.") is not writable or does not exist");
 		}
+		
+		# Send it off to the config
+		Config::set($request);
+		Config::set($url_params);
+					
+		# Get the modified time of the CSS file
+		Config::set('requested_mod_time', filemtime(Config::get('server_path')));
+		
+		# Load the plugins and flags
+		self::$modules = self::load_addons(read_dir(BASEPATH . "/modules"));
+		self::$plugins = self::load_addons(read_dir(BASEPATH . "/plugins"));
+					
+		if(Config::get('always_recache'))
+		{
+			$recache = true;
+		}
+		elseif(isset($url_params['recache']))
+		{
+			$recache = true;
+		}
+		else
+		{
+			$recache = false;
+		}
+		
+		if(Config::get('cache_lock') === true)
+		{
+			$recache = false;
+		}
+	
+		# Prepare the cache, and tell it if we want to recache
+		Cache::set($recache);
+	}
+	
+	/**
+	 * Runs CSScaffold
+	 *
+	 * @author Anthony Short
+	 * @return null
+	 */
+	public static function start()
+	{		
+		# Parse the css
+		self::parse_css();
+	
+		# Send it to the browser
+		self::output_css();
 	}
 
 	/**
@@ -352,54 +356,5 @@ class CSScaffold {
 			exit();
 		}
 	}
-	
-	/**
-	* Spits out information about the processes to Firebug
-	* Mainly for plugin development. Turn it on in the config
-	*
-	* @author Anthony Short
-	* @param $css
-	* @return null
-	*/
-	private static function debug($css)
-	{
-		FB::group('Output Information');
-			FB::log("Filesize - " . $filesize = round(strlen($css) / 1024 , 2) . "kB");
-			FB::log("Processed in ".Benchmark::get("system", "time")." seconds");
-			FB::log("Rendered as ".User_agent::$browser." ".User_agent::$version);
-			FB::log("With flags ".join(", ", array_keys(Cache::$flags)));
-			FB::log("Memory usage " . readable_size(Benchmark::memory_usage()));
-		FB::groupEnd();
 
-		FB::group('Config');
-			FB::log(Config::$configuration);
-		FB::groupEnd();
-		
-		FB::group('Constants');
-			FB::log(Constants::$constants);
-		FB::groupEnd();
-		
-		FB::group('Mixins');
-			FB::log(Mixins::$mixins);
-		FB::groupEnd();
-		
-		FB::group('Plugins');
-			FB::log(self::$plugins);
-		FB::groupEnd();
-		
-		/*
-		FB::group('Benchmark');
-		foreach (self::$loaded as $key => $value)
-		{
-			FB::group($value);
-				FB::log("Import(".Benchmark::get($value . '_import', "time")." secs)");
-				FB::log("Pre-process(".Benchmark::get($value . '_preprocess', "time")." secs)");
-				FB::log("Process(".Benchmark::get($value . '_process', "time")." secs)");
-				FB::log("Post-process(".Benchmark::get($value . '_postprocess', "time")." secs)");
-			FB::groupEnd();
-		}
-		FB::groupEnd();
-		*/
-	}
-		 
 }
