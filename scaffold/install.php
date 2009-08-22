@@ -26,7 +26,7 @@ $page =
 		</dl>
 		<dl>
 			<dt>System Path</dt>
-			<dd class='".check_path(BASEPATH)."'>".BASEPATH."</dd>
+			<dd class='".check_path(SYSPATH)."'>".SYSPATH."</dd>
 		</dl>
 		<dl>
 			<dt>System URL</dt>

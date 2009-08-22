@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR die('No direct access allowed.');
+<?php defined('SYSPATH') OR die('No direct access allowed.');
 
 /**
  * Simple benchmarking.

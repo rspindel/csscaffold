@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR die('No direct access allowed.');
+<?php defined('SYSPATH') OR die('No direct access allowed.');
 
 /**
  * CSScaffold
@@ -104,8 +104,8 @@ class CSScaffold {
 		Config::set('requested_mod_time', filemtime(Config::get('server_path')));
 		
 		# Load the plugins and flags
-		self::$modules = self::load_addons(read_dir(BASEPATH . "/modules"));
-		self::$plugins = self::load_addons(read_dir(BASEPATH . "/plugins"));
+		self::$modules = self::load_addons(read_dir(SYSPATH . "/modules"));
+		self::$plugins = self::load_addons(read_dir(SYSPATH . "/plugins"));
 					
 		if(Config::get('always_recache'))
 		{
@@ -254,8 +254,8 @@ class CSScaffold {
 			Import::parse();
 			
 			# Import the mixins in the plugin folders
-			$plugin_folders = read_dir(join_path(BASEPATH, 'plugins'));
-			$module_folders = read_dir(join_path(BASEPATH, 'modules'));
+			$plugin_folders = read_dir(join_path(SYSPATH, 'plugins'));
+			$module_folders = read_dir(join_path(SYSPATH, 'modules'));
 
 			Mixins::import_mixins(array_merge($plugin_folders, $module_folders));
 														

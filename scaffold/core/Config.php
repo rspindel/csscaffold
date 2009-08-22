@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR die('No direct access allowed.');
+<?php defined('SYSPATH') OR die('No direct access allowed.');
 
 /**
  * Config
@@ -45,7 +45,7 @@ abstract class Config
 		if (self::$configuration === NULL)
 		{
 			# Load the config file
-			self::load(join_path(BASEPATH,'config.php'));
+			self::load(join_path(SYSPATH,'config.php'));
 		}
 	}
 	
