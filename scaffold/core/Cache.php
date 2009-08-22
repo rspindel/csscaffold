@@ -10,13 +10,6 @@
 abstract class Cache
 {
 	/**
-	* The singleton instance of the controller
-	*
-	* @var object
-	**/
-	public static $instance;
-	
-	/**
 	* The location of the cache file
 	*
 	* @var string
@@ -36,16 +29,6 @@ abstract class Cache
 	 * @var array
 	 */
 	public static $flags = null;
-
-	/**
-	* Returns the instance of the core
-	*
-	* @return self
-	**/
-	public static function & get_instance()
-	{
-		return self::$instance;
-	}
 
 	/**
 	* Clear the set cached file
