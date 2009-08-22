@@ -27,3 +27,10 @@ $config['always_recache'] = true;
  * @var boolean
  **/
 $config['show_header'] = true;
+
+/**
+ * FIREBUG
+ *
+ * Enable Firebug output
+ */
+#FB::setEnabled(true);
