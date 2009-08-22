@@ -56,16 +56,14 @@ class Expression extends Plugins
 				# Remove units and quotes
 				$expression = preg_replace('/(px|em|%)/','', $expression); 
 				
-				eval("\$result = ".$expression.";");
-				
-				if($result)
+				if($result = eval("return ".$expression.";"))
 				{
 					# Replace the string in the css
 					$css = str_replace($originals[$key], $result, $css);
 				}
 				else
 				{
-					stop("Error: Eval: Can't process this function - " . $expression);
+					throw new Scaffold_User_Exception("Expression Error", "Expression cannot be parsed: " . $matches[0][$key]);
 				}
 			}
 		}

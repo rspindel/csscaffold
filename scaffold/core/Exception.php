@@ -69,7 +69,7 @@ class Scaffold_Exception extends Exception {
 		header('HTTP/1.1 500 Internal Server Error');
 	}
 
-} // End Kohana Exception
+}
 
 /**
  * Scaffold_User_Exception

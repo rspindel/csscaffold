@@ -42,26 +42,30 @@ class Import extends Plugins
 		{
 			$unique = array_unique($matches[1]);
 			$include = $unique[0];
-			
-			if($include == $previous)
-			{
-				stop("Error: Recursion in imports. You are importing the css file into itself");
-			}
-			
+
 			# This is the path of the css file that requested the 
 			$requested_dir = pathinfo(Config::get('server_path'), PATHINFO_DIRNAME);
 			
 			# Get the file path to the include
 			$path = find_absolute_path($include);
-						
-			if(is_css($include) AND file_exists($path) AND !in_array($path, self::$loaded))
+			
+			# Make sure recursion isn't happening
+			if($include == $previous)
+				throw new Scaffold_User_Exception("Import Error", "Trying to import a file into itself - " . $include);
+			
+			# Make sure it's a CSS file
+			if(!is_css($include))
+				throw new Scaffold_User_Exception("Import", "File you're trying to import isn't CSS - $include");
+			
+			# Make sure the file exists	
+			if(!file_exists($path))
+				throw new Scaffold_User_Exception("Import", "File doesn't exist - $include");
+			
+			# Make sure it hasn't already been included	
+			if(!in_array($path, self::$loaded))
 			{
 				self::$loaded[] = $path;
 				$css = str_replace($matches[0][0], file_get_contents($path), $css);
-			}
-			else
-			{
-				stop("Error: Import > File is not a css file, or cannot be found, or has alreadt been included - " . $path);
 			}
 			
 			$css = self::server_import($css, $include);

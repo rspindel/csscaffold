@@ -41,6 +41,8 @@ final class CSScaffold
 	 **/
 	public static function setup($url_params) 
 	{
+		$recache = false;
+		
 		# Define Scaffold error constant
 		define('E_SCAFFOLD', 42);
 		
@@ -53,15 +55,7 @@ final class CSScaffold
 		# Get rid of those pesky slashes
 		$requested_file	= trim_slashes($url_params['request']);
 		
-		# If they've put a param in the url, consider it set to 'true'
-		foreach($url_params as $key => $value)
-		{
-			if($value == "")
-			{
-				$url_params[$key] = true;
-			}
-		}
-
+		# Store the path information
 		$request = pathinfo($requested_file);
 		
 		# Add our requested file var to the array
@@ -74,36 +68,36 @@ final class CSScaffold
 		$request['relative_file'] = substr($requested_file, strlen(CSSURL));
 		
 		# Path to the directory containing the file, relative to the css directory		
-		$request['relative_dir'] = pathinfo($request['relative_file'], PATHINFO_DIRNAME);	
+		$request['relative_dir'] = pathinfo($request['relative_file'], PATHINFO_DIRNAME);
+		
+		# If they've put a param in the url, consider it set to 'true'
+		foreach($url_params as $key => $value)
+		{
+			if($value == "")
+			{
+				$url_params[$key] = true;
+			}
+		}
 
 		# If the file doesn't exist
 		if(!file_exists($request['server_path']))
-		{
-			throw new Scaffold_exception("Can't seem to find your css file - " . $request['server_path'] . ". Check your paths in the config"); 
-		}
+			throw new Scaffold_User_Exception("CSScaffold Error", "Requested CSS file doesn't exist - {$request['server_path']} Check your paths in the config"); 
 
 		# or if it's not a css file
-		elseif (!is_css($requested_file))
-		{
-			stop("Error: Request file isn't a css file");
-		}
+		if (!is_css($requested_file))
+			throw new Scaffold_User_Exception("CSScaffold Error", "Request file isn't a css file");
 		
 		# or if the requested file wasn't from the css directory
-		elseif(!substr(pathinfo($request['server_path'], PATHINFO_DIRNAME), 0, strlen(CSSPATH)))
-		{
-			stop('Error: The file wasn\'t requested from the css directory. Check your css path in your config, or the path to the css file you just requested');
-		}
+		if(!substr(pathinfo($request['server_path'], PATHINFO_DIRNAME), 0, strlen(CSSPATH)))
+			throw new Scaffold_User_Exception("CSScaffold Error", "Requested file wasn't within the CSS directory");
 		
-		elseif(isset($url_params['raw']))
-		{
+		# Output raw file
+		if(isset($url_params['raw']))
 			self::output_raw($request['server_path']);
-		}
 		
 		# Make sure the files/folders are writeable
 		if (!is_dir(CACHEPATH) || !is_writable(CACHEPATH))
-		{
-			stop("Cache path (".CACHEPATH.") is not writable or does not exist");
-		}
+			throw new Scaffold_User_Exception("CSScaffold Error", "Cache path {CACHEPATH} is not writable or does not exist");
 		
 		# Send it off to the config
 		Config::set($request);
@@ -111,31 +105,21 @@ final class CSScaffold
 					
 		# Get the modified time of the CSS file
 		Config::set('requested_mod_time', filemtime(Config::get('server_path')));
+			
+		# Set the recache to true if needed		
+		if(Config::get('always_recache') OR isset($url_params['recache']))
+			$recache = true;
+		
+		# Set it back to false if it's locked
+		if(Config::get('cache_lock') === true)
+			$recache = false;
+	
+		# Prepare the cache, and tell it if we want to recache
+		Cache::set($recache);
 		
 		# Load the plugins and flags
 		self::$modules = self::load_addons(read_dir(SYSPATH . "/modules"));
 		self::$plugins = self::load_addons(read_dir(SYSPATH . "/plugins"));
-					
-		if(Config::get('always_recache'))
-		{
-			$recache = true;
-		}
-		elseif(isset($url_params['recache']))
-		{
-			$recache = true;
-		}
-		else
-		{
-			$recache = false;
-		}
-		
-		if(Config::get('cache_lock') === true)
-		{
-			$recache = false;
-		}
-	
-		# Prepare the cache, and tell it if we want to recache
-		Cache::set($recache);
 	}
 	
 	/**

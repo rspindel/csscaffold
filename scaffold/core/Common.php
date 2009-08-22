@@ -106,6 +106,22 @@
 * -------------------------------------------------------------------------
 */
 	/**
+	 * Finds the line a string is on
+	 */
+	function strline($string, $base)
+	{
+		$base = explode("\n",$base);
+		
+		for($line = 0; $line < count($base); $line++) 
+		{
+			if(strpos($base[$line], $string) >= 0)
+			{
+				return $line;
+			}
+		}
+	}
+
+	/**
 	 * Quick regex matching
 	 *
 	 * @author Anthony Short

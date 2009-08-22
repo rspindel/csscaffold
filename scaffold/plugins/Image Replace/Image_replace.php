@@ -41,10 +41,12 @@ class Image_replace extends Plugins
 				$absolute_img = find_absolute_path($path);
 													
 				# Check if it exists
-				if (!file_exists($absolute_img) || !is_image($absolute_img)) 
-				{
-					continue;
-				}
+				if(!file_exists($absolute_img))
+					throw new Scaffold_User_Exception("Image Replace Plugin", "File does not exist - $absolute_img");
+				
+				# Make sure it's an image
+				if(!is_image($absolute_img)) 
+					throw new Scaffold_User_Exception("Image Replace Plugin", "File is not an image - $absolute_img");
 																				
 				// Get the size of the image file
 				$size = GetImageSize($absolute_img);

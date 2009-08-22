@@ -67,7 +67,6 @@ class Mixins extends Plugins
 			unset($full_base, $base_names, $base_args, $base_props);
 			
 			# Find the mixins
-			# match('/\+(([0-9a-zA-Z_-]*?)(\((.*?)\))?)\;/', $css);
 			if($mixins = self::find_mixins(CSS::$css))
 			{
 				# Loop through each of the found +mixins
@@ -109,7 +108,7 @@ class Mixins extends Plugins
 				$current_mixin = $mixin_name;
 				
 				# Parse the parameters of the mixin
-				$params = self::parse_params($mixins[4][$mixin_key], $bases[$mixin_name]['params']);
+				$params = self::parse_params($mixins[0][$mixin_key], $mixins[4][$mixin_key], $bases[$mixin_name]['params']);
 				
 				# Create the property string
 				$new_properties = str_replace(array_keys($params),array_values($params),$base_properties);
@@ -136,11 +135,11 @@ class Mixins extends Plugins
 			}
 			elseif($current_mixin == $mixin_name)
 			{
-				return "/* RECURSION */";
+				throw new Scaffold_User_Exception("Mixin Error", "Mixin is including itself - $mixin_name");
 			}
 			else
 			{
-				return '/* Mixin doesn\'t exist ' . $mixin_name . '*/';
+				throw new Scaffold_User_Exception("Mixin Error", "Mixin doesn't exist - $mixin_name");
 			}
 	
 			return false;	
@@ -167,54 +166,36 @@ class Mixins extends Plugins
 	 * @param $params
 	 * @return array
 	 */
-	public static function parse_params($params, $function_args = array())
+	public static function parse_params($mixin_name, $params, $function_args = array())
 	{		
 		$parsed = array();
+		$mixin_params = explode(',', $params);
 		
-		if($params != "")
-		{
-			$params = explode(',', $params);
-		}
-		else
-		{
-			$params = array();
-		}
-		
-		# Loop through each function arg and
-		# create the parsed params array
+		# Loop through each function arg and create the parsed params array
 		foreach($function_args as $key => $value)
-		{		
-			if (strstr($value, '=')) $value = explode('=', $value);
-			
-			#$value[0] = str_replace("!", "", $value[0]);
-			#$value[0] = str_replace("-", "_", trim($value[0]));
-			#$$value[0] = trim($value[1]);
-			#
-			#stop($container_width);
-							
-			# If the user didn't include one of the
-			# params, we'll check to see if a default is available			
-
-			if(!isset($params[$key]))
-			{
+		{			
+			# If the user didn't include one of the sparams, we'll check to see if a default is available			
+			if(empty($mixin_params[$key]))
+			{			
 				# If there is a default value for the param			
-				if($value[1] != '')
+				if(strstr($value, '='))
 				{
-					$params[$key] = trim($value[1]);
+					$value = explode('=', $value);
+					$mixin_params[$key] = trim($value[1]);
 					$value = $value[0];
 				}
 				
 				# Otherwise they've left one out
 				else
 				{
-					stop('Missing mixin parameter');
+					throw new Scaffold_User_Exception("Mixin Error", "Mixin is missing a parameter - $mixin_name");
 				}
 			}
 						
 			# If it has been exploded, make it a string again
 			if(is_array($value)) $value = $value[0];
 			
-			$parsed[trim($value)] = unquote($params[$key]);
+			$parsed[trim($value)] = unquote($mixin_params[$key]);
 		}
 		
 		return $parsed;
@@ -275,12 +256,9 @@ class Mixins extends Plugins
 				{
 					$value = str_replace($val, quote($val), $value);
 				}
-
-				# Parse the args
-				@eval("if($value){ \$result = true;}");
 				
 				# When one of them is if true, replace the whole group with the contents of that if and continue
-				if($result === true)
+				if(eval("if($value){ \$result = true;}"))
 				{
 					$string = str_replace($found[0][$key], $found[3][$key], $string);
 				}
