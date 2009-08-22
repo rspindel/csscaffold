@@ -15,7 +15,7 @@ class NestedSelectors extends Plugins
 	 * @author Anthony Short
 	 * @return $css string
 	 */
-	function parse()
+	public static function parse()
 	{
 		$xml = CSS::to_xml();
 		
@@ -36,7 +36,7 @@ class NestedSelectors extends Plugins
 	 * @param $rule
 	 * @return return type
 	 */
-	private function parse_rule($rule, $parent = '')
+	public static function parse_rule($rule, $parent = '')
 	{
 		$css_string = "";
 		$property_list = "";
@@ -99,7 +99,7 @@ class NestedSelectors extends Plugins
 	 * @param $child
 	 * @return string
 	 */
-	public function parse_selector($parent, $child)
+	public static function parse_selector($parent, $child)
 	{
 		# If there are listed parents eg. #id, #id2, #id3
 		if(strstr($child, ","))
@@ -130,7 +130,7 @@ class NestedSelectors extends Plugins
 	 * @param $parent
 	 * @return string
 	 */
-	private function split_children($children, $parent)
+	public static function split_children($children, $parent)
 	{
 		$children = explode(",", $children);
 												

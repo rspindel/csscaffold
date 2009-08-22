@@ -116,7 +116,7 @@ final class Benchmark {
 	 *
 	 * @return  integer
 	 */
-	public function memory_usage()
+	public static function memory_usage()
 	{
 		static $func;
 

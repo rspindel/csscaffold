@@ -119,7 +119,9 @@ class Constants extends Plugins
 				
 				if(!empty($missing))
 				{
-					throw new Scaffold_Exception('Missing Constants', 'The following constants are used, but not defined:', $missing);
+					$missing = "<p>The following constants are used, but not defined:</p><ul><li>" . implode("</li><li>", $missing) . "</li></ul>";
+					
+					throw new Scaffold_User_Exception('Undefined Constants', $missing);
 				}
 			}
 		}

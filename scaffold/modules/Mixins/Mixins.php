@@ -93,7 +93,7 @@ class Mixins extends Plugins
 	 * @param $mixins - An array of found mixins
 	 * @return string
 	 */
-	function build_mixins($mixin_key, $mixins, $current_mixin = "")
+	public static function build_mixins($mixin_key, $mixins, $current_mixin = "")
 	{
 		global $bases;
 		
@@ -155,7 +155,7 @@ class Mixins extends Plugins
 	 * @param $string
 	 * @return array
 	 */
-	private function find_mixins($string)
+	public static function find_mixins($string)
 	{	
 		return match('/\+(([0-9a-zA-Z_-]*?)(\((.*?)\))?)\;/', $string);
 	}
@@ -167,7 +167,7 @@ class Mixins extends Plugins
 	 * @param $params
 	 * @return array
 	 */
-	function parse_params($params, $function_args = array())
+	public static function parse_params($params, $function_args = array())
 	{		
 		$parsed = array();
 		
@@ -226,7 +226,7 @@ class Mixins extends Plugins
 	 * @author Anthony Short
 	 * @return string
 	 */
-	function import_mixins($path)
+	public static function import_mixins($path)
 	{
 		if(is_array($path))
 		{

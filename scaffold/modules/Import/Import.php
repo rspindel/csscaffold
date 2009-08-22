@@ -36,7 +36,7 @@ class Import extends Plugins
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	function server_import($css, $previous = "")
+	public static function server_import($css, $previous = "")
 	{		
 		if (preg_match_all('/\@include\s+(?:\'|\")([^\'\"]+)(?:\'|\")\;/', $css, $matches))
 		{

@@ -147,10 +147,10 @@ final class CSScaffold
 	 * @param   integer         line number
 	 * @return  void
 	 */
-	public function exception_handler($exception, $message = NULL, $file = NULL, $line = NULL)
+	public static function exception_handler($exception, $message = NULL, $file = NULL, $line = NULL)
 	{
 		try
-		{			
+		{	
 			# PHP errors have 5 args, always
 			$PHP_ERROR = (func_num_args() === 5);
 	
@@ -231,10 +231,10 @@ final class CSScaffold
 				}
 			}
 			
-			$message = "<ul><li>" . implode("</li><li>", $message) . "</li></ul>";
-			
+			$output = "<h1>$error</h1><p>$message</p><p><code>line $line<br/>$file</code></p>";
+
 			require(SYSPATH . '/views/error.php');
-	
+
 			# Turn off error reporting
 			error_reporting(0);
 			exit;
@@ -280,7 +280,7 @@ final class CSScaffold
 	 * @author Anthony Short
 	 * @return null
 	 */
-	private function set_headers($last_mod = "")
+	public static function set_headers($last_mod = "")
 	{
 		header('Content-Type: text/css');
 		header("Vary: User-Agent, Accept");
@@ -453,7 +453,7 @@ final class CSScaffold
 	 * @return void
 	 * @author Anthony Short
 	 **/
-	private function output_css()
+	public static function output_css()
 	{		
 		if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'], $_SERVER['SERVER_PROTOCOL']) && Config::get('cached_mod_time') <= strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']))
 		{

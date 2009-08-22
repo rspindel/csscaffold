@@ -22,7 +22,7 @@ abstract class Config
 	 * @author Anthony Short
 	 * @return boolean
 	 */
-	private function init()
+	public static function init()
 	{
 		if (self::$configuration === NULL)
 		{

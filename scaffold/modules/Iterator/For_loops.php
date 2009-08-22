@@ -28,7 +28,7 @@ class For_loops extends Plugins
 	 * @param $string
 	 * @return string
 	 */
-	private function parse_fors($string)
+	public static function parse_fors($string)
 	{
 		if($found = self::find_fors($string))
 		{			
