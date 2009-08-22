@@ -10,29 +10,11 @@
 abstract class Config
 {
 	/**
-	* The singleton instance of the controller
-	*
-	* @var object
-	**/
-	public static $instance;
-	
-	/**
 	* Hold the configuration
 	*
 	* @var array
 	**/
 	public static $configuration;
-
-	/**
-	* Returns the instance of the class
-	*
-	* @return self
-	* @author Anthony Short
-	**/
-	public static function & get_instance()
-	{
-		return self::$instance;
-	}
 
 	/**
 	 * Initializes the config

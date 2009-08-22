@@ -43,7 +43,7 @@ ini_set('display_errors', TRUE);
 // -------------------------------------------------------------------------
 // Nothing below here should be edited
 // -------------------------------------------------------------------------
-
+				
 $path = pathinfo(__FILE__);
 
 # This file
@@ -74,6 +74,7 @@ if(isset($_GET['request']))
 	require SYSPATH . '/core/Config.php';
 	require SYSPATH . '/core/CSScaffold.php';
 	require SYSPATH . '/core/CSS.php';
+	require SYSPATH . '/core/Exception.php';
 
 	# Send the request through to the main controller
 	CSScaffold::setup($_GET);

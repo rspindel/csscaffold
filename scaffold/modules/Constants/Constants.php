@@ -32,8 +32,8 @@ class Constants extends Plugins
 		# Find the constants group and values
 		$found 	= CSS::find_at_group('constants');
 		
-		self::set("scaffold_url", BASEURL);
-		self::set("css_url", URLPATH);
+		self::set("scaffold_url", SYSURL);
+		self::set("css_url", CSSURL);
 
 		# If there are some constants, let do it.
 		if($found !== false)
@@ -103,6 +103,23 @@ class Constants extends Plugins
 				if($value != "")
 				{
 					CSS::replace( "!{$key}", unquote($value));
+				}
+			}
+			
+			self::$constants = array();
+		}
+		else
+		{
+			if(preg_match_all('/!\w+/', CSS::$css, $matches))
+			{
+				$missing = array_values(array_unique($matches[0]));
+				
+				# Remove !important
+				unset($missing[array_search('!important', $missing)]);
+				
+				if(!empty($missing))
+				{
+					throw new Scaffold_Exception('Missing Constants', 'The following constants are used, but not defined:', $missing);
 				}
 			}
 		}

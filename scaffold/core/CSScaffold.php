@@ -9,8 +9,8 @@
  * @package default
  * @author Anthony Short
  **/
-class CSScaffold {
-	 
+final class CSScaffold 
+{	 
 	/**
 	 * Holds the array of plugin objects
 	 *
@@ -41,6 +41,15 @@ class CSScaffold {
 	 **/
 	public static function setup($url_params) 
 	{
+		# Define Scaffold error constant
+		define('E_SCAFFOLD', 42);
+		
+		# Set error handler
+		set_error_handler(array('CSScaffold', 'exception_handler'));
+		
+		# Set exception handler
+		set_exception_handler(array('CSScaffold', 'exception_handler'));
+
 		# Get rid of those pesky slashes
 		$requested_file	= trim_slashes($url_params['request']);
 		
@@ -62,7 +71,7 @@ class CSScaffold {
 		$request['server_path'] = join_path(DOCROOT,$requested_file);
 		
 		# Path to the file, relative to the css directory		
-		$request['relative_file'] = substr($requested_file, strlen(URLPATH));
+		$request['relative_file'] = substr($requested_file, strlen(CSSURL));
 		
 		# Path to the directory containing the file, relative to the css directory		
 		$request['relative_dir'] = pathinfo($request['relative_file'], PATHINFO_DIRNAME);	
@@ -70,7 +79,7 @@ class CSScaffold {
 		# If the file doesn't exist
 		if(!file_exists($request['server_path']))
 		{
-			stop("Can't seem to find your css file - " . $request['server_path'] . ". Check your paths in the config"); 
+			throw new Scaffold_exception("Can't seem to find your css file - " . $request['server_path'] . ". Check your paths in the config"); 
 		}
 
 		# or if it's not a css file
@@ -129,6 +138,113 @@ class CSScaffold {
 		Cache::set($recache);
 	}
 	
+	/**
+	 * Handles Exceptions
+	 *
+	 * @param   integer|object  exception object or error code
+	 * @param   string          error message
+	 * @param   string          filename
+	 * @param   integer         line number
+	 * @return  void
+	 */
+	public function exception_handler($exception, $message = NULL, $file = NULL, $line = NULL)
+	{
+		try
+		{			
+			# PHP errors have 5 args, always
+			$PHP_ERROR = (func_num_args() === 5);
+	
+			# Test to see if errors should be displayed
+			#if ($PHP_ERROR AND (error_reporting() & $exception) === 0)
+			#	return;
+				
+			# Error handling will use exactly 5 args, every time
+			if ($PHP_ERROR)
+			{
+				$code     = $exception;
+				$type     = 'PHP Error';
+			}
+			else
+			{
+				$code     = $exception->getCode();
+				$type     = get_class($exception);
+				$message  = $exception->getMessage();
+				$file     = $exception->getFile();
+				$line     = $exception->getLine();
+			}
+
+			if(is_numeric($code))
+			{
+				$codes = array
+				(
+					E_SCAFFOLD           => array( 1, 'Scaffold Error',   'Please check the Scaffold documentation for information about the following error.'),
+
+					E_RECOVERABLE_ERROR  => array( 1, 'Recoverable Error', 'An error was detected which prevented the loading of this page. If this problem persists, please contact the website administrator.'),
+					E_ERROR              => array( 1, 'Fatal Error',       ''),
+					E_USER_ERROR         => array( 1, 'Fatal Error',       ''),
+					E_PARSE              => array( 1, 'Syntax Error',      ''),
+					E_WARNING            => array( 1, 'Warning Message',   ''),
+					E_USER_WARNING       => array( 1, 'Warning Message',   ''),
+					E_STRICT             => array( 2, 'Strict Mode Error', ''),
+					E_NOTICE             => array( 2, 'Runtime Message',   ''),
+				);
+	
+				if (!empty($codes[$code]))
+				{
+					list($level, $error, $description) = $codes[$code];
+				}
+				else
+				{
+					$level = 1;
+					$error = $PHP_ERROR ? 'Unknown Error' : get_class($exception);
+					$description = '';
+				}
+			}
+			else
+			{
+				// Custom error message, this will never be logged
+				$level = 5;
+				$error = $code;
+				$description = '';
+			}
+			
+			// Remove the DOCROOT from the path, as a security precaution
+			$file = str_replace('\\', '/', realpath($file));
+			$file = preg_replace('|^'.preg_quote(DOCROOT).'|', '', $file);
+
+			if($PHP_ERROR)
+			{
+				$description = 'An error has occurred which has stopped Scaffold';
+	
+				if (!headers_sent())
+				{
+					# Send the 500 header
+					header('HTTP/1.1 500 Internal Server Error');
+				}
+			}
+			else
+			{
+				if (method_exists($exception, 'sendHeaders') AND !headers_sent())
+				{
+					# Send the headers if they have not already been sent
+					$exception->sendHeaders();
+				}
+			}
+			
+			$message = "<ul><li>" . implode("</li><li>", $message) . "</li></ul>";
+			
+			require(SYSPATH . '/views/error.php');
+	
+			# Turn off error reporting
+			error_reporting(0);
+			exit;
+		}
+		catch(Exception $e)
+		{
+			die('Fatal Error: '.$e->getMessage().' File: '.$e->getFile().' Line: '.$e->getLine());
+		}
+	}
+		
 	/**
 	 * Runs CSScaffold
 	 *
@@ -276,8 +392,7 @@ class CSScaffold {
 				$plugin->pre_process();
 			}
 			
-			# This HAS to happen AFTER they are set, but 
-			# before they are used.
+			# Replace the constants
 			Constants::replace();
 			
 			# Parse @for loops
@@ -293,6 +408,9 @@ class CSScaffold {
 			
 			# Parse the mixins
 			Mixins::parse();
+			
+			# Find missing constants
+			Constants::replace();
 			
 			# Compress it before parsing
 			CSS::compress(CSS::$css);

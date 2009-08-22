@@ -30,7 +30,7 @@ $page =
 		</dl>
 		<dl>
 			<dt>System URL</dt>
-			<dd class='".check_path(join_path(DOCROOT, BASEURL))."'>".BASEURL."</dd>
+			<dd class='".check_path(join_path(DOCROOT, SYSURL))."'>".SYSURL."</dd>
 		</dl>
 		<dl>
 			<dt>CSS Path</dt>
@@ -38,7 +38,7 @@ $page =
 		</dl>
 		<dl>
 			<dt>URL path to the CSS directory</dt>
-			<dd class='".check_path(join_path(DOCROOT, URLPATH))."'>".URLPATH."</dd>
+			<dd class='".check_path(join_path(DOCROOT, CSSURL))."'>".CSSURL."</dd>
 		</dl>
 		";
 		
