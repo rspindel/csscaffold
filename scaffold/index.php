@@ -1,131 +1,87 @@
 <?php
 
-error_reporting(E_ALL);
+/**
+ * CSS DIRECTORY
+ *
+ * Absolute url path to your css directory. eg. /themes/css/
+ */
+$css_dir = "../";
 
-/******************************************************************************
-* Get the common functions
-******************************************************************************/
-	
-	# Fetch the core functions.
-	require 'config.php'; 
-	require 'core/Common.php'; 
-	
-/******************************************************************************
-* Path Settings
-******************************************************************************/
-	 
-	/**
-	 * CSS DIRECTORY
-	 *
-	 * Path to your css directory. eg. /themes/css/
-	 *
-	 * @var string
-	 **/
-	$css_dir = "./";
-	
-	/**
-	 * CACHE DIRECTORY PATH
-	 *
-	 * Leave this unless you would like to set something other 
-	 * than the default system/cache/ folder.  Use a full server 
-	 * path with trailing slash.
-	 * 
-	 * Default is the cache folder inside the system directory
-	 *
-	 * @var string
-	 **/
-	$cache_dir = "";
+/**
+ * CACHE DIRECTORY PATH
+ *
+ * Leave this unless you would like to set something other 
+ * than the default system/cache/ folder.  Use a full server 
+ * path with trailing slash.
+ * 
+ * Default is the cache folder inside the system directory
+ */
+$cache_dir = "cache";
 
+/**
+ * PHP VERSION
+ *
+ * Make sure the we're using PHP 5.2 or newer
+ */
+version_compare(PHP_VERSION, '5.2', '<') and exit('CSScaffold requires PHP 5.2 or newer.');
 
-/******************************************************************************
-* Define constants
-******************************************************************************/
+/**
+ * ERROR REPORTING
+ *
+ * Set the error reporting level. Unless you have a special need, E_ALL is a
+ * good level for error reporting.
+ */
+error_reporting(E_ALL & ~E_STRICT);
 
-	# Define the document root
-	define('DOCROOT', $_SERVER['DOCUMENT_ROOT']);
-		
-	$css_dir = join_path(DOCROOT,$css_dir);
-	$css_dir = realpath($css_dir);
-	$css_dir = str_replace(trim_slashes(DOCROOT), "/", $css_dir);
-	
-	# Fix up any weird slash issues. We'll just ditch them
-	# and let our join path function fix it
-	$css_dir = trim_slashes($css_dir);
-	
-	# The full server path to this directory
-	$system_dir = realpath('./');
-	
-	# If cache dir is blank, use the default
-	if($cache_dir == "")
-	{
-		$cache_dir = join_path($system_dir, 'cache');
-	}
-	
-	# Full path to the cache folder
-	define('CACHEPATH', $cache_dir);
-		
-	# Full path to the system folder
-	define('BASEPATH', $system_dir);
-	
-	# Url to the scaffold folder
-	define('BASEURL', str_replace(DOCROOT, '', BASEPATH));
-	
-	# Full path to the CSS directory
-	define('CSSPATH', join_path(DOCROOT,$css_dir));
-	
-	# Url path to the css directory
-	define('URLPATH', $css_dir);
-	
-	# Clean up
-	unset($cache_dir, $css_dir, $system_dir);
-	
+/**
+ * DISPLAY ERRORS
+ *
+ * Setting it to false will remove all errors
+ */
+ini_set('display_errors', TRUE);
 
-/******************************************************************************
-* Make sure the files/folders are writeable
-******************************************************************************/
+// -------------------------------------------------------------------------
+// Nothing below here should be edited
+// -------------------------------------------------------------------------
 
-	if (!is_dir(CACHEPATH) || !is_writable(CACHEPATH))
-	{
-		stop("Cache path (".CACHEPATH.") is not writable or does not exist");
-	}
-	
-/******************************************************************************
-* Load the required classes
-******************************************************************************/
-	
-	require './core/Benchmark.php';
-	require './core/Plugins.php';
-	require './core/Cache.php';
-	require './core/Config.php';
-	require './core/CSScaffold.php';
-	require './core/CSS.php';
-	
-	require './libraries/FirePHPCore/FirePHP.class.php';
-	require './libraries/FirePHPCore/fb.php';
-	
-	if($config['debug'] === true)
-	{
-		FB::setEnabled(true);
-	}
-	else
-	{
-		FB::setEnabled(false);
-	}
-	
-		
-/******************************************************************************
-* We've got everything we need, lets do this thing...
-******************************************************************************/
-	
-	# Setup CSScaffold with our CSS file
-	# But make sure a file was requested
-	if(isset($_GET['request']))
-	{
-		CSScaffold::run($_GET);
-	}
-	else
-	{
-		require './install.php';
-	}
+$path = pathinfo(__FILE__);
 
+# This file
+define('SCAFFOLD', $path['basename']);
 
+# If this is a symlink, change to the real file
+is_link(SCAFFOLD) and chdir(dirname(realpath(__FILE__)));
+
+define('DOCROOT', 	$_SERVER['DOCUMENT_ROOT']);
+define('SYSPATH', 	$path['dirname']);
+define('CACHEPATH', realpath($cache_dir));
+define('CSSPATH',	realpath($css_dir));
+define('CSSURL', 	str_replace(DOCROOT, '/', CSSPATH));
+define('SYSURL', 	str_replace(DOCROOT, '/', SYSPATH));
+
+# Clean up
+unset($cache_dir, $css_dir, $path);
+
+# Common/global helper functions 
+require SYSPATH . '/core/Common.php'; 
+	
+# If a file was requested, load it up and send it off
+if(isset($_GET['request']))
+{
+	require SYSPATH . '/core/Benchmark.php';
+	require SYSPATH . '/core/Plugins.php';
+	require SYSPATH . '/core/Cache.php';
+	require SYSPATH . '/core/Config.php';
+	require SYSPATH . '/core/CSScaffold.php';
+	require SYSPATH . '/core/CSS.php';
+
+	# Send the request through to the main controller
+	CSScaffold::setup($_GET);
+	
+	# Start the system
+	CSScaffold::start();
+}
+else
+{
+	require SYSPATH . '/install.php';
+}
