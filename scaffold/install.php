@@ -38,7 +38,7 @@ $page =
 		</dl>
 		<dl>
 			<dt>URL path to the CSS directory</dt>
-			<dd class='".check_path(URLPATH)."'>".URLPATH."</dd>
+			<dd class='".check_path(join_path(DOCROOT, URLPATH))."'>".URLPATH."</dd>
 		</dl>
 		";
 		
