@@ -135,14 +135,12 @@ class Mixins extends Plugins
 			}
 			elseif($current_mixin == $mixin_name)
 			{
-				throw new Scaffold_User_Exception("Mixin Error", "Mixin is including itself - $mixin_name");
+				throw new Scaffold_Exception("Mixins.recursion", $mixin_name);
 			}
-			else
-			{
-				throw new Scaffold_User_Exception("Mixin Error", "Mixin doesn't exist - $mixin_name");
-			}
-	
-			return false;	
+		}
+		else
+		{
+			throw new Scaffold_Exception("Mixins.missing_mixin", $mixin_name);
 		}
 		
 	}
@@ -188,7 +186,7 @@ class Mixins extends Plugins
 				# Otherwise they've left one out
 				else
 				{
-					throw new Scaffold_User_Exception("Mixin Error", "Mixin is missing a parameter - $mixin_name");
+					throw new Scaffold_Exception("Mixins.missing_param", $mixin_name);
 				}
 			}
 						

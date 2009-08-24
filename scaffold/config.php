@@ -33,4 +33,13 @@ $config['show_header'] = true;
  *
  * Enable Firebug output
  */
-#FB::setEnabled(true);
+FB::setEnabled(true);
+
+/**
+ * LANGUAGE
+ *
+ * Choose a language. Currently, only supports English
+ *
+ * @var boolean
+ **/
+$config['language'] = 'english';

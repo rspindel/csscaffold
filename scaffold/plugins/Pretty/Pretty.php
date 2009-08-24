@@ -7,7 +7,7 @@ class Pretty extends Plugins
 {
 	function formatting_process()
 	{
-		if(Config::get('pretty') === true)
+		if(CSScaffold::config('pretty') === true)
 		{
 			$css =& CSS::$css;
 			

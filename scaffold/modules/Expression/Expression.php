@@ -63,7 +63,7 @@ class Expression extends Plugins
 				}
 				else
 				{
-					throw new Scaffold_User_Exception("Expression Error", "Expression cannot be parsed: " . $matches[0][$key]);
+					throw new Scaffold_Exception("Expression.cannot_parse", $matches[0][$key]);
 				}
 			}
 		}

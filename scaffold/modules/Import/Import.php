@@ -44,22 +44,22 @@ class Import extends Plugins
 			$include = $unique[0];
 
 			# This is the path of the css file that requested the 
-			$requested_dir = pathinfo(Config::get('server_path'), PATHINFO_DIRNAME);
+			$requested_dir = pathinfo(CSScaffold::config('requested_file_path'), PATHINFO_DIRNAME);
 			
 			# Get the file path to the include
 			$path = find_absolute_path($include);
 			
 			# Make sure recursion isn't happening
 			if($include == $previous)
-				throw new Scaffold_User_Exception("Import Error", "Trying to import a file into itself - " . $include);
+				throw new Scaffold_Exception("Import.recursion", $include);
 			
 			# Make sure it's a CSS file
 			if(!is_css($include))
-				throw new Scaffold_User_Exception("Import", "File you're trying to import isn't CSS - $include");
+				throw new Scaffold_Exception("Import.not_css", $include);
 			
 			# Make sure the file exists	
 			if(!file_exists($path))
-				throw new Scaffold_User_Exception("Import", "File doesn't exist - $include");
+				throw new Scaffold_Exception("Import.doesnt_exist", $include);
 			
 			# Make sure it hasn't already been included	
 			if(!in_array($path, self::$loaded))

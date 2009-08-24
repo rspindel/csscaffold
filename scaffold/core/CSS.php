@@ -441,20 +441,6 @@ abstract class CSS
 			'data:image/PNG;' => '#SCAFFOLD-IMGDATA-PNG#',
 			'data:image/JPG;' => "#SCAFFOLD-IMGDATA-JPG#",
 			'http://' => "#SCAFFOLD-HTTP",
-			
-			/*
-			':hover' => '#SCAFFOLD-HOVER#',
-			':root' => '#SCAFFOLD-ROOT#',
-			':nth-child' => '#SCAFFOLD-NTH#',
-			':nth-last-child' => '#SCAFFOLD-NTHLAST#',
-			':nth-of-type' => '#SCAFFOLD-NTHOFTYPE',
-			':nth-last-of-type' => '#SCAFFOLD-NTHLASTTYPE',
-			':first-child' => '#SCAFFOLD-FIRSTCHILD',
-			':last-child' => '#SCAFFOLD-LASTCHILD',
-			':first-of-type' => '#SCAFFOLD-FIRSTTYPE',
-			':last-of-type' => '#SCAFFOLD-LASTTYPE',
-			':only-child' => '#SCAFFOLD-ONLYCHILD',
-			*/
 		);
 		
 		switch ($action)
@@ -483,93 +469,5 @@ abstract class CSS
 	{
 		self::$css .= $selector ."{". $properties . "}";
 	}
-	
-	/**
-	* Calculates the total amount of padding present
-	* in a selector. This doesn't factor in cascading.
-	*
-	* @param   string   All of the properties of a selector
-	* @return  string	The total amount of left and right padding combined
-	*/
-	public static function get_padding($properties)
-	{
-		$padding = $paddingleft = $paddingright = 0;
-		
-		# Get the padding (in its many different forms)
-
-		if (preg_match_all('/padding\:(.+?)\;/x', $properties, $matches))
-		{
-			$padding = preg_split('/\s/', $matches[1][0]);
-			$padding = str_replace("px", "", $padding);
-			
-			if (sizeof($padding) == 1)
-			{
-				$paddingright = $paddingleft = $padding[0];
-			} 
-			elseif (sizeof($padding) == 2 || sizeof($padding) == 3)
-			{
-				$paddingleft = $paddingright = $padding[1];
-			}
-			elseif (sizeof($padding) == 4)
-			{
-				$paddingright = $padding[1];
-				$paddingleft = $padding[3];
-			}
-		}
-	
-		if (preg_match_all('/padding\-left\:(.+?)\;/x', $properties, $paddingl))
-		{
-			$paddingleft = str_replace('px', '', $paddingl[1][0]);
-		}
-		
-		if (preg_match_all('/padding\-right\:(.+?)\;/x', $properties, $paddingr))
-		{
-			$paddingright = str_replace('px', '', $paddingr[1][0]);
-		}
-
-		return $paddingleft + $paddingright;
-		
-	}
-
-	/**
-	* Calculates the total amount of border present
-	* in a selector. This doesn't factor in cascading.
-	*
-	* @param   string   All of the properties of a selector
-	* @return  string	The total amount of left and right border combined
-	*/
-	public static function get_border($properties)
-	{		
-		$border = $borderleft = $borderright = 0;
-
-		if (preg_match_all('/border\:.+?\;/x', $properties, $matches))
-		{
-			if (preg_match_all('/\d.?px/', $matches[0][0], $match))
-			{
-				$borderw = str_replace('px','',$match[0][0]);
-				
-				$borderleft = $borderright = $borderw;
-			}
-		}	
-		if (preg_match_all('/border\-left\:.+?\;/x', $properties, $matches))
-		{
-			if (preg_match_all('/\d.?px/', $matches[0][0], $match))
-			{
-				$borderleft = str_replace('px','',$match[0][0]);
-			}
-		}
-		
-		if (preg_match_all('/border\-right\:.+?\;/x', $properties, $matches))
-		{
-			if (preg_match_all('/\d.?px/', $matches[0][0], $match))
-			{
-				$borderright = str_replace('px','',$match[0][0]);
-			}
-		}
-			
-		return $borderleft + $borderright;
-		
-	}
-
 
 }
