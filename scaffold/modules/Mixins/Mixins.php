@@ -165,22 +165,22 @@ class Mixins extends Plugins
 	 * @return array
 	 */
 	public static function parse_params($mixin_name, $params, $function_args = array())
-	{		
+	{
 		$parsed = array();
 		$mixin_params = explode(',', $params);
 		
 		# Loop through each function arg and create the parsed params array
 		foreach($function_args as $key => $value)
-		{			
-			# If the user didn't include one of the sparams, we'll check to see if a default is available			
+		{
+			$v = explode('=', $value);
+								
+			# If the user didn't include one of thesparams, we'll check to see if a default is available			
 			if(empty($mixin_params[$key]))
 			{			
 				# If there is a default value for the param			
 				if(strstr($value, '='))
 				{
-					$value = explode('=', $value);
-					$mixin_params[$key] = trim($value[1]);
-					$value = $value[0];
+					$parsed[trim($v[0])] = unquote(trim($v[1]));
 				}
 				
 				# Otherwise they've left one out
@@ -189,11 +189,11 @@ class Mixins extends Plugins
 					throw new Scaffold_Exception("Mixins.missing_param", $mixin_name);
 				}
 			}
-						
-			# If it has been exploded, make it a string again
-			if(is_array($value)) $value = $value[0];
-			
-			$parsed[trim($value)] = unquote($mixin_params[$key]);
+			else
+			{
+				$p = explode(",", $params);
+				$parsed[trim($v[0])] = unquote(trim($p[$key]));
+			}		
 		}
 		
 		return $parsed;
