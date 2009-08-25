@@ -63,7 +63,7 @@ class Image_replace extends Plugins
 				
 				// Build the selector
 				$properties = "
-					background:url($url) no-repeat 0 0;
+					background:url($path) no-repeat 0 0;
 					height:{$height}px;
 					width:{$width}px;
 					display:block;
