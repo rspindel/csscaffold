@@ -347,7 +347,7 @@ final class CSScaffold
 	 * @param $path
 	 * @return boolean
 	 */
-	private function config_load($path, $sub_array = "")
+	private static function config_load($path, $sub_array = "")
 	{
 		require($path);
 
@@ -657,8 +657,8 @@ final class CSScaffold
 			$PHP_ERROR = (func_num_args() === 5);
 	
 			# Test to see if errors should be displayed
-			if ($PHP_ERROR AND (error_reporting() & $exception) === 0)
-				return;
+			if ($PHP_ERROR AND error_reporting() === 0)
+				die;
 				
 			# Error handling will use exactly 5 args, every time
 			if ($PHP_ERROR)
