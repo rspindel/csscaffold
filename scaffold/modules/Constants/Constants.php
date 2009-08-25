@@ -110,7 +110,7 @@ class Constants extends Plugins
 		}
 		else
 		{
-			if(preg_match_all('/!\w+/', CSS::$css, $matches))
+			if(preg_match_all('/![a-zA-Z0-9-_]+/', CSS::$css, $matches))
 			{
 				$missing = array_values(array_unique($matches[0]));
 				
