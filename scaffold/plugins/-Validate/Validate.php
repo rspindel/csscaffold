@@ -5,8 +5,11 @@
  **/
 class Validate extends Plugins
 {
-	function post_process()
+	function formatting_process()
 	{
+		# Clean it up so we can use the line numbers
+		CSS::pretty();
+		
 		# Get the validator options from the config
 		$validator_options = CSScaffold::config('Validate');
 		
