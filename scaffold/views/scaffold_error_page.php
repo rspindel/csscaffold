@@ -8,7 +8,7 @@
 		html { background:#e7e7e7; }
 		.content { width:70%; margin:30px auto; font:15px/18px Arial; padding:20px; background:#fff; color:#595959; border:1px solid #aaa; margin-bottom: 20px; }
 		h1 { color:#000;}
-		pre { background:#eee; padding:10px; font-size:11px; }
+		pre { background:#eee; padding:10px; font-size:11px; overflow:auto; }
 		.backtrace { list-style:none; padding:0; margin:0; }
 		tt { background:#59a0bb; color:#fff; display:block; margin:-10px -10px 10px -10px; padding:10px; font-weight:bold; font:13px/18px Arial; }
 		p strong { color: #000; }
@@ -35,6 +35,14 @@
 			}
 		?>
 	</div>
+	
+	<?php if(CSS::$css != ""): ?>
+	<div class="content">
+		<h2>CSS</h2>
+		
+		<pre><code><?= CSS::pretty(true); ?></code></pre>
+	</div>
+	<?php endif; ?>
 
 </body>
 </html>
