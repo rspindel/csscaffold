@@ -398,7 +398,7 @@
 			$up = substr_count($path, '../');
 
 			# Join the CSS directory with the requested directory
-			$path = join_path(CSSPATH, Config::get('relative_dir'), unquote($path));
+			$path = join_path(CSSPATH, CSScaffold::config('relative_dir'), unquote($path));
 
 			# Get the full server path to the file
 			$absolute = realpath($path);
