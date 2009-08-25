@@ -38,6 +38,7 @@ class Validate extends Plugins
 		# Close it
 		curl_close($handle);
 		
+		# If something was returned
 		if (!empty($buffer))
 		{
 			# Simplexml doesn't like colons
@@ -68,7 +69,8 @@ class Validate extends Plugins
 		    	
 		    	$message .= "</ol>";
 		    	
-		    	throw new Scaffold_User_Exception("CSS is not valid", $message);
+		    	# Throw an error
+		    	throw new Scaffold_User_Exception("CSS is not valid - $count errors", $message);
 		    }
 		}
 	}
