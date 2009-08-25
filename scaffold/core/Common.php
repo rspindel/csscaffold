@@ -394,9 +394,6 @@
 	{
 		if($path[0] != "/")
 		{
-			# Count the number of up folder references
-			$up = substr_count($path, '../');
-
 			# Join the CSS directory with the requested directory
 			$path = join_path(CSSPATH, CSScaffold::config('relative_dir'), unquote($path));
 

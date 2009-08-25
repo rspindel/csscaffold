@@ -107,7 +107,7 @@ final class CSScaffold
 		$request['requested_file_path'] = join_path(DOCROOT,$requested_file);
 		
 		# Path to the file, relative to the css directory		
-		$request['relative_file'] = substr($requested_file, strlen(CSSURL));
+		$request['relative_file'] = str_replace(CSSURL, '/', $requested_file);
 		
 		# Path to the directory containing the file, relative to the css directory		
 		$request['relative_dir'] = pathinfo($request['relative_file'], PATHINFO_DIRNAME);
