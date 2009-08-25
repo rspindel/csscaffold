@@ -574,9 +574,6 @@ final class CSScaffold
 			# Parse the mixins
 			Mixins::parse();
 			
-			# Find missing constants
-			Constants::replace();
-			
 			# Compress it before parsing
 			CSS::compress(CSS::$css);
 			
@@ -599,6 +596,9 @@ final class CSScaffold
 				$plugin->formatting_process();
 			}
 			
+			# Find missing constants
+			Constants::replace();
+			
 			# Stop the timer...
 			Benchmark::stop("parse_css");
 			
@@ -606,7 +606,7 @@ final class CSScaffold
 			{		
 				CSS::$css  = "/* Processed by CSScaffold on ". gmdate('r') . " in ".Benchmark::get("parse_css", "time")." seconds */\n\n" . CSS::$css;
 			}
-			
+
 			# Write the css file to the cache
 			self::cache_write(CSS::$css);
 		} 
