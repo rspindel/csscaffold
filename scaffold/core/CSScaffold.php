@@ -69,6 +69,11 @@ final class CSScaffold
 	 * @var array
 	 */
 	public static $flags;
+	
+	/**
+	 * Paths to use for searching
+	 */
+	private static $include_paths;
 	 
 	/**
 	 * Sets the initial variables, checks if we need to process the css
@@ -79,9 +84,12 @@ final class CSScaffold
 	 **/
 	public static function setup($url_params) 
 	{
-		# Load the config
-		self::config_load(SYSPATH.'/config.php');
-			
+		static $run;
+
+		# This function can only be run once
+		if ($run === TRUE)
+			return;
+				
 		# Recache is off by default
 		$recache = false;
 		
@@ -101,10 +109,10 @@ final class CSScaffold
 		$requested_file	= trim_slashes($url_params['request']);
 		
 		# Add our requested file var to the array
-		$request['requested_file'] = $requested_file;
+		$request['file'] = $requested_file;
 		
 		# Full server path to the requested file
-		$request['requested_file_path'] = join_path(DOCROOT,$requested_file);
+		$request['path'] = join_path(DOCROOT,$requested_file);
 		
 		# Path to the file, relative to the css directory		
 		$request['relative_file'] = str_replace(CSSURL, '/', $requested_file);
@@ -122,15 +130,15 @@ final class CSScaffold
 		}
 		
 		# If the file doesn't exist
-		if(!file_exists($request['requested_file_path']))
-			throw new Scaffold_Exception("core.doesnt_exist", $request['requested_file']); 
+		if(!file_exists($request['path']))
+			throw new Scaffold_Exception("core.doesnt_exist", $request['file']); 
 
 		# or if it's not a css file
 		if (!is_css($requested_file))
 			throw new Scaffold_Exception("core.not_css", $requested_file);
 		
 		# or if the requested file wasn't from the css directory
-		if(!substr(pathinfo($request['requested_file_path'], PATHINFO_DIRNAME), 0, strlen(CSSPATH)))
+		if(!substr(pathinfo($request['path'], PATHINFO_DIRNAME), 0, strlen(CSSPATH)))
 			throw new Scaffold_Exception("core.outside_css_directory");
 		
 		# Make sure the files/folders are writeable
@@ -138,18 +146,18 @@ final class CSScaffold
 			throw new Scaffold_Exception("core.missing_cache", CACHEPATH);
 		
 		# Send it off to the config
-		self::config_set($request);
-		self::config_set($url_params);
+		self::config_set('request',$request);
+		self::config_set('core.url_params',$url_params);
 					
 		# Get the modified time of the CSS file
-		self::config_set('requested_mod_time', filemtime(self::config('requested_file_path')));
+		self::config_set('request.mod_time', filemtime(self::config('request.path')));
 			
 		# Set the recache to true if needed		
-		if(self::config('always_recache') OR isset($url_params['recache']))
+		if(self::config('core.always_recache') OR isset($url_params['recache']))
 			$recache = true;
 		
 		# Set it back to false if it's locked
-		if(self::config('cache_lock') === true)
+		if(self::config('core.cache_lock') === true)
 			$recache = false;
 	
 		# Prepare the cache, and tell it if we want to recache
@@ -160,6 +168,9 @@ final class CSScaffold
 		
 		# Load the plugins
 		self::$plugins = self::load_addons(read_dir(SYSPATH . "/plugins"));
+		
+		# Setup is complete, prevent it from being run again
+		$run = TRUE;
 	}
 	
 	/**
@@ -176,14 +187,14 @@ final class CSScaffold
 		$group = $keys[0];
 
 		// Get locale name
-		$locale = self::config('language');
+		$locale = self::config('core.language');
 
 		if (!isset(self::$internal_cache['language'][$locale][$group]))
 		{
 			// Messages for this group
 			$messages = array();
 
-			include join_path(SYSPATH, 'language/', $locale, $group . '.php');
+			include join_path(SYSPATH, 'language/', $locale, $group . EXT);
 
 			// Merge in configuration
 			if ( ! empty($lang) AND is_array($lang))
@@ -289,7 +300,7 @@ final class CSScaffold
 		}
 		
 		# Determine the name of the cache file
-		$cached_file = join_path(CACHEPATH,preg_replace('#(.+)(\.css)$#i', "$1{$checksum}$2", self::config('relative_file')));
+		$cached_file = join_path(CACHEPATH,preg_replace('#(.+)(\.css)$#i', "$1{$checksum}$2", self::config('core.relative_file')));`;l
 		
 		# Save it
 		self::$cached_file = $cached_file;
@@ -311,17 +322,17 @@ final class CSScaffold
 			$cached_mod_time = 0;
 		}
 		
-		self::config_set('cached_mod_time', $cached_mod_time);
+		self::config_set('cache.mod_time', $cached_mod_time);
 
 		return TRUE;
 	}
 	
 	/**
-	* Empty the entire cache, removing every cached css file.
-	*
-	* @return void
-	* @author Anthony Short
-	**/
+	 * Empty the entire cache, removing every cached css file.
+	 *
+	 * @return void
+	 * @author Anthony Short
+	 */
 	private static function cache_clear($path = CACHEPATH)
 	{	
 		$f = read_dir($path);
@@ -339,72 +350,76 @@ final class CSScaffold
 			}
 		}
 	}
-
+	
 	/**
-	 * Loads a config file into the global configuration
+	 * Get all include paths. APPPATH is the first path, followed by module
+	 * paths in the order they are configured, follow by the SYSPATH.
 	 *
-	 * @author Anthony Short
-	 * @param $path
-	 * @return boolean
+	 * @param   boolean  re-process the include paths
+	 * @return  array
 	 */
-	private static function config_load($path, $sub_array = "")
+	public static function include_paths($process = FALSE)
 	{
-		require($path);
+		if ($process === TRUE)
+		{
+			// Add APPPATH as the first path
+			self::$include_paths = array(APPPATH);
 
-		# If the config file doesn't contain an array
-		if(!isset($config) || !is_array($config))
-			throw new Scaffold_Exception("core.missing_array", array($path));
-		
-		# Set the config values in our core config
-		if($sub_array == "")
-		{
-			self::$configuration = $config;
+			foreach (self::$configuration['core']['modules'] as $path)
+			{
+				if ($path = str_replace('\\', '/', realpath($path)))
+				{
+					// Add a valid path
+					self::$include_paths[] = $path.'/';
+				}
+			}
+
+			// Add SYSPATH as the last path
+			self::$include_paths[] = SYSPATH;
 		}
-		else
-		{
-			self::$configuration[$sub_array] = $config;
-		}
-		
-		# Remove the config array
-		unset($config);
-		
-		return true;
+
+		return self::$include_paths;
 	}
-
+	
 	/**
 	 * Get a config item or group.
 	 *
-	 * @param   string  item name
-	 * @param	string	group name
+	 * @param   string   item name
+	 * @param   boolean  force a forward slash (/) at the end of the item
+	 * @param   boolean  is the item required?
 	 * @return  mixed
 	 */
-	public static function config($key, $group = "")
+	public static function config($key, $slash = FALSE, $required = TRUE)
 	{
-		# If we're looking for a group
-		if ($group != "")
+		if (self::$configuration === NULL)
 		{
-			if(isset(self::$configuration[$group]))
-			{
-				return self::$configuration[$group][$key];
-			}
-			else
-			{
-				false;
-			}
+			// Load core configuration
+			self::$configuration['core'] = self::config_load('core');
+
+			// Re-parse the include paths
+			self::include_paths(TRUE);
 		}
-		
-		# Otherwise return the normal item
-		else
+
+		// Get the group name from the key
+		$group = explode('.', $key, 2);
+		$group = $group[0];
+
+		if ( ! isset(self::$configuration[$group]))
 		{
-			if(isset(self::$configuration[$key]))
-			{
-				return self::$configuration[$key];
-			}
-			else
-			{
-				return false;
-			}
+			// Load the configuration group
+			self::$configuration[$group] = self::config_load($group, $required);
 		}
+
+		// Get the value of the key string
+		$value = self::key_string(self::$configuration, $key);
+
+		if ($slash === TRUE AND is_string($value) AND $value !== '')
+		{
+			// Force the value to end with "/"
+			$value = rtrim($value, '/').'/';
+		}
+
+		return $value;
 	}
 
 	/**
@@ -414,36 +429,354 @@ final class CSScaffold
 	 * @param   string   config value
 	 * @return  boolean
 	 */
-	public static function config_set($key, $value = '')
-	{		
+	public static function config_set($key, $value)
+	{
+		// Do this to make sure that the config array is already loaded
+		self::config($key);
+
+		// Convert dot-noted key string to an array
+		$keys = explode('.', $key);
+
 		// Used for recursion
 		$conf =& self::$configuration;
-		
-		# If they're both arrays
-		if(is_array($key) && is_array($value))
+		$last = count($keys) - 1;
+
+		foreach ($keys as $i => $k)
 		{
-			foreach ($key as $k => $name)
+			if ($i === $last)
 			{
-				$conf[$name] = $value[$k];
+				$conf[$k] = $value;
 			}
-		}
-		
-		# If we only gave it an array
-		elseif(is_array($key) && $value == '')
-		{
-			foreach($key as $name => $val)
+			else
 			{
-				$conf[$name] = $val;
+				$conf =& $conf[$k];
 			}
-		}
-		
-		# Otherwise, do it normally
-		else
-		{
-			$conf[$key] = $value;
 		}
 
-		return true;
+		if ($key === 'core.modules')
+		{
+			// Reprocess the include paths
+			self::include_paths(TRUE);
+		}
+
+		return TRUE;
+	}
+
+	/**
+	 * Load a config file.
+	 *
+	 * @param   string   config filename, without extension
+	 * @param   boolean  is the file required?
+	 * @return  array
+	 */
+	public static function config_load($name, $required = TRUE)
+	{
+		if ($name === 'core')
+		{
+			// Load the application configuration file
+			require SYSPATH.'/config.php';
+
+			if ( ! isset($config['cache_lock']))
+			{
+				// Invalid config file
+				die('Your configuration file is not valid.');
+			}
+
+			return $config;
+		}
+
+		if (isset(self::$internal_cache['configuration'][$name]))
+			return self::$internal_cache['configuration'][$name];
+
+		// Load matching configs
+		$configuration = array();
+
+		if ($files = self::find_file('config', $name, $required))
+		{
+			foreach ($files as $file)
+			{
+				require $file;
+
+				if (isset($config) AND is_array($config))
+				{
+					// Merge in configuration
+					$configuration = array_merge($configuration, $config);
+				}
+			}
+		}
+
+		return self::$internal_cache['configuration'][$name] = $configuration;
+	}
+
+	/**
+	 * Clears a config group from the cached configuration.
+	 *
+	 * @param   string  config group
+	 * @return  void
+	 */
+	public static function config_clear($group)
+	{
+		// Remove the group from config
+		unset(self::$configuration[$group], self::$internal_cache['configuration'][$group]);
+	}
+	
+	/**
+	 * Find a resource file in a given directory. Files will be located according
+	 * to the order of the include paths. Configuration and i18n files will be
+	 * returned in reverse order.
+	 *
+	 * @throws  Kohana_Exception  if file is required and not found
+	 * @param   string   directory to search in
+	 * @param   string   filename to look for (without extension)
+	 * @param   boolean  file required
+	 * @param   string   file extension
+	 * @return  array    if the type is config, i18n or l10n
+	 * @return  string   if the file is found
+	 * @return  FALSE    if the file is not found
+	 */
+	public static function find_file($directory, $filename, $required = FALSE, $ext = FALSE)
+	{
+		// NOTE: This test MUST be not be a strict comparison (===), or empty
+		// extensions will be allowed!
+		if ($ext == '')
+		{
+			// Use the default extension
+			$ext = EXT;
+		}
+		else
+		{
+			// Add a period before the extension
+			$ext = '.'.$ext;
+		}
+
+		// Search path
+		$search = $directory.'/'.$filename.$ext;
+
+		if (isset(self::$internal_cache['find_file_paths'][$search]))
+			return self::$internal_cache['find_file_paths'][$search];
+
+		// Load include paths
+		$paths = self::$include_paths;
+
+		// Nothing found, yet
+		$found = NULL;
+
+		if ($directory === 'config' OR $directory === 'language')
+		{
+			// Search in reverse, for merging
+			$paths = array_reverse($paths);
+
+			foreach ($paths as $path)
+			{
+				if (is_file($path.$search))
+				{
+					// A matching file has been found
+					$found[] = $path.$search;
+				}
+			}
+		}
+		else
+		{
+			foreach ($paths as $path)
+			{
+				if (is_file($path.$search))
+				{
+					// A matching file has been found
+					$found = $path.$search;
+
+					// Stop searching
+					break;
+				}
+			}
+		}
+
+		if ($found === NULL)
+		{
+			if ($required === TRUE)
+			{
+				// If the file is required, throw an exception
+				#throw new Scaffold_Exception('core.resource_not_found', $directory, $filename);
+			}
+			else
+			{
+				// Nothing was found, return FALSE
+				$found = FALSE;
+			}
+		}
+
+		return self::$internal_cache['find_file_paths'][$search] = $found;
+	}
+
+	/**
+	 * Lists all files and directories in a resource path.
+	 *
+	 * @param   string   directory to search
+	 * @param   boolean  list all files to the maximum depth?
+	 * @param   string   full path to search (used for recursion, *never* set this manually)
+	 * @return  array    filenames and directories
+	 */
+	public static function list_files($directory, $recursive = FALSE, $path = FALSE)
+	{
+		$files = array();
+
+		if ($path === FALSE)
+		{
+			$paths = array_reverse(self::include_paths());
+
+			foreach ($paths as $path)
+			{
+				// Recursively get and merge all files
+				$files = array_merge($files, self::list_files($directory, $recursive, $path.$directory));
+			}
+		}
+		else
+		{
+			$path = rtrim($path, '/').'/';
+
+			if (is_readable($path))
+			{
+				$items = (array) glob($path.'*');
+
+				if ( ! empty($items))
+				{
+					foreach ($items as $index => $item)
+					{
+						$files[] = $item = str_replace('\\', '/', $item);
+
+						// Handle recursion
+						if (is_dir($item) AND $recursive == TRUE)
+						{
+							// Filename should only be the basename
+							$item = pathinfo($item, PATHINFO_BASENAME);
+
+							// Append sub-directory search
+							$files = array_merge($files, self::list_files($directory, TRUE, $path.$item));
+						}
+					}
+				}
+			}
+		}
+
+		return $files;
+	}
+	
+	/**
+	 * Returns the value of a key, defined by a 'dot-noted' string, from an array.
+	 *
+	 * @param   array   array to search
+	 * @param   string  dot-noted string: foo.bar.baz
+	 * @return  string  if the key is found
+	 * @return  void    if the key is not found
+	 */
+	public static function key_string($array, $keys)
+	{
+		if (empty($array))
+			return NULL;
+
+		// Prepare for loop
+		$keys = explode('.', $keys);
+
+		do
+		{
+			// Get the next key
+			$key = array_shift($keys);
+
+			if (isset($array[$key]))
+			{
+				if (is_array($array[$key]) AND ! empty($keys))
+				{
+					// Dig down to prepare the next loop
+					$array = $array[$key];
+				}
+				else
+				{
+					// Requested key was found
+					return $array[$key];
+				}
+			}
+			else
+			{
+				// Requested key is not set
+				break;
+			}
+		}
+		while ( ! empty($keys));
+
+		return NULL;
+	}
+
+	/**
+	 * Sets values in an array by using a 'dot-noted' string.
+	 *
+	 * @param   array   array to set keys in (reference)
+	 * @param   string  dot-noted string: foo.bar.baz
+	 * @return  mixed   fill value for the key
+	 * @return  void
+	 */
+	public static function key_string_set( & $array, $keys, $fill = NULL)
+	{
+		if (is_object($array) AND ($array instanceof ArrayObject))
+		{
+			// Copy the array
+			$array_copy = $array->getArrayCopy();
+
+			// Is an object
+			$array_object = TRUE;
+		}
+		else
+		{
+			if ( ! is_array($array))
+			{
+				// Must always be an array
+				$array = (array) $array;
+			}
+
+			// Copy is a reference to the array
+			$array_copy =& $array;
+		}
+
+		if (empty($keys))
+			return $array;
+
+		// Create keys
+		$keys = explode('.', $keys);
+
+		// Create reference to the array
+		$row =& $array_copy;
+
+		for ($i = 0, $end = count($keys) - 1; $i <= $end; $i++)
+		{
+			// Get the current key
+			$key = $keys[$i];
+
+			if ( ! isset($row[$key]))
+			{
+				if (isset($keys[$i + 1]))
+				{
+					// Make the value an array
+					$row[$key] = array();
+				}
+				else
+				{
+					// Add the fill key
+					$row[$key] = $fill;
+				}
+			}
+			elseif (isset($keys[$i + 1]))
+			{
+				// Make the value an array
+				$row[$key] = (array) $row[$key];
+			}
+
+			// Go down a level, creating a new row reference
+			$row =& $row[$key];
+		}
+
+		if (isset($array_object))
+		{
+			// Swap the array back in
+			$array->exchangeArray($array_copy);
+		}
 	}
 		
 	/**
@@ -479,7 +812,7 @@ final class CSScaffold
 					
 					$plugin_class = pathinfo($plugin_file, PATHINFO_FILENAME);
 					$config = join_path($plugin_folder, 'config.php');
-					$language_file = $plugin_folder . '/language/' . self::config('language') . ".php";
+					$language_file = $plugin_folder . '/language/' . self::config('core.language') . ".php";
 					
 					# Load the config					
 					if(file_exists($config))
@@ -491,7 +824,7 @@ final class CSScaffold
 					if(file_exists($language_file))
 					{
 						require $language_file;
-						self::$internal_cache['language'][self::config('language')][$plugin_class] = $lang;
+						self::$internal_cache['language'][self::config('core.language')][$plugin_class] = $lang;
 						unset($lang);
 					}
 										
@@ -523,13 +856,15 @@ final class CSScaffold
 	public static function parse_css()
 	{						
 		# If the cache is stale or doesn't exist
-		if (self::config('cached_mod_time') < self::config('requested_mod_time'))
+		if (self::config('cache.mod_time') < self::config('request.mod_time'))
 		{
+			stop('sdfdsf');
+			
 			# Start the timer
 			Benchmark::start("parse_css");
 			
 			# Load the CSS file in the object
-			CSS::load(file_get_contents(self::config('requested_file_path')));
+			CSS::load(file_get_contents(self::config('request.path')));
 			
 			# Import CSS files
 			Import::parse();
@@ -634,7 +969,7 @@ final class CSScaffold
 		}
 		else
 		{			
-			header('Last-Modified: '. gmdate('D, d M Y H:i:s', self::config('cached_mod_time')) .' GMT');
+			header('Last-Modified: '. gmdate('D, d M Y H:i:s', self::config('cache.mod_time')) .' GMT');
 			echo file_get_contents(self::$cached_file);
 			exit;
 		}
