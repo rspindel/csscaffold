@@ -205,26 +205,27 @@ class Mixins extends Plugins
 	 * @author Anthony Short
 	 * @return string
 	 */
-	public static function import_mixins($path)
+	public static function import_mixins()
 	{
-		if(is_array($path))
+		# The paths to all of the modules and plugins
+		$p = array_merge(
+			read_dir(join_path(SYSPATH, 'modules')), 
+			read_dir(join_path(SYSPATH, 'plugins'))
+		);
+
+		foreach($p as $folder)
 		{
-			foreach($path as $folder)
+			if($mixins = read_dir(join_path($folder, 'mixins')))
 			{
-				self::import_mixins($folder);
-			}
+				foreach($mixins as $file)
+				{
+					if (!is_css($file)) { continue; }
+					
+					# Add it to our css
+					CSS::append(file_get_contents($file));
+				}
+			}	
 		}
-		
-		elseif($mixins = read_dir(join_path($path, 'mixins')))
-		{
-			foreach($mixins as $file)
-			{
-				if (!is_css($file)) { continue; }
-				
-				# Add it to our css
-				CSS::append(file_get_contents($file));
-			}
-		}	
 	}
 	
 	/**

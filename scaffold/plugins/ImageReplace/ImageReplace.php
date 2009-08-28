@@ -6,7 +6,7 @@
  * @author Anthony Short
  * @dependencies None
  **/
-class Image_replace extends Plugins
+class ImageReplace extends Plugins
 {
 
 	/**
@@ -16,20 +16,8 @@ class Image_replace extends Plugins
 	 * @author Anthony Short
 	 * @return $css string
 	 */
-	public function post_process()
+	public static function post_process()
 	{
-		# Replace the image-replace properties
-		$this->image_replace();
-	}
-
-	/**
-	 * Image-replaced
-	 *
-	 * @author Anthony Short
-	 * @return null
-	 */
-	public function image_replace()
-	{	
 		$found = CSS::find_properties_with_value('image-replace', 'url\([\'\"]?([^)]+)[\'\"]?\)');
 		
 		if($found)
@@ -78,4 +66,5 @@ class Image_replace extends Plugins
 			CSS::replace($found[1], '');
 		}
 	}
+
 }

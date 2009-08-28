@@ -6,7 +6,6 @@
  * Handles all of the inner workings of the framework and juicy goodness.
  * This is where the metaphorical cogs of the system reside. 
  *
- * @package default
  * @author Anthony Short
  **/
 final class CSScaffold 
@@ -24,14 +23,7 @@ final class CSScaffold
 	 * @var array
 	 */ 
 	private static $modules;
-	
-	/**
-	 * What plugins have been loaded (Just their name)
-	 *
-	 * @var array
-	 */ 
-	private static $loaded = array();
-	
+
 	/**
 	 * The configuration settings
 	 */
@@ -52,13 +44,6 @@ final class CSScaffold
 	private static $cached_file; 
 	
 	/**
-	* The modified time of the cached file
-	*
-	* @var string
-	**/
-	private static $cached_mod_time;
-	
-	/**
 	 * Internal cache
 	 */
 	private static $internal_cache;
@@ -71,7 +56,9 @@ final class CSScaffold
 	public static $flags;
 	
 	/**
-	 * Paths to use for searching
+	 * Include paths
+	 *
+	 * @var array
 	 */
 	private static $include_paths;
 	 
@@ -146,11 +133,11 @@ final class CSScaffold
 			throw new Scaffold_Exception("core.missing_cache", CACHEPATH);
 		
 		# Send it off to the config
-		self::config_set('request',$request);
+		self::config_set('core.request',$request);
 		self::config_set('core.url_params',$url_params);
 					
 		# Get the modified time of the CSS file
-		self::config_set('request.mod_time', filemtime(self::config('request.path')));
+		self::config_set('core.request.mod_time', filemtime(self::config('core.request.path')));
 			
 		# Set the recache to true if needed		
 		if(self::config('core.always_recache') OR isset($url_params['recache']))
@@ -164,10 +151,10 @@ final class CSScaffold
 		self::cache_set($recache);
 		
 		# Load the modules
-		self::$modules = self::load_addons(read_dir(SYSPATH . "/modules"));
+		self::load(SYSPATH."/modules");
 		
 		# Load the plugins
-		self::$plugins = self::load_addons(read_dir(SYSPATH . "/plugins"));
+		self::load(SYSPATH."/plugins");
 		
 		# Setup is complete, prevent it from being run again
 		$run = TRUE;
@@ -263,7 +250,7 @@ final class CSScaffold
 		if ($cache_info['dirname'] . "/" != CACHEPATH)
 		{
 			$path = CACHEPATH;
-			$dirs = explode('/', self::config('relative_dir'));
+			$dirs = explode('/', self::config('core.request.relative_dir'));
 						
 			foreach ($dirs as $dir)
 			{
@@ -281,7 +268,7 @@ final class CSScaffold
 		touch(self::$cached_file, time());
 		
 		# Set the config file mod time
-		self::config_set('cached_mod_time', time());
+		self::config_set('core.cache.mod_time', time());
 	}
 
 	/**
@@ -300,11 +287,11 @@ final class CSScaffold
 		}
 		
 		# Determine the name of the cache file
-		$cached_file = join_path(CACHEPATH,preg_replace('#(.+)(\.css)$#i', "$1{$checksum}$2", self::config('core.relative_file')));`;l
+		$cached_file = join_path(CACHEPATH,preg_replace('#(.+)(\.css)$#i', "$1{$checksum}$2", self::config('core.request.relative_file')));
 		
 		# Save it
 		self::$cached_file = $cached_file;
-		
+
 		# Check to see if we should delete the cache file
 		if($recache === true && file_exists($cached_file))
 		{
@@ -313,7 +300,7 @@ final class CSScaffold
 		}
 		
 		# When was the cache last modified
-		if(file_exists(self::$cached_file))
+		if(file_exists($cached_file))
 		{
 			$cached_mod_time =  (int) filemtime(self::$cached_file);
 		}
@@ -322,17 +309,15 @@ final class CSScaffold
 			$cached_mod_time = 0;
 		}
 		
-		self::config_set('cache.mod_time', $cached_mod_time);
-
-		return TRUE;
+		self::config_set('core.cache.mod_time', $cached_mod_time);
 	}
 	
 	/**
-	 * Empty the entire cache, removing every cached css file.
-	 *
-	 * @return void
-	 * @author Anthony Short
-	 */
+	* Empty the entire cache, removing every cached css file.
+	*
+	* @return void
+	* @author Anthony Short
+	**/
 	private static function cache_clear($path = CACHEPATH)
 	{	
 		$f = read_dir($path);
@@ -344,43 +329,13 @@ final class CSScaffold
 				self::cache_clear($file);
 				rmdir($file);
 			}
-			elseif(substr($file, -3) == 'css')
+			else
 			{
 				unlink($file);
 			}
 		}
 	}
-	
-	/**
-	 * Get all include paths. APPPATH is the first path, followed by module
-	 * paths in the order they are configured, follow by the SYSPATH.
-	 *
-	 * @param   boolean  re-process the include paths
-	 * @return  array
-	 */
-	public static function include_paths($process = FALSE)
-	{
-		if ($process === TRUE)
-		{
-			// Add APPPATH as the first path
-			self::$include_paths = array(APPPATH);
 
-			foreach (self::$configuration['core']['modules'] as $path)
-			{
-				if ($path = str_replace('\\', '/', realpath($path)))
-				{
-					// Add a valid path
-					self::$include_paths[] = $path.'/';
-				}
-			}
-
-			// Add SYSPATH as the last path
-			self::$include_paths[] = SYSPATH;
-		}
-
-		return self::$include_paths;
-	}
-	
 	/**
 	 * Get a config item or group.
 	 *
@@ -389,13 +344,13 @@ final class CSScaffold
 	 * @param   boolean  is the item required?
 	 * @return  mixed
 	 */
-	public static function config($key, $slash = FALSE, $required = TRUE)
+	public static function config($key, $slash = FALSE, $required = FALSE)
 	{
 		if (self::$configuration === NULL)
 		{
 			// Load core configuration
 			self::$configuration['core'] = self::config_load('core');
-
+			
 			// Re-parse the include paths
 			self::include_paths(TRUE);
 		}
@@ -452,8 +407,8 @@ final class CSScaffold
 				$conf =& $conf[$k];
 			}
 		}
-
-		if ($key === 'core.modules')
+		
+		if ($key === 'core.modules' OR $key === 'core.plugins')
 		{
 			// Reprocess the include paths
 			self::include_paths(TRUE);
@@ -521,6 +476,41 @@ final class CSScaffold
 	}
 	
 	/**
+	 * Get all include paths. APPPATH is the first path, followed by module
+	 * paths in the order they are configured, follow by the SYSPATH.
+	 *
+	 * @param   boolean  re-process the include paths
+	 * @return  array
+	 */
+	public static function include_paths($process = FALSE)
+	{
+		if ($process === TRUE)
+		{
+			// Add APPPATH as the first path
+			self::$include_paths = array();
+			
+			if(!isset(self::$internal_cache['include_paths']))
+			{
+				self::$internal_cache['include_paths'] = array_merge(read_dir(SYSPATH . '/modules'), read_dir(SYSPATH . '/plugins'));
+			}
+			
+			foreach (self::$internal_cache['include_paths'] as $path)
+			{
+				if ($path = str_replace('\\', '/', realpath($path)))
+				{
+					// Add a valid path
+					self::$include_paths[] = $path.'/';
+				}
+			}
+
+			// Add SYSPATH as the last path
+			self::$include_paths[] = SYSPATH;
+		}
+
+		return self::$include_paths;
+	}
+	
+	/**
 	 * Find a resource file in a given directory. Files will be located according
 	 * to the order of the include paths. Configuration and i18n files will be
 	 * returned in reverse order.
@@ -561,7 +551,7 @@ final class CSScaffold
 		// Nothing found, yet
 		$found = NULL;
 
-		if ($directory === 'config' OR $directory === 'language')
+		if ($directory === 'config' OR $directory === 'i18n')
 		{
 			// Search in reverse, for merging
 			$paths = array_reverse($paths);
@@ -595,7 +585,7 @@ final class CSScaffold
 			if ($required === TRUE)
 			{
 				// If the file is required, throw an exception
-				#throw new Scaffold_Exception('core.resource_not_found', $directory, $filename);
+				throw new Scaffold_Exception('core.resource_not_found', $directory, $filename);
 			}
 			else
 			{
@@ -659,7 +649,7 @@ final class CSScaffold
 
 		return $files;
 	}
-	
+
 	/**
 	 * Returns the value of a key, defined by a 'dot-noted' string, from an array.
 	 *
@@ -780,71 +770,59 @@ final class CSScaffold
 	}
 		
 	/**
-	 * Loads the Plugins
+	 * Loads modules and plugins
 	 *
+	 * @param $path The server path to the directory of addons
 	 * @return boolean
 	 * @author Anthony Short
 	 **/
-	private static function load_addons($folders)
-	{			
-		$plugins = array();
+	private static function load($path)
+	{
+		# Stores the names of the plugins that are loaded
+		$loaded = array();
 		
-		foreach($folders as $plugin_folder)
-		{
-			$plugin_files = read_dir($plugin_folder);
+		# Is it a module or plugin?
+		$type = pathinfo($path, PATHINFO_BASENAME);
 			
-			foreach($plugin_files as $plugin_file)
+		foreach(read_dir($path) as $folder)
+		{
+			# Get the folder name. This will be the same as 
+			# The controller name and the class name
+			$addon = pathinfo($folder, PATHINFO_BASENAME);
+			$controller = join_path($folder,$addon.EXT);
+			
+			# Set the paths in the config
+			$loaded[] = $addon;
+			self::config_set("$addon.support", join_path($folder,'support'));
+			self::config_set("$addon.libraries", join_path($folder,'libraries'));
+
+			# Include the addon controller
+			if(file_exists($controller))
 			{
-				$library_path = join_path($plugin_folder, "libraries");
-				
-				# Include the libraries
-				if($libraries = read_dir($library_path))
+				require_once($controller);
+			}
+
+			# Include the libraries
+			if($libraries = read_dir($folder."/libraries"))
+			{
+				foreach($libraries as $library)
 				{
-					foreach($libraries as $library)
-					{
-						require_once($library);
-					}
+					require_once($library);
 				}
-				
-				if(extension($plugin_file) == "php" && pathinfo($plugin_file, PATHINFO_FILENAME) != "config")
-				{					
-					require_once($plugin_file);
-					
-					$plugin_class = pathinfo($plugin_file, PATHINFO_FILENAME);
-					$config = join_path($plugin_folder, 'config.php');
-					$language_file = $plugin_folder . '/language/' . self::config('core.language') . ".php";
-					
-					# Load the config					
-					if(file_exists($config))
-					{
-						self::config_load($config, $plugin_class);
-					}
-					
-					# Load the language file
-					if(file_exists($language_file))
-					{
-						require $language_file;
-						self::$internal_cache['language'][self::config('core.language')][$plugin_class] = $lang;
-						unset($lang);
-					}
-										
-					if(class_exists($plugin_class))
-					{				
-						# Initialize the plugin
-						$plugins[$plugin_class] = new $plugin_class();
-						
-						# Set the member paths
-						$plugins[$plugin_class]->path['support'] 	= join_path($plugin_folder, 'support');
-						$plugins[$plugin_class]->path['libraries'] 	= $library_path;
-					}
-					
-					# Add the plugin to the loaded array
-					self::$loaded[] = $plugin_class;
-				}			
+			}
+			
+			# Load the language file
+			$language_file = $folder . '/language/' . self::config('core.language') . EXT;
+			
+			if(file_exists($language_file))
+			{
+				require $language_file;
+				self::$internal_cache['language'][self::config('core.language')][$addon] = $lang;
+				unset($lang);
 			}
 		}
 		
-		return $plugins;
+		self::config_set("core.$type", $loaded);
 	}
 	
 	/**
@@ -856,29 +834,26 @@ final class CSScaffold
 	public static function parse_css()
 	{						
 		# If the cache is stale or doesn't exist
-		if (self::config('cache.mod_time') < self::config('request.mod_time'))
-		{
-			stop('sdfdsf');
-			
+		if (self::config('core.cache.mod_time') < self::config('core.request.mod_time'))
+		{			
 			# Start the timer
 			Benchmark::start("parse_css");
 			
 			# Load the CSS file in the object
-			CSS::load(file_get_contents(self::config('request.path')));
+			CSS::load(file_get_contents(self::config('core.request.path')));
+			
+			$plugins = self::config('core.plugins');
 			
 			# Import CSS files
 			Import::parse();
 			
-			# Import the mixins in the plugin folders
-			$plugin_folders = read_dir(join_path(SYSPATH, 'plugins'));
-			$module_folders = read_dir(join_path(SYSPATH, 'modules'));
-
-			Mixins::import_mixins(array_merge($plugin_folders, $module_folders));
+			# Import the mixins in the plugin/module folders
+			Mixins::import_mixins();
 														
 			# Parse our css through the plugins
-			foreach(self::$plugins as $plugin)
+			foreach($plugins as $plugin)
 			{
-				$plugin->import_process();
+				call_user_func(array($plugin,'import_process'));
 			}
 			
 			# Compress it before parsing
@@ -887,23 +862,23 @@ final class CSScaffold
 			# Parse the constants
 			Constants::parse();
 
-			foreach(self::$plugins as $plugin)
+			foreach($plugins as $plugin)
 			{
-				$plugin->pre_process();
+				call_user_func(array($plugin,'pre_process'));
 			}
 			
 			# Replace the constants
 			Constants::replace();
 			
 			# Parse @for loops
-			For_loops::parse();
+			Iteration::parse();
 			
 			# Compress it before parsing
 			CSS::compress(CSS::$css);
 			
-			foreach(self::$plugins as $plugin)
+			foreach($plugins as $plugin)
 			{
-				$plugin->process();
+				call_user_func(array($plugin,'process'));
 			}
 			
 			# Parse the mixins
@@ -912,9 +887,9 @@ final class CSScaffold
 			# Compress it before parsing
 			CSS::compress(CSS::$css);
 			
-			foreach(self::$plugins as $plugin)
+			foreach($plugins as $plugin)
 			{
-				$plugin->post_process();
+				call_user_func(array($plugin,'post_process'));
 			}
 			
 			# Parse the expressions
@@ -926,9 +901,9 @@ final class CSScaffold
 			# Add the extra string we've been storing
 			CSS::$css .= CSS::$append;
 			
-			foreach(self::$plugins as $plugin)
+			foreach($plugins as $plugin)
 			{
-				$plugin->formatting_process();
+				call_user_func(array($plugin,'formatting_process'));
 			}
 			
 			# Find missing constants
@@ -937,7 +912,7 @@ final class CSScaffold
 			# Stop the timer...
 			Benchmark::stop("parse_css");
 			
-			if (self::config('show_header') === TRUE)
+			if (self::config('core.show_header') === TRUE)
 			{		
 				CSS::$css  = "/* Processed by CSScaffold on ". gmdate('r') . " in ".Benchmark::get("parse_css", "time")." seconds */\n\n" . CSS::$css;
 			}
@@ -961,7 +936,7 @@ final class CSScaffold
 			
 		if (
 			isset($_SERVER['HTTP_IF_MODIFIED_SINCE'], $_SERVER['SERVER_PROTOCOL']) && 
-			self::config('cached_mod_time') <= strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE'])
+			self::config('core.cache.mod_time') <= strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE'])
 		)
 		{
 			header("{$_SERVER['SERVER_PROTOCOL']} 304 Not Modified");
@@ -969,7 +944,7 @@ final class CSScaffold
 		}
 		else
 		{			
-			header('Last-Modified: '. gmdate('D, d M Y H:i:s', self::config('cache.mod_time')) .' GMT');
+			header('Last-Modified: '. gmdate('D, d M Y H:i:s', self::config('core.cache.mod_time')) .' GMT');
 			echo file_get_contents(self::$cached_file);
 			exit;
 		}
