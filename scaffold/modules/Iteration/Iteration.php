@@ -6,7 +6,7 @@
  * @author Anthony Short
  * @dependencies None
  **/
-class For_loops extends Plugins
+class Iteration extends Plugins
 {
 	
 	/**
