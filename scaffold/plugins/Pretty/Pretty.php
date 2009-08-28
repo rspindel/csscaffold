@@ -5,9 +5,9 @@
  **/
 class Pretty extends Plugins
 {
-	function formatting_process()
+	public static function formatting_process()
 	{
-		if(CSScaffold::config('pretty') === true)
+		if(CSScaffold::config('core.url_params.pretty') === true)
 		{
 			CSS::pretty();			
 		}

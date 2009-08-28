@@ -44,7 +44,7 @@ class Import extends Plugins
 			$include = $unique[0];
 
 			# This is the path of the css file that requested the 
-			$requested_dir = pathinfo(CSScaffold::config('requested_file_path'), PATHINFO_DIRNAME);
+			$requested_dir = pathinfo(CSScaffold::config('core.request.path'), PATHINFO_DIRNAME);
 			
 			# Get the file path to the include
 			$path = find_absolute_path($include);
