@@ -110,10 +110,7 @@ final class CSScaffold
 		# If they've put a param in the url, consider it set to 'true'
 		foreach($url_params as $key => $value)
 		{
-			if($value == "")
-			{
-				$url_params[$key] = true;
-			}
+			self::config('core.url_params.' . $key, true);
 		}
 		
 		# If the file doesn't exist
@@ -134,7 +131,6 @@ final class CSScaffold
 		
 		# Send it off to the config
 		self::config_set('core.request',$request);
-		self::config_set('core.url_params',$url_params);
 					
 		# Get the modified time of the CSS file
 		self::config_set('core.request.mod_time', filemtime(self::config('core.request.path')));
@@ -151,10 +147,10 @@ final class CSScaffold
 		self::cache_set($recache);
 		
 		# Load the modules
-		self::load(SYSPATH."/modules");
+		self::load_addons("modules");
 		
 		# Load the plugins
-		self::load(SYSPATH."/plugins");
+		self::load_addons("plugins");
 		
 		# Setup is complete, prevent it from being run again
 		$run = TRUE;
@@ -181,14 +177,20 @@ final class CSScaffold
 			// Messages for this group
 			$messages = array();
 
-			include join_path(SYSPATH, 'language/', $locale, $group . EXT);
-
-			// Merge in configuration
-			if ( ! empty($lang) AND is_array($lang))
+			if ($files = self::find_file("language", "$locale/$group"))
 			{
-				foreach ($lang as $k => $v)
+				foreach ($files as $file)
 				{
-					$messages[$k] = $v;
+					include $file;
+
+					// Merge in configuration
+					if ( ! empty($lang) AND is_array($lang))
+					{
+						foreach ($lang as $k => $v)
+						{
+							$messages[$k] = $v;
+						}
+					}
 				}
 			}
 					
@@ -319,17 +321,15 @@ final class CSScaffold
 	* @author Anthony Short
 	**/
 	private static function cache_clear($path = CACHEPATH)
-	{	
-		$f = read_dir($path);
-
-		foreach($f as $file)
+	{
+		foreach(self::list_files($path, TRUE, $path) as $file)
 		{
 			if(is_dir($file))
 			{
 				self::cache_clear($file);
 				rmdir($file);
 			}
-			else
+			elseif(file_exists($file))
 			{
 				unlink($file);
 			}
@@ -487,16 +487,22 @@ final class CSScaffold
 		if ($process === TRUE)
 		{
 			// Add APPPATH as the first path
-			self::$include_paths = array();
+			self::$include_paths = array
+			(
+				SYSPATH . 'modules',
+				SYSPATH . 'plugins',
+				CACHEPATH
+			);
 			
-			if(!isset(self::$internal_cache['include_paths']))
-			{
-				self::$internal_cache['include_paths'] = array_merge(read_dir(SYSPATH . '/modules'), read_dir(SYSPATH . '/plugins'));
-			}
+			# Find the modules and plugins installed	
+			$modules = self::list_files('modules', FALSE, SYSPATH . 'modules');
+			$plugins = self::list_files('plugins', FALSE, SYSPATH . 'plugins');
 			
-			foreach (self::$internal_cache['include_paths'] as $path)
+			foreach (array_merge($plugins,$modules) as $path)
 			{
-				if ($path = str_replace('\\', '/', realpath($path)))
+				$path = str_replace('\\', '/', realpath($path));
+				
+				if (is_dir($path))
 				{
 					// Add a valid path
 					self::$include_paths[] = $path.'/';
@@ -541,7 +547,7 @@ final class CSScaffold
 
 		// Search path
 		$search = $directory.'/'.$filename.$ext;
-
+		
 		if (isset(self::$internal_cache['find_file_paths'][$search]))
 			return self::$internal_cache['find_file_paths'][$search];
 
@@ -551,7 +557,7 @@ final class CSScaffold
 		// Nothing found, yet
 		$found = NULL;
 
-		if ($directory === 'config' OR $directory === 'i18n')
+		if ($directory === 'config' OR $directory === 'language')
 		{
 			// Search in reverse, for merging
 			$paths = array_reverse($paths);
@@ -626,12 +632,21 @@ final class CSScaffold
 			if (is_readable($path))
 			{
 				$items = (array) glob($path.'*');
-
+				
 				if ( ! empty($items))
 				{
 					foreach ($items as $index => $item)
 					{
+						$name = pathinfo($item, PATHINFO_BASENAME);
+						
+						if(substr($name, 0, 1) == '.' || substr($name, 0, 1) == '-')
+						{
+							continue;
+						}
+						
 						$files[] = $item = str_replace('\\', '/', $item);
+						
+						
 
 						// Handle recursion
 						if (is_dir($item) AND $recursive == TRUE)
@@ -651,140 +666,20 @@ final class CSScaffold
 	}
 
 	/**
-	 * Returns the value of a key, defined by a 'dot-noted' string, from an array.
-	 *
-	 * @param   array   array to search
-	 * @param   string  dot-noted string: foo.bar.baz
-	 * @return  string  if the key is found
-	 * @return  void    if the key is not found
-	 */
-	public static function key_string($array, $keys)
-	{
-		if (empty($array))
-			return NULL;
-
-		// Prepare for loop
-		$keys = explode('.', $keys);
-
-		do
-		{
-			// Get the next key
-			$key = array_shift($keys);
-
-			if (isset($array[$key]))
-			{
-				if (is_array($array[$key]) AND ! empty($keys))
-				{
-					// Dig down to prepare the next loop
-					$array = $array[$key];
-				}
-				else
-				{
-					// Requested key was found
-					return $array[$key];
-				}
-			}
-			else
-			{
-				// Requested key is not set
-				break;
-			}
-		}
-		while ( ! empty($keys));
-
-		return NULL;
-	}
-
-	/**
-	 * Sets values in an array by using a 'dot-noted' string.
-	 *
-	 * @param   array   array to set keys in (reference)
-	 * @param   string  dot-noted string: foo.bar.baz
-	 * @return  mixed   fill value for the key
-	 * @return  void
-	 */
-	public static function key_string_set( & $array, $keys, $fill = NULL)
-	{
-		if (is_object($array) AND ($array instanceof ArrayObject))
-		{
-			// Copy the array
-			$array_copy = $array->getArrayCopy();
-
-			// Is an object
-			$array_object = TRUE;
-		}
-		else
-		{
-			if ( ! is_array($array))
-			{
-				// Must always be an array
-				$array = (array) $array;
-			}
-
-			// Copy is a reference to the array
-			$array_copy =& $array;
-		}
-
-		if (empty($keys))
-			return $array;
-
-		// Create keys
-		$keys = explode('.', $keys);
-
-		// Create reference to the array
-		$row =& $array_copy;
-
-		for ($i = 0, $end = count($keys) - 1; $i <= $end; $i++)
-		{
-			// Get the current key
-			$key = $keys[$i];
-
-			if ( ! isset($row[$key]))
-			{
-				if (isset($keys[$i + 1]))
-				{
-					// Make the value an array
-					$row[$key] = array();
-				}
-				else
-				{
-					// Add the fill key
-					$row[$key] = $fill;
-				}
-			}
-			elseif (isset($keys[$i + 1]))
-			{
-				// Make the value an array
-				$row[$key] = (array) $row[$key];
-			}
-
-			// Go down a level, creating a new row reference
-			$row =& $row[$key];
-		}
-
-		if (isset($array_object))
-		{
-			// Swap the array back in
-			$array->exchangeArray($array_copy);
-		}
-	}
-		
-	/**
 	 * Loads modules and plugins
 	 *
 	 * @param $path The server path to the directory of addons
 	 * @return boolean
 	 * @author Anthony Short
 	 **/
-	private static function load($path)
+	private static function load_addons($type)
 	{
 		# Stores the names of the plugins that are loaded
 		$loaded = array();
 		
-		# Is it a module or plugin?
-		$type = pathinfo($path, PATHINFO_BASENAME);
+		$files = self::list_files($type);
 			
-		foreach(read_dir($path) as $folder)
+		foreach($files as $folder)
 		{
 			# Get the folder name. This will be the same as 
 			# The controller name and the class name
@@ -792,7 +687,6 @@ final class CSScaffold
 			$controller = join_path($folder,$addon.EXT);
 			
 			# Set the paths in the config
-			$loaded[] = $addon;
 			self::config_set("$addon.support", join_path($folder,'support'));
 			self::config_set("$addon.libraries", join_path($folder,'libraries'));
 
@@ -800,25 +694,7 @@ final class CSScaffold
 			if(file_exists($controller))
 			{
 				require_once($controller);
-			}
-
-			# Include the libraries
-			if($libraries = read_dir($folder."/libraries"))
-			{
-				foreach($libraries as $library)
-				{
-					require_once($library);
-				}
-			}
-			
-			# Load the language file
-			$language_file = $folder . '/language/' . self::config('core.language') . EXT;
-			
-			if(file_exists($language_file))
-			{
-				require $language_file;
-				self::$internal_cache['language'][self::config('core.language')][$addon] = $lang;
-				unset($lang);
+				$loaded[] = $addon;
 			}
 		}
 		
@@ -1118,8 +994,127 @@ final class CSScaffold
 
 		return '<ul class="backtrace">'.implode("\n", $output).'</ul>';
 	}
+	
+		/**
+	 * Returns the value of a key, defined by a 'dot-noted' string, from an array.
+	 *
+	 * @param   array   array to search
+	 * @param   string  dot-noted string: foo.bar.baz
+	 * @return  string  if the key is found
+	 * @return  void    if the key is not found
+	 */
+	public static function key_string($array, $keys)
+	{
+		if (empty($array))
+			return NULL;
 
-}
+		// Prepare for loop
+		$keys = explode('.', $keys);
+
+		do
+		{
+			// Get the next key
+			$key = array_shift($keys);
+
+			if (isset($array[$key]))
+			{
+				if (is_array($array[$key]) AND ! empty($keys))
+				{
+					// Dig down to prepare the next loop
+					$array = $array[$key];
+				}
+				else
+				{
+					// Requested key was found
+					return $array[$key];
+				}
+			}
+			else
+			{
+				// Requested key is not set
+				break;
+			}
+		}
+		while ( ! empty($keys));
+
+		return NULL;
+	}
+
+	/**
+	 * Sets values in an array by using a 'dot-noted' string.
+	 *
+	 * @param   array   array to set keys in (reference)
+	 * @param   string  dot-noted string: foo.bar.baz
+	 * @return  mixed   fill value for the key
+	 * @return  void
+	 */
+	public static function key_string_set( & $array, $keys, $fill = NULL)
+	{
+		if (is_object($array) AND ($array instanceof ArrayObject))
+		{
+			// Copy the array
+			$array_copy = $array->getArrayCopy();
+
+			// Is an object
+			$array_object = TRUE;
+		}
+		else
+		{
+			if ( ! is_array($array))
+			{
+				// Must always be an array
+				$array = (array) $array;
+			}
+
+			// Copy is a reference to the array
+			$array_copy =& $array;
+		}
+
+		if (empty($keys))
+			return $array;
+
+		// Create keys
+		$keys = explode('.', $keys);
+
+		// Create reference to the array
+		$row =& $array_copy;
+
+		for ($i = 0, $end = count($keys) - 1; $i <= $end; $i++)
+		{
+			// Get the current key
+			$key = $keys[$i];
+
+			if ( ! isset($row[$key]))
+			{
+				if (isset($keys[$i + 1]))
+				{
+					// Make the value an array
+					$row[$key] = array();
+				}
+				else
+				{
+					// Add the fill key
+					$row[$key] = $fill;
+				}
+			}
+			elseif (isset($keys[$i + 1]))
+			{
+				// Make the value an array
+				$row[$key] = (array) $row[$key];
+			}
+
+			// Go down a level, creating a new row reference
+			$row =& $row[$key];
+		}
+
+		if (isset($array_object))
+		{
+			// Swap the array back in
+			$array->exchangeArray($array_copy);
+		}
+	}
+
+} // END CSScaffold
 
 /**
  * Creates a generic exception.

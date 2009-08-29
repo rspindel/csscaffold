@@ -50,7 +50,7 @@ is_link(SCAFFOLD) and chdir(dirname(realpath(__FILE__)));
 
 # Set the constants
 define('DOCROOT', 	$_SERVER['DOCUMENT_ROOT']);
-define('SYSPATH', 	$path['dirname']);
+define('SYSPATH', 	$path['dirname'] . '/');
 define('CACHEPATH', realpath($cache_dir));
 define('CSSPATH',	realpath($css_dir));
 define('CSSURL', 	str_replace(DOCROOT, '/', CSSPATH));
