@@ -1,4 +1,4 @@
-<?php
+<?php defined('SYSPATH') OR die('No direct access allowed.');
 
 /**
  * CACHE LOCK
@@ -17,7 +17,7 @@ $config['cache_lock'] = false;
  *
  * @var boolean
  **/	
-$config['always_recache'] = false;
+$config['always_recache'] = true;
 
 /**
  * SHOW CSS HEADER INFORMATION
