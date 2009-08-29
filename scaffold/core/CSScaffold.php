@@ -497,9 +497,8 @@ final class CSScaffold
 			# Find the modules and plugins installed	
 			$modules = self::list_files('modules', FALSE, SYSPATH . 'modules');
 			$plugins = self::list_files('plugins', FALSE, SYSPATH . 'plugins');
-			$css = self::list_files(CSSPATH, FALSE, CSSPATH);
 			
-			foreach (array_merge($plugins,$modules,$css) as $path)
+			foreach (array_merge($plugins,$modules) as $path)
 			{
 				$path = str_replace('\\', '/', realpath($path));
 				
@@ -657,8 +656,6 @@ final class CSScaffold
 						}
 						
 						$files[] = $item = str_replace('\\', '/', $item);
-						
-						
 
 						// Handle recursion
 						if (is_dir($item) AND $recursive == TRUE)
