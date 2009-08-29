@@ -17,7 +17,7 @@ $config['cache_lock'] = false;
  *
  * @var boolean
  **/	
-$config['always_recache'] = true;
+$config['always_recache'] = false;
 
 /**
  * SHOW CSS HEADER INFORMATION
@@ -33,7 +33,7 @@ $config['show_header'] = true;
  *
  * Enable Firebug output
  */
-FB::setEnabled(true);
+FB::setEnabled(false);
 
 /**
  * LANGUAGE
