@@ -47,7 +47,7 @@ class Plugins
 	 */
 	public static function load_library($library) 
 	{
-		require CSScaffold::find_file('libraries', $library, TRUE);
+		require_once(CSScaffold::find_file('libraries', $library, TRUE));
 	}
 
 }
