@@ -491,14 +491,15 @@ final class CSScaffold
 			(
 				SYSPATH . 'modules',
 				SYSPATH . 'plugins',
-				CACHEPATH
+				CACHEPATH,
 			);
 			
 			# Find the modules and plugins installed	
 			$modules = self::list_files('modules', FALSE, SYSPATH . 'modules');
 			$plugins = self::list_files('plugins', FALSE, SYSPATH . 'plugins');
+			$css = self::list_files(CSSPATH, FALSE, CSSPATH);
 			
-			foreach (array_merge($plugins,$modules) as $path)
+			foreach (array_merge($plugins,$modules,$css) as $path)
 			{
 				$path = str_replace('\\', '/', realpath($path));
 				
@@ -515,7 +516,7 @@ final class CSScaffold
 
 		return self::$include_paths;
 	}
-	
+
 	/**
 	 * Find a resource file in a given directory. Files will be located according
 	 * to the order of the include paths. Configuration and i18n files will be
@@ -571,6 +572,17 @@ final class CSScaffold
 				}
 			}
 		}
+		elseif(in_array($directory, $paths))
+		{
+			if (is_file($directory.$filename.$ext))
+			{
+				// A matching file has been found
+				$found = $path.$search;
+
+				// Stop searching
+				break;
+			}
+		}
 		else
 		{
 			foreach ($paths as $path)
@@ -591,7 +603,7 @@ final class CSScaffold
 			if ($required === TRUE)
 			{
 				// If the file is required, throw an exception
-				throw new Scaffold_Exception('core.resource_not_found', $directory, $filename);
+				throw new Scaffold_Exception('core.resource_not_found', $directory . $filename . $ext);
 			}
 			else
 			{
