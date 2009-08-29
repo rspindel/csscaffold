@@ -208,23 +208,23 @@ class Mixins extends Plugins
 	public static function import_mixins()
 	{
 		# The paths to all of the modules and plugins
-		$p = array_merge(
-			read_dir(join_path(SYSPATH, 'modules')), 
-			read_dir(join_path(SYSPATH, 'plugins'))
-		);
+		$plugins = CSScaffold::list_files('plugins');
+		$modules = CSScaffold::list_files('modules');
 
-		foreach($p as $folder)
+		foreach(array_merge($plugins,$modules) as $folder)
 		{
-			if($mixins = read_dir(join_path($folder, 'mixins')))
+			if(is_dir($folder . '/mixins'))
 			{
-				foreach($mixins as $file)
+				$mixin_folder = str_replace(SYSPATH,'',$folder) . '/mixins';
+			
+				foreach(CSScaffold::list_files($mixin_folder) as $item)
 				{
-					if (!is_css($file)) { continue; }
+					if (!is_css($item)) { continue; }
 					
 					# Add it to our css
-					CSS::append(file_get_contents($file));
+					CSS::append(file_get_contents($item));
 				}
-			}	
+			}
 		}
 	}
 	

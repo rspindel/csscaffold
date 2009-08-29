@@ -322,33 +322,6 @@
 		}
 		return $loaded;
 	}
-	
-	// Returns the files of a directory as a string
-	function read_dir($directory)
-	{
-		$files = array();
-		
-		if(is_dir($directory))
-		{
-			if ($listing = scandir($directory)) 
-        	{
-            	foreach($listing as $file)
-            	{
-					if (!is_enabled($file))
-					{ 
-						continue; 
-					}
-					
-					$files[$file] = join_path($directory, $file);
-				}
-			}
-		}
-		else
-		{
-			return false;
-		}
-		return $files;
-	}
 
 	/**
 	 * Returns the extension of the file
@@ -364,47 +337,3 @@
 	  return pathinfo($path, PATHINFO_EXTENSION);;
 	} 
 
-	/**
-	 * Checks if a file starts with a dot or dash. If so, it
-	 * isn't activated and should be ignored
-	 *
-	 * @author Anthony Short
-	 * @param $file
-	 */
-	function is_enabled($file)
-	{
-		if(substr($file, 0, 1) == '.' || substr($file, 0, 1) == '-')
-		{
-			return false;
-		}
-		else
-		{
-			return true;
-		}
-	}
-	
-	/**
-	 * Finds the absolute path from a relative path
-	 *
-	 * @author Anthony Short
-	 * @param $relative_img
-	 * @return string
-	 */
-	function find_absolute_path($path)
-	{
-		if($path[0] != "/")
-		{
-			# Join the CSS directory with the requested directory
-			$path = join_path(CSSPATH, CSScaffold::config('relative_dir'), unquote($path));
-
-			# Get the full server path to the file
-			$absolute = realpath($path);
-		}
-		else
-		{
-			$absolute = join_path(DOCROOT,$path);
-		}
-
-		return $absolute; 
-	}
-	
