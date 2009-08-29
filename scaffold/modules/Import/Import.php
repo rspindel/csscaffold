@@ -25,7 +25,7 @@ class Import extends Plugins
 	 * @param $css
 	 */
 	public static function parse()
-	{		
+	{
 		# Find all the @server imports
 		CSS::$css = self::server_import(CSS::$css);
 	}
@@ -41,13 +41,14 @@ class Import extends Plugins
 		if (preg_match_all('/\@include\s+(?:\'|\")([^\'\"]+)(?:\'|\")\;/', $css, $matches))
 		{
 			$unique = array_unique($matches[1]);
-			$include = $unique[0];
+			$include =  unquote($unique[0]);
+			$include_info = pathinfo($include);
 
 			# This is the path of the css file that requested the 
 			$requested_dir = pathinfo(CSScaffold::config('core.request.path'), PATHINFO_DIRNAME);
 			
-			# Get the file path to the include
-			$path = find_absolute_path($include);
+			# Resolve the CSS-style path
+			$path = CSS::resolve_path($include);
 			
 			# Make sure recursion isn't happening
 			if($include == $previous)

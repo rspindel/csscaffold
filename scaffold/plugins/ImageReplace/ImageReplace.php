@@ -26,7 +26,7 @@ class ImageReplace extends Plugins
 			{
 				$path = unquote($value);
 								
-				$absolute_img = find_absolute_path($path);
+				$absolute_img = CSS::resolve_path($path);
 													
 				# Check if it exists
 				if(!file_exists($absolute_img))
