@@ -101,6 +101,32 @@ abstract class CSS
 	}
 	
 	/**
+	 * Resolves a path used in the CSS so that the user can use
+	 * paths like normal css rather than PHP
+	 *
+	 * @author Anthony Short
+	 * @param $path
+	 * @return string
+	 */
+	public static function resolve_path($path)
+	{
+		if($path[0] != "/")
+		{
+			# Join the CSS directory with the requested directory
+			$path = join_path(CSSPATH,CSScaffold::config('core.request.relative_dir'),$path);
+			
+			# Get the full server path to the file
+			$path = realpath($path);
+		}
+		else
+		{
+			$path = DOCROOT.$path;
+		}
+		
+		return $path;
+	}
+	
+	/**
 	 * Removes the string from the css rather than replacing it.
 	 *
 	 * @author Anthony Short
