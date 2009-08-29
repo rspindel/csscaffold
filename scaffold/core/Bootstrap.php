@@ -1,4 +1,4 @@
-<?php
+<?php defined('SYSPATH') OR die('No direct access allowed.');
 
 require SYSPATH . '/core/Common.php';
 require SYSPATH . '/core/Benchmark.php';
