@@ -9,4 +9,5 @@ $lang = array
 	'resource_not_found'	=> "Cannot locate the resource: %s",
 	'error_file_line'       => '<tt>%s <strong>[%s]:</strong></tt>',
 	'missing_array'			=> "Your config file does not contain a config array: <strong>%s</strong>",
+	'no_file_requested'		=> "No CSS file requested. You need to set a path to a CSS file using the <code>request</code> url parameter."
 );
