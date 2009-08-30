@@ -76,6 +76,12 @@ final class CSScaffold
 		# This function can only be run once
 		if ($run === TRUE)
 			return;
+		
+		# The path to the cache
+		define('CACHEPATH', realpath(SYSPATH.'cache'));
+		
+		# Load the include paths
+		self::include_paths(TRUE);
 				
 		# Recache is off by default
 		$recache = false;
@@ -104,11 +110,11 @@ final class CSScaffold
 		# Add our requested file var to the array
 		$request['file'] = $requested_file;
 		
-		# Full server path to the requested file
-		$request['path'] = join_path(DOCROOT,$requested_file);
+		# Find the server path to the requested file
+		$request['path'] = self::find_file(pathinfo($requested_file, PATHINFO_DIRNAME).'/', basename($requested_file, '.css'), TRUE, 'css');
 		
 		# Path to the file, relative to the css directory		
-		$request['relative_file'] = str_replace(CSSURL, '/', $requested_file);
+		$request['relative_file'] = str_replace(str_replace(DOCROOT, '', CSSPATH), '/', $requested_file);
 		
 		# Path to the directory containing the file, relative to the css directory		
 		$request['relative_dir'] = pathinfo($request['relative_file'], PATHINFO_DIRNAME);
@@ -116,7 +122,7 @@ final class CSScaffold
 		# If they've put a param in the url, consider it set to 'true'
 		foreach($url_params as $key => $value)
 		{
-			self::config('core.url_params.' . $key, true);
+			self::config('core.url_params.' . $key, $value);
 		}
 		
 		# If the file doesn't exist
@@ -435,7 +441,7 @@ final class CSScaffold
 		if ($name === 'core')
 		{
 			// Load the application configuration file
-			require SYSPATH.'/config.php';
+			require SYSPATH.'config.php';
 
 			if ( ! isset($config['cache_lock']))
 			{
@@ -498,6 +504,7 @@ final class CSScaffold
 				SYSPATH . 'modules',
 				SYSPATH . 'plugins',
 				CACHEPATH,
+				DOCROOT
 			);
 			
 			# Find the modules and plugins installed	
@@ -859,7 +866,7 @@ final class CSScaffold
 			$PHP_ERROR = (func_num_args() === 5);
 	
 			# Test to see if errors should be displayed
-			if ($PHP_ERROR AND error_reporting() === 0)
+			if (IN_PRODUCTION OR ($PHP_ERROR AND error_reporting() === 0))
 				die;
 				
 			# Error handling will use exactly 5 args, every time

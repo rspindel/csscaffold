@@ -30,11 +30,11 @@ class ImageReplace extends Plugins
 													
 				# Check if it exists
 				if(!file_exists($absolute_img))
-					throw new Scaffold_User_Exception("Image Replace Plugin", "File does not exist - $absolute_img");
+					throw new Scaffold_User_Exception("Image Replace Plugin", "File does not exist - $path");
 				
 				# Make sure it's an image
 				if(!is_image($absolute_img)) 
-					throw new Scaffold_User_Exception("Image Replace Plugin", "File is not an image - $absolute_img");
+					throw new Scaffold_User_Exception("Image Replace Plugin", "File is not an image - $path");
 																				
 				// Get the size of the image file
 				$size = GetImageSize($absolute_img);
@@ -46,8 +46,6 @@ class ImageReplace extends Plugins
 				{
 					$width = $height = 0;
 				}
-				
-				$url = str_replace(DOCROOT, '', $absolute_img);
 				
 				// Build the selector
 				$properties = "
