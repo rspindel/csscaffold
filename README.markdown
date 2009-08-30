@@ -28,10 +28,12 @@ Any css files within this css directory will now be parsed by Scaffold automatic
 
 Some of the plugins available are:
 
-- [Layout](http://github.com/anthonyshort/Layout/tree/master) - Create 960.gs style grids with Mixins and classes.
-- [OOCSS](http://github.com/anthonyshort/Extends/tree/master) - Extend one selector using another selector
-- [Browsers](http://github.com/anthonyshort/Browsers/tree/master) - Target specific browsers
-- [Icy Compressor](http://github.com/anthonyshort/Icy/tree/master) -  An alternative to Minify
+- Layout - Create 960.gs style grids with Mixins and classes.
+- OOCSS - Extend one selector using another selector
+- Browsers - Target specific browsers
+- Icy Compressor -  An alternative to Minify
+
+See the wiki for more information.
 
 ##Having trouble?
 
