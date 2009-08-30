@@ -83,6 +83,9 @@ final class CSScaffold
 		# Set the user agent
 		self::$user_agent = ( ! empty($_SERVER['HTTP_USER_AGENT']) ? trim($_SERVER['HTTP_USER_AGENT']) : '');
 		
+		# Set timezone
+		date_default_timezone_set('UTC');
+		
 		# Define Scaffold error constant
 		define('E_SCAFFOLD', 42);
 		
@@ -91,6 +94,9 @@ final class CSScaffold
 		
 		# Set exception handler
 		set_exception_handler(array('CSScaffold', 'exception_handler'));
+		
+		if(!isset($url_params['request']))
+			throw new Scaffold_Exception('core.no_file_requested');
 
 		# Get rid of those pesky slashes
 		$requested_file	= trim_slashes($url_params['request']);
@@ -816,10 +822,6 @@ final class CSScaffold
 	 **/
 	public static function output_css()
 	{	
-		# Set the default headers
-		header('Content-Type: text/css');
-		header("Vary: User-Agent, Accept");
-			
 		if (
 			isset($_SERVER['HTTP_IF_MODIFIED_SINCE'], $_SERVER['SERVER_PROTOCOL']) && 
 			self::config('core.cache.mod_time') <= strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE'])
@@ -829,7 +831,11 @@ final class CSScaffold
 			exit;
 		}
 		else
-		{			
+		{
+			# Set the default headers
+			header('Content-Type: text/css');
+			header("Vary: User-Agent, Accept");
+			
 			header('Last-Modified: '. gmdate('D, d M Y H:i:s', self::config('core.cache.mod_time')) .' GMT');
 			echo file_get_contents(self::$cached_file);
 			exit;
