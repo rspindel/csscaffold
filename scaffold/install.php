@@ -30,20 +30,15 @@ $page =
 			<h1>Installation</h1>
 			<p>Make sure you remove install.php when you're finished.</p>
 				<dl>
-					<dt>Cache Path</dt>
-					<dd class='".check_path(CACHEPATH)."'>".CACHEPATH."</dd>
+					<dt>Document Root</dt>
+					<dd class='".check_path(DOCROOT)."'>".DOCROOT."</dd>
 		
 					<dt>System Path</dt>
 					<dd class='".check_path(SYSPATH)."'>".SYSPATH."</dd>
 		
-					<dt>System URL</dt>
-					<dd class='".check_path(DOCROOT . SYSURL)."'>".SYSURL."</dd>
-		
 					<dt>CSS Path</dt>
 					<dd class='".check_path(CSSPATH)."'>".CSSPATH."</dd>
-					
-					<dt>URL path to the CSS directory</dt>
-					<dd class='".check_path(DOCROOT . CSSURL)."'>".CSSURL."</dd>
+		
 				</dl>
 			</div>
 		</body>

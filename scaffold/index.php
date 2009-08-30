@@ -68,7 +68,7 @@ define('DOCROOT', $document_root.DIRECTORY_SEPARATOR);
 # If this is a symlink, change to the real file
 is_link(FRONT) and chdir(dirname(realpath(__FILE__)));
 
-# Check if the system path is relative or absolute
+# Check if the css path is relative or absolute
 $css_path = file_exists($css_path) ? $css_path : DOCROOT.$css_path;
 
 # Set the constants

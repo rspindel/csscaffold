@@ -107,17 +107,21 @@ final class CSScaffold
 		# Get rid of those pesky slashes
 		$requested_file	= trim_slashes($url_params['request']);
 		
+		# Remove the start of the url if it exists (http://www.example.com)
+		$requested_file = preg_replace('/https?\:\/\/[^\/]+/i', '', $requested_file);
+		
 		# Add our requested file var to the array
 		$request['file'] = $requested_file;
 		
-		# Find the server path to the requested file
-		$request['path'] = self::find_file(pathinfo($requested_file, PATHINFO_DIRNAME).'/', basename($requested_file, '.css'), TRUE, 'css');
-		
-		# Path to the file, relative to the css directory		
-		$request['relative_file'] = str_replace(str_replace(DOCROOT, '', CSSPATH), '/', $requested_file);
-		
+		# Path to the file, relative to the css directory
+		$css_url = 	ltrim(str_replace(DOCROOT, '/', CSSPATH), '/');
+		$request['relative_file'] = ltrim(str_replace($css_url, '/', $requested_file), '/');
+
 		# Path to the directory containing the file, relative to the css directory		
 		$request['relative_dir'] = pathinfo($request['relative_file'], PATHINFO_DIRNAME);
+		
+		# Find the server path to the requested file
+		$request['path'] = self::find_file($request['relative_dir'] . '/', basename($requested_file, '.css'), TRUE, 'css');
 		
 		# If they've put a param in the url, consider it set to 'true'
 		foreach($url_params as $key => $value)
@@ -294,33 +298,26 @@ final class CSScaffold
 	private static function cache_set($recache = FALSE)
 	{
 		$checksum = "";
+		$cached_mod_time = 0;
 		
 		if(self::$flags != null)
 		{
 			$checksum = "-" . implode("_", array_keys(self::$flags));
 		}
-		
+
 		# Determine the name of the cache file
-		$cached_file = join_path(CACHEPATH,preg_replace('#(.+)(\.css)$#i', "$1{$checksum}$2", self::config('core.request.relative_file')));
-		
-		# Save it
-		self::$cached_file = $cached_file;
+		self::$cached_file = join_path(CACHEPATH,preg_replace('#(.+)(\.css)$#i', "$1{$checksum}$2", self::config('core.request.relative_file')));
 
 		# Check to see if we should delete the cache file
-		if($recache === true && file_exists($cached_file))
+		if($recache === true && file_exists(self::$cached_file))
 		{
 			# Empty out the cache
 			self::cache_clear();
 		}
-		
-		# When was the cache last modified
-		if(file_exists($cached_file))
+		elseif(file_exists(self::$cached_file))
 		{
+			# When was the cache last modified
 			$cached_mod_time =  (int) filemtime(self::$cached_file);
-		}
-		else
-		{
-			$cached_mod_time = 0;
 		}
 		
 		self::config_set('core.cache.mod_time', $cached_mod_time);
@@ -334,16 +331,22 @@ final class CSScaffold
 	**/
 	private static function cache_clear($path = CACHEPATH)
 	{
-		foreach(self::list_files($path, TRUE, $path) as $file)
+		$path .= '/';
+
+		foreach(scandir($path) as $file)
 		{
-			if(is_dir($file))
+			if($file[0] == ".")
 			{
-				self::cache_clear($file);
-				rmdir($file);
+				continue;
 			}
-			elseif(file_exists($file))
+			elseif(is_dir($path.$file))
 			{
-				unlink($file);
+				self::cache_clear($path.$file);
+				rmdir($path.$file);
+			}
+			elseif(file_exists($path.$file))
+			{
+				unlink($path.$file);
 			}
 		}
 	}
@@ -503,8 +506,7 @@ final class CSScaffold
 			(
 				SYSPATH . 'modules',
 				SYSPATH . 'plugins',
-				CACHEPATH,
-				DOCROOT
+				CSSPATH
 			);
 			
 			# Find the modules and plugins installed	
@@ -733,7 +735,7 @@ final class CSScaffold
 	public static function parse_css()
 	{						
 		# If the cache is stale or doesn't exist
-		if (self::config('core.cache.mod_time') < self::config('core.request.mod_time'))
+		if (self::config('core.cache.mod_time') <= self::config('core.request.mod_time'))
 		{			
 			# Start the timer
 			Benchmark::start("parse_css");
