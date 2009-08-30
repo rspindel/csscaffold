@@ -9,6 +9,11 @@
  */
  
 /**
+ * Run the installer to help you solve path issues.
+ */
+define('INSTALL', FALSE);
+ 
+/**
  * Define the website environment status. When this flag is set to TRUE, 
  * errors in your css will result in a blank page rather than displaying
  * error information to the user.
@@ -73,7 +78,7 @@ define('CSSPATH', str_replace('\\', '/', realpath($css_path)).'/');
 # Clean up
 unset($css_path, $document_root, $path); 
 
-if(file_exists(SYSPATH.'install'.EXT))
+if(INSTALL && !IN_PRODUCTION)
 {
 	require SYSPATH.'install'.EXT;
 }

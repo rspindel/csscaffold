@@ -6,7 +6,7 @@
  * If you lock the cache, it will never recache your css
  *
  * @var boolean
- **/	
+ */	
 $config['cache_lock'] = false;
 
 /**
@@ -16,7 +16,7 @@ $config['cache_lock'] = false;
  * you don't need to do ?recache during development.
  *
  * @var boolean
- **/	
+ */	
 $config['always_recache'] = true;
 
 /**
@@ -41,5 +41,5 @@ FB::setEnabled(false);
  * Choose a language. Currently, only supports English
  *
  * @var boolean
- **/
+ */
 $config['language'] = 'english';
