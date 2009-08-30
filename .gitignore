@@ -5,9 +5,5 @@ CSScaffold.esproj
 tests
 
 scaffold/cache/*
-scaffold/plugins/Layout
-scaffold/plugins/OOCSS
-scaffold/plugins/Browsers
-scaffold/plugins/Icy
 
 
