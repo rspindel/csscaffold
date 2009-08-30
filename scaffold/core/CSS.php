@@ -110,17 +110,17 @@ abstract class CSS
 	 */
 	public static function resolve_path($path)
 	{
-		if($path[0] != "/")
+		if($path[0] == "/")
+		{
+			$path = CSSPATH.$path;
+		}
+		else
 		{
 			# Join the CSS directory with the requested directory
 			$path = join_path(CSSPATH,CSScaffold::config('core.request.relative_dir'),$path);
 			
 			# Get the full server path to the file
 			$path = realpath($path);
-		}
-		else
-		{
-			$path = DOCROOT.$path;
 		}
 		
 		return $path;
