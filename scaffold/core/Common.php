@@ -60,18 +60,6 @@
 		
 		return implode($sep, $ret);
 	}
-
-    /**
-	 * Rounds a number to the nearest multiple of another number
-	 *
-	 * @author Anthony Short
-	 * @param $number int
-	 * @param $multiple int
-	 */
-	function round_nearest($number,$multiple) 
-	{ 
-		return round($number/$multiple)*$multiple;
-	}
   
 	/**
 	 * Prints out the value and exits
