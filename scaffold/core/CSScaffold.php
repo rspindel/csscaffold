@@ -142,15 +142,15 @@ final class CSScaffold
 		# Set it back to false if it's locked
 		if(self::config('core.cache_lock') === true)
 			$recache = false;
-	
-		# Prepare the cache, and tell it if we want to recache
-		self::cache_set($recache);
 		
 		# Load the modules
 		self::load_addons("modules");
 		
 		# Load the plugins
 		self::load_addons("plugins");
+		
+		# Prepare the cache, and tell it if we want to recache
+		self::cache_set($recache);
 		
 		# Setup is complete, prevent it from being run again
 		$run = TRUE;
@@ -703,6 +703,7 @@ final class CSScaffold
 			if(file_exists($controller))
 			{
 				require_once($controller);
+				call_user_func(array($addon,'flag'));
 				$loaded[] = $addon;
 			}
 		}
