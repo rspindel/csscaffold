@@ -112,7 +112,7 @@ abstract class CSS
 	{
 		if($path[0] == "/")
 		{
-			$path = CSSPATH.$path;
+			$path = DOCROOT.$path;
 		}
 		else
 		{
