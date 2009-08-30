@@ -10,6 +10,17 @@ A dynamic CSS framework inspired by Shaun Inman's CSS Cacheer. It's aimed at exp
 - Image replace text by just linking to the image file
 - Plus easily add your own functionality using the plugin system
 
+##New in 1.4
+
+- Exception handling so you can see exactly what went wrong and how to fix it. This should help out people who receive errors but have no idea what actually went wrong. This includes checks for missing constants, mixins, css files etc.
+- Language files now control the output of text. This means you can translate Scaffold into other languages.
+- Included all of the plugins, rather than keeping them separate
+- New Plugin - Validate. Validates your CSS using the W3C CSS validator. Only turn this on when you need it :)
+- Install file so you can check your paths. To use the install file, turn it on in index.php and navigate to the scaffold folder in a browser. 
+- New way to use the global config (Kohana dot-notation style)
+- Slight folder change in the repo. Moved the folders into a css directory to give a strong indication of where they should go
+- Various bug fixes and enhancements thanks to Kohana.
+
 ##What you need
 
 - PHP5+
