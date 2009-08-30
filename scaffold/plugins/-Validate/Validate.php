@@ -1,11 +1,11 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
 /**
- * Pretty
+ * Validate
  **/
 class Validate extends Plugins
 {
-	function formatting_process()
+	public static function formatting_process()
 	{
 		# Clean it up so we can use the line numbers
 		CSS::pretty();
