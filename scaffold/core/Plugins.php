@@ -11,9 +11,11 @@
 class Plugins
 {
 	/**
-	 * The constructor.
+	 * Sets cache flags
+	 *
+	 * @return Plugin
 	 */
-	private function __construct() {}
+	public static function flag() {}
 	
 	/**
 	 * Place any importing here. This will happen
