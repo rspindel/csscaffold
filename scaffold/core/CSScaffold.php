@@ -103,7 +103,10 @@ final class CSScaffold
 		
 		if(!isset($url_params['request']))
 			throw new Scaffold_Exception('core.no_file_requested');
-
+		
+		# URL to the css directory
+		$css_url = ltrim(str_replace(DOCROOT, '/', CSSPATH), '/');
+		
 		# Get rid of those pesky slashes
 		$requested_file	= trim_slashes($url_params['request']);
 		
@@ -114,14 +117,13 @@ final class CSScaffold
 		$request['file'] = $requested_file;
 		
 		# Path to the file, relative to the css directory
-		$css_url = 	ltrim(str_replace(DOCROOT, '/', CSSPATH), '/');
 		$request['relative_file'] = ltrim(str_replace($css_url, '/', $requested_file), '/');
 
 		# Path to the directory containing the file, relative to the css directory		
 		$request['relative_dir'] = pathinfo($request['relative_file'], PATHINFO_DIRNAME);
 		
 		# Find the server path to the requested file
-		$request['path'] = self::find_file($request['relative_dir'] . '/', basename($requested_file, '.css'), TRUE, 'css');
+		$request['path'] = self::find_file($request['relative_dir'] . '/', basename($requested_file, '.css'), FALSE, 'css');
 		
 		# If they've put a param in the url, consider it set to 'true'
 		foreach($url_params as $key => $value)
@@ -504,9 +506,9 @@ final class CSScaffold
 			// Add APPPATH as the first path
 			self::$include_paths = array
 			(
+				CSSPATH,
 				SYSPATH . 'modules',
 				SYSPATH . 'plugins',
-				CSSPATH
 			);
 			
 			# Find the modules and plugins installed	
