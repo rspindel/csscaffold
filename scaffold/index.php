@@ -22,12 +22,11 @@ define('IN_PRODUCTION', FALSE);
 $document_root = $_SERVER['DOCUMENT_ROOT'];
 
 /**
- * CSScaffold system directory. This directory should contain the core/ directory,
- * and the resources you included in your download of CSScaffold.
+ * CSS directory. This is where you are storing your CSS files.
  *
  * This path can be relative to this file or absolute from the document root.
  */
-$scaffold_system = "scaffold";
+$css_path = "../";
 
 /**
  * Make sure the we're using PHP 5.2 or newer
@@ -65,14 +64,14 @@ define('DOCROOT', $document_root.DIRECTORY_SEPARATOR);
 is_link(FRONT) and chdir(dirname(realpath(__FILE__)));
 
 # Check if the system path is relative or absolute
-$scaffold_system = file_exists($scaffold_system) ? $scaffold_system : DOCROOT.$scaffold_system;
+$css_path = file_exists($css_path) ? $css_path : DOCROOT.$css_path;
 
 # Set the constants
-define('CSSPATH', $path['dirname'].DIRECTORY_SEPARATOR);
-define('SYSPATH', str_replace('\\', '/', realpath($scaffold_system)).'/');
+define('SYSPATH', str_replace('\\', '/', realpath($path['dirname'])).'/');
+define('CSSPATH', str_replace('\\', '/', realpath($css_path)).'/');
 
 # Clean up
-unset($scaffold_system, $document_root, $path); 
+unset($css_path, $document_root, $path); 
 
 if(file_exists(SYSPATH.'install'.EXT))
 {
