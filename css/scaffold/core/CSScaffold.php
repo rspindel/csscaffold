@@ -61,6 +61,17 @@ final class CSScaffold
 	 * @var array
 	 */
 	private static $include_paths;
+	
+	/**
+	 * System-required URL params.
+	 *
+	 * @var array
+	 */
+	protected static $system_url_params = array
+	(
+		'recache',
+		'request'
+	);
 	 
 	/**
 	 * Sets the initial variables, checks if we need to process the css
@@ -124,11 +135,14 @@ final class CSScaffold
 		
 		# Find the server path to the requested file
 		$request['path'] = self::find_file($request['relative_dir'] . '/', basename($requested_file, '.css'), FALSE, 'css');
-		
+
 		# If they've put a param in the url, consider it set to 'true'
 		foreach($url_params as $key => $value)
 		{
-			self::config('core.url_params.' . $key, $value);
+			if(!in_array($key, self::$system_url_params))
+			{
+				self::config_set('core.options.'.$key, true);
+			}
 		}
 		
 		# If the file doesn't exist
@@ -160,7 +174,7 @@ final class CSScaffold
 		# Set it back to false if it's locked
 		if(self::config('core.cache_lock') === true)
 			$recache = false;
-		
+
 		# Load the modules
 		self::load_addons("modules");
 		
