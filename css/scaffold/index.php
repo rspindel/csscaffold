@@ -7,18 +7,6 @@
  *
  * @see https://github.com/anthonyshort/csscaffold/tree/master
  */
- 
-/**
- * Run the installer to help you solve path issues.
- */
-define('INSTALL', FALSE);
- 
-/**
- * Define the website environment status. When this flag is set to TRUE, 
- * errors in your css will result in a blank page rather than displaying
- * error information to the user.
- */
-define('IN_PRODUCTION', FALSE);
 
 /**
  * The document root for the server. If you're server doesn't set this
@@ -32,6 +20,24 @@ $document_root = $_SERVER['DOCUMENT_ROOT'];
  * This path can be relative to this file or absolute from the document root.
  */
 $css_path = "../";
+
+/**
+ * The path to the system folder. This path can be relative to this file 
+ * or absolute from the document root.
+ */
+$scaffold = "./";
+ 
+/**
+ * Run the installer to help you solve path issues.
+ */
+define('INSTALL', FALSE);
+ 
+/**
+ * Define the website environment status. When this flag is set to TRUE, 
+ * errors in your css will result in a blank page rather than displaying
+ * error information to the user.
+ */
+define('IN_PRODUCTION', FALSE);
 
 /**
  * Make sure the we're using PHP 5.2 or newer
@@ -57,8 +63,12 @@ ini_set('display_errors', TRUE);
 define('EXT', '.php');
 
 /**
+ * --------------------------------------------------------------------------------
  * Don't touch anything below here.
+ * --------------------------------------------------------------------------------
  */
+
+# Path information about the current file
 $path = pathinfo(__FILE__);
 
 # This file
@@ -69,14 +79,15 @@ define('DOCROOT', $document_root.DIRECTORY_SEPARATOR);
 is_link(FRONT) and chdir(dirname(realpath(__FILE__)));
 
 # Check if the css path is relative or absolute
-$css_path = file_exists($css_path) ? $css_path : DOCROOT.$css_path;
+$css_path = file_exists(realpath($css_path)) ? realpath($css_path) : DOCROOT.$css_path;
+$scaffold = file_exists(realpath($scaffold)) ? realpath($scaffold) : DOCROOT.$scaffold;
 
 # Set the constants
-define('SYSPATH', str_replace('\\', '/', realpath($path['dirname'])).'/');
-define('CSSPATH', str_replace('\\', '/', realpath($css_path)).'/');
+define('SYSPATH', str_replace('\\', '/', $scaffold).'/');
+define('CSSPATH', str_replace('\\', '/', $css_path).'/');
 
 # Clean up
-unset($css_path, $document_root, $path); 
+unset($css_path, $document_root, $path, $scaffold); 
 
 if(INSTALL && !IN_PRODUCTION)
 {
