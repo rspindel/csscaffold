@@ -1,8 +1,8 @@
-######################################################################
+####################################################
 # 
-#	THIS FILE SHOULD BE IN THE SAME DIRECTORY AS THE SCAFFOLD FOLDER
+#	THIS FILE SHOULD BE PLACED IN YOUR CSS DIRECTORY
 #
-######################################################################
+####################################################
 
 <IfModule mod_deflate.c>
 	SetOutputFilter DEFLATE

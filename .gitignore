@@ -2,8 +2,5 @@ CSScaffold.esproj
 */.DS_STORE
 
 .htaccess
-tests
 
-scaffold/cache/*
-
-
+cache/*
