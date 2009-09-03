@@ -29,13 +29,13 @@ A dynamic CSS framework inspired by Shaun Inman's CSS Cacheer. It's aimed at exp
 ##Quick Installation
 
 1. Download the latest release of Scaffold.
-2. Rename the downloaded file to <code>scaffold</code>
+2. Rename the downloaded file to *scaffold*
 3. Place all the files **inside your css directory on your webserver**. 
-4. Move css.htaccess into your css directory (one level up) and rename to .htaccess
-5. Change any configuration options in scaffold/config.php
-6. In scaffold/index.php change the INSTALL parameter to TRUE
-7. Navigate to the scaffold folder in a browser eg http://localhost/css/scaffold/ to run the installer which checks your paths
-8. If all is well, rename or remove the install.php file and change the INSTALL parameter back to FALSE
+4. Move *css.htaccess* into your css directory (one level up) and rename to *.htaccess*
+5. Change any configuration options in *scaffold/config.php*
+6. In *scaffold/index.php* change the INSTALL parameter to TRUE
+7. Navigate to the scaffold folder in a browser eg *http://localhost/css/scaffold/* to run the installer which checks your paths
+8. If all is well, rename or remove the *install.php* file and change the INSTALL parameter back to FALSE
 
 Any css files within this css directory will now be parsed by Scaffold automatically. 
 
