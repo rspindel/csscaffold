@@ -17,10 +17,8 @@ class ImageReplace extends Plugins
 	 * @return $css string
 	 */
 	public static function post_process()
-	{
-		$found = CSS::find_properties_with_value('image-replace', 'url\([\'\"]?([^)]+)[\'\"]?\)');
-		
-		if($found)
+	{		
+		if($found = CSS::find_properties_with_value('image-replace', 'url\([\'\"]?([^)]+)[\'\"]?\)'))
 		{
 			foreach ($found[4] as $key => $value) 
 			{
@@ -57,7 +55,7 @@ class ImageReplace extends Plugins
 					overflow:hidden;
 				";
 
-				CSS::replace($found[1][$key], $properties);
+				CSS::replace($found[2][$key], $properties);
 			}
 			
 			# Remove any left overs
