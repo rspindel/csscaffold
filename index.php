@@ -83,8 +83,8 @@ $css_path = file_exists(realpath($css_path)) ? realpath($css_path) : DOCROOT.$cs
 $scaffold = file_exists(realpath($scaffold)) ? realpath($scaffold) : DOCROOT.$scaffold;
 
 # Set the constants
-define('SYSPATH', str_replace('\\', '/', $scaffold).'/');
-define('CSSPATH', str_replace('\\', '/', $css_path).'/');
+define('SYSPATH', str_replace('\\', '/', $scaffold).DIRECTORY_SEPARATOR);
+define('CSSPATH', str_replace('\\', '/', $css_path).DIRECTORY_SEPARATOR);
 
 # Clean up
 unset($css_path, $document_root, $path, $scaffold); 
