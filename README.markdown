@@ -35,7 +35,7 @@ A dynamic CSS framework inspired by Shaun Inman's CSS Cacheer. It's aimed at exp
 5. Change any configuration options in *scaffold/config.php*
 6. In *scaffold/index.php* change the INSTALL parameter to TRUE
 7. Navigate to the scaffold folder in a browser eg *http://localhost/css/scaffold/* to run the installer which checks your paths
-8. If all is well, rename or remove the *install.php* file and change the INSTALL parameter back to FALSE
+8. If all is well, change the INSTALL parameter back to FALSE
 
 Any css files within this css directory will now be parsed by Scaffold automatically. 
 
@@ -52,7 +52,10 @@ Some of the plugins available are:
 - Layout - Create 960.gs style grids with Mixins and classes.
 - OOCSS - Extend one selector using another selector
 - Browsers - Target specific browsers
+- Minify - Uses the minify library to compress your CSS
 - Icy Compressor -  An alternative to Minify
+- Validate - Validates your CSS using the W3C validator
+- Image Replace - Image replace titles by just linking to the image. Scaffold will find the height and width of the image and take care of the rest of the properties needed to image replace the text.
 
 See the wiki for more information.
 
