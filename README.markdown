@@ -26,7 +26,7 @@ A dynamic CSS framework inspired by Shaun Inman's CSS Cacheer. It's aimed at exp
 - PHP5+
 - modrewrite enabled in Apache (optional)
 
-##Quick Installation
+##Installation
 
 1. Download the latest release of Scaffold.
 2. Rename the downloaded file to *scaffold*
@@ -38,6 +38,12 @@ A dynamic CSS framework inspired by Shaun Inman's CSS Cacheer. It's aimed at exp
 8. If all is well, rename or remove the *install.php* file and change the INSTALL parameter back to FALSE
 
 Any css files within this css directory will now be parsed by Scaffold automatically. 
+
+##Install with Git
+
+<pre><code>cd path/to/css/directory</code></pre>
+<pre><code>git clone git://github.com/anthonyshort/csscaffold.git scaffold</code></pre>
+<pre><code>git mv scaffold/css.htaccess .htaccess</code></pre>
 
 ##Available Plugins
 
