@@ -134,7 +134,16 @@ final class CSScaffold
 		$request['relative_dir'] = pathinfo($request['relative_file'], PATHINFO_DIRNAME);
 		
 		# Find the server path to the requested file
-		$request['path'] = self::find_file($request['relative_dir'] . '/', basename($requested_file, '.css'), FALSE, 'css');
+		if(file_exists(DOCROOT.$requested_file))
+		{
+			# The request is sent with the absolute path most of the time
+			$request['path'] = DOCROOT.$requested_file;
+		}
+		else
+		{
+			# Otherwise we'll try to find it inside the CSS directory
+			$request['path'] = self::find_file($request['relative_dir'] . '/', basename($requested_file, '.css'), FALSE, 'css');
+		}
 
 		# If they've put a param in the url, consider it set to 'true'
 		foreach($url_params as $key => $value)
