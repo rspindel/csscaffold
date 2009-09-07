@@ -22,20 +22,24 @@ class ImageReplace extends Plugins
 		{
 			foreach ($found[4] as $key => $value) 
 			{
-				$path = unquote($value);
-								
-				$absolute_img = CSS::resolve_path($path);
+				$path = $url = str_replace("\\", "/", unquote($value));
+			
+				# If they're getting an absolute file
+				if($path[0] == "/")
+				{
+					$path = DOCROOT . ltrim($include, "/");
+				}
 													
 				# Check if it exists
-				if(!file_exists($absolute_img))
+				if(!file_exists($path))
 					throw new Scaffold_User_Exception("Image Replace Plugin", "File does not exist - $path");
 				
 				# Make sure it's an image
-				if(!is_image($absolute_img)) 
+				if(!is_image($path)) 
 					throw new Scaffold_User_Exception("Image Replace Plugin", "File is not an image - $path");
 																				
 				// Get the size of the image file
-				$size = GetImageSize($absolute_img);
+				$size = GetImageSize($path);
 				$width = $size[0];
 				$height = $size[1];
 				
@@ -47,7 +51,7 @@ class ImageReplace extends Plugins
 				
 				// Build the selector
 				$properties = "
-					background:url($path) no-repeat 0 0;
+					background:url($url) no-repeat 0 0;
 					height:{$height}px;
 					width:{$width}px;
 					display:block;

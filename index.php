@@ -73,7 +73,7 @@ $path = pathinfo(__FILE__);
 
 # This file
 define('FRONT', $path['basename']);
-define('DOCROOT', $document_root.DIRECTORY_SEPARATOR);
+define('DOCROOT', str_replace('\\', '/', $document_root). '/');
 
 # If this is a symlink, change to the real file
 is_link(FRONT) and chdir(dirname(realpath(__FILE__)));
@@ -83,8 +83,8 @@ $css_path = file_exists(realpath($css_path)) ? realpath($css_path) : DOCROOT.$cs
 $scaffold = file_exists(realpath($scaffold)) ? realpath($scaffold) : DOCROOT.$scaffold;
 
 # Set the constants
-define('SYSPATH', str_replace('\\', '/', $scaffold).DIRECTORY_SEPARATOR);
-define('CSSPATH', str_replace('\\', '/', $css_path).DIRECTORY_SEPARATOR);
+define('SYSPATH', str_replace('\\', '/', $scaffold). '/');
+define('CSSPATH', str_replace('\\', '/', $css_path). '/');
 
 # Clean up
 unset($css_path, $document_root, $path, $scaffold); 

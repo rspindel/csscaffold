@@ -38,17 +38,16 @@ class Import extends Plugins
 	 */
 	public static function server_import($css, $previous = "")
 	{		
-		if (preg_match_all('/\@include\s+(?:\'|\")([^\'\"]+)(?:\'|\")\;/', $css, $matches))
+		if(preg_match_all('/\@include\s+(?:\'|\")([^\'\"]+)(?:\'|\")\;/', $css, $matches))
 		{
 			$unique = array_unique($matches[1]);
-			$include =  unquote($unique[0]);
-			$include_info = pathinfo($include);
-
-			# This is the path of the css file that requested the 
-			$requested_dir = pathinfo(CSScaffold::config('core.request.path'), PATHINFO_DIRNAME);
+			$include = str_replace("\\", "/", unquote($unique[0]));
 			
-			# Resolve the CSS-style path
-			$path = CSS::resolve_path($include);
+			# If they're getting an absolute file
+			if($include[0] == "/")
+			{
+				$include = DOCROOT . ltrim($include, "/");
+			}
 			
 			# Make sure recursion isn't happening
 			if($include == $previous)
@@ -58,18 +57,22 @@ class Import extends Plugins
 			if(!is_css($include))
 				throw new Scaffold_Exception("Import.not_css", $include);
 			
-			# Make sure the file exists	
-			if(!file_exists($path))
-				throw new Scaffold_Exception("Import.doesnt_exist", $include);
-			
-			# Make sure it hasn't already been included	
-			if(!in_array($path, self::$loaded))
-			{
-				self::$loaded[] = $path;
-				$css = str_replace($matches[0][0], file_get_contents($path), $css);
+			if(file_exists($include))
+			{	
+				# Make sure it hasn't already been included	
+				if(!in_array($include, self::$loaded))
+				{
+					self::$loaded[] = $include;
+					$css = str_replace($matches[0][0], file_get_contents($include), $css);
+				}
+				
+				# Check the file again for more imports
+				$css = self::server_import($css, $include);
 			}
-			
-			$css = self::server_import($css, $include);
+			else
+			{
+				throw new Scaffold_Exception("Import.doesnt_exist", $include);
+			}
 		}
 		
 		return $css;
