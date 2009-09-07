@@ -733,25 +733,22 @@ final class CSScaffold
 	/**
 	 * Loads modules and plugins
 	 *
-	 * @param $path The server path to the directory of addons
-	 * @return boolean
-	 * @author Anthony Short
+	 * @param $addons An array of addon names
+	 * @param $directory The directory to look for these addons in
+	 * @return void
 	 */
-	private static function load_addons($addons, $type)
+	private static function load_addons($addons, $directory)
 	{
-		# Stores the names of the plugins that are loaded
-		$loaded = array();
-
 		foreach($addons as $addon)
-		{	
+		{			
 			# The addon folder
-			$folder = realpath(join_path($type, $addon));
+			$folder = realpath(join_path($directory, $addon));
 					
 			# The controller for the plugin (Optional)
 			$controller = join_path($folder,$addon.EXT);
 
 			# The config file for the plugin (Optional)
-			$config_file = join_path($folder,'config.php');
+			$config_file = $folder.'/config.php';
 			
 			# Set the paths in the config
 			self::config_set("$addon.support", join_path($folder,'support'));
@@ -796,8 +793,6 @@ final class CSScaffold
 			# Load the CSS file in the object
 			CSS::load(file_get_contents(self::config('core.request.path')));
 			
-			$plugins = self::$plugins;
-			
 			# Import CSS files
 			Import::parse();
 			
@@ -805,7 +800,7 @@ final class CSScaffold
 			Mixins::import_mixins();
 														
 			# Parse our css through the plugins
-			foreach($plugins as $plugin)
+			foreach(self::$plugins as $plugin)
 			{
 				call_user_func(array($plugin,'import_process'));
 			}
@@ -816,7 +811,7 @@ final class CSScaffold
 			# Parse the constants
 			Constants::parse();
 
-			foreach($plugins as $plugin)
+			foreach(self::$plugins as $plugin)
 			{
 				call_user_func(array($plugin,'pre_process'));
 			}
@@ -830,7 +825,7 @@ final class CSScaffold
 			# Compress it before parsing
 			CSS::compress(CSS::$css);
 			
-			foreach($plugins as $plugin)
+			foreach(self::$plugins as $plugin)
 			{
 				call_user_func(array($plugin,'process'));
 			}
@@ -844,7 +839,7 @@ final class CSScaffold
 			# Compress it before parsing
 			CSS::compress(CSS::$css);
 			
-			foreach($plugins as $plugin)
+			foreach(self::$plugins as $plugin)
 			{
 				call_user_func(array($plugin,'post_process'));
 			}
@@ -858,7 +853,7 @@ final class CSScaffold
 			# Add the extra string we've been storing
 			CSS::$css .= CSS::$append;
 			
-			foreach($plugins as $plugin)
+			foreach(self::$plugins as $plugin)
 			{
 				call_user_func(array($plugin,'formatting_process'));
 			}

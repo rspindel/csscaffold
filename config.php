@@ -29,6 +29,25 @@ $config['always_recache'] = true;
 $config['show_header'] = true;
 
 /**
+ * FIREBUG
+ *
+ * Enable Firebug output. You need Firebug and FirePHP for Firefox.
+ * This is handy when you're viewing the page the CSS is used on,
+ * as it will display CSScaffold errors in the console.
+ *
+ */
+FB::setEnabled(false);
+
+/**
+ * LANGUAGE
+ *
+ * Choose a language. Currently, only supports English
+ *
+ * @var boolean
+ */
+$config['language'] = 'english';
+
+/**
  * Enabled Plugins
  *
  * Set which plugins are currently enabled. Plugins may also have
@@ -53,17 +72,17 @@ $config['plugins'] = array
 	# url parameter when calling your CSS from a browser.
 	'Pretty' => true,
 
-	# Feed different browsers different CSS rules by targetting
-	# the browsers from WITHIN your CSS
-	'Browsers' => false,
-
 	# Define a grid from within your CSS and have access to
 	# constants, mixins and more. This makes creating layouts
 	# much, much quicker.
 	'Layout' => true,
 	
 	# Uses the minify library to compress your CSS as much as possible.
-	'Minify' => false,
+	'Minify' => true,
+	
+	# Feed different browsers different CSS rules by targetting
+	# the browsers from WITHIN your CSS
+	'Browsers' => false,
 	
 	# Base one selector on another selector so you can 'extend' your
 	# CSS rules, just like objects in OOP
@@ -78,19 +97,3 @@ $config['plugins'] = array
 	# your CSS files. 
 	'XML_constants' => false,
 );
-
-/**
- * FIREBUG
- *
- * Enable Firebug output
- */
-FB::setEnabled(false);
-
-/**
- * LANGUAGE
- *
- * Choose a language. Currently, only supports English
- *
- * @var boolean
- */
-$config['language'] = 'english';
