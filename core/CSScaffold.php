@@ -88,9 +88,6 @@ final class CSScaffold
 		if ($run === TRUE)
 			return;
 		
-		# The path to the cache
-		define('CACHEPATH', realpath(SYSPATH.'cache'));
-		
 		# Load the include paths
 		self::include_paths(TRUE);
 				

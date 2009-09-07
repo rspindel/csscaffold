@@ -26,6 +26,13 @@ $css_path = "../";
  * or absolute from the document root.
  */
 $scaffold = "./";
+
+/**
+ * Sets the cache path. By default, this is inside of the system folder.
+ * You can set it to a custom location here. Be aware that when Scaffold
+ * recaches, it empties the whole cache to remove all flagged cache files. 
+ */
+$cache = "cache";
  
 /**
  * Run the installer to help you solve path issues.
@@ -81,13 +88,15 @@ is_link(FRONT) and chdir(dirname(realpath(__FILE__)));
 # Check if the css path is relative or absolute
 $css_path = file_exists(realpath($css_path)) ? realpath($css_path) : DOCROOT.$css_path;
 $scaffold = file_exists(realpath($scaffold)) ? realpath($scaffold) : DOCROOT.$scaffold;
+$cache = file_exists(realpath($cache)) ? realpath($cache) : DOCROOT.$cache;
 
 # Set the constants
-define('SYSPATH', str_replace('\\', '/', $scaffold). '/');
-define('CSSPATH', str_replace('\\', '/', $css_path). '/');
+define('SYSPATH', 	str_replace('\\', '/', $scaffold). '/');
+define('CSSPATH', 	str_replace('\\', '/', $css_path). '/');
+define('CACHEPATH', str_replace('\\', '/', $cache). '/');
 
 # Clean up
-unset($css_path, $document_root, $path, $scaffold); 
+unset($css_path, $document_root, $path, $scaffold, $cache); 
 
 if(INSTALL && !IN_PRODUCTION)
 {
