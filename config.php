@@ -56,18 +56,13 @@ $config['plugins'] = array
 	# Feed different browsers different CSS rules by targetting
 	# the browsers from WITHIN your CSS
 	'Browsers' => false,
-	
-	# Compress your CSS using Icy Compressor. This is said to
-	# give the most compression possible.
-	'Icy' => false,
-	
+
 	# Define a grid from within your CSS and have access to
 	# constants, mixins and more. This makes creating layouts
 	# much, much quicker.
-	'Layout' => false,
+	'Layout' => true,
 	
-	# Uses the minify library to compress your CSS. The preferred
-	# solution as it's very quick.
+	# Uses the minify library to compress your CSS as much as possible.
 	'Minify' => false,
 	
 	# Base one selector on another selector so you can 'extend' your
