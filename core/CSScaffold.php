@@ -734,6 +734,7 @@ final class CSScaffold
 			# The controller name and the class name
 			$addon = pathinfo($folder, PATHINFO_BASENAME);
 			$controller = join_path($folder,$addon.EXT);
+			$config_file = join_path($folder,'config.php');
 			
 			# Set the paths in the config
 			self::config_set("$addon.support", join_path($folder,'support'));
@@ -745,6 +746,19 @@ final class CSScaffold
 				require_once($controller);
 				call_user_func(array($addon,'flag'));
 				$loaded[] = $addon;
+			}
+			
+			# If there is a config file
+			if(file_exists($config_file))
+			{
+				include $config_file;
+				
+				foreach($config as $key => $value)
+				{
+					self::config_set($addon.'.'.$key, $value);
+				}
+				
+				unset($config);
 			}
 		}
 		
@@ -810,6 +824,9 @@ final class CSScaffold
 			# Parse the mixins
 			Mixins::parse();
 			
+			# Find missing constants
+			Constants::replace();
+			
 			# Compress it before parsing
 			CSS::compress(CSS::$css);
 			
@@ -831,9 +848,6 @@ final class CSScaffold
 			{
 				call_user_func(array($plugin,'formatting_process'));
 			}
-			
-			# Find missing constants
-			Constants::replace();
 			
 			# Stop the timer...
 			Benchmark::stop("parse_css");

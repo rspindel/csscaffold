@@ -8,7 +8,6 @@
  * to the mixin.
  * 
  * @author Anthony Short
- * @dependencies None
  */
 class Mixins extends Plugins
 {
