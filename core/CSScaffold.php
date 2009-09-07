@@ -11,20 +11,6 @@
 final class CSScaffold 
 {	 
 	/**
-	 * Holds the array of plugin objects
-	 *
-	 * @var array
-	 */ 
-	private static $plugins;
-	
-	/**
-	 * Holds the array of module objects
-	 *
-	 * @var array
-	 */ 
-	private static $modules;
-
-	/**
 	 * The configuration settings
 	 */
 	private static $configuration;
@@ -70,8 +56,26 @@ final class CSScaffold
 	protected static $system_url_params = array
 	(
 		'recache',
-		'request'
+		'request',
 	);
+	
+	/**
+	 * Modules
+	 */
+	protected static $modules = array
+	(
+		'Constants',
+		'Expression',
+		'Import',
+		'Iteration',
+		'Mixins',
+		'NestedSelectors'
+	);
+	
+	/**
+	 * Plugins that are installed
+	 */
+	public static $plugins = array();
 	 
 	/**
 	 * Sets the initial variables, checks if we need to process the css
@@ -181,11 +185,23 @@ final class CSScaffold
 		if(self::config('core.cache_lock') === true)
 			$recache = false;
 
-		# Load the modules
-		self::load_addons("modules");
+		# Load the modules.
+		self::load_addons(self::$modules, 'modules');
 		
 		# Load the plugins
-		self::load_addons("plugins");
+		$plugins = self::config('core.plugins');
+		
+		# If the plugin is disabled, remove it.
+		foreach($plugins as $key => $value)
+		{
+			if($value !== false)
+			{
+				self::$plugins[] = $key;
+			}
+		}
+		
+		# Now we can load them
+		self::load_addons(self::$plugins, "plugins");
 		
 		# Prepare the cache, and tell it if we want to recache
 		self::cache_set($recache);
@@ -720,20 +736,21 @@ final class CSScaffold
 	 * @param $path The server path to the directory of addons
 	 * @return boolean
 	 * @author Anthony Short
-	 **/
-	private static function load_addons($type)
+	 */
+	private static function load_addons($addons, $type)
 	{
 		# Stores the names of the plugins that are loaded
 		$loaded = array();
-		
-		$files = self::list_files($type);
-			
-		foreach($files as $folder)
-		{
-			# Get the folder name. This will be the same as 
-			# The controller name and the class name
-			$addon = pathinfo($folder, PATHINFO_BASENAME);
+
+		foreach($addons as $addon)
+		{	
+			# The addon folder
+			$folder = realpath(join_path($type, $addon));
+					
+			# The controller for the plugin (Optional)
 			$controller = join_path($folder,$addon.EXT);
+
+			# The config file for the plugin (Optional)
 			$config_file = join_path($folder,'config.php');
 			
 			# Set the paths in the config
@@ -745,7 +762,6 @@ final class CSScaffold
 			{
 				require_once($controller);
 				call_user_func(array($addon,'flag'));
-				$loaded[] = $addon;
 			}
 			
 			# If there is a config file
@@ -761,8 +777,6 @@ final class CSScaffold
 				unset($config);
 			}
 		}
-		
-		self::config_set("core.$type", $loaded);
 	}
 	
 	/**
@@ -782,7 +796,7 @@ final class CSScaffold
 			# Load the CSS file in the object
 			CSS::load(file_get_contents(self::config('core.request.path')));
 			
-			$plugins = self::config('core.plugins');
+			$plugins = self::$plugins;
 			
 			# Import CSS files
 			Import::parse();

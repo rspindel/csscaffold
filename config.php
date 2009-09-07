@@ -29,6 +29,62 @@ $config['always_recache'] = true;
 $config['show_header'] = true;
 
 /**
+ * Enabled Plugins
+ *
+ * Set which plugins are currently enabled. Plugins may also have
+ * their own configuration options. Check the plugin folder for a 
+ * config.php file to customize the way the plugin works.
+ *
+ * All of these plugins are already installed. This is where you can 
+ * turn them on or off.
+ * 
+ * To install a new plugin, drop it in scaffold/plugins, then add it to
+ * this list. For more information on any of these plugins, or about
+ * creating your own plugins, check the wiki on Github.
+ * 
+ */
+$config['plugins'] = array
+(
+	# Easily image replace text. Just use the image-replace property
+	# and give it a url() like a normal image. Scaffold takes care of the rest.
+	'ImageReplace' => true,
+	
+	# Allows you to make the final output much more readable. Just as ?pretty as a 
+	# url parameter when calling your CSS from a browser.
+	'Pretty' => true,
+
+	# Feed different browsers different CSS rules by targetting
+	# the browsers from WITHIN your CSS
+	'Browsers' => false,
+	
+	# Compress your CSS using Icy Compressor. This is said to
+	# give the most compression possible.
+	'Icy' => false,
+	
+	# Define a grid from within your CSS and have access to
+	# constants, mixins and more. This makes creating layouts
+	# much, much quicker.
+	'Layout' => false,
+	
+	# Uses the minify library to compress your CSS. The preferred
+	# solution as it's very quick.
+	'Minify' => false,
+	
+	# Base one selector on another selector so you can 'extend' your
+	# CSS rules, just like objects in OOP
+	'OOCSS' => false,
+	
+	# Validate your CSS on the fly. DO NOT keep this running all the
+	# time. It will cause your CSS to load very slowly, and can bog
+	# down the validation servers.
+	'Validate' => false,
+	
+	# Set constants via XML, allowing a CMS to tie itself in with
+	# your CSS files. 
+	'XML_constants' => false,
+);
+
+/**
  * FIREBUG
  *
  * Enable Firebug output
