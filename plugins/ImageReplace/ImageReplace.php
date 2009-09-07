@@ -27,7 +27,7 @@ class ImageReplace extends Plugins
 				# If they're getting an absolute file
 				if($path[0] == "/")
 				{
-					$path = DOCROOT . ltrim($include, "/");
+					$path = DOCROOT . ltrim($path, "/");
 				}
 													
 				# Check if it exists
