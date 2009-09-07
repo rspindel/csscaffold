@@ -193,6 +193,9 @@ final class CSScaffold
 		# Prepare the cache, and tell it if we want to recache
 		self::cache_set($recache);
 		
+		# Work in the same directory as the requested CSS file
+		chdir(dirname($request['path']));
+		
 		# Setup is complete, prevent it from being run again
 		$run = TRUE;
 	}
