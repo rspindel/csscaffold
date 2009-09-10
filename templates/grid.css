@@ -11,3 +11,10 @@
 	baseline:20;
 	unit:px;
 }
+
+/**
+ * This mixin will generate all of the classes a
+ * normal framework creates, columns, spans, pushes,
+ * pulls, append columns etc, all based on your grid.
+ */
++grid-classes;
