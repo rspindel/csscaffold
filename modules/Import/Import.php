@@ -65,7 +65,7 @@ class Import extends Plugins
 			if($include[0] == "~")
 			{
 				$include = ltrim($include, '~/');
-				$include = CSSURL . $include;	
+				$include = CSSPATH . $include;	
 			}
 			
 			if(file_exists($include))
