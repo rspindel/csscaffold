@@ -12,6 +12,18 @@ function check_path($path)
 	}
 }
 
+function check_cache($path)
+{
+	if(is_writable($path))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 $page =
 		"
 		<!DOCTYPE html>
@@ -38,8 +50,18 @@ $page =
 		
 					<dt>CSS Path</dt>
 					<dd class='".check_path(CSSPATH)."'>".CSSPATH."</dd>
+					
+					<dt>Path to Scaffold folder</dt>
+					<dd class='".check_path(SCAFFOLD)."'>".SCAFFOLD."</dd>
+					
+					<dt>Plugins Path</dt>
+					<dd class='".check_path(PLUGINS)."'>".PLUGINS."</dd>
+					
+					<dt>Cache Path</dt>
+					<dd class='".check_path(CACHEPATH)."'>".CACHEPATH."</dd>					
 		
 				</dl>
+					
 			</div>
 		</body>
 		</html>
