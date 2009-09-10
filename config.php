@@ -22,7 +22,7 @@ $config['always_recache'] = true;
 /**
  * SHOW CSS HEADER INFORMATION
  *
- * Output information at the top of your cached file for debugging
+ * Output information at the top of your cached file.
  *
  * @var boolean
  **/

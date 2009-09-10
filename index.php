@@ -118,7 +118,7 @@ unset($css, $document_root, $path, $system, $cache, $scaffold, $plugins);
 
 if(INSTALL && !IN_PRODUCTION)
 {
-	require SYSPATH.'install'.EXT;
+	require SYSPATH.'views/install'.EXT;
 }
 else
 {
