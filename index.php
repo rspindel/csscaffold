@@ -19,7 +19,7 @@ $document_root = $_SERVER['DOCUMENT_ROOT'];
  *
  * This path can be relative to this file or absolute from the document root.
  */
-$css_path = "../";
+$css = "../";
 
 /**
  * The path to the system folder. This path can be relative to this file 
@@ -86,17 +86,17 @@ define('DOCROOT', str_replace('\\', '/', $document_root). '/');
 is_link(FRONT) and chdir(dirname(realpath(__FILE__)));
 
 # Check if the css path is relative or absolute
-$css_path = file_exists(realpath($css_path)) ? realpath($css_path) : DOCROOT.$css_path;
+$css = file_exists(realpath($css)) ? realpath($css) : DOCROOT.$css;
 $scaffold = file_exists(realpath($scaffold)) ? realpath($scaffold) : DOCROOT.$scaffold;
 $cache = file_exists(realpath($cache)) ? realpath($cache) : DOCROOT.$cache;
 
 # Set the constants
 define('SYSPATH', 	str_replace('\\', '/', $scaffold). '/');
-define('CSSPATH', 	str_replace('\\', '/', $css_path). '/');
+define('CSSPATH', 	str_replace('\\', '/', $css). '/');
 define('CACHEPATH', str_replace('\\', '/', $cache). '/');
 
 # Clean up
-unset($css_path, $document_root, $path, $scaffold, $cache); 
+unset($css, $document_root, $path, $scaffold, $cache); 
 
 if(INSTALL && !IN_PRODUCTION)
 {
