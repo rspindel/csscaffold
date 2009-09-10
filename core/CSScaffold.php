@@ -117,7 +117,7 @@ final class CSScaffold
 			throw new Scaffold_Exception('core.no_file_requested');
 		
 		# URL to the css directory
-		define('CSSURL', ltrim(str_replace(DOCROOT, '/', CSSPATH), '/'));
+		define('CSSURL', str_replace(DOCROOT, '/', CSSPATH));
 		
 		# Get rid of those pesky slashes
 		$requested_file	= trim_slashes($url_params['request']);
@@ -797,7 +797,7 @@ final class CSScaffold
 			Import::parse();
 			
 			# Import the mixins in the plugin/module folders
-			Mixins::import_mixins();
+			Mixins::import_mixins('mixins');
 														
 			# Parse our css through the plugins
 			foreach(self::$plugins as $plugin)
