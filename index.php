@@ -38,7 +38,7 @@ $system = 'system';
  * You can set it to a custom location here. Be aware that when Scaffold
  * recaches, it empties the whole cache to remove all flagged cache files. 
  */
-$cache = 'system/cache';
+$cache = 'compressed';
 
 /**
  * Path to the plugins directory. This path can be relative to this file 

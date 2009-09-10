@@ -70,7 +70,12 @@ class Layout extends Plugins
 				Constants::set($key,$value);
 			}
 			
-			$img = CACHEPATH . "/{$lgw}_{$cw}_{$rgw}_{$bl}_grid.png";
+			# Make a directory in the cache just for this plugin
+			if(!is_readable(CACHEPATH.'Layout'))
+				mkdir(CACHEPATH.'Layout');
+			
+			# Path to the image
+			$img = CACHEPATH . "/Layout/{$lgw}_{$cw}_{$rgw}_{$bl}_grid.png";
 			
 			# Generate the grid.png
 			self::create_grid_image($cw, $bl, $lgw, $rgw, $img);
@@ -84,7 +89,8 @@ class Layout extends Plugins
 			
 			# Add mixins	
 			$mixins = CSScaffold::config('Layout.support') . '/mixins/grid.css';
-			CSS::append(file_get_contents($mixins));
+			$mixins = file_get_contents($mixins);
+			CSS::append($mixins);
 		}
 	}
 	

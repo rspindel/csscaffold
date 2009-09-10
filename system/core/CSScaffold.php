@@ -826,13 +826,13 @@ final class CSScaffold
 			# Parse @for loops
 			Iteration::parse();
 			
-			# Compress it before parsing
-			CSS::compress(CSS::$css);
-			
 			foreach(self::$plugins as $plugin)
 			{
 				call_user_func(array($plugin,'process'));
 			}
+			
+			# Compress it before parsing
+			CSS::compress(CSS::$css);
 			
 			# Parse the mixins
 			Mixins::parse();

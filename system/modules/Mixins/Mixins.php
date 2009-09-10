@@ -37,7 +37,6 @@ class Mixins extends Plugins
 		# Finds any selectors starting with =mixin-name
 		if( $found = CSS::find_selectors('\=(?P<name>[0-9a-zA-Z_-]*)(\((?P<args>.*?)\))?', 5) )
 		{
-		
 			# Just to make life a little easier
 			$full_base 		= $found[0];
 			$base_names 	= $found['name'];
@@ -57,7 +56,7 @@ class Mixins extends Plugins
 			}
 						
 			# Store this away for debugging
-			self::$mixins 	= $bases;
+			self::$mixins = $bases;
 			
 			# Remove all of the mixin bases
 			CSS::remove($full_base);
