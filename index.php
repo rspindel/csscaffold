@@ -19,20 +19,32 @@ $document_root = $_SERVER['DOCUMENT_ROOT'];
  *
  * This path can be relative to this file or absolute from the document root.
  */
-$css = "../";
+$css = '../';
+
+/**
+ * The path to the scaffold directory. Usually the directory this file
+ * is in, but you might have moved the index.php elsewhere.
+ */
+$scaffold = './';
 
 /**
  * The path to the system folder. This path can be relative to this file 
  * or absolute from the document root.
  */
-$scaffold = "./";
+$system = 'system';
 
 /**
  * Sets the cache path. By default, this is inside of the system folder.
  * You can set it to a custom location here. Be aware that when Scaffold
  * recaches, it empties the whole cache to remove all flagged cache files. 
  */
-$cache = "cache";
+$cache = 'system/cache';
+
+/**
+ * Path to the plugins directory. This path can be relative to this file 
+ * or absolute from the document root.
+ */
+$plugins = 'plugins';
  
 /**
  * Run the installer to help you solve path issues.
@@ -80,23 +92,29 @@ $path = pathinfo(__FILE__);
 
 # This file
 define('FRONT', $path['basename']);
-define('DOCROOT', str_replace('\\', '/', $document_root). '/');
 
 # If this is a symlink, change to the real file
 is_link(FRONT) and chdir(dirname(realpath(__FILE__)));
 
-# Check if the css path is relative or absolute
-$css = file_exists(realpath($css)) ? realpath($css) : DOCROOT.$css;
+# Set the docroot
+define('DOCROOT', str_replace('\\', '/', $document_root). '/');
+
+# Check if the paths are relative or absolute
 $scaffold = file_exists(realpath($scaffold)) ? realpath($scaffold) : DOCROOT.$scaffold;
+$css = file_exists(realpath($css)) ? realpath($css) : DOCROOT.$css;
+$system = file_exists(realpath($system)) ? realpath($system) : DOCROOT.$system;
 $cache = file_exists(realpath($cache)) ? realpath($cache) : DOCROOT.$cache;
+$plugins = file_exists(realpath($plugins)) ? realpath($plugins) : DOCROOT.$plugins;
 
 # Set the constants
-define('SYSPATH', 	str_replace('\\', '/', $scaffold). '/');
+define('SCAFFOLD',  str_replace('\\', '/', $scaffold). '/');
+define('SYSPATH', 	str_replace('\\', '/', $system). '/');
 define('CSSPATH', 	str_replace('\\', '/', $css). '/');
 define('CACHEPATH', str_replace('\\', '/', $cache). '/');
+define('PLUGINS',   str_replace('\\', '/', $plugins). '/');
 
 # Clean up
-unset($css, $document_root, $path, $scaffold, $cache); 
+unset($css, $document_root, $path, $system, $cache, $scaffold, $plugins); 
 
 if(INSTALL && !IN_PRODUCTION)
 {

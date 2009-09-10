@@ -92,6 +92,9 @@ final class CSScaffold
 		if ($run === TRUE)
 			return;
 		
+		# Change into the system directory
+		chdir(SYSPATH);
+		
 		# Load the include paths
 		self::include_paths(TRUE);
 				
@@ -199,9 +202,9 @@ final class CSScaffold
 				self::$plugins[] = $key;
 			}
 		}
-		
+
 		# Now we can load them
-		self::load_addons(self::$plugins, "plugins");
+		self::load_addons(self::$plugins, PLUGINS);
 		
 		# Prepare the cache, and tell it if we want to recache
 		self::cache_set($recache);
@@ -485,7 +488,7 @@ final class CSScaffold
 		if ($name === 'core')
 		{
 			// Load the application configuration file
-			require SYSPATH.'config.php';
+			require SCAFFOLD.'config.php';
 
 			if ( ! isset($config['cache_lock']))
 			{
@@ -547,12 +550,12 @@ final class CSScaffold
 			(
 				CSSPATH,
 				SYSPATH . 'modules',
-				SYSPATH . 'plugins',
+				PLUGINS,
 			);
 			
 			# Find the modules and plugins installed	
 			$modules = self::list_files('modules', FALSE, SYSPATH . 'modules');
-			$plugins = self::list_files('plugins', FALSE, SYSPATH . 'plugins');
+			$plugins = self::list_files('plugins', FALSE, PLUGINS);
 			
 			foreach (array_merge($plugins,$modules) as $path)
 			{
@@ -567,6 +570,7 @@ final class CSScaffold
 
 			// Add SYSPATH as the last path
 			self::$include_paths[] = SYSPATH;
+			self::$include_paths[] = SCAFFOLD;
 		}
 
 		return self::$include_paths;
@@ -740,7 +744,7 @@ final class CSScaffold
 	private static function load_addons($addons, $directory)
 	{
 		foreach($addons as $addon)
-		{			
+		{
 			# The addon folder
 			$folder = realpath(join_path($directory, $addon));
 					

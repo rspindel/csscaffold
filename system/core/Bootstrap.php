@@ -6,8 +6,8 @@ require SYSPATH . '/core/Plugins.php';
 require SYSPATH . '/core/CSScaffold.php';
 require SYSPATH . '/core/CSS.php';
 
-require SYSPATH . '/libraries/FirePHPCore/fb.php';
-require SYSPATH . '/libraries/FirePHPCore/FirePHP.class.php';
+require SYSPATH . '/vendor/FirePHPCore/fb.php';
+require SYSPATH . '/vendor/FirePHPCore/FirePHP.class.php';
 
 # Send the request through to the main controller
 CSScaffold::setup($_GET);
