@@ -117,7 +117,7 @@ final class CSScaffold
 			throw new Scaffold_Exception('core.no_file_requested');
 		
 		# URL to the css directory
-		$css_url = ltrim(str_replace(DOCROOT, '/', CSSPATH), '/');
+		define('CSSURL', ltrim(str_replace(DOCROOT, '/', CSSPATH), '/'));
 		
 		# Get rid of those pesky slashes
 		$requested_file	= trim_slashes($url_params['request']);
@@ -129,7 +129,7 @@ final class CSScaffold
 		$request['file'] = $requested_file;
 		
 		# Path to the file, relative to the css directory
-		$request['relative_file'] = ltrim(str_replace($css_url, '/', $requested_file), '/');
+		$request['relative_file'] = ltrim(str_replace(CSSURL, '/', $requested_file), '/');
 
 		# Path to the directory containing the file, relative to the css directory		
 		$request['relative_dir'] = pathinfo($request['relative_file'], PATHINFO_DIRNAME);
