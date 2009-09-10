@@ -53,9 +53,20 @@ class Import extends Plugins
 			if($include == $previous)
 				throw new Scaffold_Exception("Import.recursion", $include);
 			
+			# If they haven't supplied an extension, we'll assume its a css file
+			if(pathinfo($include, PATHINFO_EXTENSION) == "")
+				$include .= '.css';
+			
 			# Make sure it's a CSS file
 			if(!is_css($include))
 				throw new Scaffold_Exception("Import.not_css", $include);
+			
+			# If the url starts with ~, we'll assume it's from the root of the css directory
+			if($include[0] == "~")
+			{
+				$include = ltrim($include, '~/');
+				$include = CSSURL . $include;	
+			}
 			
 			if(file_exists($include))
 			{	
