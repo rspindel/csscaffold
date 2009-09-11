@@ -29,6 +29,16 @@ $config['always_recache'] = true;
 $config['show_header'] = true;
 
 /**
+ * Automatically include mixins
+ *
+ * By default, Scaffold includes any and all mixin files stored
+ * in framework/mixins, to save the user the trouble of including
+ * them by themselves. If you want Scaffold to run faster, you can
+ * include them manually
+ */
+$config['auto_include_mixins'] = true;
+
+/**
  * FIREBUG
  *
  * Enable Firebug output. You need Firebug and FirePHP for Firefox.

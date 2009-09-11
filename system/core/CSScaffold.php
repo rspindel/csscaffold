@@ -800,8 +800,11 @@ final class CSScaffold
 			# Import CSS files
 			Import::parse();
 			
-			# Import the mixins in the plugin/module folders
-			Mixins::import_mixins('framework/mixins');
+			if(self::config('core.auto_include_mixins') === true)
+			{
+				# Import the mixins in the plugin/module folders
+				Mixins::import_mixins('framework/mixins');
+			}
 														
 			# Parse our css through the plugins
 			foreach(self::$plugins as $plugin)
