@@ -1,3 +1,6 @@
 <IfModule mod_deflate.c>
 	SetOutputFilter DEFLATE
 </IfModule>
+
+ExpiresActive on
+ExpiresDefault "access plus 10 years"
