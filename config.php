@@ -51,11 +51,31 @@ $config['override_import'] = false;
  * If you're calling CSS using scaffold/index.php?request=path/to/css method,
  * the relative paths to images will break in the browser, as it will
  * be looking for the images inside the scaffold folder. To fix this, Scaffold
- * can make all images absolute.
+ * can make all url() paths absolute.
  *
  * If you're having image path issues, set this to true.
  */
 $config['absolute_urls'] = false;
+
+/**
+ * Use CSS-style constants
+ *
+ * You can use a syntax similar to the proposed CSS variable syntax which is
+ * const(constantname) instead of the SASS-style !constantname
+ *
+ * Setting this to true uses the const(constantname) syntax for constants
+ */
+$config['use_css_constants'] = false;
+
+/**
+ * Minify/Compress CSS
+ *
+ * You can use the minify library to compress your CSS. If this is set
+ * to false, the CSS will be reformatted in an easy-to-read format instead.
+ *
+ * Minify strips all unnecessary whitespace, empty and redundant selectors etc.
+ */
+$config['minify_css'] = true;
 
 /**
  * Firebug
@@ -94,18 +114,11 @@ $config['plugins'] = array
 	# Easily image replace text. Just use the image-replace property
 	# and give it a url() like a normal image. Scaffold takes care of the rest.
 	'ImageReplace' => true,
-	
-	# Allows you to make the final output much more readable. Just as ?pretty as a 
-	# url parameter when calling your CSS from a browser.
-	'Pretty' => true,
 
 	# Define a grid from within your CSS and have access to
 	# constants, mixins and more. This makes creating layouts
 	# much, much quicker.
 	'Layout' => true,
-	
-	# Uses the minify library to compress your CSS as much as possible.
-	'Minify' => true,
 	
 	# Feed different browsers different CSS rules by targetting
 	# the browsers from WITHIN your CSS

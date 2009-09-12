@@ -102,7 +102,14 @@ class Constants extends Plugins
 			{
 				if($value != "")
 				{
-					CSS::replace( "!{$key}", unquote($value));
+					if(CSScaffold::config('core.use_css_constants') === true)
+					{
+						CSS::replace( "const({$key})", unquote($value));
+					}
+					else
+					{
+						CSS::replace( "!{$key}", unquote($value));
+					}
 				}
 			}
 			

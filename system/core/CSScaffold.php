@@ -69,7 +69,8 @@ final class CSScaffold
 		'Import',
 		'Iteration',
 		'Mixins',
-		'NestedSelectors'
+		'NestedSelectors',
+		'Minify'
 	);
 	
 	/**
@@ -866,6 +867,19 @@ final class CSScaffold
 			# Add the extra string we've been storing
 			CSS::$css .= CSS::$append;
 			
+			# If they want to minify it
+			if(self::config('core.minify_css') === true)
+			{
+				Minify::compress();
+			}
+			
+			# Otherwise, we'll make it pretty
+			else
+			{
+				CSS::pretty();
+			}
+			
+			# Formatting hook
 			foreach(self::$plugins as $plugin)
 			{
 				call_user_func(array($plugin,'formatting_process'));

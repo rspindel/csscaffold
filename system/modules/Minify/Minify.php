@@ -5,7 +5,7 @@
  **/
 class Minify extends Plugins
 {
-	public static function formatting_process()
+	public static function compress()
 	{
 		self::load_library('Minify_Compressor');
 		
