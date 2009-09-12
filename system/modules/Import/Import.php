@@ -37,8 +37,18 @@ class Import extends Plugins
 	 * @param $css
 	 */
 	public static function server_import($css, $previous = "")
-	{		
-		if(preg_match_all('/\@include\s+(?:\'|\")([^\'\"]+)(?:\'|\")\;/', $css, $matches))
+	{
+		# If they want to override the CSS syntax
+		if(CSScaffold::config('override_import') === true)
+		{
+			$import = 'import';
+		}
+		else
+		{
+			$import = 'include';
+		}
+			
+		if(preg_match_all('/\@'.$import.'\s+(?:\'|\")([^\'\"]+)(?:\'|\")\;/', $css, $matches))
 		{
 			$unique = array_unique($matches[1]);
 			$include = str_replace("\\", "/", unquote($unique[0]));

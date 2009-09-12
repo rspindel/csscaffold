@@ -1,31 +1,25 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
 /**
- * CACHE LOCK
+ * Cache Lock
  *
  * If you lock the cache, it will never recache your css
- *
- * @var boolean
  */	
 $config['cache_lock'] = false;
 
 /**
- * ALWAYS RECACHE
+ * Always Recache
  *
  * If true, it will recache the css every time. This means
  * you don't need to do ?recache during development.
- *
- * @var boolean
  */	
 $config['always_recache'] = true;
 
 /**
- * SHOW CSS HEADER INFORMATION
+ * Show CSS rendering information
  *
  * Output information at the top of your cached file.
- *
- * @var boolean
- **/
+ */
 $config['show_header'] = true;
 
 /**
@@ -34,12 +28,37 @@ $config['show_header'] = true;
  * By default, Scaffold includes any and all mixin files stored
  * in framework/mixins, to save the user the trouble of including
  * them by themselves. If you want Scaffold to run faster, you can
- * include them manually
+ * include them manually.
+ *
+ * Setting this to false means you need to include the framework/mixins manually.
  */
 $config['auto_include_mixins'] = true;
 
 /**
- * FIREBUG
+ * Override CSS @import
+ *
+ * Scaffold normally uses @include to import files, rather than
+ * overriding the standard CSS @import. You can change this, and
+ * use @import instead by setting this to true.
+ *
+ * Setting this to true means you'll use @import instead of @include
+ */
+$config['override_import'] = false;
+
+/**
+ * Make all URL paths absolute
+ *
+ * If you're calling CSS using scaffold/index.php?request=path/to/css method,
+ * the relative paths to images will break in the browser, as it will
+ * be looking for the images inside the scaffold folder. To fix this, Scaffold
+ * can make all images absolute.
+ *
+ * If you're having image path issues, set this to true.
+ */
+$config['absolute_urls'] = true;
+
+/**
+ * Firebug
  *
  * Enable Firebug output. You need Firebug and FirePHP for Firefox.
  * This is handy when you're viewing the page the CSS is used on,
@@ -49,11 +68,9 @@ $config['auto_include_mixins'] = true;
 FB::setEnabled(false);
 
 /**
- * LANGUAGE
+ * Language
  *
  * Choose a language. Currently, only supports English
- *
- * @var boolean
  */
 $config['language'] = 'english';
 

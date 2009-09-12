@@ -857,6 +857,12 @@ final class CSScaffold
 			# Parse the nested selectors
 			NestedSelectors::parse();
 			
+			# Convert all url()'s to absolute paths if required
+			if(self::config('core.absolute_urls') === true)
+			{
+				CSS::convert_to_absolute_urls();
+			}
+			
 			# Add the extra string we've been storing
 			CSS::$css .= CSS::$append;
 			

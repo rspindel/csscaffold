@@ -55,6 +55,38 @@ abstract class CSS
 	}
 	
 	/**
+	 * Makes all URLs absolute
+	 *
+	 * @author Anthony Short
+	 * @return void
+	 */
+	public static function convert_to_absolute_urls($css = "")
+	{
+		if($css == "") $css =& self::$css;
+		
+		if($found = self::find_functions('url', '', $css))
+		{
+			foreach($found[1] as $key => $value)
+			{
+				$url = unquote($value);
+								
+				# Absolute Path
+				if($url[0] == "/" || $url[0] == "\\")
+				{
+					continue;
+				}
+				
+				# Relative Path
+				else
+				{
+					$url = str_replace(DOCROOT, "/", realpath($url));
+					$css = str_replace($value, $url, $css);
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Compresses down the CSS file as much as possible
 	 *
 	 * @author Anthony Short
