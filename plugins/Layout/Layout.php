@@ -80,7 +80,7 @@ class Layout extends Plugins
 			# Generate the grid.png
 			self::create_grid_image($cw, $bl, $lgw, $rgw, $img);
 			
-			$img = str_replace(DOCROOT,'',$img);
+			$img = str_replace(DOCROOT,'/',$img);
 			
 			CSS::append(".showgrid{background:url('".$img."');}");
 			
