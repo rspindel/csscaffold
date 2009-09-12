@@ -70,12 +70,20 @@ $config['use_css_constants'] = false;
 /**
  * Minify/Compress CSS
  *
- * You can use the minify library to compress your CSS. If this is set
- * to false, the CSS will be reformatted in an easy-to-read format instead.
- *
- * Minify strips all unnecessary whitespace, empty and redundant selectors etc.
+ * You can use the minify library to compress your CSS. Minify strips all 
+ * unnecessary whitespace, empty and redundant selectors etc.
  */
 $config['minify_css'] = true;
+
+/**
+ * Prettify CSS
+ *
+ * Instead of minifying your CSS, you can prettify it, making it easier to
+ * read instead of worrying about compressing down the size. 
+ *
+ * This will only function if minify_css is set to false.
+ */
+$config['prettify_css'] = false;
 
 /**
  * Firebug

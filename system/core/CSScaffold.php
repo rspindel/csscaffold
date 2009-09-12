@@ -874,7 +874,7 @@ final class CSScaffold
 			}
 			
 			# Otherwise, we'll make it pretty
-			else
+			elseif(self::config('core.prettify_css') === true)
 			{
 				CSS::pretty();
 			}
