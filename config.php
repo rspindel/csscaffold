@@ -55,7 +55,7 @@ $config['override_import'] = false;
  *
  * If you're having image path issues, set this to true.
  */
-$config['absolute_urls'] = true;
+$config['absolute_urls'] = false;
 
 /**
  * Firebug
