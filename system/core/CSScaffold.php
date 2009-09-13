@@ -186,7 +186,7 @@ final class CSScaffold
 			$recache = true;
 		
 		# Set it back to false if it's locked
-		if(self::config('core.cache_lock') === true)
+		if(self::config('core.cache_lock') === true || IN_PRODUCTION)
 			$recache = false;
 
 		# Load the modules.
@@ -212,6 +212,9 @@ final class CSScaffold
 		
 		# Work in the same directory as the requested CSS file
 		chdir(dirname($request['path']));
+		
+		# Load the CSS file into the object
+		CSS::load(file_get_contents(self::config('core.request.path')));
 		
 		# Setup is complete, prevent it from being run again
 		$run = TRUE;
@@ -794,10 +797,7 @@ final class CSScaffold
 		{			
 			# Start the timer
 			Benchmark::start("parse_css");
-			
-			# Load the CSS file in the object
-			CSS::load(file_get_contents(self::config('core.request.path')));
-			
+						
 			# Import CSS files
 			Import::parse();
 			
@@ -874,7 +874,7 @@ final class CSScaffold
 			}
 			
 			# Otherwise, we'll make it pretty
-			elseif(self::config('core.prettify_css') === true)
+			else
 			{
 				CSS::pretty();
 			}
