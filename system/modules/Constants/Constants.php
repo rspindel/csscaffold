@@ -32,8 +32,13 @@ class Constants extends Plugins
 		# Find the constants group and values
 		$found 	= CSS::find_at_group('constants');
 		
-		self::set("scaffold_url", str_replace(DOCROOT, '/',SYSPATH));
-		self::set("css_url", str_replace(DOCROOT, '/',CSSPATH));
+		# Set the global constants
+		foreach(CSScaffold::config('core.constants') as $key => $value)
+		{
+			self::set($key, $value);
+		}
+		
+		stop(self::$constants);
 
 		# If there are some constants, let do it.
 		if($found !== false)

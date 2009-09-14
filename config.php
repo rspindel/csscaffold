@@ -79,6 +79,22 @@ $config['use_css_constants'] = false;
 $config['minify_css'] = true;
 
 /**
+ * Custom Global Constants
+ *
+ * You can set basic constants here that can be access throughout your 
+ * entire project. I'd advise that you don't add stylesheet-specific styles
+ * here (like colours), instead, just add any constants you might need,
+ * like $_SERVER variables.
+ *
+ * If you want to add more complex variable logic, create a plugin
+ */
+$config['constants'] = array
+(
+	'scaffold_url' 	=> SYSURL,
+	'css_url' 		=> CSSURL,
+);
+		
+/**
  * Firebug
  *
  * Enable Firebug output. You need Firebug and FirePHP for Firefox.

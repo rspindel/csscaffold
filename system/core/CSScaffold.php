@@ -122,6 +122,7 @@ final class CSScaffold
 		
 		# URL to the css directory
 		define('CSSURL', str_replace(DOCROOT, '/', CSSPATH));
+		define('SYSURL', str_replace(DOCROOT, '/', SYSPATH));
 		
 		# Get rid of those pesky slashes
 		$requested_file	= trim_slashes($url_params['request']);
