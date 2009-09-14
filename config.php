@@ -79,14 +79,14 @@ $config['use_css_constants'] = false;
 $config['minify_css'] = true;
 
 /**
- * Custom Global Constants
+ * Custom Global CSS Constants
  *
  * You can set basic constants here that can be access throughout your 
  * entire project. I'd advise that you don't add stylesheet-specific styles
  * here (like colours), instead, just add any constants you might need,
  * like $_SERVER variables.
  *
- * If you want to add more complex variable logic, create a plugin
+ * If you want to add more complex constant-setting logic, create a plugin.
  */
 $config['constants'] = array
 (
@@ -155,6 +155,6 @@ $config['plugins'] = array
 	'XML_constants' => false,
 	
 	# Outputs a typography testing suite which used the requested
-	# and parsed CSS file
+	# and parsed CSS file. Add ?output=type_suite to the url.
 	'Type_suite' => true,
 );
