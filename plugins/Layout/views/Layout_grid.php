@@ -21,7 +21,7 @@
 </head>
 <body>
 
-<div id="page">
+<div class="container">
 
 	<div class="columns-12">
 		<h1>Grid</h1>
