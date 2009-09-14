@@ -967,6 +967,40 @@ final class CSScaffold
 	}
 	
 	/**
+	 * Loads a view file and returns it
+	 */
+	private static function load_view($view, $data)
+	{
+		if ($view == '')
+				return;
+		
+		# Find the view file
+		$view = self::find_file('views/', $view, true);
+	
+		# Buffering on
+		ob_start();
+	
+		# Import the view variables to local namespace
+		extract($data, EXTR_SKIP);
+	
+		# Views are straight HTML pages with embedded PHP, so importing them
+		# this way insures that $this can be accessed as if the user was in
+		# the controller, which gives the easiest access to libraries in views
+		try
+		{
+			include $view;
+		}
+		catch (Exception $e)
+		{
+			ob_end_clean();
+			throw $e;
+		}
+	
+		# Fetch the output and close the buffer
+		return ob_get_clean();
+	}
+
+	/**
 	 * Output the CSS to the browser
 	 *
 	 * @return void
