@@ -37,8 +37,6 @@ class Constants extends Plugins
 		{
 			self::set($key, $value);
 		}
-		
-		stop(self::$constants);
 
 		# If there are some constants, let do it.
 		if($found !== false)
