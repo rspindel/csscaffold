@@ -4,13 +4,13 @@
 	<meta charset=utf-8 />
 	<title>Typography | CSScaffold</title>
 	<style type="text/css">
-		<?php echo file_get_contents(CSScaffold::$cached_file); ?>
+		<?= file_get_contents(CSScaffold::$cached_file); ?>
 	</style>
 	
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
 	<script>
 		$(document).ready(function(){
-			if (window.location.href.indexOf('?grid')>0) 
+			if (window.location.href.indexOf('grid')>0) 
 			{
 				$('#page').addClass('showgrid');
 			}
@@ -27,8 +27,7 @@
  
 			<div id="headings">
  
-			<h2><a href="?grid">View the grid</a></h2>
- 
+			<h2>Lorem ipsum dolor sit amet, consectetur adipisicing elit</h2>
  
 			<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi commodo, ipsum sed pharetra gravida, orci magna rhoncus neque, id pulvinar odio lorem non turpis. Nullam sit amet enim. Suspendisse id velit vitae ligula volutpat condimentum. Aliquam erat volutpat. Sed quis velit. Nulla facilisi. Nulla libero. Vivamus pharetra posuere sapien. Nam consectetuer. Sed aliquam, nunc eget euismod ullamcorper, lectus nunc ullamcorper orci, fermentum bibendum enim nibh eget ipsum. Donec porttitor ligula eu dolor. Maecenas vitae nulla consequat libero cursus venenatis. Nam magna enim, accumsan eu, blandit sed, blandit a, eros.</p>
  

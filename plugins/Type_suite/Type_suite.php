@@ -11,11 +11,14 @@ class Type_suite extends Plugins
 	{
 		if(CSScaffold::config('core.options.output') == "type_suite")
 		{
+			# Make sure we're sending HTML
 			header('Content-Type: text/html');
 			
-			$type = CSScaffold::load_view('Type_suite_typography');
+			# Load the test suite markup
+			$type = CSScaffold::load_view('TS_typography');
 			
-			echo($type);
+			# Echo and out!
+			echo($type); 
 			exit;
 		}
 	}
