@@ -155,7 +155,14 @@ final class CSScaffold
 		{
 			if(!in_array($key, self::$system_url_params))
 			{
-				self::config_set('core.options.'.$key, true);
+				if($value == "")
+				{
+					self::config_set('core.options.'.$key, true);
+				}
+				else
+				{
+					self::config_set('core.options.'.$key, $value);
+				}
 			}
 		}
 		
@@ -969,7 +976,7 @@ final class CSScaffold
 	/**
 	 * Loads a view file and returns it
 	 */
-	private static function load_view($view, $data)
+	public static function load_view($view)
 	{
 		if ($view == '')
 				return;
@@ -979,9 +986,6 @@ final class CSScaffold
 	
 		# Buffering on
 		ob_start();
-	
-		# Import the view variables to local namespace
-		extract($data, EXTR_SKIP);
 	
 		# Views are straight HTML pages with embedded PHP, so importing them
 		# this way insures that $this can be accessed as if the user was in

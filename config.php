@@ -137,4 +137,8 @@ $config['plugins'] = array
 	# Set constants via XML, allowing a CMS to tie itself in with
 	# your CSS files. 
 	'XML_constants' => false,
+	
+	# Outputs a typography testing suite which used the requested
+	# and parsed CSS file
+	'Type_suite' => true,
 );
