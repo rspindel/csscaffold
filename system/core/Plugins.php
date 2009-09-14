@@ -45,6 +45,11 @@ class Plugins
 	public static function formatting_process() {}
 	
 	/**
+	 * For loading views and display a page other than the CSS
+	 */
+	public static function output() {}
+	
+	/**
 	 * Loads a library
 	 */
 	public static function load_library($library) 

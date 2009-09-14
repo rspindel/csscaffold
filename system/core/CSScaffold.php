@@ -895,6 +895,16 @@ final class CSScaffold
 
 			# Write the css file to the cache
 			self::cache_write(CSS::$css);
+			
+			# Output process hook for plugins to display views.
+			# Doesn't run in production mode.
+			if(!IN_PRODUCTION)
+			{
+				foreach(self::$plugins as $plugin)
+				{
+					call_user_func(array($plugin,'output'));
+				}
+			}
 		} 
 	}
 		
