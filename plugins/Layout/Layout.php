@@ -94,6 +94,22 @@ class Layout extends Plugins
 		}
 	}
 	
+	public static function output()
+	{
+		if(CSScaffold::config('core.options.output') == "layout_test")
+		{
+			# Make sure we're sending HTML
+			header('Content-Type: text/html');
+			
+			# Load the test suite markup
+			$page = CSScaffold::load_view('Layout_grid');
+
+			# Echo and out!
+			echo($page); 
+			exit;
+		}
+	}
+	
 	/**
 	 * Finds any round(n) and rounds the number 
 	 * to the nearest multiple of the baseline
