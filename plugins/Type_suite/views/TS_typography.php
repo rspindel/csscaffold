@@ -18,16 +18,13 @@
 	</script>
 </head>
 <body>
-	<div id="page">
-	
-		<div class=" columns-12">
+	<div style="width:70%; margin:0 auto;">
  
+			<h1>Lorem ipsum dolor sit amet, consectetur adipisicing elit adipisicing elit adipisicing elit</h1>
+ 			
+ 			<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi commodo, ipsum sed pharetra gravida, orci magna rhoncus neque, id pulvinar odio lorem non turpis. Nullam sit amet enim. Suspendisse id velit vitae ligula volutpat condimentum. Aliquam erat volutpat. Sed quis velit. Nulla facilisi. Nulla libero. Vivamus pharetra posuere sapien. Nam consectetuer. Sed aliquam, nunc eget euismod ullamcorper, lectus nunc ullamcorper orci, fermentum bibendum enim nibh eget ipsum. Donec porttitor ligula eu dolor. Maecenas vitae nulla consequat libero cursus venenatis. Nam magna enim, accumsan eu, blandit sed, blandit a, eros.</p>
  
-			<h1>Typography</h1>
- 
-			<div id="headings">
- 
-			<h2>Lorem ipsum dolor sit amet, consectetur adipisicing elit</h2>
+			<h2>Lorem ipsum dolor sit amet, consectetur adipisicing elit adipisicing elit adipisicing elit</h2>
  
 			<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi commodo, ipsum sed pharetra gravida, orci magna rhoncus neque, id pulvinar odio lorem non turpis. Nullam sit amet enim. Suspendisse id velit vitae ligula volutpat condimentum. Aliquam erat volutpat. Sed quis velit. Nulla facilisi. Nulla libero. Vivamus pharetra posuere sapien. Nam consectetuer. Sed aliquam, nunc eget euismod ullamcorper, lectus nunc ullamcorper orci, fermentum bibendum enim nibh eget ipsum. Donec porttitor ligula eu dolor. Maecenas vitae nulla consequat libero cursus venenatis. Nam magna enim, accumsan eu, blandit sed, blandit a, eros.</p>
  
@@ -36,17 +33,17 @@
 			<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi commodo, ipsum sed pharetra gravida, orci magna rhoncus neque, id pulvinar odio lorem non turpis. Nullam sit amet enim. Suspendisse id velit vitae ligula volutpat condimentum. Aliquam erat volutpat. Sed quis velit. Nulla facilisi. Nulla libero. Vivamus pharetra posuere sapien. Nam consectetuer. Sed aliquam, nunc eget euismod ullamcorper, lectus nunc ullamcorper orci, fermentum bibendum enim nibh eget ipsum. Donec porttitor ligula eu dolor. Maecenas vitae nulla consequat libero cursus venenatis. Nam magna enim, accumsan eu, blandit sed, blandit a, eros.</p>
  
  
-			<h4>Lorem ipsum dolor sit amet, consectetur adipisicing elit adipisicing elit adipisicing elit</h4>
+			<h4>Lorem ipsum dolor sit amet, consectetur adipisicing elit adipisicing elit adipisicing elit. Lorem ipsum dolor sit amet, consectetur adipisicing elit adipisicing elit adipisicing elit</h4>
  
 			<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi commodo, ipsum sed pharetra gravida, orci magna rhoncus neque, id pulvinar odio lorem non turpis. Nullam sit amet enim. Suspendisse id velit vitae ligula volutpat condimentum. Aliquam erat volutpat. Sed quis velit. Nulla facilisi. Nulla libero. Vivamus pharetra posuere sapien. Nam consectetuer. Sed aliquam, nunc eget euismod ullamcorper, lectus nunc ullamcorper orci, fermentum bibendum enim nibh eget ipsum. Donec porttitor ligula eu dolor. Maecenas vitae nulla consequat libero cursus venenatis. Nam magna enim, accumsan eu, blandit sed, blandit a, eros.</p>
  
  
-			<h5>Lorem ipsum dolor sit amet, consectetur adipisicing elit adipisicing elit adipisicing elit</h5>
+			<h5>Lorem ipsum dolor sit amet, consectetur adipisicing elit adipisicing elit adipisicing elit, Lorem ipsum dolor sit amet, consectetur adipisicing elit adipisicing elit adipisicing elit</h5>
  
 			<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi commodo, ipsum sed pharetra gravida, orci magna rhoncus neque, id pulvinar odio lorem non turpis. Nullam sit amet enim. Suspendisse id velit vitae ligula volutpat condimentum. Aliquam erat volutpat. Sed quis velit. Nulla facilisi. Nulla libero. Vivamus pharetra posuere sapien. Nam consectetuer. Sed aliquam, nunc eget euismod ullamcorper, lectus nunc ullamcorper orci, fermentum bibendum enim nibh eget ipsum. Donec porttitor ligula eu dolor. Maecenas vitae nulla consequat libero cursus venenatis. Nam magna enim, accumsan eu, blandit sed, blandit a, eros.</p>
  
  
-			<h6>Lorem ipsum dolor sit amet, consectetur adipisicing elit adipisicing elit adipisicing elit</h6>
+			<h6>Lorem ipsum dolor sit amet, consectetur adipisicing elit adipisicing elit adipisicing elit, Lorem ipsum dolor sit amet, consectetur adipisicing elit adipisicing elit adipisicing elit</h6>
  
 			<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi commodo, ipsum sed pharetra gravida, orci magna rhoncus neque, id pulvinar odio lorem non turpis. Nullam sit amet enim. Suspendisse id velit vitae ligula volutpat condimentum. Aliquam erat volutpat. Sed quis velit. Nulla facilisi. Nulla libero. Vivamus pharetra posuere sapien. Nam consectetuer. Sed aliquam, nunc eget euismod ullamcorper, lectus nunc ullamcorper orci, fermentum bibendum enim nibh eget ipsum. Donec porttitor ligula eu dolor. Maecenas vitae nulla consequat libero cursus venenatis. Nam magna enim, accumsan eu, blandit sed, blandit a, eros.</p>
  
@@ -56,10 +53,6 @@
 			<h4>H4: Lorem ipsum dolor sit amet, consectetur adipisicing elit adipis</h4>
 			<h5>H5: Lorem ipsum dolor sit amet, consectetur adipisicing elit adipisicing elit adipisicing elit</h5>
 			<h6>H6: Lorem ipsum dolor sit amet, consectetur adipisicing elit adipisicing elit adipisicing elit</h6>
- 
-			</div>
- 
-			<div id="lists">
  
 			<h2>Lists</h2>
  
@@ -120,10 +113,6 @@
 	      		<dd>Lorem ipsum dolor sit amet, consectetur adipisicing elit adipisicing elit adipisicing elit</dd>
 	      </dl>	
  
-	      </div>
- 
-	  <div id="tables">
- 
 	      	<h2>Tables</h2>
  
 		      	<table summary="This is the summary text for this table."  border="0" cellspacing="0" cellpadding="0">
@@ -176,12 +165,6 @@
 		      	</tbody>
 		      </table>
  
- 
-		      </div>
- 
- 
-				    <div id="other">
- 
 	      <h2>Other type elements</h2>
  
 		      	<p>
@@ -233,11 +216,7 @@ Not indented
             even though the code has newlines, spaces, and tabs. 
       It should be the same size as &lt;p&gt; text.
       </tt>
-      
-      	</div>
-      	
  
-		</div>
  
 	</div>
 </body>
