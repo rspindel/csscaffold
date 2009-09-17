@@ -18,7 +18,7 @@
 	</script>
 </head>
 <body>
-	<div style="width:70%; margin:0 auto;">
+	<div id="page" style="width:70%; margin:0 auto;">
  
 			<h1>Lorem ipsum dolor sit amet, consectetur adipisicing elit adipisicing elit adipisicing elit</h1>
  			

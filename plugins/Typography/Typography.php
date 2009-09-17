@@ -5,11 +5,11 @@
  *
  * Outputs a HTML page of every type element using the parsed CSS
  **/
-class Type_suite extends Plugins
+class Typography extends Plugins
 {
 	public static function output()
 	{
-		if(CSScaffold::config('core.options.output') == "type_suite")
+		if(CSScaffold::config('core.options.output') == "typography")
 		{
 			# Make sure we're sending HTML
 			header('Content-Type: text/html');
