@@ -127,6 +127,9 @@ final class CSScaffold
 		# Get rid of those pesky slashes
 		$requested_file	= trim_slashes($url_params['request']);
 		
+		# Remove anything about .css - like /typography/
+		$requested_file = preg_replace('/\.css(.*)$/', '.css', $requested_file);
+		
 		# Remove the start of the url if it exists (http://www.example.com)
 		$requested_file = preg_replace('/https?\:\/\/[^\/]+/i', '', $requested_file);
 		
