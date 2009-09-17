@@ -96,7 +96,7 @@ class Layout extends Plugins
 	
 	public static function output()
 	{
-		if(CSScaffold::config('core.options.output') == "layout_test")
+		if(CSScaffold::config('core.options.output') == "layout")
 		{
 			# Make sure we're sending HTML
 			header('Content-Type: text/html');
