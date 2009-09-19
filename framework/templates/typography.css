@@ -6,37 +6,6 @@
 *
 */
 
-	/**
-	 * Create our grid. Fairly self-explanatory. This is required
-	 * to use any of the layout plugins features.
-	 *
-	 * This would usually be done somewhere else, like the main stylesheet.
-	 */
-	@grid
-	{
-		column-width:60;
-		column-count:12;
-		left-gutter-width:10;
-		right-gutter-width:10;
-		baseline:20;
-		unit:px;
-	}
-		
-	/**
-	 * Define constants for this file
-	 */
-	@constants
-	{
-		body_background		:#fff;
-		body_color			:#555;
-		heading_color		:#111;
-		light				:#666;
-		highlight			:#ffffd9;
-		success				:green;
-		error				:red;
-		notice				:yellow;
-	}
-
 	body 
 	{
 		+helvetica;

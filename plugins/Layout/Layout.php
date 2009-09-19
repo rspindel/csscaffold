@@ -72,11 +72,23 @@ class Layout extends Plugins
 		# Find the @grid - this returns an array of 'groups' and 'values'		
 		if( $settings = CSS::find_at_group('grid') )
 		{
-			# Remove it from the css
-			CSS::replace($settings['groups'], array()); 
+			# All the @grids
+			$groups = $settings['groups'];
 			
 			# Store it so it's easier to grab
 			$settings = $settings['values'];
+			
+			# Make sure none of the required options are missing
+			foreach(array('column-count', 'column-width', 'unit', 'baseline') as $option)
+			{
+				if(!isset($settings[$option]))
+				{
+					throw new Scaffold_Exception('Layout.missing_option', $option);
+				}
+			}
+			
+			# Remove it from the css
+			CSS::replace($groups, array()); 
 			
 			# The number of columns, baseline and unit
 			$cc = $settings['column-count'];

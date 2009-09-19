@@ -37,7 +37,7 @@
 		
 		<div class="wireframe">
 			<?php for ($i = 1; $i < Layout::$column_count; $i++) : ?>
-			<div class="columns-<?= $i; ?>"></div>
+			<div class="columns-<?= $i; ?> first"></div>
 			<div class="columns-<?= (Layout::$column_count - $i); ?> last"></div>
 	 		<?php endfor; ?>
 	 	</div>
