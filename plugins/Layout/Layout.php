@@ -8,6 +8,56 @@
  **/
 class Layout extends Plugins
 {
+
+	/**
+	 * Width of a single column
+	 *
+	 * @var string
+	 */
+	public static $column_width;
+	
+	/**
+	 * Number of columns in the grid
+	 *
+	 * @var string
+	 */
+	public static $column_count;
+	
+	/**
+	 * Total width of the gutters combined
+	 *
+	 * @var string
+	 */
+	public static $gutter_width;
+	
+	/**
+	 * Left gutter width
+	 *
+	 * @var string
+	 */
+	public static $left_gutter_width;
+	
+	/**
+	 * Right gutter width
+	 *
+	 * @var string
+	 */
+	public static $right_gutter_width;
+	
+	/**
+	 * The total width of the grid
+	 *
+	 * @var string
+	 */
+	public static $grid_width;
+	
+	/**
+	 * The baseline height
+	 *
+	 * @var string
+	 */
+	public static $baseline;
+
 	/**
 	 * The pre-processing function occurs after the importing,
 	 * but before any real processing. This is usually the stage
@@ -91,12 +141,21 @@ class Layout extends Plugins
 			$mixins = CSScaffold::config('Layout.support') . '/mixins/grid.css';
 			$mixins = file_get_contents($mixins);
 			CSS::append($mixins);
+			
+			# Make each of the column variables a member variable
+			self::$column_count = $cc;
+			self::$column_width = $cw;
+			self::$gutter_width = $gw;
+			self::$left_gutter_width = $lgw;
+			self::$right_gutter_width = $rgw;
+			self::$grid_width = $grid;
+			self::$baseline = $bl;
 		}
 	}
 	
 	public static function output()
 	{
-		if(CSScaffold::config('core.options.output') == "layout")
+		if(CSScaffold::config('core.options.output') == "grid")
 		{
 			# Make sure we're sending HTML
 			header('Content-Type: text/html');
