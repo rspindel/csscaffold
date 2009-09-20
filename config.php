@@ -132,10 +132,6 @@ $config['plugins'] = array
 	# and give it a url() like a normal image. Scaffold takes care of the rest.
 	'ImageReplace' => true,
 	
-	# Base one selector on another selector so you can 'extend' your
-	# CSS rules, just like objects in OOP
-	'Extendable' => false,
-	
 	# Validate your CSS on the fly. DO NOT keep this running all the
 	# time. It will cause your CSS to load very slowly, and can bog
 	# down the validation servers.
