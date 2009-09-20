@@ -10,7 +10,7 @@
 	-webkit-box-sizing:border-box;
 	-ms-box-sizing:border-box;
 	box-sizing:border-box;
-	behavior:url("!scaffold_url/modules/Mixins/support/behaviours/boxsizing.htc");
+	behavior:url("!scaffold_url/framework/behaviours/boxsizing.htc");
 }
 
 /**
