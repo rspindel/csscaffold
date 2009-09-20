@@ -32,11 +32,11 @@ class OOCSS extends Plugins
 				# Find the selector we want to extend and replace it
 				if($base = CSS::find_selectors($find))
 				{
-					CSS::replace($property, $base['properties'][0]);
+					CSS::replace($property, implode('', $base['properties']));
 				}
 				elseif($base = CSS::find_selectors($find,2))
 				{
-					CSS::replace($property, $base['properties'][0]);
+					CSS::replace($property, implode('', $base['properties']));
 				}
 			} 
 		}
