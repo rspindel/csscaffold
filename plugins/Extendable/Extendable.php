@@ -1,14 +1,13 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
 /**
- * OOCSS
+ * Extendable
  *
- * Adds useful functions so that CSS can behave in a more 
- * object-orientated way.
+ * You can extend one selector from another by using extend:'selectorname';
  * 
  * @author Anthony Short
  */
-class OOCSS extends Plugins
+class Extendable extends Plugins
 {
 	/**
 	 * Process

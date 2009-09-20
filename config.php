@@ -138,7 +138,7 @@ $config['plugins'] = array
 	
 	# Base one selector on another selector so you can 'extend' your
 	# CSS rules, just like objects in OOP
-	'OOCSS' => false,
+	'Extendable' => false,
 	
 	# Validate your CSS on the fly. DO NOT keep this running all the
 	# time. It will cause your CSS to load very slowly, and can bog
