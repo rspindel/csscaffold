@@ -17,8 +17,8 @@
 		.wireframe div
 		{ 
 			background:rgba(255,0,0,0.4); 
-			min-height:60px; 
-			margin-bottom:20px; 
+			min-height:<?= Layout::$baseline * 3; ?>px; 
+			margin-bottom:<?= Layout::$baseline; ?>px; 
 		}
 
 	</style>

@@ -14,3 +14,11 @@
  * pulls, append columns etc, all based on your grid.
  */
 +grid-classes;
+
+/**
+ * The Blueprint container class doesn't include gutters
+ */
+.container 
+{
+	width: #[!grid-width - !gutter-width]px;
+}

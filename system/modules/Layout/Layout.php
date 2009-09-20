@@ -79,7 +79,7 @@ class Layout extends Plugins
 			$settings = $settings['values'];
 			
 			# Make sure none of the required options are missing
-			foreach(array('column-count', 'column-width', 'unit', 'baseline') as $option)
+			foreach(array('column-count', 'column-width') as $option)
 			{
 				if(!isset($settings[$option]))
 				{
@@ -91,9 +91,10 @@ class Layout extends Plugins
 			CSS::replace($groups, array()); 
 			
 			# The number of columns, baseline and unit
-			$cc = $settings['column-count'];
-			$unit = $settings['unit'];
-			$bl = $settings['baseline'];
+			$cc 	= $settings['column-count'];
+			$unit 	= (isset($settings['unit'])) ? $settings['unit'] : 'px';
+			$bl 	= (isset($settings['baseline'])) ? $settings['baseline'] : 18;
+			$cw 	= $settings['column-width'];
 			
 			# Get the gutters
 			$lgw = (isset($settings['left-gutter-width'])) ? $settings['left-gutter-width'] : 0;
@@ -102,19 +103,8 @@ class Layout extends Plugins
 			# Get the total gutter width
 			$gw	= $settings['gutter-width'] = $lgw + $rgw;
 			
-			# Check whether we should use the column width or calculate it from the grid width
-			if(isset($settings['grid-width'])) 
-			{
-				$grid = $settings['grid-width'];
-				
-				# Our awesome column width calculation
-				$cw = ($grid - ($gw * ($cc-1)))/$cc;
-			}
-			else
-			{
-				$cw = $settings['column-width'];
-				$grid = ($cw + $gw) * $cc;
-			}
+			# The total grid width
+			$grid = ($cw + $gw) * $cc;
 			
 			$grid_settings = array(
 				'column-count' 			=> $cc,

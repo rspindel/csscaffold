@@ -41,11 +41,6 @@
 	position:relative;
 }
 
-=container-alt
-{ 
-	+container(#[!grid-width + !gutter-width]px);
-}
-
 /**
  * Baseline
  */
