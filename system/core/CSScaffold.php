@@ -70,7 +70,8 @@ final class CSScaffold
 		'Iteration',
 		'Mixins',
 		'NestedSelectors',
-		'Minify'
+		'Minify',
+		'Layout'
 	);
 	
 	/**

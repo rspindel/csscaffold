@@ -131,11 +131,6 @@ $config['plugins'] = array
 	# Easily image replace text. Just use the image-replace property
 	# and give it a url() like a normal image. Scaffold takes care of the rest.
 	'ImageReplace' => true,
-
-	# Define a grid from within your CSS and have access to
-	# constants, mixins and more. This makes creating layouts
-	# much, much quicker.
-	'Layout' => true,
 	
 	# Feed different browsers different CSS rules by targetting
 	# the browsers from WITHIN your CSS
