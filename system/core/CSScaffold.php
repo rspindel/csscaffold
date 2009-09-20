@@ -1077,6 +1077,9 @@ final class CSScaffold
 				call_user_func(array($plugin,'pre_process'));
 			}
 			
+			# Parse the @grid
+			Layout::parse_grid();
+			
 			# Replace the constants
 			Constants::replace();
 			
@@ -1152,8 +1155,8 @@ final class CSScaffold
 			# Output process hook for plugins to display views.
 			# Doesn't run in production mode.
 			if(!IN_PRODUCTION)
-			{
-				foreach(self::$plugins as $plugin)
+			{				
+				foreach(array_merge(self::$plugins, self::$modules) as $plugin)
 				{
 					call_user_func(array($plugin,'output'));
 				}
