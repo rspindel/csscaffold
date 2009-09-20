@@ -149,11 +149,6 @@ class Layout extends Plugins
 			# Round to baselines
 			self::round_to_baseline($bl);
 			
-			# Add mixins	
-			$mixins = CSScaffold::config('Layout.support') . '/mixins/grid.css';
-			$mixins = file_get_contents($mixins);
-			CSS::append($mixins);
-			
 			# Make each of the column variables a member variable
 			self::$column_count = $cc;
 			self::$column_width = $cw;
