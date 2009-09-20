@@ -17,7 +17,7 @@ class ImageReplace extends Plugins
 	 * @return $css string
 	 */
 	public static function post_process()
-	{		
+	{			
 		if($found = CSS::find_properties_with_value('image-replace', 'url\([\'\"]?([^)]+)[\'\"]?\)'))
 		{
 			foreach ($found[4] as $key => $value) 

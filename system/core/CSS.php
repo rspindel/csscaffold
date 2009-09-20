@@ -28,15 +28,28 @@ abstract class CSS
 	 *
 	 * @author Anthony Short
 	 * @param $css
-	 * @return null
+	 * @return void
 	 */
 	public static function load($css)
 	{
-		self::$css = $css;
+		static $run;
+		
+		if($run === TRUE)
+		{
+			return;
+		}
+		else
+		{
+			self::$css = $css;
+			$run = TRUE;
+		}
 	}
 	
 	/**
-	 * Appends the string to the css string
+	 * Appends the string to the css string. Setting $later to true will
+	 * add the string to the css just before caching the CSS file to make
+	 * the parsing process faster. Do this if the string you're adding doesn't
+	 * need any more parsing.
 	 *
 	 * @author Anthony Short
 	 * @param $string
@@ -55,7 +68,7 @@ abstract class CSS
 	}
 	
 	/**
-	 * Makes all URLs absolute
+	 * Makes all URLs absolute in a CSS string
 	 *
 	 * @author Anthony Short
 	 * @return void
@@ -87,7 +100,8 @@ abstract class CSS
 	}
 	
 	/**
-	 * Compresses down the CSS file as much as possible
+	 * Compresses down the CSS file. Not a complete compression,
+	 * but enough to minimize parsing time.
 	 *
 	 * @author Anthony Short
 	 * @return null
@@ -186,7 +200,7 @@ abstract class CSS
 	 * @author Anthony Short
 	 * @param $name
 	 * @param $capture_group
-	 * @return null
+	 * @return array
 	 */
 	public static function find_functions($name, $capture_group = "", $css = "")
 	{
@@ -400,6 +414,19 @@ abstract class CSS
 		{
 			return array();
 		}
+	}
+	
+	/**
+	 * Check if a selector exists
+	 *
+	 * @param $name
+	 * @return boolean
+	 */
+	public static function selector_exists($name, $css = "")
+	{
+		if($css == "") $css =& self::$css;
+		
+		return preg_match('/'.preg_quote($name).'[^{,]*?({|,)/', $css);
 	}
 	
 	/**
