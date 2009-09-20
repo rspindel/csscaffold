@@ -71,7 +71,8 @@ final class CSScaffold
 		'Mixins',
 		'NestedSelectors',
 		'Minify',
-		'Layout'
+		'Layout',
+		'Typography'
 	);
 	
 	/**

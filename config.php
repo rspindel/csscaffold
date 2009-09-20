@@ -132,10 +132,6 @@ $config['plugins'] = array
 	# and give it a url() like a normal image. Scaffold takes care of the rest.
 	'ImageReplace' => true,
 	
-	# Feed different browsers different CSS rules by targetting
-	# the browsers from WITHIN your CSS
-	'Browsers' => false,
-	
 	# Base one selector on another selector so you can 'extend' your
 	# CSS rules, just like objects in OOP
 	'Extendable' => false,
