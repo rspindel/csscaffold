@@ -132,11 +132,6 @@ $config['plugins'] = array
 	# and give it a url() like a normal image. Scaffold takes care of the rest.
 	'ImageReplace' => true,
 	
-	# Outputs a typography testing suite which used the requested
-	# and parsed CSS file. Add ?output=typography to the url.
-	# This format will also work /path/to/stylesheet.css/typography/
-	'Typography' => true,
-	
 	# Feed different browsers different CSS rules by targetting
 	# the browsers from WITHIN your CSS
 	'Browsers' => false,
