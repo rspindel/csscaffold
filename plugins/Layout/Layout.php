@@ -113,7 +113,7 @@ class Layout extends Plugins
 			else
 			{
 				$cw = $settings['column-width'];
-				$grid = ($cw + $gw) * $cc - $gw;
+				$grid = ($cw + $gw) * $cc;
 			}
 			
 			$grid_settings = array(
