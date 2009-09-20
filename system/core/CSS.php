@@ -426,7 +426,7 @@ abstract class CSS
 	{
 		if($css == "") $css =& self::$css;
 		
-		return preg_match('/'.preg_quote($name).'[^{,]*?({|,)/', $css);
+		return preg_match('/'.preg_quote($name).'\s*?({|,)/', $css);
 	}
 	
 	/**
