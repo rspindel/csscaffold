@@ -79,6 +79,18 @@ $config['use_css_constants'] = false;
 $config['minify_css'] = true;
 
 /**
+ * Validate CSS
+ *
+ * Scaffold can send your CSS to the W3C CSS validator and return
+ * any validation errors. Note: Validation errors will throw a 
+ * Scaffold error.
+ *
+ * Don't leave this on, as it increases CSS parsing time by at least 4 
+ * seconds, and can bog down the validation server.
+ */
+$config['validate'] = false;
+
+/**
  * Custom Global CSS Constants
  *
  * You can set basic constants here that can be access throughout your 
@@ -131,12 +143,7 @@ $config['plugins'] = array
 	# Easily image replace text. Just use the image-replace property
 	# and give it a url() like a normal image. Scaffold takes care of the rest.
 	'ImageReplace' => true,
-	
-	# Validate your CSS on the fly. DO NOT keep this running all the
-	# time. It will cause your CSS to load very slowly, and can bog
-	# down the validation servers.
-	'Validate' => false,
-	
+
 	# Set constants via XML, allowing a CMS to tie itself in with
 	# your CSS files. 
 	'XML_constants' => false,
