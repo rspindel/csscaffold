@@ -1,36 +1,39 @@
-/**
- * The grid classes
- */
-@for !i from 1 to !column-count
+=grid-classes
 {
-	.columns-!i 		{ +span(!i); }
-	.push-!i 			{ +push(!i); }
-	.pull-!i 			{ +pull(!i); }
-	.append-!i 			{ +append(!i); }
-	.prepend-!i 		{ +prepend(!i); }
-	.baseline-!i		{ height:#[!baseline * !i]px; }
-	.baseline-up-!i		{ +baseline-up(!i); }
-	.baseline-down-!i	{ +baseline-down(!i); }
-}
-
-#[Iteration::enumerate('.columns-', 1, !column-count)]
-{
-	+columns-base;
-}
-
-.container
-{
-	+container;
-}
-
-.first
-{
-	+first;
-}
-
-.last
-{
-	+last;
+	/**
+	 * The grid classes
+	 */
+	@for !i from 1 to !column-count
+	{
+		.columns-!i 		{ +span(!i); }
+		.push-!i 			{ +push(!i); }
+		.pull-!i 			{ +pull(!i); }
+		.append-!i 			{ +append(!i); }
+		.prepend-!i 		{ +prepend(!i); }
+		.baseline-!i		{ height:#[!baseline * !i]px; }
+		.baseline-up-!i		{ +baseline-up(!i); }
+		.baseline-down-!i	{ +baseline-down(!i); }
+	}
+	
+	#[Iteration::enumerate('.columns-', 1, !column-count)]
+	{
+		+columns-base;
+	}
+	
+	.container
+	{
+		+container;
+	}
+	
+	.first
+	{
+		+first;
+	}
+	
+	.last
+	{
+		+last;
+	}
 }
 
 /**
