@@ -23,6 +23,16 @@
 	+container;
 }
 
+.first
+{
+	+first;
+}
+
+.last
+{
+	+last;
+}
+
 /**
 * Container
 *
@@ -91,12 +101,12 @@
 
 =first
 {
-	margin-left:0;
+	margin-left:0 !important;
 }
 
 =last
 {
-	margin-right:0;
+	margin-right:0 !important;
 }
 
 /**
