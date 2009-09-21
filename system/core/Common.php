@@ -40,26 +40,6 @@
 *	General Functions
 * -------------------------------------------------------------------------
 */
-
-	/**
-	 * Takes a string, a seperator and a max number and generates
-	 * a long string from them
-	 *
-	 * @author Anthony Short
-	 * @param $string
-	 * @return string
-	 */
-	function enumerate($string, $min, $max, $sep = ",")
-	{
-		$ret = array();
-		
-		for ($i = $min; $i <= $max; $i++)
-		{
-			$ret[] = $string . $i;
-		}
-		
-		return implode($sep, $ret);
-	}
   
 	/**
 	 * Prints out the value and exits
@@ -74,18 +54,6 @@
 		exit;
 	}
 
-	/**
-	 * LOAD XML
-	 * 
-	 * A quicker way to load an XML file to an XML object
-	 *
-	 * @author Anthony Short
-	 * @param $file string
-	 */
-	function load_xml($file)
-	{		
-		return simplexml_load_string(file_get_contents($file));
-	}
 
 /**
 * -------------------------------------------------------------------------

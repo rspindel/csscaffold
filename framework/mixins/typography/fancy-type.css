@@ -1,17 +1,9 @@
-/**
-* Safari text shadow fix.
-*/
-=crisp
-{
-	text-shadow:rgba(0,0,0,0.01) 0 0 0;
-}
-
 /** 
-* Incremental Leading 
-*
-* Every 4 lines of normal type, there are 5 lines of
-* smaller type 
-*/
+ * Incremental Leading 
+ *
+ * Every 4 lines of normal type, there are 5 lines of
+ * smaller type 
+ */
 =small-type
 { 
 	line-height: #[floor(!baseline*4/5)]px; 
@@ -76,14 +68,4 @@ Based on work by Jørgen Arnor Gårdsø Lom [http://twistedintellect.com/] */
   +warnock; 
   font-style: italic;
   font-weight: normal;
-}
-
-/* For manual image-replaced titles */
-=image-replaced
-{
-	display:block;
-	text-indent:-9999px;
-	background-repeat: no-repeat;
-	background-position: 0 0;
-	overflow:hidden;
 }

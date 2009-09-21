@@ -152,7 +152,7 @@ class Layout extends Plugins
 	
 	public static function output()
 	{
-		if(CSScaffold::config('core.options.output') == "grid")
+		if(CSScaffold::config('core.options.output') == "grid" && isset(self::$column_width))
 		{
 			# Make sure we're sending HTML
 			header('Content-Type: text/html');

@@ -5,7 +5,7 @@
  **/
 class Validate extends Plugins
 {
-	public static function formatting_process()
+	public static function check()
 	{
 		if(!IN_PRODUCTION)
 		{

@@ -1,5 +1,5 @@
 /**
- * Create our grid. Fairly self-explanatory. This is required
+ * Create a generic grid. Fairly self-explanatory. This is required
  * to use any of the layout plugins features.
  */
 @grid
@@ -11,10 +11,3 @@
 	baseline:20;
 	unit:px;
 }
-
-/**
- * This mixin will generate all of the classes a
- * normal framework creates, columns, spans, pushes,
- * pulls, append columns etc, all based on your grid.
- */
-+grid-classes;

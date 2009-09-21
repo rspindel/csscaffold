@@ -1,3 +1,13 @@
+/**
+ * 960.gs Grid
+ *
+ * The grid creates a 960.gs style grid, with 60px columns and 10px
+ * gutters on either side of the columns
+ *
+ * Note: This doesn't create the same classes used in 960.gs. It
+ * just creates the same grid
+ */
+
 @grid
 {
 	column-width:60;
@@ -7,10 +17,3 @@
 	baseline:18;
 	unit:px;
 }
-
-/**
- * This mixin will generate all of the classes a
- * normal framework creates, columns, spans, pushes,
- * pulls, append columns etc, all based on your grid.
- */
-+grid-classes;

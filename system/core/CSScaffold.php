@@ -72,7 +72,8 @@ final class CSScaffold
 		'NestedSelectors',
 		'Minify',
 		'Layout',
-		'Typography'
+		'Typography',
+		'Validate'
 	);
 	
 	/**
@@ -1140,6 +1141,12 @@ final class CSScaffold
 			foreach(self::$plugins as $plugin)
 			{
 				call_user_func(array($plugin,'formatting_process'));
+			}
+			
+			# Validate the CSS
+			if(self::config('core.validate') === true)
+			{
+				Validate::check();
 			}
 			
 			# Stop the timer...

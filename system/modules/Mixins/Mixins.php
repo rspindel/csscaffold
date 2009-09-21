@@ -205,7 +205,7 @@ class Mixins extends Plugins
 	 */
 	public static function import_mixins($dir)
 	{		
-		if($mixin_files = CSScaffold::list_files($dir))
+		if($mixin_files = CSScaffold::list_files($dir, true))
 		{
 			foreach($mixin_files as $item)
 			{
