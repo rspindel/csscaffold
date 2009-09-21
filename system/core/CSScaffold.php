@@ -1122,6 +1122,9 @@ final class CSScaffold
 				CSS::convert_to_absolute_urls();
 			}
 			
+			# Replaces url()'s that start with ~ to lead to the CSS directory
+			CSS::replace_css_urls();
+			
 			# Add the extra string we've been storing
 			CSS::$css .= CSS::$append;
 			

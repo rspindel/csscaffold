@@ -217,6 +217,28 @@ abstract class CSS
 	}
 	
 	/**
+	 * Finds all url()'s that start with ~/ and replaces it
+	 * with the CSS url.
+	 *
+	 * @return void
+	 */
+	public static function replace_css_urls()
+	{
+		if($found = CSS::find_functions('url'))
+		{
+			foreach($found[1] as $url)
+			{
+				$url = unquote($url);
+
+				if($url[0] == "~")
+				{					
+					self::replace($url, str_replace('~/', CSSURL, $url));
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Finds @groups within the css and returns
 	 * an array with the values, and groups.
 	 *
