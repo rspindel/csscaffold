@@ -4,6 +4,13 @@
 #
 ####################################################
 
+<IfModule mod_deflate.c>
+	SetOutputFilter DEFLATE
+</IfModule>
+
+ExpiresActive on
+ExpiresDefault "access plus 10 years"
+
 # To enable invisible parsing of your css, you need to change the path
 # below to find your scaffold/index.php file.
 #
@@ -17,14 +24,12 @@
 
 <IfModule mod_rewrite.c> 
 	RewriteEngine	on
+	
+	# Anything after .css is used as the output= 
+	RewriteCond 	%{REQUEST_URI}			\.css
+	RewriteRule 	^(.+)/([^/]+)/?$ 		scaffold/index.php?request=%{REQUEST_URI}&output=$2&%{QUERY_STRING}
+	
 	RewriteCond		%{REQUEST_FILENAME}		-f
 	RewriteCond 	%{REQUEST_URI}			\.css$
 	RewriteRule 	^(.+)$ 					scaffold/index.php?request=%{REQUEST_URI}&%{QUERY_STRING}
 </IfModule>
-
-<IfModule mod_deflate.c>
-	SetOutputFilter DEFLATE
-</IfModule>
-
-ExpiresActive on
-ExpiresDefault "access plus 10 years"
