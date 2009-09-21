@@ -39,7 +39,7 @@ class Import extends Plugins
 	public static function server_import($css, $previous = "")
 	{
 		# If they want to override the CSS syntax
-		if(CSScaffold::config('override_import') === true)
+		if(CSScaffold::config('core.override_import') === true)
 		{
 			$import = 'import';
 		}
