@@ -1,6 +1,3 @@
-CSScaffold.esproj
 */.DS_STORE
-
-.htaccess
-
+config.php
 cache/*
