@@ -115,6 +115,10 @@ define('CSSPATH', 	str_replace('\\', '/', $css). '/');
 define('CACHEPATH', str_replace('\\', '/', $cache). '/');
 define('PLUGINS',   str_replace('\\', '/', $plugins). '/');
 
+# URL to the css directory
+define('CSSURL', str_replace(DOCROOT, '/', CSSPATH));
+define('SYSURL', str_replace(DOCROOT, '/', SYSPATH));
+
 # Clean up
 unset($css, $document_root, $path, $system, $cache, $scaffold, $plugins); 
 

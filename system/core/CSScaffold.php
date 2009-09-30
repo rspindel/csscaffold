@@ -123,10 +123,6 @@ final class CSScaffold
 		if(!isset($url_params['request']))
 			throw new Scaffold_Exception('core.no_file_requested');
 		
-		# URL to the css directory
-		define('CSSURL', str_replace(DOCROOT, '/', CSSPATH));
-		define('SYSURL', str_replace(DOCROOT, '/', SYSPATH));
-		
 		# Get rid of those pesky slashes
 		$requested_file	= trim_slashes($url_params['request']);
 		
