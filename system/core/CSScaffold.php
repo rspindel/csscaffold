@@ -1048,6 +1048,9 @@ final class CSScaffold
 		{			
 			# Start the timer
 			Benchmark::start("parse_css");
+			
+			# Compress it before parsing
+			CSS::compress(CSS::$css);
 						
 			# Import CSS files
 			Import::parse();

@@ -87,6 +87,9 @@ class Import extends Plugins
 					$css = str_replace($matches[0][0], file_get_contents($include), $css);
 				}
 				
+				# Compress it which removes any commented out @imports
+				CSS::compress($css);
+				
 				# Check the file again for more imports
 				$css = self::server_import($css, $include);
 			}

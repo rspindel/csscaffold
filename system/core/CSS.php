@@ -106,9 +106,9 @@ abstract class CSS
 	 * @author Anthony Short
 	 * @return null
 	 */	
-	public static function compress()
+	public static function compress(&$css)
 	{
-		$css =& self::$css;
+		if($css == "") $css =& self::$css;
 		
 		# Remove comments
 		$css = self::remove_comments($css);
