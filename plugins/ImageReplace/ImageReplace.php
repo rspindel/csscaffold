@@ -32,7 +32,7 @@ class ImageReplace extends Plugins
 													
 				# Check if it exists
 				if(!file_exists($path))
-					throw new Scaffold_User_Exception("Image Replace Plugin", "File does not exist - $path");
+					FB::log("ImageReplace - Image doesn't exist " . $path);
 				
 				# Make sure it's an image
 				if(!is_image($path)) 
