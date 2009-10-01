@@ -252,7 +252,7 @@ class Mixins extends Plugins
 				eval("if($value){ \$result = true;}");
 				
 				# When one of them is if true, replace the whole group with the contents of that if and continue
-				if($result === true)
+				if($result)
 				{
 					$string = str_replace($found[0][$key], $found[3][$key], $string);
 				}
