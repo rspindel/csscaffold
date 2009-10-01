@@ -41,6 +41,9 @@ class Constants extends Plugins
 		# If there are some constants, let do it.
 		if($found !== false)
 		{
+			# Sort the constants by length
+			uksort($found['values'], array('self','sortByLength'));
+			
 			# Create our template style constants
 			foreach($found['values'] as $key => $value)
 			{
@@ -51,6 +54,18 @@ class Constants extends Plugins
 			# Remove the @constants groups
 			CSS::replace($found['groups'], array());		
 		}
+	}
+	
+	/**
+	 * Sorts array elements by length
+	 *
+	 * @param $param
+	 * @return return type
+	 */
+	public static function sortByLength($a,$b)
+	{
+		if($a == $b) return 0;
+		return (strlen($a) > strlen($b) ? -1 : 1);
 	}
 	
 	/**
