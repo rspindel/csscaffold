@@ -139,7 +139,11 @@ abstract class CSS
 		}
 		else
 		{
-			self::$css = str_replace($match, $replace, self::$css);
+			# Check if the string exists in the CSS before doing a replace
+			if(strstr(self::$css, $match))
+			{
+				self::$css = str_replace($match, $replace, self::$css);
+			}
 			return true;
 		}
 		
