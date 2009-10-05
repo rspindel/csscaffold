@@ -456,7 +456,7 @@ final class CSScaffold
 		if ($name === 'core')
 		{
 			// Load the application configuration file
-			require SCAFFOLD.'config.php';
+			require CONFIG;
 
 			if ( ! isset($config['cache_lock']))
 			{

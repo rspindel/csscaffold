@@ -45,6 +45,11 @@ $cache = 'cache';
  * or absolute from the document root.
  */
 $plugins = 'plugins';
+
+/**
+ * Path to the default config file
+ */
+$config = 'config.php';
  
 /**
  * Run the installer to help you solve path issues.
@@ -107,6 +112,7 @@ $css = file_exists(realpath($css)) ? realpath($css) : DOCROOT.$css;
 $system = file_exists(realpath($system)) ? realpath($system) : DOCROOT.$system;
 $cache = file_exists(realpath($cache)) ? realpath($cache) : DOCROOT.$cache;
 $plugins = file_exists(realpath($plugins)) ? realpath($plugins) : DOCROOT.$plugins;
+$config = file_exists(realpath($config)) ? realpath($config) : DOCROOT.$config;
 
 # Set the constants
 define('SCAFFOLD',  str_replace('\\', '/', $scaffold). '/');
@@ -114,13 +120,14 @@ define('SYSPATH', 	str_replace('\\', '/', $system). '/');
 define('CSSPATH', 	str_replace('\\', '/', $css). '/');
 define('CACHEPATH', str_replace('\\', '/', $cache). '/');
 define('PLUGINS',   str_replace('\\', '/', $plugins). '/');
+define('CONFIG',    str_replace('\\', '/', $config). '/');
 
 # URL to the css directory
 define('CSSURL', str_replace(DOCROOT, '/', CSSPATH));
 define('SYSURL', str_replace(DOCROOT, '/', SYSPATH));
 
 # Clean up
-unset($css, $document_root, $path, $system, $cache, $scaffold, $plugins); 
+unset($css, $document_root, $path, $system, $cache, $scaffold, $plugins, $config); 
 
 if(INSTALL && !IN_PRODUCTION)
 {
