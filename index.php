@@ -120,7 +120,7 @@ define('SYSPATH', 	str_replace('\\', '/', $system). '/');
 define('CSSPATH', 	str_replace('\\', '/', $css). '/');
 define('CACHEPATH', str_replace('\\', '/', $cache). '/');
 define('PLUGINS',   str_replace('\\', '/', $plugins). '/');
-define('CONFIG',    str_replace('\\', '/', $config). '/');
+define('CONFIG',    str_replace('\\', '/', $config));
 
 # URL to the css directory
 define('CSSURL', str_replace(DOCROOT, '/', CSSPATH));
