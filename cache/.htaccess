@@ -1,2 +1,4 @@
-ExpiresActive on
-ExpiresDefault "access plus 10 years"
+<IfModule mod_expires.c>
+	ExpiresActive on
+	ExpiresDefault "access plus 10 years"
+</IfModule>

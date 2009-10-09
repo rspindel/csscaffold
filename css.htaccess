@@ -8,8 +8,10 @@
 	SetOutputFilter DEFLATE
 </IfModule>
 
-ExpiresActive on
-ExpiresDefault "access plus 10 years"
+<IfModule mod_expires.c>
+	ExpiresActive on
+	ExpiresDefault "access plus 10 years"
+</IfModule>
 
 # To enable invisible parsing of your css, you need to change the path
 # below to find your scaffold/index.php file.
