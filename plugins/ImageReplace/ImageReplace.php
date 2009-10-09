@@ -36,7 +36,7 @@ class ImageReplace extends Plugins
 
 				# Make sure it's an image
 				if(!is_image($path))
-					throw new Scaffold_User_Exception("Image Replace Plugin", "File is not an image - $path");
+					FB::log("ImageReplace - File is not an image: $path");
 																				
 				// Get the size of the image file
 				$size = GetImageSize($path);
