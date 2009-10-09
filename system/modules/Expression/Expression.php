@@ -52,11 +52,13 @@ class Expression extends Plugins
 			$expressions 	= array_unique($matches[2]);
 					
 			foreach($expressions as $key => $expression)
-			{								
+			{
+				$result = false;
+							
 				# Remove units and quotes
 				$expression = preg_replace('/(px|em|%)/','', $expression); 
 				
-				if($result = eval("return ".$expression.";"))
+				if($result = eval("return $expression;"))
 				{
 					# Replace the string in the css
 					$css = str_replace($originals[$key], $result, $css);
