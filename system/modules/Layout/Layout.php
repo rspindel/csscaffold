@@ -127,7 +127,7 @@ class Layout extends Plugins
 				mkdir(CACHEPATH.'Layout');
 			
 			# Path to the image
-			$img = CACHEPATH . "/Layout/{$lgw}_{$cw}_{$rgw}_{$bl}_grid.png";
+			$img = CACHEPATH . "Layout/{$lgw}_{$cw}_{$rgw}_{$bl}_grid.png";
 			
 			# Generate the grid.png
 			self::create_grid_image($cw, $bl, $lgw, $rgw, $img);
