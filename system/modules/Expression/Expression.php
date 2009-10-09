@@ -58,7 +58,9 @@ class Expression extends Plugins
 				# Remove units and quotes
 				$expression = preg_replace('/(px|em|%)/','', $expression); 
 				
-				if($result = eval("return $expression;"))
+				$result = eval("return $expression;");
+				
+				if($result !== false)
 				{
 					# Replace the string in the css
 					$css = str_replace($originals[$key], $result, $css);
