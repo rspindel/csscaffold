@@ -134,20 +134,20 @@ abstract class CSS
 	{
 		if($regex === true)
 		{
-			self::$css = preg_replace($match, $replace, self::$css);
-			return true;
+			if(self::$css = preg_replace($match, $replace, self::$css))
+			{
+				return true;
+			}
 		}
 		else
 		{
-			# Check if the string exists in the CSS before doing a replace
-			if(strstr(self::$css, $match))
+			if(self::$css = str_replace($match, $replace, self::$css))
 			{
-				self::$css = str_replace($match, $replace, self::$css);
+				return true;
 			}
-			return true;
 		}
 		
-		return false;
+		FB::log("CSS::replace - nothing to replace: " . $match);
 	}
 	
 	/**
