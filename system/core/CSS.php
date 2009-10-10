@@ -256,7 +256,7 @@ abstract class CSS
 		
 		$found['values'] = $found['groups'] = array();
 		
-		if(preg_match_all('#@'.$group.'\s*\{\s*([^\}]+)\s*\}\s*#i', $css, $matches))
+		if(preg_match_all('#@'.$group.'[^{]*?\{\s*([^\}]+)\s*\}\s*#i', $css, $matches))
 		{	
 			$found['groups'] = $matches[0];
 						

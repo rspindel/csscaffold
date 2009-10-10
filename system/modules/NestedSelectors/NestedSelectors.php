@@ -51,11 +51,10 @@ class NestedSelectors extends Plugins
 			if($parent != "")
 			{
 				$parent = explode(",", $parent);
-				
+
 				foreach($parent as $parent_key => $parent_value)
 				{
-					$parent_value = trim($parent_value);
-					$parent[$parent_key] = self::parse_selector($parent_value, $child);
+					$parent[$parent_key] = self::parse_selector(trim($parent_value), $child);
 				}
 				
 				$parent = implode(",", $parent);
@@ -76,17 +75,31 @@ class NestedSelectors extends Plugins
 			$property_list .= $property['name'].":".$property['value'].";";
 		}
 		
-		# Just in case...
-		if(!is_array($parent))
+		# Create the css string
+		if($property_list != "")
 		{
 			$css_string .= $parent . "{" . $property_list . "}";
 		}
 
 		foreach($rule->rule as $inner_rule)
 		{
-			$css_string .= self::parse_rule($inner_rule, $parent);
+			# We don't want the selectors inside @media to have @media before them
+			if(strstr($parent, '@media'))
+			{
+				$css_string .= self::parse_rule($inner_rule, '');
+			}
+			else
+			{
+				$css_string .= self::parse_rule($inner_rule, $parent);
+			}
 		}
 		
+		# Build our @media string full of these properties if we need to
+		if(strstr($parent, '@media'))
+		{
+			$css_string = $parent . "{" . $css_string . "}";
+		}
+
 		return $css_string;
 	}
 	
@@ -97,10 +110,11 @@ class NestedSelectors extends Plugins
 	 * @author Anthony Short
 	 * @param $parent
 	 * @param $child
+	 * @param $atmedia Is this an at media group?
 	 * @return string
 	 */
 	public static function parse_selector($parent, $child)
-	{
+	{		
 		# If there are listed parents eg. #id, #id2, #id3
 		if(strstr($child, ","))
 		{
@@ -110,7 +124,7 @@ class NestedSelectors extends Plugins
 		# If the child references the parent selector
 		elseif (strstr($child, "#SCAFFOLD-PARENT#"))
 		{						
-			$parent = str_replace("#SCAFFOLD-PARENT#", $parent, $child);	
+			$parent = str_replace("#SCAFFOLD-PARENT#", $parent, $child);
 		}
 		
 		# Otherwise, do it normally
