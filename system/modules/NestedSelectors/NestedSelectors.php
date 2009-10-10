@@ -8,6 +8,18 @@
  **/
 class NestedSelectors extends Plugins
 {
+
+	/**
+	 * Array of selectors to skip and keep them nested.
+	 * It just checks if the string is present, so it can
+	 * just be part of a string, like the @media rule is below.
+	 *
+	 * @var array
+	 */
+	protected static $skip = array
+	(
+		'@media'
+	);
 	
 	/**
 	 * The main processing function called by Scaffold. MUST return $css!
@@ -41,6 +53,7 @@ class NestedSelectors extends Plugins
 		$css_string = "";
 		$property_list = "";
 		$parent = trim($parent);
+		$skip = false;
 	
 		# Get the selector and store it away
 		foreach($rule->attributes() as $type => $value)
@@ -82,9 +95,20 @@ class NestedSelectors extends Plugins
 		}
 
 		foreach($rule->rule as $inner_rule)
-		{
+		{			
+			# If the selector is in our skip array in the 
+			# member variable, we'll leave the selector as nested.
+			foreach(self::$skip as $selector)
+			{				
+				if(strstr($parent, $selector))
+				{
+					$skip = true;
+					continue;
+				}
+			}
+			
 			# We don't want the selectors inside @media to have @media before them
-			if(strstr($parent, '@media'))
+			if($skip)
 			{
 				$css_string .= self::parse_rule($inner_rule, '');
 			}
@@ -95,14 +119,14 @@ class NestedSelectors extends Plugins
 		}
 		
 		# Build our @media string full of these properties if we need to
-		if(strstr($parent, '@media'))
+		if($skip)
 		{
 			$css_string = $parent . "{" . $css_string . "}";
 		}
 
 		return $css_string;
 	}
-	
+		
 	/**
 	 * Parses the parent and child to find the next parent
 	 * to pass on to the function
