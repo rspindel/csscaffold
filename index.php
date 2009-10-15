@@ -7,6 +7,20 @@
  *
  * @see https://github.com/anthonyshort/csscaffold/tree/master
  */
+ 
+/**
+ * Run the installer to help you solve path issues.
+ */
+define('INSTALL', FALSE);
+ 
+/**
+ * Define the website environment status. When this flag is set to TRUE, 
+ * errors in your css will result in a blank page rather than displaying
+ * error information to the user.
+ *
+ * The CSS cache will also be locked and unable to be recached.
+ */
+define('IN_PRODUCTION', FALSE);
 
 /**
  * The document root for the server. If you're server doesn't set this
@@ -50,20 +64,6 @@ $plugins = 'plugins';
  * Path to the default config file
  */
 $config = 'config.php';
- 
-/**
- * Run the installer to help you solve path issues.
- */
-define('INSTALL', FALSE);
- 
-/**
- * Define the website environment status. When this flag is set to TRUE, 
- * errors in your css will result in a blank page rather than displaying
- * error information to the user.
- *
- * The CSS cache will also be locked and unable to be recached.
- */
-define('IN_PRODUCTION', FALSE);
 
 /**
  * Make sure the we're using PHP 5.2 or newer
@@ -131,7 +131,7 @@ unset($css, $document_root, $path, $system, $cache, $scaffold, $plugins, $config
 
 if(INSTALL && !IN_PRODUCTION)
 {
-	require SYSPATH.'views/install'.EXT;
+	require 'install'.EXT;
 }
 else
 {
