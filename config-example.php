@@ -1,4 +1,56 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php defined('FRONT') OR die('No direct access allowed.');
+
+/**
+ * The document root for the server. If you're server doesn't set this
+ * variable, you can manually enter in the server path to the document root
+ */
+$document_root = $_SERVER['DOCUMENT_ROOT'];
+
+/**
+ * CSS directory. This is where you are storing your CSS files.
+ *
+ * This path can be relative to this file or absolute from the document root.
+ */
+$css = '../';
+
+/**
+ * The path to the scaffold directory. Usually the directory this file
+ * is in, but you might have moved the index.php elsewhere.
+ */
+$scaffold = './';
+
+/**
+ * The path to the system folder. This path can be relative to this file 
+ * or absolute from the document root.
+ */
+$system = 'system';
+
+/**
+ * Sets the cache path. By default, this is inside of the system folder.
+ * You can set it to a custom location here. Be aware that when Scaffold
+ * recaches, it empties the whole cache to remove all flagged cache files. 
+ */
+$cache = 'cache';
+
+/**
+ * Path to the plugins directory. This path can be relative to this file 
+ * or absolute from the document root.
+ */
+$plugins = 'plugins';
+
+/**
+ * Run the installer to help you solve path issues.
+ */
+define('INSTALL', FALSE);
+ 
+/**
+ * Define the website environment status. When this flag is set to TRUE, 
+ * errors in your css will result in a blank page rather than displaying
+ * error information to the user.
+ *
+ * The CSS cache will also be locked and unable to be recached.
+ */
+define('IN_PRODUCTION', FALSE);
 
 /**
  * Cache Lock
@@ -14,7 +66,7 @@ $config['cache_lock'] = false;
  * you don't need to do ?recache during development.
  */	
 $config['always_recache'] = true;
-
+ 
 /**
  * Show CSS rendering information
  *
@@ -95,14 +147,14 @@ $config['constants'] = array
 );
 		
 /**
- * Firebug
+ * Debug
  *
  * Enable Firebug output. You need Firebug and FirePHP for Firefox.
  * This is handy when you're viewing the page the CSS is used on,
  * as it will display CSScaffold errors in the console.
  *
  */
-FB::setEnabled(false);
+$config['debug'] = false;
 
 /**
  * Language

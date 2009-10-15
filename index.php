@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file acts as the "front controller" for CSScaffold. You can
  * configure your CSScaffold, modules, plugins and system directories here.
@@ -7,6 +6,12 @@
  *
  * @see https://github.com/anthonyshort/csscaffold/tree/master
  */
+
+# Path information about the current file
+$path = pathinfo(__FILE__);
+
+# This file
+define('FRONT', $path['basename']);
 
 /**
  * Path to the default config file
@@ -40,18 +45,6 @@ ini_set('display_errors', TRUE);
  * different extension.
  */
 define('EXT', '.php');
-
-/**
- * --------------------------------------------------------------------------------
- * Don't touch anything below here.
- * --------------------------------------------------------------------------------
- */
-
-# Path information about the current file
-$path = pathinfo(__FILE__);
-
-# This file
-define('FRONT', $path['basename']);
 
 # If this is a symlink, change to the real file
 is_link(FRONT) and chdir(dirname(realpath(__FILE__)));
