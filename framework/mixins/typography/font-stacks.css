@@ -25,6 +25,12 @@
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+=helvetica-light
+{
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "HelveticaLTStd-Light", "Helvetica LT Std Light", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight:300;
+}
+
 =myriad
 {
 	font-family: "MyriadPro", Myriad, "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -68,6 +74,16 @@
 =geneva
 {
 	font-family: Geneva, Verdana, Lucida Sans, Lucida Grande, Lucida Sans Unicode, sans-serif;
+}
+
+=verdana
+{
+	font-family: Verdana, Lucida Sans, Lucida Grande, Lucida Sans Unicode, sans-serif;
+}
+
+=lucida
+{
+	font-family: Lucida Sans, Lucida Grande, Lucida Sans Unicode, sans-serif;
 }
 
 =georgia
