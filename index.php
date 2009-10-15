@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file acts as the "front controller" for CSScaffold. You can
  * configure your CSScaffold, modules, plugins and system directories here.
@@ -8,24 +9,61 @@
  */
 
 /**
- * Path information about the current file
+ * The document root for the server. If you're server doesn't set this
+ * variable, you can manually enter in the server path to the document root
  */
-$path = pathinfo(__FILE__);
+$document_root = $_SERVER['DOCUMENT_ROOT'];
 
 /**
- * 
+ * CSS directory. This is where you are storing your CSS files.
+ *
+ * This path can be relative to this file or absolute from the document root.
  */
-define('FRONT', $path['basename']);
+$css = '../';
+
+/**
+ * The path to the scaffold directory. Usually the directory this file
+ * is in, but you might have moved the index.php elsewhere.
+ */
+$scaffold = './';
+
+/**
+ * The path to the system folder. This path can be relative to this file 
+ * or absolute from the document root.
+ */
+$system = 'system';
+
+/**
+ * Sets the cache path. By default, this is inside of the system folder.
+ * You can set it to a custom location here. Be aware that when Scaffold
+ * recaches, it empties the whole cache to remove all flagged cache files. 
+ */
+$cache = 'cache';
+
+/**
+ * Path to the plugins directory. This path can be relative to this file 
+ * or absolute from the document root.
+ */
+$plugins = 'plugins';
 
 /**
  * Path to the default config file
  */
-$config_file = 'config.php';
-
+$config = 'config.php';
+ 
 /**
- * Load the config
+ * Run the installer to help you solve path issues.
  */
-require $config_file;
+define('INSTALL', FALSE);
+ 
+/**
+ * Define the website environment status. When this flag is set to TRUE, 
+ * errors in your css will result in a blank page rather than displaying
+ * error information to the user.
+ *
+ * The CSS cache will also be locked and unable to be recached.
+ */
+define('IN_PRODUCTION', FALSE);
 
 /**
  * Make sure the we're using PHP 5.2 or newer
@@ -50,6 +88,18 @@ ini_set('display_errors', TRUE);
  */
 define('EXT', '.php');
 
+/**
+ * --------------------------------------------------------------------------------
+ * Don't touch anything below here.
+ * --------------------------------------------------------------------------------
+ */
+
+# Path information about the current file
+$path = pathinfo(__FILE__);
+
+# This file
+define('FRONT', $path['basename']);
+
 # If this is a symlink, change to the real file
 is_link(FRONT) and chdir(dirname(realpath(__FILE__)));
 
@@ -62,7 +112,7 @@ $css = file_exists(realpath($css)) ? realpath($css) : DOCROOT.$css;
 $system = file_exists(realpath($system)) ? realpath($system) : DOCROOT.$system;
 $cache = file_exists(realpath($cache)) ? realpath($cache) : DOCROOT.$cache;
 $plugins = file_exists(realpath($plugins)) ? realpath($plugins) : DOCROOT.$plugins;
-$config_file = file_exists(realpath($config_file)) ? realpath($config_file) : DOCROOT.$config_file;
+$config = file_exists(realpath($config)) ? realpath($config) : DOCROOT.$config;
 
 # Set the constants
 define('SCAFFOLD',  str_replace('\\', '/', $scaffold). '/');
@@ -70,18 +120,18 @@ define('SYSPATH', 	str_replace('\\', '/', $system). '/');
 define('CSSPATH', 	str_replace('\\', '/', $css). '/');
 define('CACHEPATH', str_replace('\\', '/', $cache). '/');
 define('PLUGINS',   str_replace('\\', '/', $plugins). '/');
-define('CONFIG',    str_replace('\\', '/', $config_file));
+define('CONFIG',    str_replace('\\', '/', $config));
 
 # URL to the css directory
 define('CSSURL', str_replace(DOCROOT, '/', CSSPATH));
 define('SYSURL', str_replace(DOCROOT, '/', SYSPATH));
 
 # Clean up
-unset($css, $document_root, $path, $system, $cache, $scaffold, $plugins, $config_file); 
+unset($css, $document_root, $path, $system, $cache, $scaffold, $plugins, $config); 
 
 if(INSTALL && !IN_PRODUCTION)
 {
-	require 'install'.EXT;
+	require SYSPATH.'views/install'.EXT;
 }
 else
 {

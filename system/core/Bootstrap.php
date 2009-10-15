@@ -12,7 +12,7 @@ require SYSPATH . '/vendor/FirePHPCore/fb.php';
 require SYSPATH . '/vendor/FirePHPCore/FirePHP.class.php';
 
 # Send the request through to the main controller
-CSScaffold::setup($_GET, $config);
+CSScaffold::setup($_GET);
 
 # Parse the css
 CSScaffold::parse_css();

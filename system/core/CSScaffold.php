@@ -88,29 +88,16 @@ final class CSScaffold
 	 * @return void
 	 * @author Anthony Short
 	 **/
-	public static function setup($url_params, $config) 
+	public static function setup($url_params) 
 	{
 		static $run;
 
 		# This function can only be run once
 		if ($run === TRUE)
 			return;
-
+		
 		# Change into the system directory
 		chdir(SYSPATH);
-		
-		# Make sure the config is valid
-		if ( ! isset($config) AND !is_array($config))
-		{
-			// Invalid config file
-			die('Your configuration file is not valid.');
-		}
-		
-		# Set the config
-		self::$configuration['core'] = $config;
-		
-		# Enable FirePHP
-		FB::setEnabled($config['debug']);
 		
 		# Load the include paths
 		self::include_paths(TRUE);
@@ -414,6 +401,15 @@ final class CSScaffold
 	 */
 	public static function config($key, $slash = FALSE, $required = FALSE)
 	{
+		if (self::$configuration === NULL)
+		{
+			// Load core configuration
+			self::$configuration['core'] = self::config_load('core');
+			
+			// Re-parse the include paths
+			self::include_paths(TRUE);
+		}
+
 		// Get the group name from the key
 		$group = explode('.', $key, 2);
 		$group = $group[0];
@@ -457,6 +453,20 @@ final class CSScaffold
 	 */
 	public static function config_load($name, $required = TRUE)
 	{
+		if ($name === 'core')
+		{
+			// Load the application configuration file
+			require CONFIG;
+
+			if ( ! isset($config['cache_lock']))
+			{
+				// Invalid config file
+				die('Your configuration file is not valid.');
+			}
+
+			return $config;
+		}
+
 		if (isset(self::$internal_cache['configuration'][$name]))
 			return self::$internal_cache['configuration'][$name];
 
