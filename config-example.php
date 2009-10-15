@@ -79,18 +79,6 @@ $config['use_css_constants'] = false;
 $config['minify_css'] = true;
 
 /**
- * Validate CSS
- *
- * Scaffold can send your CSS to the W3C CSS validator and return
- * any validation errors. Note: Validation errors will throw a 
- * Scaffold error.
- *
- * Don't leave this on, as it increases CSS parsing time by at least 4 
- * seconds, and can bog down the validation server.
- */
-$config['validate'] = false;
-
-/**
  * Custom Global CSS Constants
  *
  * You can set basic constants here that can be access throughout your 

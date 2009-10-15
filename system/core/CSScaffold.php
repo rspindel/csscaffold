@@ -1146,10 +1146,7 @@ final class CSScaffold
 			}
 			
 			# Validate the CSS
-			if(self::config('core.validate') === true)
-			{
-				Validate::check();
-			}
+			Validate::check();
 			
 			# Stop the timer...
 			Benchmark::stop("parse_css");

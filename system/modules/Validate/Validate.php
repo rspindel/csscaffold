@@ -7,7 +7,7 @@ class Validate extends Plugins
 {
 	public static function check()
 	{
-		if(!IN_PRODUCTION)
+		if(!IN_PRODUCTION && CSScaffold::config('core.options.output') == "validate")
 		{
 			# Clean it up so we can use the line numbers
 			CSS::pretty();
