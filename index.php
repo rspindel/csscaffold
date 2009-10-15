@@ -7,10 +7,14 @@
  * @see https://github.com/anthonyshort/csscaffold/tree/master
  */
 
-# Path information about the current file
+/**
+ * Path information about the current file
+ */
 $path = pathinfo(__FILE__);
 
-# This file
+/**
+ * 
+ */
 define('FRONT', $path['basename']);
 
 /**
