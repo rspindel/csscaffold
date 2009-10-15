@@ -9,61 +9,14 @@
  */
 
 /**
- * The document root for the server. If you're server doesn't set this
- * variable, you can manually enter in the server path to the document root
- */
-$document_root = $_SERVER['DOCUMENT_ROOT'];
-
-/**
- * CSS directory. This is where you are storing your CSS files.
- *
- * This path can be relative to this file or absolute from the document root.
- */
-$css = '../';
-
-/**
- * The path to the scaffold directory. Usually the directory this file
- * is in, but you might have moved the index.php elsewhere.
- */
-$scaffold = './';
-
-/**
- * The path to the system folder. This path can be relative to this file 
- * or absolute from the document root.
- */
-$system = 'system';
-
-/**
- * Sets the cache path. By default, this is inside of the system folder.
- * You can set it to a custom location here. Be aware that when Scaffold
- * recaches, it empties the whole cache to remove all flagged cache files. 
- */
-$cache = 'cache';
-
-/**
- * Path to the plugins directory. This path can be relative to this file 
- * or absolute from the document root.
- */
-$plugins = 'plugins';
-
-/**
  * Path to the default config file
  */
-$config = 'config.php';
- 
+$config_file = 'config.php';
+
 /**
- * Run the installer to help you solve path issues.
+ * Load the config
  */
-define('INSTALL', FALSE);
- 
-/**
- * Define the website environment status. When this flag is set to TRUE, 
- * errors in your css will result in a blank page rather than displaying
- * error information to the user.
- *
- * The CSS cache will also be locked and unable to be recached.
- */
-define('IN_PRODUCTION', FALSE);
+require $config_file;
 
 /**
  * Make sure the we're using PHP 5.2 or newer
@@ -112,7 +65,7 @@ $css = file_exists(realpath($css)) ? realpath($css) : DOCROOT.$css;
 $system = file_exists(realpath($system)) ? realpath($system) : DOCROOT.$system;
 $cache = file_exists(realpath($cache)) ? realpath($cache) : DOCROOT.$cache;
 $plugins = file_exists(realpath($plugins)) ? realpath($plugins) : DOCROOT.$plugins;
-$config = file_exists(realpath($config)) ? realpath($config) : DOCROOT.$config;
+$config_file = file_exists(realpath($config_file)) ? realpath($config_file) : DOCROOT.$config_file;
 
 # Set the constants
 define('SCAFFOLD',  str_replace('\\', '/', $scaffold). '/');
@@ -120,14 +73,14 @@ define('SYSPATH', 	str_replace('\\', '/', $system). '/');
 define('CSSPATH', 	str_replace('\\', '/', $css). '/');
 define('CACHEPATH', str_replace('\\', '/', $cache). '/');
 define('PLUGINS',   str_replace('\\', '/', $plugins). '/');
-define('CONFIG',    str_replace('\\', '/', $config));
+define('CONFIG',    str_replace('\\', '/', $config_file));
 
 # URL to the css directory
 define('CSSURL', str_replace(DOCROOT, '/', CSSPATH));
 define('SYSURL', str_replace(DOCROOT, '/', SYSPATH));
 
 # Clean up
-unset($css, $document_root, $path, $system, $cache, $scaffold, $plugins, $config); 
+unset($css, $document_root, $path, $system, $cache, $scaffold, $plugins, $config_file); 
 
 if(INSTALL && !IN_PRODUCTION)
 {
