@@ -101,6 +101,9 @@ final class CSScaffold
 		
 		# Load the include paths
 		self::include_paths(TRUE);
+		
+		# Turn on FirePHP
+		FB::setEnabled(self::config('core.debug'));
 				
 		# Recache is off by default
 		$recache = false;
