@@ -19,11 +19,11 @@
 <body>
 	
 	<div class="content">
-		<h1><?= $error ?></h1>
-		<p id="message"><?= $message ?></p>
+		<h1><?php echo $error ?></h1>
+		<p id="message"><?php echo $message; ?></p>
 		
 		<?php if($PHP_ERROR): ?>
-		<pre><code>line <?=$line?><br/><?=$file?></code></pre>
+		<pre><code>line <?=$line?><br/><?php echo $file ?></code></pre>
 		<?php endif; ?>
 	</div>
 	
@@ -41,7 +41,7 @@
 	<div class="content">
 		<h2>CSS</h2>
 		
-		<pre><code><?= CSS::pretty(true); ?></code></pre>
+		<pre><code><?php echo CSS::pretty(true); ?></code></pre>
 	</div>
 	<?php endif; ?>
 </body>
