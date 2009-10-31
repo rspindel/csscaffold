@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
-define('SCAFFOLD_VERSION',  '1.5b3');
+define('SCAFFOLD_VERSION',  '1.5b6');
 
 require SYSPATH . '/core/Common.php';
 require SYSPATH . '/core/Benchmark.php';
