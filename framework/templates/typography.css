@@ -68,7 +68,7 @@
 	h2 
 	{
 		font-size:30px;
-		line-height:!baseline;
+		line-height:#[!baseline*2]px;
 		color:#333;
 	}
 	
@@ -81,6 +81,8 @@
 	h4 
 	{
 		font-size:18px;
+		line-height:#[!baseline*1.5]px;
+		margin-bottom:#[!baseline*0.5]px;
 	}
 	
 	h5 
