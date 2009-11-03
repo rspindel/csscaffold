@@ -379,7 +379,11 @@ final class CSScaffold
 			{
 				$path = join_path($path, $dir);
 				
-				if (!is_dir($path)) { mkdir($path, 0777); }
+				if (!is_dir($path)) 
+				{ 
+					mkdir($path); 
+					chmod($path, 0777); 
+				}
 			}
 		}	
 		
