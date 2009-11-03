@@ -388,7 +388,7 @@ final class CSScaffold
 		}	
 		
 		# Put it in the cache
-		file_put_contents(self::$cached_file, $data, 0777);
+		file_put_contents(self::$cached_file, $data);
 		
 		# Set its properties
 		chmod(self::$cached_file, 0777);
