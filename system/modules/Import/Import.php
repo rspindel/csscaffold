@@ -86,7 +86,7 @@ class Import extends Plugins
 					self::$loaded[] = $include;
 					$css = str_replace($matches[0][0], file_get_contents($include), $css);
 				}
-				# It's already been included, remove it. We don't need to import it again
+				# It's already been included, we don't need to import it again
 				else
 				{
 					$css = str_replace($matches[0][0], '', $css);
