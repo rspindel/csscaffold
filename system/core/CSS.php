@@ -496,7 +496,14 @@ abstract class CSS
 	public static function remove_comments($css = "")
 	{
 		if($css == "") $css =& self::$css;
-		return trim(preg_replace('#/\*[^*]*\*+([^/*][^*]*\*+)*/#', '', $css));
+		
+		# Remove normal CSS comments
+		$css = trim(preg_replace('#/\*[^*]*\*+([^/*][^*]*\*+)*/#', '', $css));
+	
+		# Remove single line comments. Thanks Naonak!
+		$css = preg_replace('#//.*$#Umsi', '', $css);
+
+		return $css;
 	}
 
 	/**
