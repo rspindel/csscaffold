@@ -86,10 +86,15 @@ class Import extends Plugins
 					self::$loaded[] = $include;
 					$css = str_replace($matches[0][0], file_get_contents($include), $css);
 				}
+				# It's already been included, remove it. We don't need to import it again
+				else
+				{
+					$css = str_replace($matches[0][0], '', $css);
+				}
 				
 				# Compress it which removes any commented out @imports
 				CSS::compress($css);
-				
+
 				# Check the file again for more imports
 				$css = self::server_import($css, $include);
 			}
@@ -98,7 +103,6 @@ class Import extends Plugins
 				throw new Scaffold_Exception("Import.doesnt_exist", $include);
 			}
 		}
-		
 		return $css;
 	}
 }
