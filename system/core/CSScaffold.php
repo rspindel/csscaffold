@@ -31,21 +31,7 @@ class CSScaffold extends Controller
 	 * CSScaffold Version
 	 */
 	const VERSION = '1.5.0b7';
-	
-	/**
-	 * The location of the cache file
-	 *
-	 * @var string
-	 */
-	private static $cached_file; 
 
-	/**
-	 * Stores the flags
-	 *
-	 * @var array
-	 */
-	public static $flags;
-	
 	/**
 	 * Successfully loaded modules
 	 *
@@ -227,116 +213,6 @@ class CSScaffold extends Controller
 			throw new Scaffold_Exception("Requested file wasn't within the CSS directory");
 		
 		return $request;
-	}
-	
-	/**
-	 * Empty the entire cache, removing every cached css file.
-	 *
-	 * @return void
-	 * @author Anthony Short
-	 */
-	private static function cache_clear($path = "")
-	{
-		if($path == "")
-			$path = self::config('core.path.cache');
-			
-		$path .= "/";
-
-		foreach(scandir($path) as $file)
-		{
-			if($file[0] == ".")
-			{
-				continue;
-			}
-			elseif(is_dir($path.$file))
-			{
-				self::cache_clear($path.$file);
-				rmdir($path.$file);
-			}
-			elseif(file_exists($path.$file))
-			{
-				unlink($path.$file);
-			}
-		}
-	}
-	
-	/**
-	 * Set the cache file which will be used for this process
-	 *
-	 * @return boolean
-	 * @author Anthony Short
-	 */
-	private static function cache_set($path)
-	{
-		$checksum = "";
-		$cached_mod_time = 0;
-		
-		# Make sure the files/folders are writeable
-		if (!is_dir($path))
-			throw new Scaffold_Exception("Cache path does not exist.");
-			
-		if (!is_writable($path))
-			throw new Scaffold_Exception("Cache path is not writable.");
-		
-		if(self::$flags != null)
-		{
-			$checksum = "-" . implode("_", array_keys(self::$flags));
-		}
-
-		# Determine the name of the cache file
-		self::$cached_file = join_path($path,preg_replace('#(.+)(\.css)$#i', "$1{$checksum}$2", self::config('core.request.relative_file')));
-
-		if(file_exists(self::$cached_file))
-		{
-			# When was the cache last modified
-			$cached_mod_time =  (int) filemtime(self::$cached_file);
-		}
-		
-		self::config_set('core.cache.mod_time', $cached_mod_time);
-	}
-
-	/**
-	 * Write to the set cache
-	 *
-	 * @return void
-	 * @author Anthony Short
-	 */
-	public static function cache_write($data,$target)
-	{
-		# Create the cache file
-		self::cache_create(dirname($target));
-		
-		# Put it in the cache
-		file_put_contents($target, $data);
-		
-		# Set its parmissions
-		chmod($target, 0777);
-		touch($target, time());
-	}
-	
-	/**
-	 * Create the cache file directory
-	 */
-	public static function cache_create($path)
-	{
-		# Create the directory to write the file to	
-		if(!is_dir($path)) 
-		{ 
-			mkdir($path); 
-			chmod($path, 0777); 
-		}
-	}
-
-	/**
-	 * Sets a cache flag
-	 *
-	 * @author Anthony Short
-	 * @param $flag_name
-	 * @return null
-	 */
-	public static function flag($flag_name)
-	{
-		self::$flags[$flag_name] = true;
 	}
 
 	/**
