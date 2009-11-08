@@ -113,10 +113,10 @@ class CSScaffold extends Controller
 			error_reporting(E_ALL & ~E_STRICT);
 			
 			# Set error handler
-			set_error_handler(array('Scaffold_Exception', 'exception_handler'));
+			set_error_handler(array('CSScaffold', 'exception_handler'));
 		
 			# Set exception handler
-			set_exception_handler(array('Scaffold_Exception', 'exception_handler'));
+			set_exception_handler(array('CSScaffold', 'exception_handler'));
 			
 			# Turn on FirePHP
 			FB::setEnabled(true);

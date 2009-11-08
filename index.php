@@ -20,7 +20,7 @@ ini_set('display_errors', TRUE);
 error_reporting(E_ALL & ~E_STRICT);
 
 # Set the include path
-set_include_path($path['system'] . PATH_SEPARATOR . get_include_path());
+set_include_path(realpath($path['system']) . PATH_SEPARATOR . get_include_path());
 
 # Include the main class
 require 'core/CSScaffold.php';
