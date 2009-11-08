@@ -1,20 +1,65 @@
-<?php defined('FRONT') OR die('No direct access allowed.');
+<?php
+
+/** 
+ * Run the Scaffold installer which will create a config.php and .htaccess
+ * file for you
+ */
+$install = false;
 
 /**
- * Cache Lock
- *
- * If you lock the cache, it will never recache your css
- */	
-$config['cache_lock'] = false;
+ * The document root for the server. If you're server doesn't set this
+ * variable, you can manually enter in the server path to the document root
+ */
+$path['document_root'] = $_SERVER['DOCUMENT_ROOT'];
 
 /**
- * Always Recache
+ * CSS directory. This is where you are storing your CSS files.
  *
- * If true, it will recache the css every time. This means
- * you don't need to do ?recache during development.
+ * This path can be relative to this file or absolute from the document root.
+ */
+$path['css'] = '../';
+
+/**
+ * The path to the system folder.
+ */
+$path['system'] = 'system';
+
+/**
+ * Sets the cache path. By default, this is inside of the system folder.
+ * You can set it to a custom location here. Be aware that when Scaffold
+ * recaches, it empties the whole cache to removes all flagged cache files. 
+ */
+$path['cache'] = 'system/cache';
+
+/**
+ * Debug
+ *
+ * Enable Firebug output. You need Firebug and FirePHP for Firefox.
+ * This is handy when you're viewing the page the CSS is used on,
+ * as it will display CSScaffold errors in the console.
+ *
+ */
+$config['debug'] = true;
+
+/**
+ * Mode
+ *
+ * Either 'production' or 'development'. In development the cache is always
+ * refreshed each time you reload the CSS. In production, the cache is locked
+ * and will never be recached. This means the load on your server will be much
+ * less when the site is live. 
+ */
+$config['in_production'] = false;
+
+/**
+ * Force Recache
+ *
+ * By default, Scaffold will only recache your CSS if there
+ * have been changes made to the requested file. If you want
+ * it to always recache for development, set this to true.
  */	
-$config['always_recache'] = true;
- 
+$config['force_recache'] = true;
+
 /**
  * Show CSS rendering information
  *
@@ -93,23 +138,6 @@ $config['constants'] = array
 	'scaffold_url' 	=> SYSURL,
 	'css_url' 		=> CSSURL,
 );
-		
-/**
- * Debug
- *
- * Enable Firebug output. You need Firebug and FirePHP for Firefox.
- * This is handy when you're viewing the page the CSS is used on,
- * as it will display CSScaffold errors in the console.
- *
- */
-$config['debug'] = false;
-
-/**
- * Language
- *
- * Choose a language. Currently, only supports English
- */
-$config['language'] = 'english';
 
 /**
  * Enabled Plugins
@@ -126,13 +154,7 @@ $config['language'] = 'english';
  * creating your own plugins, check the wiki on Github.
  * 
  */
-$config['plugins'] = array
+$config['disabled_plugins'] = array
 (
-	# Easily image replace text. Just use the image-replace property
-	# and give it a url() like a normal image. Scaffold takes care of the rest.
-	'ImageReplace' => true,
-
-	# Set constants via XML, allowing a CMS to tie itself in with
-	# your CSS files. 
-	'XML_constants' => false,
+	'XML_constants'
 );
