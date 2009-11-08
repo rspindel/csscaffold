@@ -61,7 +61,7 @@ class Import extends Module
 			
 			# Make sure recursion isn't happening
 			if($include == $previous)
-				throw new Scaffold_Exception("Import.recursion", $include);
+				throw new Scaffold_Exception("Recursion occurring with CSS @includes in $include");
 			
 			# If they haven't supplied an extension, we'll assume its a css file
 			if(pathinfo($include, PATHINFO_EXTENSION) == "")
@@ -69,13 +69,13 @@ class Import extends Module
 			
 			# Make sure it's a CSS file
 			if(!is_css($include))
-				throw new Scaffold_Exception("Import.not_css", $include);
+				throw new Scaffold_Exception("Included file isn't a CSS file ($include)");
 			
 			# If the url starts with ~, we'll assume it's from the root of the css directory
 			if($include[0] == "~")
 			{
 				$include = ltrim($include, '~/');
-				$include = CSSPATH . $include;	
+				$include = CSScaffold::config('core.path.css') . $include;	
 			}
 			
 			if(file_exists($include))
@@ -100,7 +100,7 @@ class Import extends Module
 			}
 			else
 			{
-				throw new Scaffold_Exception("Import.doesnt_exist", $include);
+				throw new Scaffold_Exception("Included CSS file doesn't exist ($include)");
 			}
 		}
 		return $css;
