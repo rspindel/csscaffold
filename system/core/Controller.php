@@ -493,7 +493,6 @@ class Controller
 
 		return self::$include_paths;
 	}
-
 	
 	/**
 	 * Empty the entire cache, removing every cached css file.
@@ -584,11 +583,11 @@ class Controller
 	 * Create the cache file directory
 	 */
 	public static function cache_create($path)
-	{
+	{		
 		# Create the directory to write the file to	
 		if(!is_dir($path)) 
-		{ 
-			mkdir($path); 
+		{
+			mkdir($path, 0777, true); 
 			chmod($path, 0777); 
 		}
 	}
@@ -762,7 +761,7 @@ class Controller
 						$arg = preg_replace('!^'.preg_quote(self::config('core.path.docroot')).'!', '', $arg);
 					}
 
-					//$temp .= $sep.htmlspecialchars((string)$arg, ENT_QUOTES, 'UTF-8');
+					$temp .= $sep.htmlspecialchars((string)$arg, ENT_QUOTES, 'UTF-8');
 
 					// Change separator to a comma
 					$sep = ', ';
