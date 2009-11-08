@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
 
 /**
  * Grid class
@@ -6,7 +6,7 @@
  * @author Anthony Short
  * @dependencies None
  **/
-class Layout extends Plugins
+class Layout extends Module
 {
 
 	/**
@@ -122,12 +122,8 @@ class Layout extends Plugins
 				Constants::set($key,$value);
 			}
 			
-			# Make a directory in the cache just for this plugin
-			if(!is_readable(CACHEPATH.'Layout'))
-				mkdir(CACHEPATH.'Layout');
-			
 			# Path to the image
-			$img = CACHEPATH . "Layout/{$lgw}_{$cw}_{$rgw}_{$bl}_grid.png";
+			$img = CSScaffold::config('core.path.cache') . "Layout/{$lgw}_{$cw}_{$rgw}_{$bl}_grid.png";
 			
 			# Generate the grid.png
 			self::create_grid_image($cw, $bl, $lgw, $rgw, $img);
@@ -135,7 +131,7 @@ class Layout extends Plugins
 			$img = str_replace(DOCROOT,'/',$img);
 			
 			CSS::append(".showgrid{background:url('".$img."');}");
-			
+
 			# Round to baselines
 			self::round_to_baseline($bl);
 			
@@ -216,6 +212,7 @@ class Layout extends Plugins
 			# Draw baseline
 			imageline($image, 0, ($bl - 1 ), $lgw + $cw + $rgw, ($bl - 1), $colorGrey);
 			
+			CSScaffold::cache_create(dirname($file));
 			ImagePNG($image, $file);
 		    
 		    # Kill it

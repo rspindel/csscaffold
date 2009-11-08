@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
 
 /**
  * Import
@@ -9,7 +9,7 @@
  * @author Anthony Short
  * @dependencies None
  **/
-class Import extends Plugins
+class Import extends Module
 {
 	/**
 	 * Stores which files have already been included

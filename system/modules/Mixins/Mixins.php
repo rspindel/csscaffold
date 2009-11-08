@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
 
 /**
  * Mixins
@@ -9,7 +9,7 @@
  * 
  * @author Anthony Short
  */
-class Mixins extends Plugins
+class Mixins extends Module
 {
 	/**
 	 * Stores the mixins for debugging purposes
@@ -217,7 +217,7 @@ class Mixins extends Plugins
 		}
 		else
 		{
-			throw new Scaffold_Exception('Mixins.mixin_dir_error', $dir);
+			throw new Scaffold_Exception('Cannot find the mixin directory - ' . $dir);
 		}
 	}
 	

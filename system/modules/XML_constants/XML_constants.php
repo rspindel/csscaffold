@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
 
 /**
  * XML Constants
@@ -23,7 +23,7 @@
  * 
  * @author Anthony Short
  */
-class XML_constants extends Plugins
+class XML_constants extends Module
 {
 	/**
 	 * Gets the XML and sets each of the nodes as constants
@@ -37,7 +37,7 @@ class XML_constants extends Plugins
 		
 		# If the xml file doesn't exist
 		if(!file_exists($file))
-			throw new Scaffold_Exception('XML_constants.doesnt_exist', $file);
+			throw new Scaffold_Exception("XML File doesn't exist - $file");
 		
 		# Load the xml
 		$xml = simplexml_load_file($file);

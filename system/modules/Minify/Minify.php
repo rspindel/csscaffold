@@ -1,9 +1,9 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
 
 /**
  * Minify Plugin
  **/
-class Minify extends Plugins
+class Minify extends Module
 {
 	public static function compress()
 	{

@@ -1,13 +1,13 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
 
 /**
  * Validate
  **/
-class Validate extends Plugins
+class Validate extends Module
 {
 	public static function check()
 	{
-		if(!IN_PRODUCTION && CSScaffold::config('core.options.output') == "validate")
+		if(CSScaffold::config('core.in_production') !== false && CSScaffold::config('core.options.output') == "validate")
 		{
 			# Clean it up so we can use the line numbers
 			CSS::pretty();

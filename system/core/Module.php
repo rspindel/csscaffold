@@ -1,14 +1,14 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
 
 /**
- * Plugins
+ * Module
  *
- * The base class for all the plugins
+ * The base class for all the Module
  *
- * @package default
+ * @package CSScaffold
  * @author Anthony Short
- **/
-class Plugins
+ */
+class Module
 {
 	/**
 	 * Sets cache flags

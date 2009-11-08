@@ -1,4 +1,14 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+/**
+ * Class CSScaffold
+ * @package CSScaffold
+ */
+
+require 'core/Utils.php';
+require 'core/Benchmark.php';
+require 'core/Module.php';
+require 'core/CSS.php';
+require 'core/CSS_Utils.php';
 
 /**
  * CSScaffold
@@ -6,21 +16,31 @@
  * Handles all of the inner workings of the framework and juicy goodness.
  * This is where the metaphorical cogs of the system reside. 
  *
- * @author Anthony Short
- **/
-final class CSScaffold 
-{	 
+ * Requires PHP 5.1.0.
+ * Tested on PHP 5.2.
+ *
+ * @package Minify
+ * @author Anthony Short <anthonyshort@me.com>
+ * @copyright 2009 Anthony Short. All rights reserved.
+ * @license http://opensource.org/licenses/bsd-license.php  New BSD License
+ * @link https://github.com/anthonyshort/csscaffold/master
+ */
+class CSScaffold 
+{
 	/**
-	 * The configuration settings
+	 * CSScaffold Version
 	 */
-	private static $configuration;
+	const VERSION = '1.5.0';
 	
 	/**
-	 * Stores the user agent string
-	 *
-	 * @var string
+	 * Default header type for CSS
 	 */
-	public static $user_agent;
+	const TYPE_CSS = 'text/css';
+
+	/**
+	 * The config settings
+	 */
+	private static $config;
 	
 	/**
 	 * The location of the cache file
@@ -49,37 +69,11 @@ final class CSScaffold
 	private static $include_paths;
 	
 	/**
-	 * System-required URL params.
+	 * Successfully loaded modules
 	 *
 	 * @var array
 	 */
-	protected static $system_url_params = array
-	(
-		'recache',
-		'request',
-	);
-	
-	/**
-	 * Modules
-	 */
-	protected static $modules = array
-	(
-		'Constants',
-		'Expression',
-		'Import',
-		'Iteration',
-		'Mixins',
-		'NestedSelectors',
-		'Minify',
-		'Layout',
-		'Typography',
-		'Validate'
-	);
-	
-	/**
-	 * Plugins that are installed
-	 */
-	public static $plugins = array();
+	private static $loaded_modules;
 	 
 	/**
 	 * Sets the initial variables, checks if we need to process the css
@@ -88,7 +82,7 @@ final class CSScaffold
 	 * @return void
 	 * @author Anthony Short
 	 **/
-	public static function setup($url_params) 
+	public static function run($get, $config = array(), $path = array()) 
 	{
 		static $run;
 
@@ -96,40 +90,127 @@ final class CSScaffold
 		if ($run === TRUE)
 			return;
 		
+		# The default options
+		$default_config = array
+		(
+			'debug' 				=> false,
+			'in_production' 		=> false,
+			'force_recache' 		=> false,
+			'show_header' 			=> true,
+			'auto_include_mixins' 	=> true,
+			'override_import' 		=> false,
+			'absolute_urls' 		=> false,
+			'use_css_constants' 	=> false,
+			'minify_css' 			=> true,
+			'constants' 			=> array(),
+			'disabled_plugins' 		=> array()		
+		);
+		
+		# Merge them with our set options
+		$config = array_merge($default_config, $config);
+		
+		# The default paths
+		$default_paths = array
+		(
+			'document_root' => $_SERVER['DOCUMENT_ROOT'],
+			'css' => '../',
+			'system' => 'system',
+			'cache' => 'cache'
+		);
+		
+		# Merge them with our set options
+		$path = array_merge($default_paths, $path);
+		
+		# Set the constants
+		define('DOCROOT', fix_path($path['document_root']));
+		define('SYSPATH', fix_path($path['system']));
+		define('CSSPATH', fix_path($path['css']));
+		define('CSSURL', str_replace(DOCROOT, '/', CSSPATH));
+		define('SYSURL', str_replace(DOCROOT, '/', SYSPATH));
+		$path['cache'] = fix_path($path['cache']);
+		
 		# Change into the system directory
 		chdir(SYSPATH);
 		
 		# Load the include paths
 		self::include_paths(TRUE);
 		
-		# Turn on FirePHP
-		FB::setEnabled(self::config('core.debug'));
-				
-		# Recache is off by default
-		$recache = false;
+		# If we want to debug (turn on errors and FirePHP)
+		if($config['debug'])
+		{
+			require 'vendor/FirePHPCore/fb.php';
+			require 'vendor/FirePHPCore/FirePHP.class.php';
+	
+			# Set the error reporting level.
+			error_reporting(E_ALL & ~E_STRICT);
+			
+			# Set error handler
+			set_error_handler(array('CSScaffold', 'exception_handler'));
 		
-		# Set the user agent
-		self::$user_agent = ( ! empty($_SERVER['HTTP_USER_AGENT']) ? trim($_SERVER['HTTP_USER_AGENT']) : '');
+			# Set exception handler
+			set_exception_handler(array('CSScaffold', 'exception_handler'));
+			
+			# Turn on FirePHP
+			FB::setEnabled(true);
+		}
+		else
+		{
+			# Turn off errors
+			error_reporting(0);
+		}
 		
-		# Set timezone
-		date_default_timezone_set('UTC');
+		# Set the options and paths in the config
+		self::config_set('core', $config);
+		self::config_set('core.path', $path);
 		
-		# Define Scaffold error constant
-		define('E_SCAFFOLD', 42);
+		# Parse the $_GET['request'] and set it in the config
+		self::config_set('core.request', self::parse_request($get['request']));
+					
+		# Get the modified time of the CSS file
+		self::config_set('core.request.mod_time', filemtime(self::config('core.request.path')));
+
+		# Tell CSScaffold where to cache and tell if we want to recache
+		self::cache_set($path['cache']);
+	
+		# Set it back to false if it's locked
+		if( $config['in_production'] AND file_exists(self::$cached_file) )
+		{
+			$recache = false;
+		}
+			
+		# If we need to recache
+		elseif( $config['force_recache'] OR isset($get['recache']) OR self::config('core.cache.mod_time') <= self::config('core.request.mod_time') )
+		{
+			$recache = true;
+			self::cache_clear();
+		}
 		
-		# Set error handler
-		set_error_handler(array('CSScaffold', 'exception_handler'));
+		# Load the modules
+		self::load_modules($config['disabled_plugins']);
 		
-		# Set exception handler
-		set_exception_handler(array('CSScaffold', 'exception_handler'));
+		# Work in the same directory as the requested CSS file
+		chdir(dirname(self::config('core.request.path')));
 		
-		if(!isset($url_params['request']))
-			throw new Scaffold_Exception('core.no_file_requested');
+		# Create a new CSS object
+		CSS::load(self::config('core.request.path'));
 		
+		# Parse it
+		if($recache)
+			self::parse_css();
+		
+		# Output it
+		self::output_css(CSS::$css);
+		
+		# Setup is complete, prevent it from being run again
+		$run = TRUE;
+	}
+	
+	private static function parse_request($path)
+	{
 		# Get rid of those pesky slashes
-		$requested_file	= trim_slashes($url_params['request']);
+		$requested_file	= trim_slashes($path);
 		
-		# Remove anything about .css - like /typography/
+		# Remove anything after .css - like /typography/
 		$requested_file = preg_replace('/\.css(.*)$/', '.css', $requested_file);
 		
 		# Remove the start of the url if it exists (http://www.example.com)
@@ -155,82 +236,20 @@ final class CSScaffold
 			# Otherwise we'll try to find it inside the CSS directory
 			$request['path'] = self::find_file($request['relative_dir'] . '/', basename($requested_file, '.css'), FALSE, 'css');
 		}
-
-		# If they've put a param in the url, consider it set to 'true'
-		foreach($url_params as $key => $value)
-		{
-			if(!in_array($key, self::$system_url_params))
-			{
-				if($value == "")
-				{
-					self::config_set('core.options.'.$key, true);
-				}
-				else
-				{
-					self::config_set('core.options.'.$key, $value);
-				}
-			}
-		}
 		
 		# If the file doesn't exist
 		if(!file_exists($request['path']))
-			throw new Scaffold_Exception("core.doesnt_exist", $request['file']); 
+			throw new Scaffold_Exception("Requested CSS file doesn't exist:" . $request['file']); 
 
 		# or if it's not a css file
 		if (!is_css($requested_file))
-			throw new Scaffold_Exception("core.not_css", $requested_file);
+			throw new Scaffold_Exception("Requested file isn't a css file: $requested_file" );
 		
 		# or if the requested file wasn't from the css directory
 		if(!substr(pathinfo($request['path'], PATHINFO_DIRNAME), 0, strlen(CSSPATH)))
-			throw new Scaffold_Exception("core.outside_css_directory");
+			throw new Scaffold_Exception("Requested file wasn't within the CSS directory");
 		
-		# Make sure the files/folders are writeable
-		if (!is_dir(CACHEPATH) || !is_writable(CACHEPATH))
-			throw new Scaffold_Exception("core.missing_cache", CACHEPATH);
-		
-		# Send it off to the config
-		self::config_set('core.request',$request);
-					
-		# Get the modified time of the CSS file
-		self::config_set('core.request.mod_time', filemtime(self::config('core.request.path')));
-			
-		# Set the recache to true if needed		
-		if(self::config('core.always_recache') OR isset($url_params['recache']))
-			$recache = true;
-		
-		# Set it back to false if it's locked
-		if(self::config('core.cache_lock') === true || IN_PRODUCTION)
-			$recache = false;
-
-		# Load the modules.
-		self::load_addons(self::$modules, 'modules');
-		
-		# Load the plugins
-		$plugins = self::config('core.plugins');
-		
-		# If the plugin is disabled, remove it.
-		foreach($plugins as $key => $value)
-		{
-			if($value !== false)
-			{
-				self::$plugins[] = $key;
-			}
-		}
-
-		# Now we can load them
-		self::load_addons(self::$plugins, PLUGINS);
-		
-		# Prepare the cache, and tell it if we want to recache
-		self::cache_set($recache);
-		
-		# Work in the same directory as the requested CSS file
-		chdir(dirname($request['path']));
-		
-		# Load the CSS file into the object
-		CSS::load(file_get_contents(self::config('core.request.path')));
-		
-		# Setup is complete, prevent it from being run again
-		$run = TRUE;
+		return $request;
 	}
 	
 	/**
@@ -255,7 +274,10 @@ final class CSScaffold
 			
 			if (isset($entry['file']))
 			{
-				$temp .= self::lang('core.error_file_line', preg_replace('!^'.preg_quote(DOCROOT).'!', '', $entry['file']), $entry['line']);
+				$file = preg_replace('!^'.preg_quote(DOCROOT).'!', '', $entry['file']);
+				$line = (string)$entry['line'];
+
+				$temp .= "<tt>{$file}<strong>[{$line}]:</strong></tt>";
 			}
 
 			if (isset($entry['class']))
@@ -281,7 +303,7 @@ final class CSScaffold
 						$arg = preg_replace('!^'.preg_quote(DOCROOT).'!', '', $arg);
 					}
 
-					$temp .= $sep.htmlspecialchars((string)$arg, ENT_QUOTES, 'UTF-8');
+					//$temp .= $sep.htmlspecialchars((string)$arg, ENT_QUOTES, 'UTF-8');
 
 					// Change separator to a comma
 					$sep = ', ';
@@ -302,9 +324,12 @@ final class CSScaffold
 	 * @return void
 	 * @author Anthony Short
 	 */
-	private static function cache_clear($path = CACHEPATH)
+	private static function cache_clear($path = "")
 	{
-		$path .= '/';
+		if($path == "")
+			$path = self::config('core.path.cache');
+			
+		$path .= "/";
 
 		foreach(scandir($path) as $file)
 		{
@@ -330,10 +355,17 @@ final class CSScaffold
 	 * @return boolean
 	 * @author Anthony Short
 	 */
-	private static function cache_set($recache = FALSE)
+	private static function cache_set($path)
 	{
 		$checksum = "";
 		$cached_mod_time = 0;
+		
+		# Make sure the files/folders are writeable
+		if (!is_dir($path))
+			throw new Scaffold_Exception("Cache path does not exist.");
+			
+		if (!is_writable($path))
+			throw new Scaffold_Exception("Cache path is not writable.");
 		
 		if(self::$flags != null)
 		{
@@ -341,15 +373,9 @@ final class CSScaffold
 		}
 
 		# Determine the name of the cache file
-		self::$cached_file = join_path(CACHEPATH,preg_replace('#(.+)(\.css)$#i', "$1{$checksum}$2", self::config('core.request.relative_file')));
+		self::$cached_file = join_path($path,preg_replace('#(.+)(\.css)$#i', "$1{$checksum}$2", self::config('core.request.relative_file')));
 
-		# Check to see if we should delete the cache file
-		if($recache === true && file_exists(self::$cached_file))
-		{
-			# Empty out the cache
-			self::cache_clear();
-		}
-		elseif(file_exists(self::$cached_file))
+		if(file_exists(self::$cached_file))
 		{
 			# When was the cache last modified
 			$cached_mod_time =  (int) filemtime(self::$cached_file);
@@ -364,38 +390,30 @@ final class CSScaffold
 	 * @return void
 	 * @author Anthony Short
 	 */
-	private static function cache_write($data)
-	{	   	
-	   	# Make sure the cache exists
-		$cache_info = pathinfo(self::$cached_file);
-		
-		# Make the cache mimic the css directory
-		if ($cache_info['dirname'] . "/" != CACHEPATH)
-		{
-			$path = CACHEPATH;
-			$dirs = explode('/', self::config('core.request.relative_dir'));
-						
-			foreach ($dirs as $dir)
-			{
-				$path = join_path($path, $dir);
-				
-				if (!is_dir($path)) 
-				{ 
-					mkdir($path); 
-					chmod($path, 0777); 
-				}
-			}
-		}	
+	public static function cache_write($data,$target)
+	{
+		# Create the cache file
+		self::cache_create(dirname($target));
 		
 		# Put it in the cache
-		file_put_contents(self::$cached_file, $data);
+		file_put_contents($target, $data);
 		
-		# Set its properties
-		chmod(self::$cached_file, 0777);
-		touch(self::$cached_file, time());
-		
-		# Set the config file mod time
-		self::config_set('core.cache.mod_time', time());
+		# Set its parmissions
+		chmod($target, 0777);
+		touch($target, time());
+	}
+	
+	/**
+	 * Create the cache file directory
+	 */
+	public static function cache_create($path)
+	{
+		# Create the directory to write the file to	
+		if(!is_dir($path)) 
+		{ 
+			mkdir($path); 
+			chmod($path, 0777); 
+		}
 	}
 
 	/**
@@ -408,27 +426,18 @@ final class CSScaffold
 	 */
 	public static function config($key, $slash = FALSE, $required = FALSE)
 	{
-		if (self::$configuration === NULL)
-		{
-			// Load core configuration
-			self::$configuration['core'] = self::config_load('core');
-			
-			// Re-parse the include paths
-			self::include_paths(TRUE);
-		}
-
 		// Get the group name from the key
 		$group = explode('.', $key, 2);
 		$group = $group[0];
 
-		if ( ! isset(self::$configuration[$group]))
+		if ( ! isset(self::$config[$group]))
 		{
-			// Load the configuration group
-			self::$configuration[$group] = self::config_load($group, $required);
+			// Load the config group
+			self::$config[$group] = self::config_load($group, $required);
 		}
 
 		// Get the value of the key string
-		$value = self::key_string(self::$configuration, $key);
+		$value = self::key_string(self::$config, $key);
 
 		if ($slash === TRUE AND is_string($value) AND $value !== '')
 		{
@@ -440,7 +449,7 @@ final class CSScaffold
 	}
 
 	/**
-	 * Clears a config group from the cached configuration.
+	 * Clears a config group from the cached config.
 	 *
 	 * @param   string  config group
 	 * @return  void
@@ -448,7 +457,7 @@ final class CSScaffold
 	public static function config_clear($group)
 	{
 		// Remove the group from config
-		unset(self::$configuration[$group], self::$internal_cache['configuration'][$group]);
+		unset(self::$config[$group], self::$internal_cache['config'][$group]);
 	}
 
 	/**
@@ -460,25 +469,11 @@ final class CSScaffold
 	 */
 	public static function config_load($name, $required = TRUE)
 	{
-		if ($name === 'core')
-		{
-			// Load the application configuration file
-			require CONFIG;
-
-			if ( ! isset($config['cache_lock']))
-			{
-				// Invalid config file
-				die('Your configuration file is not valid.');
-			}
-
-			return $config;
-		}
-
-		if (isset(self::$internal_cache['configuration'][$name]))
-			return self::$internal_cache['configuration'][$name];
+		if (isset(self::$internal_cache['config'][$name]))
+			return self::$internal_cache['config'][$name];
 
 		// Load matching configs
-		$configuration = array();
+		$config = array();
 
 		if ($files = self::find_file('config', $name, $required))
 		{
@@ -488,17 +483,17 @@ final class CSScaffold
 
 				if (isset($config) AND is_array($config))
 				{
-					// Merge in configuration
-					$configuration = array_merge($configuration, $config);
+					// Merge in config
+					$config = array_merge($config, $config);
 				}
 			}
 		}
 
-		return self::$internal_cache['configuration'][$name] = $configuration;
+		return self::$internal_cache['config'][$name] = $config;
 	}
 	
 	/**
-	 * Sets a configuration item, if allowed.
+	 * Sets a config item, if allowed.
 	 *
 	 * @param   string   config key string
 	 * @param   string   config value
@@ -513,7 +508,7 @@ final class CSScaffold
 		$keys = explode('.', $key);
 
 		// Used for recursion
-		$conf =& self::$configuration;
+		$conf =& self::$config;
 		$last = count($keys) - 1;
 
 		foreach ($keys as $i => $k)
@@ -539,7 +534,7 @@ final class CSScaffold
 
 	/**
 	 * Find a resource file in a given directory. Files will be located according
-	 * to the order of the include paths. Configuration and i18n files will be
+	 * to the order of the include paths. config and i18n files will be
 	 * returned in reverse order.
 	 *
 	 * @throws  Kohana_Exception  if file is required and not found
@@ -558,7 +553,7 @@ final class CSScaffold
 		if ($ext == '')
 		{
 			// Use the default extension
-			$ext = EXT;
+			$ext = '.php';
 		}
 		else
 		{
@@ -623,7 +618,7 @@ final class CSScaffold
 			if ($required === TRUE)
 			{
 				// If the file is required, throw an exception
-				throw new Scaffold_Exception('core.resource_not_found', $directory . $filename . $ext);
+				throw new Scaffold_Exception("Cannot locate the resource: " . $directory . $filename . $ext);
 			}
 			else
 			{
@@ -663,12 +658,12 @@ final class CSScaffold
 			(
 				CSSPATH,
 				SYSPATH . 'modules',
-				PLUGINS,
+				SYSPATH . 'plugins',
 			);
 			
 			# Find the modules and plugins installed	
 			$modules = self::list_files('modules', FALSE, SYSPATH . 'modules');
-			$plugins = self::list_files('plugins', FALSE, PLUGINS);
+			$plugins = self::list_files('plugins', FALSE, SYSPATH . 'plugins');
 			
 			foreach (array_merge($plugins,$modules) as $path)
 			{
@@ -681,9 +676,9 @@ final class CSScaffold
 				}
 			}
 
-			// Add SYSPATH as the last path
+			# Add SYSPATH as the last path
 			self::$include_paths[] = SYSPATH;
-			self::$include_paths[] = SCAFFOLD;
+			self::$include_paths[] = SCAFFOLD_DIR.'/';
 		}
 
 		return self::$include_paths;
@@ -835,7 +830,7 @@ final class CSScaffold
 				{
 					include $file;
 
-					// Merge in configuration
+					// Merge in config
 					if ( ! empty($lang) AND is_array($lang))
 					{
 						foreach ($lang as $k => $v)
@@ -944,28 +939,43 @@ final class CSScaffold
 	 * @param $directory The directory to look for these addons in
 	 * @return void
 	 */
-	private static function load_addons($addons, $directory)
+	private static function load_modules($disabled = array())
 	{
-		foreach($addons as $addon)
+		# Get each of the folders inside the Plugins and Modules directories
+		$modules = self::list_files('modules');
+		
+		foreach($modules as $module)
 		{
+			$name = basename($module);
+			
+			if(in_array($name, $disabled))
+			{
+				continue;
+			}
+			
 			# The addon folder
-			$folder = realpath(join_path($directory, $addon));
+			$folder = $module;
 					
 			# The controller for the plugin (Optional)
-			$controller = join_path($folder,$addon.EXT);
+			$controller = join_path($folder,$name.'.php');
 
 			# The config file for the plugin (Optional)
 			$config_file = $folder.'/config.php';
 			
 			# Set the paths in the config
-			self::config_set("$addon.support", join_path($folder,'support'));
-			self::config_set("$addon.libraries", join_path($folder,'libraries'));
+			self::config_set("$name.support", join_path($folder,'support'));
+			self::config_set("$name.libraries", join_path($folder,'libraries'));
 
 			# Include the addon controller
 			if(file_exists($controller))
 			{
 				require_once($controller);
-				call_user_func(array($addon,'flag'));
+				
+				# Any flags this module sets
+				call_user_func(array($name,'flag'));
+				
+				# It's loaded
+				self::$loaded_modules[] = $name;
 			}
 			
 			# If there is a config file
@@ -975,7 +985,7 @@ final class CSScaffold
 				
 				foreach($config as $key => $value)
 				{
-					self::config_set($addon.'.'.$key, $value);
+					self::config_set($name.'.'.$key, $value);
 				}
 				
 				unset($config);
@@ -1047,134 +1057,139 @@ final class CSScaffold
 	 *
 	 * @return string - The processes css file as a string
 	 * @author Anthony Short
-	 **/
+	 */
 	public static function parse_css()
-	{						
-		# If the cache is stale or doesn't exist
-		if (self::config('core.cache.mod_time') <= self::config('core.request.mod_time'))
-		{			
-			# Start the timer
-			Benchmark::start("parse_css");
-			
-			# Compress it before parsing
-			CSS::compress(CSS::$css);
-						
-			# Import CSS files
+	{								
+		# Start the timer
+		Benchmark::start("parse_css");
+		
+		# Compress it before parsing
+		CSS::compress(CSS::$css);
+		
+		# Import CSS files
+		if(class_exists('Import'))
 			Import::parse();
-			
-			if(self::config('core.auto_include_mixins') === true)
-			{
-				# Import the mixins in the plugin/module folders
-				Mixins::import_mixins('framework/mixins');
-			}
-														
-			# Parse our css through the plugins
-			foreach(self::$plugins as $plugin)
-			{
-				call_user_func(array($plugin,'import_process'));
-			}
-			
-			# Compress it before parsing
-			CSS::compress(CSS::$css);
+		
+		if(self::config('core.auto_include_mixins') === true && class_exists('Mixins'))
+		{
+			# Import the mixins in the plugin/module folders
+			Mixins::import_mixins('framework/mixins');
+		}
+													
+		# Parse our css through the plugins
+		foreach(self::$loaded_modules as $module)
+		{
+			call_user_func(array($module,'import_process'));
+		}
+		
+		# Compress it before parsing
+		CSS::compress(CSS::$css);
 
-			# Parse the constants
+		# Parse the constants
+		if(class_exists('Constants'))
 			Constants::parse();
 
-			foreach(self::$plugins as $plugin)
-			{
-				call_user_func(array($plugin,'pre_process'));
-			}
-			
-			# Parse the @grid
-			Layout::parse_grid();
-			
-			# Replace the constants
-			Constants::replace();
-			
-			# Parse @for loops
-			Iteration::parse();
-			
-			foreach(self::$plugins as $plugin)
-			{
-				call_user_func(array($plugin,'process'));
-			}
-			
-			# Compress it before parsing
-			CSS::compress(CSS::$css);
-			
-			# Parse the mixins
-			Mixins::parse();
-			
-			# Find missing constants
-			Constants::replace();
-			
-			# Compress it before parsing
-			CSS::compress(CSS::$css);
-			
-			foreach(self::$plugins as $plugin)
-			{
-				call_user_func(array($plugin,'post_process'));
-			}
-			
-			# Parse the expressions
-			Expression::parse();
-			
-			# Parse the nested selectors
-			NestedSelectors::parse();
-			
-			# Convert all url()'s to absolute paths if required
-			if(self::config('core.absolute_urls') === true)
-			{
-				CSS::convert_to_absolute_urls();
-			}
-			
-			# Replaces url()'s that start with ~ to lead to the CSS directory
-			CSS::replace_css_urls();
-			
-			# Add the extra string we've been storing
-			CSS::$css .= CSS::$append;
-			
-			# If they want to minify it
-			if(self::config('core.minify_css') === true)
-			{
-				Minify::compress();
-			}
-			
-			# Otherwise, we'll make it pretty
-			else
-			{
-				CSS::pretty();
-			}
-			
-			# Formatting hook
-			foreach(self::$plugins as $plugin)
-			{
-				call_user_func(array($plugin,'formatting_process'));
-			}
-			
-			# Validate the CSS
-			Validate::check();
-			
-			# Stop the timer...
-			Benchmark::stop("parse_css");
-			
-			if (self::config('core.show_header') === TRUE)
-			{		
-				CSS::$css  = "/* Processed by CSScaffold on ". gmdate('r') . " in ".Benchmark::get("parse_css", "time")." seconds */\n\n" . CSS::$css;
-			}
-
-			# Write the css file to the cache
-			self::cache_write(CSS::$css);
-		
+		foreach(self::$loaded_modules as $module)
+		{
+			call_user_func(array($module,'pre_process'));
 		}
-			
+		
+		# Parse the @grid
+		if(class_exists('Layout'))
+			Layout::parse_grid();
+		
+		# Replace the constants
+		if(class_exists('Constants'))
+			Constants::replace();
+		
+		# Parse @for loops
+		if(class_exists('Iteration'))
+			Iteration::parse();
+		
+		foreach(self::$loaded_modules as $module)
+		{
+			call_user_func(array($module,'process'));
+		}
+		
+		# Compress it before parsing
+		CSS::compress(CSS::$css);
+		
+		# Parse the mixins
+		if(class_exists('Mixins'))
+			Mixins::parse();
+		
+		# Find missing constants
+		if(class_exists('Constants'))
+			Constants::replace();
+		
+		# Compress it before parsing
+		CSS::compress(CSS::$css);
+		
+		foreach(self::$loaded_modules as $module)
+		{
+			call_user_func(array($module,'post_process'));
+		}
+		
+		# Parse the expressions
+		if(class_exists('Expression'))
+			Expression::parse();
+		
+		# Parse the nested selectors
+		if(class_exists('NestedSelectors'))
+			NestedSelectors::parse();
+		
+		# Convert all url()'s to absolute paths if required
+		if(self::config('core.absolute_urls') === true)
+		{
+			CSS::convert_to_absolute_urls();
+		}
+		
+		# Replaces url()'s that start with ~ to lead to the CSS directory
+		CSS::replace_css_urls();
+		
+		# Add the extra string we've been storing
+		CSS::$css .= CSS::$append;
+		
+		# If they want to minify it
+		if(self::config('core.minify_css') === true && class_exists('Minify'))
+		{
+			Minify::compress();
+		}
+		
+		# Otherwise, we'll make it pretty
+		else
+		{
+			CSS::pretty();
+		}
+		
+		# Formatting hook
+		foreach(self::$loaded_modules as $module)
+		{
+			call_user_func(array($module,'formatting_process'));
+		}
+		
+		# Validate the CSS
+		if(class_exists('Validate'))
+			Validate::check();
+		
+		# Stop the timer...
+		Benchmark::stop("parse_css");
+		
+		if (self::config('core.show_header') === TRUE)
+		{		
+			CSS::$css  = "/* Processed by CSScaffold on ". gmdate('r') . " in ".Benchmark::get("parse_css", "time")." seconds */\n\n" . CSS::$css;
+		}
+
+		# Write the css file to the cache
+		self::cache_write(CSS::$css,self::$cached_file);
+
 		# Output process hook for plugins to display views.
 		# Doesn't run in production mode.
-		if(!IN_PRODUCTION)
+		if(self::config('core.in_production') === false)
 		{				
-			foreach(array_merge(self::$plugins, self::$modules) as $plugin)
+			foreach(self::$loaded_modules as $module)
 			{
-				call_user_func(array($plugin,'output'));
+				call_user_func(array($module,'output'));
 			}
 		}
 	}
@@ -1196,7 +1211,7 @@ final class CSScaffold
 			$PHP_ERROR = (func_num_args() === 5);
 	
 			# Test to see if errors should be displayed
-			if (IN_PRODUCTION OR ($PHP_ERROR AND error_reporting() === 0))
+			if ($PHP_ERROR AND error_reporting() === 0)
 				die;
 				
 			# Error handling will use exactly 5 args, every time
@@ -1273,7 +1288,7 @@ final class CSScaffold
 			# Log to FirePHP
 			FB::log($error . "-" . $message);
 			
-			require(SYSPATH . '/views/scaffold_error_page.php');
+			require SYSPATH.'views/Scaffold_Exception.php';
 
 			# Turn off error reporting
 			error_reporting(0);
@@ -1296,7 +1311,7 @@ class Scaffold_Exception extends Exception
 	protected $header = FALSE;
 
 	# Scaffold error code
-	protected $code = E_SCAFFOLD;
+	protected $code = 42;
 
 	/**
 	 * Set exception message.
@@ -1304,19 +1319,8 @@ class Scaffold_Exception extends Exception
 	 * @param  string  i18n language key for the message
 	 * @param  array   addition line parameters
 	 */
-	public function __construct($error)
+	public function __construct($message)
 	{
-		$args = array_slice(func_get_args(), 1);
-
-		# Fetch the error message
-		$message = CSScaffold::lang($error, $args);
-		
-		if ($message === $error OR empty($message))
-		{
-			# Unable to locate the message for the error
-			$message = 'Unknown Exception: '.$error;
-		}
-
 		# Sets $this->message the proper way
 		parent::__construct($message);
 	}
@@ -1340,28 +1344,5 @@ class Scaffold_Exception extends Exception
 	{
 		// Send the 500 header
 		header('HTTP/1.1 500 Internal Server Error');
-	}
-}
-
-/**
- * Scaffold_User_Exception
- *
- * Captures errors and displays them.
- * 
- * @author Anthony Short
- */
-class Scaffold_User_Exception extends Scaffold_Exception
-{
-	/**
-	 * Set exception message.
-	 *
-	 * @param $title string The name of the exception
-	 * @param  array   addition line parameters
-	 */
-	public function __construct($title, $message)
-	{
-		Exception::__construct($message);
-
-		$this->code = $title;
 	}
 }

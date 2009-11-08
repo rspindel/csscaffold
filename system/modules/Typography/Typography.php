@@ -1,11 +1,11 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
 
 /**
  * Type_suite
  *
  * Outputs a HTML page of every type element using the parsed CSS
  **/
-class Typography extends Plugins
+class Typography extends Module
 {
 	public static function output()
 	{

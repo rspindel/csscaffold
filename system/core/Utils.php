@@ -1,4 +1,9 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+function fix_path($path)
+{
+	return str_replace('\\', '/', realpath($path)). '/';
+}
 
 /**
  * Checks if a file is an image.
@@ -204,11 +209,7 @@ function join_path()
 	return reduce_double_slashes($path);
 }
 
-function fix_path($path)
-{
-	return dirname($path . './');
-}
-	
+
 // Loads and returns a file
 function load($f)
 {
@@ -262,4 +263,3 @@ function extension($path)
 
   return pathinfo($path, PATHINFO_EXTENSION);;
 } 
-

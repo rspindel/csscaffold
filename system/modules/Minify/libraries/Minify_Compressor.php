@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
 /**
  * Class Minify_CSS_Compressor 
  * @package Minify

@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
 
 /**
  * ImageReplacement class
@@ -6,7 +6,7 @@
  * @author Anthony Short
  * @dependencies None
  **/
-class ImageReplace extends Plugins
+class ImageReplace extends Module
 {
 
 	/**

@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
 
 /**
  * NestedSelectors
@@ -6,7 +6,7 @@
  * @author Anthony Short
  * @dependencies None
  **/
-class NestedSelectors extends Plugins
+class NestedSelectors extends Module
 {
 
 	/**

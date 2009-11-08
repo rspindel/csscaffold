@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
 
 /**
  * Constants
@@ -9,7 +9,7 @@
  * @author Anthony Short
  * @dependencies None
  **/
-class Constants extends Plugins
+class Constants extends Module
 {
 	/**
 	 * Stores all of the constants for the app

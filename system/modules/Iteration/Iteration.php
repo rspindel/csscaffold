@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
 
 /**
  * Iterator
@@ -6,7 +6,7 @@
  * @author Anthony Short
  * @dependencies None
  **/
-class Iteration extends Plugins
+class Iteration extends Module
 {
 	
 	/**

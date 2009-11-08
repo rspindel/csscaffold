@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
 
 /**
  * Math
@@ -8,7 +8,7 @@
  * @author Anthony Short
  * @dependencies None
  **/
-class Expression extends Plugins
+class Expression extends Module
 {
 	/**
 	 * The final process before it is cached. This is usually just

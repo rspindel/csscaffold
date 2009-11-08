@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.'); ?>
+<?php ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,7 +23,7 @@
 		<p id="message"><?php echo $message; ?></p>
 		
 		<?php if($PHP_ERROR): ?>
-		<pre><code>line <?=$line?><br/><?php echo $file ?></code></pre>
+		<pre><code>line <?php echo $line; ?><br/><?php echo $file ?></code></pre>
 		<?php endif; ?>
 	</div>
 	
