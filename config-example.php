@@ -1,11 +1,5 @@
 <?php
 
-/** 
- * Run the Scaffold installer which will create a config.php and .htaccess
- * file for you
- */
-$install = false;
-
 /**
  * The document root for the server. If you're server doesn't set this
  * variable, you can manually enter in the server path to the document root
