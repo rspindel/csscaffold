@@ -8,7 +8,6 @@ require 'core/Utils.php';
 require 'core/Benchmark.php';
 require 'core/Module.php';
 require 'core/CSS.php';
-require 'core/CSS_Utils.php';
 
 /**
  * CSScaffold
@@ -19,7 +18,7 @@ require 'core/CSS_Utils.php';
  * Requires PHP 5.1.0.
  * Tested on PHP 5.2.
  *
- * @package Minify
+ * @package CSScaffold
  * @author Anthony Short <anthonyshort@me.com>
  * @copyright 2009 Anthony Short. All rights reserved.
  * @license http://opensource.org/licenses/bsd-license.php  New BSD License
@@ -31,11 +30,6 @@ class CSScaffold
 	 * CSScaffold Version
 	 */
 	const VERSION = '1.5.0';
-	
-	/**
-	 * Default header type for CSS
-	 */
-	const TYPE_CSS = 'text/css';
 
 	/**
 	 * The config settings
@@ -112,28 +106,31 @@ class CSScaffold
 		# The default paths
 		$default_paths = array
 		(
-			'document_root' => $_SERVER['DOCUMENT_ROOT'],
-			'css' => '../',
-			'system' => 'system',
-			'cache' => 'cache'
+			'document_root' 		=> $_SERVER['DOCUMENT_ROOT'],
+			'css' 					=> '../',
+			'system' 				=> 'system',
+			'cache' 				=> 'cache'
 		);
 		
 		# Merge them with our set options
 		$path = array_merge($default_paths, $path);
 		
-		# Set the constants
-		define('DOCROOT', fix_path($path['document_root']));
-		define('SYSPATH', fix_path($path['system']));
-		define('CSSPATH', fix_path($path['css']));
-		define('CSSURL', str_replace(DOCROOT, '/', CSSPATH));
-		define('SYSURL', str_replace(DOCROOT, '/', SYSPATH));
-		$path['cache'] = fix_path($path['cache']);
-		
-		# Change into the system directory
-		chdir(SYSPATH);
+		# Set the options and paths in the config
+		self::config_set('core', $config);
+
+		# Set the paths in the config	
+		self::config_set('core.path.docroot', fix_path($path['document_root']));
+		self::config_set('core.path.system', fix_path($path['system']));
+		self::config_set('core.path.cache', fix_path($path['cache']));
+		self::config_set('core.path.css', fix_path($path['css']));
+		self::config_set('core.url.css', str_replace(self::config('core.path.docroot'), '/', self::config('core.path.css')));
+		self::config_set('core.url.system', str_replace(self::config('core.path.docroot'), '/', self::config('core.path.system')));
 		
 		# Load the include paths
 		self::include_paths(TRUE);
+
+		# Change into the system directory
+		chdir(self::config('core.path.system'));
 		
 		# If we want to debug (turn on errors and FirePHP)
 		if($config['debug'])
@@ -159,10 +156,6 @@ class CSScaffold
 			error_reporting(0);
 		}
 		
-		# Set the options and paths in the config
-		self::config_set('core', $config);
-		self::config_set('core.path', $path);
-		
 		# Parse the $_GET['request'] and set it in the config
 		self::config_set('core.request', self::parse_request($get['request']));
 					
@@ -170,7 +163,7 @@ class CSScaffold
 		self::config_set('core.request.mod_time', filemtime(self::config('core.request.path')));
 
 		# Tell CSScaffold where to cache and tell if we want to recache
-		self::cache_set($path['cache']);
+		self::cache_set(self::config('core.path.cache'));
 	
 		# Set it back to false if it's locked
 		if( $config['in_production'] AND file_exists(self::$cached_file) )
@@ -195,8 +188,7 @@ class CSScaffold
 		CSS::load(self::config('core.request.path'));
 		
 		# Parse it
-		if($recache)
-			self::parse_css();
+		if($recache) self::parse_css();
 		
 		# Output it
 		self::output_css(CSS::$css);
@@ -220,16 +212,16 @@ class CSScaffold
 		$request['file'] = $requested_file;
 		
 		# Path to the file, relative to the css directory
-		$request['relative_file'] = ltrim(str_replace(CSSURL, '/', $requested_file), '/');
+		$request['relative_file'] = ltrim(str_replace(self::config('core.url.css'), '/', $requested_file), '/');
 
 		# Path to the directory containing the file, relative to the css directory		
 		$request['relative_dir'] = pathinfo($request['relative_file'], PATHINFO_DIRNAME);
-		
+
 		# Find the server path to the requested file
-		if(file_exists(DOCROOT.$requested_file))
+		if(file_exists(self::config('core.path.docroot').$requested_file))
 		{
 			# The request is sent with the absolute path most of the time
-			$request['path'] = DOCROOT.$requested_file;
+			$request['path'] = self::config('core.path.docroot').$requested_file;
 		}
 		else
 		{
@@ -246,7 +238,7 @@ class CSScaffold
 			throw new Scaffold_Exception("Requested file isn't a css file: $requested_file" );
 		
 		# or if the requested file wasn't from the css directory
-		if(!substr(pathinfo($request['path'], PATHINFO_DIRNAME), 0, strlen(CSSPATH)))
+		if(!substr(pathinfo($request['path'], PATHINFO_DIRNAME), 0, strlen(self::config('core.path.css'))))
 			throw new Scaffold_Exception("Requested file wasn't within the CSS directory");
 		
 		return $request;
@@ -274,7 +266,7 @@ class CSScaffold
 			
 			if (isset($entry['file']))
 			{
-				$file = preg_replace('!^'.preg_quote(DOCROOT).'!', '', $entry['file']);
+				$file = preg_replace('!^'.preg_quote(self::config('core.path.docroot')).'!', '', $entry['file']);
 				$line = (string)$entry['line'];
 
 				$temp .= "<tt>{$file}<strong>[{$line}]:</strong></tt>";
@@ -300,7 +292,7 @@ class CSScaffold
 					if (is_string($arg) AND is_file($arg))
 					{
 						// Remove docroot from filename
-						$arg = preg_replace('!^'.preg_quote(DOCROOT).'!', '', $arg);
+						$arg = preg_replace('!^'.preg_quote(self::config('core.path.docroot')).'!', '', $arg);
 					}
 
 					//$temp .= $sep.htmlspecialchars((string)$arg, ENT_QUOTES, 'UTF-8');
@@ -430,7 +422,7 @@ class CSScaffold
 		$group = explode('.', $key, 2);
 		$group = $group[0];
 
-		if ( ! isset(self::$config[$group]))
+		if ( ! isset(self::$config[$group]) && $group != "core")
 		{
 			// Load the config group
 			self::$config[$group] = self::config_load($group, $required);
@@ -523,7 +515,7 @@ class CSScaffold
 			}
 		}
 		
-		if ($key === 'core.modules' OR $key === 'core.plugins')
+		if ($key === 'core.modules')
 		{
 			// Reprocess the include paths
 			self::include_paths(TRUE);
@@ -573,7 +565,7 @@ class CSScaffold
 		// Nothing found, yet
 		$found = NULL;
 
-		if ($directory === 'config' OR $directory === 'language')
+		if ($directory === 'config')
 		{
 			// Search in reverse, for merging
 			$paths = array_reverse($paths);
@@ -644,7 +636,7 @@ class CSScaffold
 
 	/**
 	 * Get all include paths. APPPATH is the first path, followed by module
-	 * paths in the order they are configured, follow by the SYSPATH.
+	 * paths in the order they are configured, follow by the self::config('core.path.system').
 	 *
 	 * @param   boolean  re-process the include paths
 	 * @return  array
@@ -656,16 +648,14 @@ class CSScaffold
 			// Add APPPATH as the first path
 			self::$include_paths = array
 			(
-				CSSPATH,
-				SYSPATH . 'modules',
-				SYSPATH . 'plugins',
+				self::config('core.path.css'),
+				self::config('core.path.system') . 'modules/'
 			);
 			
 			# Find the modules and plugins installed	
-			$modules = self::list_files('modules', FALSE, SYSPATH . 'modules');
-			$plugins = self::list_files('plugins', FALSE, SYSPATH . 'plugins');
+			$modules = self::list_files('modules', FALSE, self::config('core.path.system') . '/modules');
 			
-			foreach (array_merge($plugins,$modules) as $path)
+			foreach ($modules as $path)
 			{
 				$path = str_replace('\\', '/', realpath($path));
 				
@@ -676,8 +666,8 @@ class CSScaffold
 				}
 			}
 
-			# Add SYSPATH as the last path
-			self::$include_paths[] = SYSPATH;
+			# Add self::config('core.path.system') as the last path
+			self::$include_paths[] = self::config('core.path.system');
 			self::$include_paths[] = SCAFFOLD_DIR.'/';
 		}
 
@@ -1252,9 +1242,9 @@ class CSScaffold
 				$description = '';
 			}
 			
-			// Remove the DOCROOT from the path, as a security precaution
+			// Remove the self::config('core.path.docroot') from the path, as a security precaution
 			$file = str_replace('\\', '/', realpath($file));
-			$file = preg_replace('|^'.preg_quote(DOCROOT).'|', '', $file);
+			$file = preg_replace('|^'.preg_quote(self::config('core.path.docroot')).'|', '', $file);
 
 			if($PHP_ERROR)
 			{
@@ -1288,7 +1278,7 @@ class CSScaffold
 			# Log to FirePHP
 			FB::log($error . "-" . $message);
 			
-			require SYSPATH.'views/Scaffold_Exception.php';
+			require self::config('core.path.system') . 'views/Scaffold_Exception.php';
 
 			# Turn off error reporting
 			error_reporting(0);

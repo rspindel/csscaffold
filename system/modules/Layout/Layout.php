@@ -83,7 +83,7 @@ class Layout extends Module
 			{
 				if(!isset($settings[$option]))
 				{
-					throw new Scaffold_Exception('Layout.missing_option', $option);
+					throw new Scaffold_Exception('Layout module requires the column-count and column-width properties');
 				}
 			}
 			
@@ -128,7 +128,7 @@ class Layout extends Module
 			# Generate the grid.png
 			self::create_grid_image($cw, $bl, $lgw, $rgw, $img);
 			
-			$img = str_replace(DOCROOT,'/',$img);
+			$img = str_replace(CSScaffold::config('core.path.docroot'),'/',$img);
 			
 			CSS::append(".showgrid{background:url('".$img."');}");
 
