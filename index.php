@@ -10,6 +10,8 @@
  *
  * @package CSScaffold
  */
+ 
+# CSScaffold requires this constant
 define('SCAFFOLD_DIR', dirname(__FILE__));
 
 # Include the config file
@@ -29,11 +31,4 @@ require 'core/CSScaffold.php';
 if(isset($_GET['request']))
 {
 	CSScaffold::run($_GET, $config, $path);
-}
-
-# If there's no request, load the installer
-elseif($install)
-{
-	header('Location: install/');
-    exit();
 }
