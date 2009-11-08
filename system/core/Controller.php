@@ -775,4 +775,5 @@ class Controller
 
 		return '<ul class="backtrace">'.implode("\n", $output).'</ul>';
 	}
+
 }
