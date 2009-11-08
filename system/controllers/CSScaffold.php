@@ -119,7 +119,8 @@ class CSScaffold extends Controller
 		chdir(SYSPATH);
 		
 		# Set the output
-		self::config_set('core.output', $get['output']);
+		if(isset($get['output']))
+			self::config_set('core.output', $get['output']);
 		
 		# Parse the $_GET['request'] and set it in the config
 		self::config_set('core.request', self::parse_request($get['request']));
