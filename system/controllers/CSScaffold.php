@@ -110,13 +110,16 @@ class CSScaffold extends Controller
 		self::config_set('core.path.cache', fix_path($path['cache']));
 		self::config_set('core.path.css', fix_path($path['css']));
 		self::config_set('core.url.css', str_replace(self::config('core.path.docroot'), '/', self::config('core.path.css')));
-		self::config_set('core.url.system', str_replace(self::config('core.path.docroot'), '/', self::config('core.path.system')));
+		self::config_set('core.url.system', str_replace(self::config('core.path.docroot'), '/', SYSPATH));
 		
 		# Load the include paths
 		self::include_paths(TRUE);
 
 		# Change into the system directory
-		chdir(self::config('core.path.system'));
+		chdir(SYSPATH);
+		
+		# Set the output
+		self::config_set('core.output', $get['output']);
 		
 		# Parse the $_GET['request'] and set it in the config
 		self::config_set('core.request', self::parse_request($get['request']));
