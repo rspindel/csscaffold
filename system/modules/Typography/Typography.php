@@ -9,7 +9,7 @@ class Typography extends Module
 {
 	public static function output()
 	{
-		if(CSScaffold::config('core.options.output') == "typography")
+		if(CSScaffold::config('core.output') == "typography")
 		{
 			# Make sure we're sending HTML
 			header('Content-Type: text/html');

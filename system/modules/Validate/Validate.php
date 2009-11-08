@@ -7,7 +7,7 @@ class Validate extends Module
 {
 	public static function check()
 	{
-		if(CSScaffold::config('core.in_production') !== false && CSScaffold::config('core.options.output') == "validate")
+		if(CSScaffold::config('core.in_production') !== true && CSScaffold::config('core.output') == "validate")
 		{
 			# Clean it up so we can use the line numbers
 			CSS::pretty();
@@ -75,7 +75,7 @@ class Validate extends Module
 			    	$message .= "</ol>";
 			    	
 			    	# Throw an error
-			    	throw new Scaffold_User_Exception("CSS is not valid - $count errors", $message);
+			    	throw new Scaffold_Exception("CSS is not valid - $count errors" . $message);
 			    }
 			}
 		}
