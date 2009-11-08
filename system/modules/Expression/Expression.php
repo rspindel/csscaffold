@@ -67,7 +67,7 @@ class Expression extends Module
 				}
 				else
 				{
-					throw new Scaffold_Exception("Expression.cannot_parse", $matches[0][$key]);
+					throw new Scaffold_Exception("Cannot parse expression " . $matches[0][$key]);
 				}
 			}
 		}

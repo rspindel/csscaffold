@@ -145,7 +145,7 @@ class Constants extends Module
 				if(!empty($missing))
 				{
 					$missing = "<ul><li>" . implode("</li><li>", $missing) . "</li></ul>";
-					throw new Scaffold_Exception('Constants.missing_constants', $missing);
+					throw new Scaffold_Exception("The following constants are used, but not defined: $missing");
 				}
 			}
 		}
