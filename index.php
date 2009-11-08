@@ -15,7 +15,7 @@ define('SCAFFOLD_DIR', dirname(__FILE__));
 # Include the config file
 include 'config.php';
 
-# Set error reporting. Debug setting overrides this later.
+# Display errors
 ini_set('display_errors', TRUE);
 error_reporting(E_ALL & ~E_STRICT);
 
@@ -35,12 +35,5 @@ if(isset($_GET['request']))
 elseif($install)
 {
 	header('Location: install/');
-    exit();
-}
-
-# There's nothing to use... :(
-else
-{
-	header('Location: /');
     exit();
 }
