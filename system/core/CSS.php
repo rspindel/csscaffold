@@ -225,8 +225,8 @@ class CSS
 				$url = unquote($url);
 
 				if($url[0] == "~")
-				{					
-					self::replace($url, str_replace('~/', CSSURL, $url));
+				{
+					self::replace($url, str_replace('~/', CSScaffold::config('core.url.css'), $url));
 				}
 			}
 		}
