@@ -27,7 +27,7 @@ class ImageReplace extends Module
 				# If they're getting an absolute file
 				if($path[0] == "/")
 				{
-					$path = DOCROOT . ltrim($path, "/");
+					$path = CSScaffold::config('core.path.docroot') . ltrim($path, "/");
 				}
 													
 				# Check if it exists
