@@ -488,7 +488,7 @@ class Controller
 
 			# Add self::config('core.path.system') as the last path
 			self::$include_paths[] = self::config('core.path.system');
-			self::$include_paths[] = SCAFFOLD_DIR.'/';
+
 		}
 
 		return self::$include_paths;
@@ -698,7 +698,7 @@ class Controller
 			# Log to FirePHP
 			FB::error($message);
 
-			require 'views/Scaffold_Exception.php';
+			require SYSPATH . 'views/Scaffold_Exception.php';
 
 			# Turn off error reporting
 			error_reporting(0);
