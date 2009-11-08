@@ -696,7 +696,7 @@ class Controller
 			}
 			
 			# Log to FirePHP
-			FB::log($error . "-" . $message);
+			FB::error($message);
 
 			require 'views/Scaffold_Exception.php';
 

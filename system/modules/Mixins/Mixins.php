@@ -131,14 +131,10 @@ class Mixins extends Module
 	
 				return $new_properties;
 			}
-			elseif($current_mixin == $mixin_name)
-			{
-				throw new Scaffold_Exception("Mixins.recursion", $mixin_name);
-			}
 		}
 		else
 		{
-			throw new Scaffold_Exception("Mixins.missing_mixin", $mixin_name);
+			throw new Scaffold_Exception("The mixin doesn't exist - $mixin_name");
 		}
 		
 	}

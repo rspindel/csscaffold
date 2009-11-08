@@ -9,6 +9,9 @@ require 'core/Benchmark.php';
 require 'core/Module.php';
 require 'core/CSS.php';
 require 'core/Controller.php';
+require 'core/Exception.php';
+require 'vendor/FirePHPCore/fb.php';
+require 'vendor/FirePHPCore/FirePHP.class.php';
 
 /**
  * CSScaffold
@@ -53,6 +56,28 @@ class CSScaffold extends Controller
 		# This function can only be run once
 		if ($run === TRUE)
 			return;
+	
+		# If we want to debug (turn on errors and FirePHP)
+		if($config['debug'])
+		{	
+			# Set the error reporting level.
+			error_reporting(E_ALL & ~E_STRICT);
+			
+			# Set error handler
+			set_error_handler(array('CSScaffold', 'exception_handler'));
+		
+			# Set exception handler
+			set_exception_handler(array('CSScaffold', 'exception_handler'));
+			
+			# Turn on FirePHP
+			FB::setEnabled(true);
+		}
+		else
+		{
+			# Turn off errors
+			error_reporting(0);
+			FB::setEnabled(false);
+		}
 		
 		# The default options
 		$default_config = array
@@ -102,31 +127,6 @@ class CSScaffold extends Controller
 		# Change into the system directory
 		chdir(self::config('core.path.system'));
 		
-		# If we want to debug (turn on errors and FirePHP)
-		if($config['debug'])
-		{
-			require 'core/Exception.php';
-			require 'vendor/FirePHPCore/fb.php';
-			require 'vendor/FirePHPCore/FirePHP.class.php';
-	
-			# Set the error reporting level.
-			error_reporting(E_ALL & ~E_STRICT);
-			
-			# Set error handler
-			set_error_handler(array('CSScaffold', 'exception_handler'));
-		
-			# Set exception handler
-			set_exception_handler(array('CSScaffold', 'exception_handler'));
-			
-			# Turn on FirePHP
-			FB::setEnabled(true);
-		}
-		else
-		{
-			# Turn off errors
-			error_reporting(0);
-		}
-		
 		# Parse the $_GET['request'] and set it in the config
 		self::config_set('core.request', self::parse_request($get['request']));
 					
@@ -161,13 +161,18 @@ class CSScaffold extends Controller
 		# Parse it
 		if($recache) self::parse_css();
 		
+		# Log to Firebug
+		FB::group('CSScaffold Settings');
+		FB::log(self::config('core'));
+		FB::groupEnd();
+		
 		# Output it
 		self::output(CSS::$css);
 		
 		# Setup is complete, prevent it from being run again
 		$run = TRUE;
 	}
-	
+
 	private static function parse_request($path)
 	{
 		# Get rid of those pesky slashes

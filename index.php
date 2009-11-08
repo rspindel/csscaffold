@@ -17,10 +17,6 @@ define('SCAFFOLD_DIR', dirname(__FILE__));
 # Include the config file
 include 'config.php';
 
-# Display errors
-ini_set('display_errors', TRUE);
-error_reporting(E_ALL & ~E_STRICT);
-
 # Set the include path
 set_include_path(realpath($path['system']) . PATH_SEPARATOR . get_include_path());
 
