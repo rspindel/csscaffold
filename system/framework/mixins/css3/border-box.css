@@ -10,5 +10,5 @@
 	-webkit-box-sizing:border-box;
 	-ms-box-sizing:border-box;
 	box-sizing:border-box;
-	behavior:url("~/scaffold/framework/behaviours/boxsizing.htc");
+	behavior:url("~/scaffold/system/framework/behaviours/boxsizing.htc");
 }
