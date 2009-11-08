@@ -4,23 +4,14 @@
  * @package CSScaffold
  */
 
-require 'core/Utils.php';
-require 'core/Benchmark.php';
-require 'core/Module.php';
-require 'core/CSS.php';
-require 'core/Controller.php';
-require 'core/Exception.php';
-require 'vendor/FirePHPCore/fb.php';
-require 'vendor/FirePHPCore/FirePHP.class.php';
-
 /**
  * CSScaffold
  *
  * Handles all of the inner workings of the framework and juicy goodness.
  * This is where the metaphorical cogs of the system reside. 
  *
- * Requires PHP 5.1.0.
- * Tested on PHP 5.2.
+ * Requires PHP 5.0.0
+ * Tested on PHP 5.3.0
  *
  * @package CSScaffold
  * @author Anthony Short <anthonyshort@me.com>
