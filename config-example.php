@@ -129,8 +129,7 @@ $config['minify_css'] = true;
  */
 $config['constants'] = array
 (
-	'scaffold_url' 	=> SYSURL,
-	'css_url' 		=> CSSURL,
+	'name' => 'value',
 );
 
 /**
