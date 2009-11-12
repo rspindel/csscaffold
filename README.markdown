@@ -17,7 +17,7 @@ A dynamic CSS framework inspired by Shaun Inman's CSS Cacheer. It's aimed at exp
 
 ##Installation & Documentation
 
-See http://anthonyshort.com.au/scaffold/docs/ for documentation.
+See http://anthonyshort.com.au/scaffold/ for documentation.
 
 ##Having trouble?
 
