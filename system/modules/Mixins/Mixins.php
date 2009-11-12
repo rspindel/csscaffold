@@ -161,6 +161,19 @@ class Mixins extends Module
 	public static function parse_params($mixin_name, $params, $function_args = array())
 	{
 		$parsed = array();
+		
+		# Make sure any commas inside ()'s, such as rgba(255,255,255,0.5) are encoded before exploding
+		# so that it doesn't break the rule.
+		if(preg_match_all('/\([^)]*?,[^)]*?\)/',$params, $matches))
+		{
+			foreach($matches as $key => $value)
+			{
+				$original = $value;
+				$new = str_replace(',','#COMMA#',$value);
+				$params = str_replace($original,$new,$params);
+			}
+		}
+		
 		$mixin_params = explode(',', $params);
 		
 		# Loop through each function arg and create the parsed params array
@@ -186,10 +199,12 @@ class Mixins extends Module
 			else
 			{
 				$p = explode(",", $params);
-				$parsed[trim($v[0])] = unquote(trim($p[$key]));
+				$value = unquote(trim($p[$key]));
+				$parsed[trim($v[0])] = str_replace('#COMMA#',',',$value);
 			}		
 		}
 		
+		stop($parsed);
 		return $parsed;
 	}		
 
