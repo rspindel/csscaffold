@@ -584,14 +584,14 @@ class Controller
 	 */
 	public static function cache_create($path)
 	{	
+		# If the cache path is included, get rid of it.
+		$path = preg_replace('#^'.self::config('core.path.cache').'#', '', $path);
+		
 		# If it already exists
-		if(is_dir($path))
+		if(is_dir(self::config('core.path.cache').$path))
 		{
 			return true;
 		}
-		
-		# If the cache path is included, get rid of it.
-		$path = preg_replace('#^'.self::config('core.path.cache').'#', '', $path);
 		
 		# Easily get the cache path
 		$cache = self::config('core.path.cache');
