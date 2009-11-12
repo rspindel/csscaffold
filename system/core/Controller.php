@@ -602,7 +602,11 @@ class Controller
 		{
 			$next = join_path($next,$dir);
 			
-			if(!is_dir($cache.$next)) mkdir($cache.$next, 0777);
+			if(!is_dir($cache.$next)) 
+			{
+				mkdir($cache.$next);
+				chmod($cache.$next, 0777);
+			}
 		}
 		
 		return true;
