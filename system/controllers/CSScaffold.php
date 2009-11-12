@@ -129,7 +129,7 @@ class CSScaffold extends Controller
 		self::config_set('core.request.mod_time', filemtime(self::config('core.request.path')));
 
 		# Tell CSScaffold where to cache and tell if we want to recache
-		self::cache_set(self::config('core.path.cache'));
+		self::cache_set(self::config('core.path.cache'));		
 	
 		# Set it back to false if it's locked
 		if( $config['in_production'] AND file_exists(self::$cached_file) )
@@ -138,10 +138,19 @@ class CSScaffold extends Controller
 		}
 			
 		# If we need to recache
-		elseif( $config['force_recache'] OR isset($get['recache']) OR self::config('core.cache.mod_time') <= self::config('core.request.mod_time') )
+		elseif( 
+			$config['force_recache'] OR 
+			isset($get['recache']) OR 
+			self::config('core.cache.mod_time') <= self::config('core.request.mod_time') OR 
+			!file_exists(self::$cached_file)
+		)
 		{
 			$recache = true;
 			self::cache_clear();
+		}
+		else
+		{
+			$recache = false;
 		}
 		
 		# Load the modules
