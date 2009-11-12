@@ -204,7 +204,6 @@ class Mixins extends Module
 			}		
 		}
 		
-		stop($parsed);
 		return $parsed;
 	}		
 
