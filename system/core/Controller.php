@@ -583,13 +583,29 @@ class Controller
 	 * Create the cache file directory
 	 */
 	public static function cache_create($path)
-	{		
-		# Create the directory to write the file to	
-		if(!is_dir($path)) 
+	{	
+		# If it already exists
+		if(is_dir($path))
 		{
-			mkdir($path, 0777, true); 
-			chmod($path, 0777); 
+			return true;
 		}
+		
+		# If the cache path is included, get rid of it.
+		$path = preg_replace('#^'.self::config('core.path.cache').'#', '', $path);
+		
+		# Easily get the cache path
+		$cache = self::config('core.path.cache');
+
+		# Create the directories inside the cache folder
+		$next = "";		
+		foreach(explode('/',$path) as $dir)
+		{
+			$next = join_path($next,$dir);
+			
+			if(!is_dir($cache.$next)) mkdir($cache.$next, 0777);
+		}
+		
+		return true;
 	}
 
 	/**
