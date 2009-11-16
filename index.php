@@ -36,6 +36,12 @@ if(!isset($_SERVER['DOCUMENT_ROOT']))
 	$_SERVER['DOCUMENT_ROOT'] = $path['document_root'];
 }
 
+# Set timezone, just in case it isn't set
+if (function_exists('date_default_timezone_set'))
+{
+	date_default_timezone_set('GMT');
+}
+
 # Include the classes
 require SYSPATH . 'core/Utils.php';
 require SYSPATH . 'core/Benchmark.php';
