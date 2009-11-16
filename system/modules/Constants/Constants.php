@@ -7,8 +7,7 @@
  * within @constants and then using a property list.
  *
  * @author Anthony Short
- * @dependencies None
- **/
+ */
 class Constants extends Scaffold_Module
 {
 	/**
@@ -30,7 +29,7 @@ class Constants extends Scaffold_Module
 	public static function parse()
 	{				
 		# Find the constants group and values
-		$found 	= CSS::find_at_group('constants');
+		$found = CSS::find_at_group('constants');
 		
 		# Set the global constants
 		foreach(CSScaffold::config('core.constants') as $key => $value)
