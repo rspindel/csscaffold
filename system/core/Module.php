@@ -8,7 +8,7 @@
  * @package CSScaffold
  * @author Anthony Short
  */
-class Module
+class Scaffold_Module
 {
 	/**
 	 * Sets cache flags

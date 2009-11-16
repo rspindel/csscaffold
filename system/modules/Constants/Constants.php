@@ -9,7 +9,7 @@
  * @author Anthony Short
  * @dependencies None
  **/
-class Constants extends Module
+class Constants extends Scaffold_Module
 {
 	/**
 	 * Stores all of the constants for the app
@@ -126,7 +126,7 @@ class Constants extends Module
 					}
 					else
 					{
-						CSS::replace( "!{$key}", unquote($value));
+						CSS::replace( "!{$key}", Utils::unquote($value));
 					}
 				}
 			}

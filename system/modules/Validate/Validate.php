@@ -3,7 +3,7 @@
 /**
  * Validate
  **/
-class Validate extends Module
+class Validate extends Scaffold_Module
 {
 	public static function check()
 	{

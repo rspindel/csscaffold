@@ -6,7 +6,7 @@
  * @author Anthony Short
  * @dependencies None
  **/
-class ImageReplace extends Module
+class ImageReplace extends Scaffold_Module
 {
 
 	/**

@@ -6,7 +6,7 @@
  * @author Anthony Short
  * @dependencies None
  **/
-class Iteration extends Module
+class Iteration extends Scaffold_Module
 {
 	
 	/**

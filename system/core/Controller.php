@@ -7,7 +7,7 @@
  * 
  * @author Anthony Short
  */
-class Controller
+class Scaffold_Controller
 {
 	/**
 	 * The config settings
@@ -549,7 +549,7 @@ class Controller
 		}
 
 		# Determine the name of the cache file
-		self::$cached_file = join_path($path,preg_replace('#(.+)(\.css)$#i', "$1{$checksum}$2", self::config('core.request.relative_file')));
+		self::$cached_file = Utils::join_path($path,preg_replace('#(.+)(\.css)$#i', "$1{$checksum}$2", self::config('core.request.relative_file')));
 
 		if(file_exists(self::$cached_file))
 		{
@@ -600,7 +600,7 @@ class Controller
 		$next = "";		
 		foreach(explode('/',$path) as $dir)
 		{
-			$next = join_path($next,$dir);
+			$next = Utils::join_path($next,$dir);
 			
 			if(!is_dir($cache.$next)) 
 			{

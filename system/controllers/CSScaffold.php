@@ -19,12 +19,12 @@
  * @license http://opensource.org/licenses/bsd-license.php  New BSD License
  * @link https://github.com/anthonyshort/csscaffold/master
  */
-class CSScaffold extends Controller
+class CSScaffold extends Scaffold_Controller
 {
 	/**
 	 * CSScaffold Version
 	 */
-	const VERSION = '1.5.0b7';
+	const VERSION = '1.5.0';
 
 	/**
 	 * Successfully loaded modules
@@ -105,12 +105,12 @@ class CSScaffold extends Controller
 		self::config_set('core', $config);
 
 		# Set the paths in the config	
-		self::config_set('core.path.docroot', fix_path($path['document_root']));
-		self::config_set('core.path.system', fix_path($path['system']));
-		self::config_set('core.path.cache', fix_path($path['cache']));
-		self::config_set('core.path.css', fix_path($path['css']));
-		self::config_set('core.url.css', str_replace(self::config('core.path.docroot'), '/', self::config('core.path.css')));
-		self::config_set('core.url.system', str_replace(self::config('core.path.docroot'), '/', SYSPATH));
+		self::config_set('core.path.docroot', 	Utils::fix_path( $path['document_root']) );
+		self::config_set('core.path.system', 	Utils::fix_path( $path['system']) );
+		self::config_set('core.path.cache', 	Utils::fix_path( $path['cache']) );
+		self::config_set('core.path.css', 		Utils::fix_path( $path['css']) );
+		self::config_set('core.url.css', 		str_replace(self::config('core.path.docroot'), '/', self::config('core.path.css')) );
+		self::config_set('core.url.system', 	str_replace(self::config('core.path.docroot'), '/', SYSPATH) );
 		
 		# Load the include paths
 		self::include_paths(TRUE);
@@ -180,7 +180,7 @@ class CSScaffold extends Controller
 	private static function parse_request($path)
 	{
 		# Get rid of those pesky slashes
-		$requested_file	= trim_slashes($path);
+		$requested_file	= Utils::trim_slashes($path);
 		
 		# Remove anything after .css - like /typography/
 		$requested_file = preg_replace('/\.css(.*)$/', '.css', $requested_file);
@@ -214,7 +214,7 @@ class CSScaffold extends Controller
 			throw new Scaffold_Exception("Requested CSS file doesn't exist:" . $request['file']); 
 
 		# or if it's not a css file
-		if (!is_css($requested_file))
+		if (!Utils::is_css($requested_file))
 			throw new Scaffold_Exception("Requested file isn't a css file: $requested_file" );
 		
 		# or if the requested file wasn't from the css directory
@@ -249,14 +249,14 @@ class CSScaffold extends Controller
 			$folder = $module;
 					
 			# The controller for the plugin (Optional)
-			$controller = join_path($folder,$name.'.php');
+			$controller = Utils::join_path($folder,$name.'.php');
 
 			# The config file for the plugin (Optional)
 			$config_file = $folder.'/config.php';
 			
 			# Set the paths in the config
-			self::config_set("$name.support", join_path($folder,'support'));
-			self::config_set("$name.libraries", join_path($folder,'libraries'));
+			self::config_set("$name.support", Utils::join_path($folder,'support'));
+			self::config_set("$name.libraries", Utils::join_path($folder,'libraries'));
 
 			# Include the addon controller
 			if(file_exists($controller))
@@ -322,7 +322,7 @@ class CSScaffold extends Controller
 	public static function parse_css()
 	{								
 		# Start the timer
-		Benchmark::start("parse_css");
+		Scaffold_Benchmark::start("parse_css");
 		
 		# Compress it before parsing
 		CSS::compress(CSS::$css);
@@ -434,11 +434,11 @@ class CSScaffold extends Controller
 			Validate::check();
 		
 		# Stop the timer...
-		Benchmark::stop("parse_css");
+		Scaffold_Benchmark::stop("parse_css");
 		
 		if (self::config('core.show_header') === TRUE)
 		{		
-			CSS::$css  = "/* Processed by CSScaffold on ". gmdate('r') . " in ".Benchmark::get("parse_css", "time")." seconds */\n\n" . CSS::$css;
+			CSS::$css  = "/* Processed by CSScaffold on ". gmdate('r') . " in ".Scaffold_Benchmark::get("parse_css", "time")." seconds */\n\n" . CSS::$css;
 		}
 
 		# Write the css file to the cache

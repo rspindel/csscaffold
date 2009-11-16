@@ -23,7 +23,7 @@
  * 
  * @author Anthony Short
  */
-class XML_constants extends Module
+class XML_constants extends Scaffold_Module
 {
 	/**
 	 * Gets the XML and sets each of the nodes as constants

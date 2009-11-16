@@ -30,6 +30,12 @@ include 'config.php';
 # Path to the system directory
 define('SYSPATH', str_replace('\\', '/', realpath($path['system'])). '/');
 
+# Set the server variable for document root
+if(!isset($_SERVER['DOCUMENT_ROOT']))
+{
+	$_SERVER['DOCUMENT_ROOT'] = $path['document_root'];
+}
+
 # Include the classes
 require SYSPATH . 'core/Utils.php';
 require SYSPATH . 'core/Benchmark.php';

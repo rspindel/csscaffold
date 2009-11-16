@@ -6,7 +6,7 @@
  * @author Anthony Short
  * @dependencies None
  **/
-class Layout extends Module
+class Layout extends Scaffold_Module
 {
 
 	/**

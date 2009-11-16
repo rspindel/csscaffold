@@ -6,7 +6,7 @@
  * @author Anthony Short
  * @dependencies None
  **/
-class NestedSelectors extends Module
+class NestedSelectors extends Scaffold_Module
 {
 
 	/**

@@ -9,7 +9,7 @@
  * @author Anthony Short
  * @dependencies None
  **/
-class Import extends Module
+class Import extends Scaffold_Module
 {
 	/**
 	 * Stores which files have already been included
@@ -51,7 +51,7 @@ class Import extends Module
 		if(preg_match_all('/\@'.$import.'\s+(?:\'|\")([^\'\"]+)(?:\'|\")\;/', $css, $matches))
 		{
 			$unique = array_unique($matches[1]);
-			$include = str_replace("\\", "/", unquote($unique[0]));
+			$include = str_replace("\\", "/", Utils::unquote($unique[0]));
 			
 			# If they're getting an absolute file
 			if($include[0] == "/")
@@ -68,7 +68,7 @@ class Import extends Module
 				$include .= '.css';
 			
 			# Make sure it's a CSS file
-			if(!is_css($include))
+			if(!Utils::is_css($include))
 				throw new Scaffold_Exception("Included file isn't a CSS file ($include)");
 			
 			# If the url starts with ~, we'll assume it's from the root of the css directory

@@ -9,7 +9,7 @@
  * 
  * @author Anthony Short
  */
-class Mixins extends Module
+class Mixins extends Scaffold_Module
 {
 	/**
 	 * Stores the mixins for debugging purposes
@@ -148,7 +148,7 @@ class Mixins extends Module
 	 */
 	public static function find_mixins($string)
 	{	
-		return match('/\+(([0-9a-zA-Z_-]*?)(\((.*?)\))?)\;/', $string);
+		return Utils::match('/\+(([0-9a-zA-Z_-]*?)(\((.*?)\))?)\;/', $string);
 	}
 	
 	/**
@@ -187,7 +187,7 @@ class Mixins extends Module
 				# If there is a default value for the param			
 				if(strstr($value, '='))
 				{
-					$parsed[trim($v[0])] = unquote(trim($v[1]));
+					$parsed[trim($v[0])] = Utils::unquote(trim($v[1]));
 				}
 				
 				# Otherwise they've left one out
@@ -199,7 +199,7 @@ class Mixins extends Module
 			else
 			{
 				$p = explode(",", $params);
-				$value = unquote(trim($p[$key]));
+				$value = Utils::unquote(trim($p[$key]));
 				$parsed[trim($v[0])] = str_replace('#COMMA#',',',$value);
 			}		
 		}
@@ -219,7 +219,7 @@ class Mixins extends Module
 		{
 			foreach($mixin_files as $item)
 			{
-				if (!is_css($item)) { continue; }
+				if (!Utils::is_css($item)) { continue; }
 				
 				# Add it to our css
 				CSS::append(file_get_contents($item));

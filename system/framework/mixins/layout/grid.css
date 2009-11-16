@@ -54,6 +54,11 @@
 	position:relative;
 }
 
+=container-with-gutters
+{ 
+	+container(#[!grid-width + !gutter-width]px);
+}
+
 /**
  * Baseline
  */

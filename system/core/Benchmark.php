@@ -9,7 +9,7 @@
  * @copyright  (c) 2007 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-final class Benchmark 
+final class Scaffold_Benchmark 
 {
 	private static $marks;
 

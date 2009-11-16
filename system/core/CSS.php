@@ -222,7 +222,7 @@ class CSS
 		{
 			foreach($found[1] as $url)
 			{
-				$url = unquote($url);
+				$url = Utils::unquote($url);
 
 				if($url[0] == "~")
 				{

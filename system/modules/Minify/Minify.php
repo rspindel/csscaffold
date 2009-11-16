@@ -3,7 +3,7 @@
 /**
  * Minify Plugin
  **/
-class Minify extends Module
+class Minify extends Scaffold_Module
 {
 	public static function compress()
 	{

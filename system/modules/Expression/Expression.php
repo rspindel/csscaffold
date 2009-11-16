@@ -8,7 +8,7 @@
  * @author Anthony Short
  * @dependencies None
  **/
-class Expression extends Module
+class Expression extends Scaffold_Module
 {
 	/**
 	 * The final process before it is cached. This is usually just
@@ -30,7 +30,7 @@ class Expression extends Module
 	 */
 	public static function find_expressions($css)
 	{
-		return match('/(\#\[[\'\"]?([^]]*?)[\'\"]?\])/', $css);
+		return Utils::match('/(\#\[[\'\"]?([^]]*?)[\'\"]?\])/', $css);
 	}
 	
 	/**
