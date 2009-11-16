@@ -421,12 +421,6 @@ class Scaffold_Controller
 				$conf =& $conf[$k];
 			}
 		}
-		
-		if ($key === 'core.modules')
-		{
-			// Reprocess the include paths
-			self::include_paths(TRUE);
-		}
 
 		return TRUE;
 	}
