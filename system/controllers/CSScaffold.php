@@ -440,5 +440,35 @@ class CSScaffold extends Scaffold_Controller
 			}
 		}
 	}
+	
+	/**
+	 * Finds a file requested in the CSS
+	 *
+	 * @author Anthony Short
+	 * @param $param
+	 * @return return type
+	 */
+	public static function find_css_file($path)
+	{
+		# If the url starts with ~, we'll assume it's from the root of the css directory
+		if($path[0] == "~")
+		{
+			$path = str_replace('~', CSScaffold::config('core.path.css'), $path);
+		}
+		
+		# If they're getting an absolute file
+		elseif($path[0] == "/")
+		{
+			$path = Utils::join_path( CSScaffold::config('core.path.docroot'), $path );
+		}
+		
+		# Otherwise it's relative to the called CSS file
+		else
+		{
+			$path = Utils::join_path( CSScaffold::config('core.request.directory'), $path ); 				
+		}
+		
+		return realpath($path);
+	}
 
 }

@@ -52,13 +52,7 @@ class Import extends Scaffold_Module
 		{
 			$unique = array_unique($matches[1]);
 			$include = str_replace("\\", "/", Utils::unquote($unique[0]));
-			
-			# If they're getting an absolute file
-			if($include[0] == "/")
-			{
-				$include = DOCROOT . ltrim($include, "/");
-			}
-			
+
 			# Make sure recursion isn't happening
 			if($include == $previous)
 				throw new Scaffold_Exception("Recursion occurring with CSS @includes in $include");
@@ -71,12 +65,8 @@ class Import extends Scaffold_Module
 			if(!Utils::is_css($include))
 				throw new Scaffold_Exception("Included file isn't a CSS file ($include)");
 			
-			# If the url starts with ~, we'll assume it's from the root of the css directory
-			if($include[0] == "~")
-			{
-				$include = ltrim($include, '~/');
-				$include = CSScaffold::config('core.path.css') . $include;	
-			}
+			# Find the file in the CSS directory
+			$include = CSScaffold::find_css_file($include);
 			
 			if(file_exists($include))
 			{	
