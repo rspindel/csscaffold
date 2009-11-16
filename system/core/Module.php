@@ -54,7 +54,7 @@ class Scaffold_Module
 	 */
 	public static function load_library($library) 
 	{
-		require_once(CSScaffold::find_file('libraries', $library, TRUE));
+		require_once( CSScaffold::find_file(get_called_class() . '/libraries', $library, TRUE) );
 	}
 
 }

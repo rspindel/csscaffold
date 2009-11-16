@@ -109,14 +109,11 @@ class CSScaffold extends Scaffold_Controller
 		self::config_set('core.path.system', 	Utils::fix_path( $path['system']) );
 		self::config_set('core.path.cache', 	Utils::fix_path( $path['cache']) );
 		self::config_set('core.path.css', 		Utils::fix_path( $path['css']) );
-		self::config_set('core.url.css', 		str_replace(self::config('core.path.docroot'), '/', self::config('core.path.css')) );
-		self::config_set('core.url.system', 	str_replace(self::config('core.path.docroot'), '/', SYSPATH) );
+		self::config_set('core.url.css', 		Utils::urlpath( self::config('core.path.css') ));
+		self::config_set('core.url.system', 	Utils::urlpath( SYSPATH ) );
 		
 		# Load the include paths
 		self::include_paths(TRUE);
-
-		# Change into the system directory
-		chdir(SYSPATH);
 		
 		# Set the output
 		if(isset($get['output']))
@@ -156,11 +153,8 @@ class CSScaffold extends Scaffold_Controller
 		# Load the modules
 		self::load_modules($config['disabled_plugins']);
 		
-		# Work in the same directory as the requested CSS file
-		chdir(dirname(self::config('core.request.path')));
-		
 		# Create a new CSS object
-		CSS::load(self::config('core.request.path'));
+		CSS::load( self::config('core.request.path') );
 		
 		# Parse it
 		if($recache) self::parse_css();
@@ -192,22 +186,16 @@ class CSScaffold extends Scaffold_Controller
 		$request['file'] = $requested_file;
 		
 		# Path to the file, relative to the css directory
-		$request['relative_file'] = ltrim(str_replace(self::config('core.url.css'), '/', $requested_file), '/');
+		$request['relative_file'] = Utils::trim_slashes(str_replace( Utils::trim_slashes(self::config('core.url.css')), '', $requested_file));
 
 		# Path to the directory containing the file, relative to the css directory		
 		$request['relative_dir'] = pathinfo($request['relative_file'], PATHINFO_DIRNAME);
 
-		# Find the server path to the requested file
-		if(file_exists(self::config('core.path.docroot').$requested_file))
-		{
-			# The request is sent with the absolute path most of the time
-			$request['path'] = self::config('core.path.docroot').$requested_file;
-		}
-		else
-		{
-			# Otherwise we'll try to find it inside the CSS directory
-			$request['path'] = self::find_file($request['relative_dir'] . '/', basename($requested_file, '.css'), FALSE, 'css');
-		}
+		# Otherwise we'll try to find it inside the CSS directory
+		$request['path'] = self::find_file($request['relative_dir'], basename($requested_file, '.css'), true, 'css');
+		
+		# Set the directory
+		$request['directory'] = dirname($request['path']);
 		
 		# If the file doesn't exist
 		if(!file_exists($request['path']))

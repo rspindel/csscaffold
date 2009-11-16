@@ -141,7 +141,7 @@ abstract class Utils
 	 */
 	public static function urlpath($relative_path) 
 	{
-		return  str_replace( $_SERVER['DOCUMENT_ROOT'], '/', realpath($relative_path) );
+		return  self::reduce_double_slashes(str_replace( $_SERVER['DOCUMENT_ROOT'], '/', realpath($relative_path) ));
 	}
 	
 	/** 
@@ -150,7 +150,7 @@ abstract class Utils
 	 * @author Anthony Short
 	 * @param $str string
 	 */
-	public static function add_end_slash($str)
+	public static function right_slash($str)
 	{
 	    return rtrim($str, '/') . '/';
 	}
@@ -161,9 +161,9 @@ abstract class Utils
 	 * @author Anthony Short
 	 * @param $str string
 	 */
-	public static function add_start_slash($str)
+	public static function left_slash($str)
 	{
-	    return ltrim($str, '/') . '/';
+	    return '/' . ltrim($str, '/');
 	}
 	
 	/** 
@@ -185,7 +185,7 @@ abstract class Utils
 	 */
 	public static function reduce_double_slashes($str)
 	{
-		return preg_replace("#([^:])//+#", "\\1/", $str);
+		return preg_replace("#//+#", "/", $str);
 	}
 	
 	/**

@@ -108,6 +108,14 @@ class Scaffold_Controller
 					# Stop searching
 					break;
 				}
+				elseif (is_file(realpath($path.$search)))
+				{
+					# A matching file has been found
+					$found = realpath($path.$search);
+
+					# Stop searching
+					break;
+				}
 			}
 		}
 
@@ -464,31 +472,16 @@ class Scaffold_Controller
 	public static function include_paths($process = FALSE)
 	{
 		if ($process === TRUE)
-		{
+		{	
 			// Add APPPATH as the first path
 			self::$include_paths = array
 			(
+				self::config('core.request.directory'),
 				self::config('core.path.css'),
-				self::config('core.path.system') . 'modules/'
+				self::config('core.path.system') . 'modules/',
+				self::config('core.path.docroot'),
+				self::config('core.path.system')
 			);
-			
-			# Find the modules and plugins installed	
-			$modules = self::list_files('modules', FALSE, self::config('core.path.system') . '/modules');
-			
-			foreach ($modules as $path)
-			{
-				$path = str_replace('\\', '/', realpath($path));
-				
-				if (is_dir($path))
-				{
-					// Add a valid path
-					self::$include_paths[] = $path.'/';
-				}
-			}
-
-			# Add self::config('core.path.system') as the last path
-			self::$include_paths[] = self::config('core.path.system');
-
 		}
 
 		return self::$include_paths;
