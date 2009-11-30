@@ -36,7 +36,7 @@ class Import extends Scaffold_Module
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	public static function server_import($css, $previous = "")
+	public static function server_import($css)
 	{
 		# If they want to override the CSS syntax
 		if(CSScaffold::config('core.override_import') === true)
@@ -52,10 +52,6 @@ class Import extends Scaffold_Module
 		{
 			$unique = array_unique($matches[1]);
 			$include = str_replace("\\", "/", Utils::unquote($unique[0]));
-
-			# Make sure recursion isn't happening
-			if($include == $previous)
-				throw new Scaffold_Exception("Recursion occurring with CSS @includes in $include");
 			
 			# If they haven't supplied an extension, we'll assume its a css file
 			if(pathinfo($include, PATHINFO_EXTENSION) == "")
@@ -64,8 +60,8 @@ class Import extends Scaffold_Module
 			# Make sure it's a CSS file
 			if(!Utils::is_css($include))
 				throw new Scaffold_Exception("Included file isn't a CSS file ($include)");
-			
-			# Find the file in the CSS directory
+
+			# Find the file
 			$include = CSScaffold::find_css_file($include);
 			
 			if(file_exists($include))
@@ -76,17 +72,18 @@ class Import extends Scaffold_Module
 					self::$loaded[] = $include;
 					$css = str_replace($matches[0][0], file_get_contents($include), $css);
 				}
+
 				# It's already been included, we don't need to import it again
 				else
 				{
 					$css = str_replace($matches[0][0], '', $css);
 				}
 				
-				# Compress it which removes any commented out @imports
-				CSS::compress($css);
+				# Removes any commented out @imports
+				CSS::remove_comments($css);
 
 				# Check the file again for more imports
-				$css = self::server_import($css, $include);
+				$css = self::server_import($css);
 			}
 			else
 			{

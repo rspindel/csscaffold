@@ -19,10 +19,12 @@ class ImageReplace extends Scaffold_Module
 	public static function post_process()
 	{			
 		if($found = CSS::find_properties_with_value('image-replace', 'url\([\'\"]?([^)\'\"]+)[\'\"]?\)'))
-		{
+		{				
 			foreach ($found[4] as $key => $value) 
-			{		
-				if($path = CSScaffold::find_file( dirname($value) . '/', pathinfo($value, PATHINFO_FILENAME), false, Utils::extension($value) ))
+			{
+				$path = CSScaffold::find_css_file($value);
+						
+				if( file_exists($path) )
 				{
 					# Make sure it's an image
 					if(!Utils::is_image($path))

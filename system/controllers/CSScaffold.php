@@ -32,6 +32,11 @@ class CSScaffold extends Scaffold_Controller
 	 * @var array
 	 */
 	private static $loaded_modules;
+	
+	/**
+	 * Internal cache
+	 */
+	private static $internal_cache;
 	 
 	/**
 	 * Sets the initial variables, checks if we need to process the css
@@ -450,6 +455,11 @@ class CSScaffold extends Scaffold_Controller
 	 */
 	public static function find_css_file($path)
 	{
+		if(isset(self::$internal_cache['find_css_file'][$path]))
+		{
+			return self::$internal_cache['find_css_file'][$path];
+		}
+		
 		# If the url starts with ~, we'll assume it's from the root of the css directory
 		if($path[0] == "~")
 		{
@@ -468,7 +478,7 @@ class CSScaffold extends Scaffold_Controller
 			$path = Utils::join_path( CSScaffold::config('core.request.directory'), $path ); 				
 		}
 		
-		return realpath($path);
+		return self::$internal_cache['find_css_file'][$path] = realpath($path);
 	}
 
 }
