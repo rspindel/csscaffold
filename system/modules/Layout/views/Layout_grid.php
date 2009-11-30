@@ -6,7 +6,7 @@
 	
 	<style type="text/css">
 
-		<?= file_get_contents(CSScaffold::$cached_file); ?>
+		<?php echo file_get_contents(CSScaffold::$cached_file); ?>
 
 		.page-intro 
 		{
@@ -17,8 +17,8 @@
 		.wireframe div
 		{ 
 			background:rgba(255,0,0,0.4); 
-			min-height:<?= Layout::$baseline * 3; ?>px; 
-			margin-bottom:<?= Layout::$baseline; ?>px; 
+			min-height:<?php echo Layout::$baseline * 3; ?>px; 
+			margin-bottom:<?php echo Layout::$baseline; ?>px; 
 		}
 
 	</style>
@@ -29,8 +29,8 @@
 	<div class="container showgrid wireframe">
 
 		<?php for ($i = 1; $i < Layout::$column_count; $i++) : ?>
-		<div class="columns-<?= $i; ?>"></div>
-		<div class="columns-<?= (Layout::$column_count - $i); ?> last"></div>
+		<div class="columns-<?php echo $i; ?>"></div>
+		<div class="columns-<?php echo (Layout::$column_count - $i); ?> last"></div>
  		<?php endfor; ?>	
  	
 	</div>

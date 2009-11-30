@@ -15,7 +15,7 @@ class Typography extends Scaffold_Module
 			header('Content-Type: text/html');
 			
 			# Load the test suite markup
-			$type = CSScaffold::load_view('TS_typography');
+			$type = CSScaffold::load_view('TS_typography','Typography/views');
 			
 			# Echo and out!
 			echo($type); 

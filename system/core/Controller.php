@@ -428,13 +428,14 @@ class Scaffold_Controller
 	/**
 	 * Loads a view file and returns it
 	 */
-	public static function load_view($view)
+	public static function load_view($view,$folder="views/")
 	{
 		if ($view == '')
 				return;
 		
+		
 		# Find the view file
-		$view = self::find_file('views/', $view, true);
+		$view = self::find_file($folder, $view, true);
 	
 		# Buffering on
 		ob_start();

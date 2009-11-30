@@ -148,13 +148,13 @@ class Layout extends Scaffold_Module
 	
 	public static function output()
 	{
-		if(CSScaffold::config('core.options.output') == "grid" && isset(self::$column_width))
+		if(CSScaffold::config('core.output') == "grid" && isset(self::$column_width))
 		{
 			# Make sure we're sending HTML
 			header('Content-Type: text/html');
 			
 			# Load the test suite markup
-			$page = CSScaffold::load_view('Layout_grid');
+			$page = CSScaffold::load_view('Layout_grid', 'Layout/views/');
 
 			# Echo and out!
 			echo($page); 
