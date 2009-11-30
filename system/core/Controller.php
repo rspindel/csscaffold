@@ -555,9 +555,14 @@ class Scaffold_Controller
 	 */
 	public static function cache_write($data,$target)
 	{
+		$relative_file = str_replace( self::config('core.path.cache'), '', $target );
+		$relative_dir = dirname($relative_file);
+		 
 		# Create the cache file
-		self::cache_create(dirname($target));
+		self::cache_create($relative_dir);
 		
+		$target = Utils::join_path(self::config('core.path.cache'),$relative_file);
+
 		# Put it in the cache
 		file_put_contents($target, $data);
 		
@@ -584,11 +589,13 @@ class Scaffold_Controller
 		$cache = self::config('core.path.cache');
 
 		# Create the directories inside the cache folder
-		$next = "";		
+		$next = "";
+				
 		foreach(explode('/',$path) as $dir)
 		{
-			$next = Utils::join_path($next,$dir);
 			
+			$next = Utils::join_path($next,$dir);
+
 			if(!is_dir($cache.$next)) 
 			{
 				mkdir($cache.$next);

@@ -116,7 +116,7 @@ class CSScaffold extends Scaffold_Controller
 		self::config_set('core.path.css', 		Utils::fix_path( $path['css']) );
 		self::config_set('core.url.css', 		Utils::urlpath( self::config('core.path.css') ));
 		self::config_set('core.url.system', 	Utils::urlpath( SYSPATH ) );
-		
+
 		# Load the include paths
 		self::include_paths(TRUE);
 		
