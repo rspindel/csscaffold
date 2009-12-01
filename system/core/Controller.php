@@ -398,8 +398,18 @@ class Scaffold_Controller
 	 * @param   string   config value
 	 * @return  boolean
 	 */
-	public static function config_set($key, $value)
+	public static function config_set($key, $value = "")
 	{
+		if(is_array($key))
+		{
+			foreach($key as $k => $v)
+			{
+				self::config_set($k,$v);
+			}
+			
+			return true;
+		}
+		
 		// Do this to make sure that the config array is already loaded
 		self::config($key);
 
@@ -464,22 +474,21 @@ class Scaffold_Controller
 	 * @param   boolean  re-process the include paths
 	 * @return  array
 	 */
-	public static function include_paths($process = FALSE)
+	public static function include_paths()
 	{
-		if ($process === TRUE)
-		{	
-			// Add APPPATH as the first path
-			self::$include_paths = array
-			(
-				self::config('core.request.directory'),
-				self::config('core.path.css'),
-				self::config('core.path.system') . 'modules/',
-				self::config('core.path.docroot'),
-				self::config('core.path.system')
-			);
-		}
-
 		return self::$include_paths;
+	}
+	
+	/**
+	 * Adds a path to the include paths list
+	 *
+	 * @author Anthony Short
+	 * @param $path
+	 * @return void
+	 */
+	public static function add_include_path($path)
+	{
+		self::$include_paths[] = $path;
 	}
 	
 	/**
@@ -492,7 +501,14 @@ class Scaffold_Controller
 	{
 		if($path == "")
 			$path = self::config('core.path.cache');
-			
+		
+		if($file = self::find_file( self::config('core.path.cache'), $path, false, 'css' ))
+		{
+			Utils::stop($file);
+			unlink($file);
+			return true;
+		}
+		
 		$path .= "/";
 
 		foreach(scandir($path) as $file)
@@ -511,41 +527,6 @@ class Scaffold_Controller
 				unlink($path.$file);
 			}
 		}
-	}
-	
-	/**
-	 * Set the cache file which will be used for this process
-	 *
-	 * @return boolean
-	 * @author Anthony Short
-	 */
-	public static function cache_set($path)
-	{
-		$checksum = "";
-		$cached_mod_time = 0;
-		
-		# Make sure the files/folders are writeable
-		if (!is_dir($path))
-			throw new Scaffold_Exception("Cache path does not exist.");
-			
-		if (!is_writable($path))
-			throw new Scaffold_Exception("Cache path is not writable.");
-		
-		if(self::$flags != null)
-		{
-			$checksum = "-" . implode("_", array_keys(self::$flags));
-		}
-
-		# Determine the name of the cache file
-		self::$cached_file = Utils::join_path($path,preg_replace('#(.+)(\.css)$#i', "$1{$checksum}$2", self::config('core.request.relative_file')));
-
-		if(file_exists(self::$cached_file))
-		{
-			# When was the cache last modified
-			$cached_mod_time =  (int) filemtime(self::$cached_file);
-		}
-		
-		self::config_set('core.cache.mod_time', $cached_mod_time);
 	}
 
 	/**
@@ -713,7 +694,7 @@ class Scaffold_Controller
 			# Log to FirePHP
 			FB::error($message);
 
-			require SYSPATH . 'views/Scaffold_Exception.php';
+			require self::config('core.path.system') . 'views/Scaffold_Exception.php';
 
 			# Turn off error reporting
 			error_reporting(0);

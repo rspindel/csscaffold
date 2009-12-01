@@ -37,18 +37,8 @@ class Import extends Scaffold_Module
 	 * @param $css
 	 */
 	public static function server_import($css)
-	{
-		# If they want to override the CSS syntax
-		if(CSScaffold::config('core.override_import') === true)
-		{
-			$import = 'import';
-		}
-		else
-		{
-			$import = 'include';
-		}
-			
-		if(preg_match_all('/\@'.$import.'\s+(?:\'|\")([^\'\"]+)(?:\'|\")\;/', $css, $matches))
+	{			
+		if(preg_match_all('/\@include\s+(?:\'|\")([^\'\"]+)(?:\'|\")\;/', $css, $matches))
 		{
 			$unique = array_unique($matches[1]);
 			$include = str_replace("\\", "/", Utils::unquote($unique[0]));
@@ -62,7 +52,7 @@ class Import extends Scaffold_Module
 				throw new Scaffold_Exception("Included file isn't a CSS file ($include)");
 
 			# Find the file
-			$include = CSScaffold::find_css_file($include);
+			$include = CSScaffold::find_file($include);
 			
 			if(file_exists($include))
 			{	

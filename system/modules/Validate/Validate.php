@@ -5,9 +5,9 @@
  **/
 class Validate extends Scaffold_Module
 {
-	public static function check()
+	public static function output()
 	{
-		if(CSScaffold::config('core.in_production') !== true && CSScaffold::config('core.output') == "validate")
+		if($output == "validate")
 		{
 			# Clean it up so we can use the line numbers
 			CSS::pretty();
