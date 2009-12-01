@@ -71,7 +71,7 @@ class CSS
 		{
 			foreach($found[1] as $key => $value)
 			{
-				$url = unquote($value);
+				$url = Utils::unquote($value);
 								
 				# Absolute Path
 				if($url[0] == "/" || $url[0] == "\\")
@@ -82,7 +82,7 @@ class CSS
 				# Relative Path
 				else
 				{
-					$url = str_replace(DOCROOT, "/", realpath($url));
+					$url = str_replace($_SERVER['document_root'], "/", realpath($url));
 					$css = str_replace($value, $url, $css);
 				}
 			}
