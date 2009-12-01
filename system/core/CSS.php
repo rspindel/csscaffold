@@ -8,20 +8,14 @@
  * 
  * @author Anthony Short
  */
-class CSS
+class Scaffold_CSS
 {
 	/**
 	 * The CSS string
 	 *
 	 * @var string
 	 */
-	public static $css;
-	
-	/**
-	 * This string is added to the css at the very end
-	 * @var string
-	 */
-	public static $append;
+	public $css;
 	
 	/**
 	 * The constructor
@@ -30,40 +24,18 @@ class CSS
 	 * @param $css
 	 * @return void
 	 */
-	public static function load($css)
+	public function __construct($css)
 	{
 		self::$css = file_get_contents($css);
 	}
-	
-	/**
-	 * Appends the string to the css string. Setting $later to true will
-	 * add the string to the css just before caching the CSS file to make
-	 * the parsing process faster. Do this if the string you're adding doesn't
-	 * need any more parsing.
-	 *
-	 * @author Anthony Short
-	 * @param $string
-	 * @return null
-	 */
-	public static function append($string, $later = false)
-	{
-		if($later === false)
-		{
-			self::$css .= $string;
-		}
-		elseif($later === true)
-		{
-			self::$append .= $string;
-		}
-	}
-	
+
 	/**
 	 * Makes all URLs absolute in a CSS string
 	 *
 	 * @author Anthony Short
 	 * @return void
 	 */
-	public static function convert_to_absolute_urls($css = "")
+	public function convert_to_absolute_urls($css = "")
 	{
 		if($css == "") $css =& self::$css;
 		
@@ -96,9 +68,9 @@ class CSS
 	 * @author Anthony Short
 	 * @return null
 	 */	
-	public static function compress(&$css)
+	public function compress()
 	{
-		if($css == "") $css =& self::$css;
+		$css =& self::$css;
 		
 		# Remove comments
 		$css = self::remove_comments($css);
@@ -120,7 +92,7 @@ class CSS
 	 * @param $regex Is it a regular expression
 	 * @return null
 	 */
-	public static function replace($match, $replace, $regex = false)
+	public function replace($match, $replace, $regex = false)
 	{
 		if($regex === true)
 		{
@@ -148,7 +120,7 @@ class CSS
 	 * @param $path
 	 * @return string
 	 */
-	public static function resolve_path($path)
+	public function resolve_path($path)
 	{
 		if($path[0] == "/")
 		{
@@ -173,7 +145,7 @@ class CSS
 	 * @param $string
 	 * @return null
 	 */
-	public static function remove($string)
+	public function remove($string)
 	{
 		if(is_array($string))
 		{
@@ -196,7 +168,7 @@ class CSS
 	 * @param $capture_group
 	 * @return array
 	 */
-	public static function find_functions($name, $capture_group = "", $css = "")
+	public function find_functions($name, $capture_group = "", $css = "")
 	{
 		if($css == "") $css =& self::$css;
 		
@@ -216,7 +188,7 @@ class CSS
 	 *
 	 * @return void
 	 */
-	public static function replace_css_urls()
+	public function replace_css_urls()
 	{
 		if($found = CSS::find_functions('url'))
 		{
@@ -240,7 +212,7 @@ class CSS
 	 * @param $group string
 	 * @param $css string
 	 */
-	public static function find_at_group($group, $css = "")
+	public function find_at_group($group, $css = "")
 	{
 		if($css == "") $css =& self::$css;
 		
@@ -281,7 +253,7 @@ class CSS
 	 * @param $property string
 	 * @param $value string
 	 */
-	public static function find_selectors_with_property($property, $value = ".*?", $css = "")
+	public function find_selectors_with_property($property, $value = ".*?", $css = "")
 	{
 		if($css == "") $css =& self::$css;
 		
@@ -304,7 +276,7 @@ class CSS
 	 * @param $css
 	 * @return array
 	 */
-	public static function find_properties_with_value($property, $value = ".*?", $css = "")
+	public function find_properties_with_value($property, $value = ".*?", $css = "")
 	{
 		if($css == "") $css =& self::$css;
 		
@@ -327,7 +299,7 @@ class CSS
 	 * @author Anthony Short
 	 * @return array
 	 */
-	public static function find_property_with_value($property, $value, $css = "")
+	public function find_property_with_value($property, $value, $css = "")
 	{
 		if($css == "") $css =& self::$css;
 		return self::find_properties_with_value($property, $value, $css);
@@ -342,7 +314,7 @@ class CSS
 	 * @param $selector string
 	 * @param $css string
 	 */
-	public static function find_selectors($selector, $recursive = "", $css = "")
+	public function find_selectors($selector, $recursive = "", $css = "")
 	{
 		if($css == "") $css =& self::$css;
 		
@@ -386,7 +358,7 @@ class CSS
 	 * @param $css
 	 * @return array
 	 */
-	public static function find_selector_names($selector, $css = "")
+	public function find_selector_names($selector, $css = "")
 	{
 		if($css == "") $css =& self::$css;
 		
@@ -418,7 +390,7 @@ class CSS
 	 * @param $property string
 	 * @param $css string
 	 */
-	public static function find_property($property, $css = "")
+	public function find_property($property, $css = "")
 	{
 		if($css == "") $css =& self::$css;
 		
@@ -438,7 +410,7 @@ class CSS
 	 * @param $name
 	 * @return boolean
 	 */
-	public static function selector_exists($name, $css = "")
+	public function selector_exists($name, $css = "")
 	{
 		if($css == "") $css =& self::$css;
 		
@@ -453,7 +425,7 @@ class CSS
 	 * @param $css
 	 * @return array
 	 */
-	public static function find_properties($property, $css = "")
+	public function find_properties($property, $css = "")
 	{
 		if($css == "") $css =& self::$css;
 		return find_property($property, $css);
@@ -469,7 +441,7 @@ class CSS
 	 * @param $value string
 	 * @param $css string
 	 */
-	public static function remove_properties($property, $value, $css = "")
+	public function remove_properties($property, $value, $css = "")
 	{
 		if($css == "") $css =& self::$css;
 		return preg_replace('/'.$property.'\s*\:\s*'.$value.'\s*\;/', '', $css);
@@ -483,7 +455,7 @@ class CSS
 	 * @author Anthony Short
 	 * @param $css string
 	 */
-	public static function remove_comments($css = "")
+	public function remove_comments($css = "")
 	{
 		if($css == "") $css =& self::$css;
 		
@@ -503,7 +475,7 @@ class CSS
 	 * @param $css
 	 * @return string
 	 */
-	public static function to_xml($css = "")
+	public function to_xml($css = "")
 	{
 		if($css == "") $css =& self::$css;
 
@@ -541,7 +513,7 @@ class CSS
 	 * @param $css
 	 * @return string
 	 */
-	public static function convert_entities($action = 'encode', $css)
+	public function convert_entities($action = 'encode', $css)
 	{
 		$css_replacements = array(
 			'"' => '#SCAFFOLD-QUOTE#',
@@ -574,7 +546,7 @@ class CSS
 	 * @param $properties
 	 * @return null
 	 */
-	public static function add($selector, $properties)
+	public function add($selector, $properties)
 	{
 		self::$css .= $selector ."{". $properties . "}";
 	}
@@ -582,7 +554,7 @@ class CSS
 	/**
 	 * Makes the CSS readable
 	 */
-	public static function pretty($output = false)
+	public function pretty($output = false)
 	{
 		$css =& self::$css;
 		
