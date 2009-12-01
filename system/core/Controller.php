@@ -54,13 +54,10 @@ class Scaffold_Controller
 	 * @return  string   if the file is found
 	 * @return  FALSE    if the file is not found
 	 */
-	public static function find_file($directory, $filename, $required = FALSE, $ext = FALSE)
+	public static function find_file($filename, $directory = '', $required = FALSE)
 	{
-		# NOTE: This test MUST be not be a strict comparison (===), or empty extensions will be allowed!
-		$ext = ($ext == '') ? '.php' : '.'.$ext;
-
 		# Search path
-		$search = $directory.'/'.$filename.$ext;
+		$search = $directory.'/'.$filename;
 		
 		if (isset(self::$internal_cache['find_file_paths'][$search]))
 			return self::$internal_cache['find_file_paths'][$search];
@@ -71,23 +68,9 @@ class Scaffold_Controller
 		# Nothing found, yet
 		$found = NULL;
 
-		if ($directory === 'config')
+		if(in_array($directory, $paths))
 		{
-			# Search in reverse, for merging
-			$paths = array_reverse($paths);
-
-			foreach ($paths as $path)
-			{
-				if (is_file($path.$search))
-				{
-					# A matching file has been found
-					$found[] = $path.$search;
-				}
-			}
-		}
-		elseif(in_array($directory, $paths))
-		{
-			if (is_file($directory.$filename.$ext))
+			if (is_file($directory.$filename))
 			{
 				# A matching file has been found
 				$found = $path.$search;
@@ -124,7 +107,7 @@ class Scaffold_Controller
 			if ($required === TRUE)
 			{
 				# If the file is required, throw an exception
-				throw new Scaffold_Exception("Cannot locate the resource: " . $directory . $filename . $ext);
+				throw new Scaffold_Exception("Cannot locate the resource: " . $directory . $filename);
 			}
 			else
 			{
@@ -329,12 +312,6 @@ class Scaffold_Controller
 		$group = explode('.', $key, 2);
 		$group = $group[0];
 
-		if ( ! isset(self::$config[$group]) && $group != "core")
-		{
-			// Load the config group
-			self::$config[$group] = self::config_load($group, $required);
-		}
-
 		// Get the value of the key string
 		$value = self::key_string(self::$config, $key);
 
@@ -499,32 +476,38 @@ class Scaffold_Controller
 	 */
 	public static function cache_clear($path = "")
 	{
-		if($path == "")
-			$path = self::config('core.path.cache');
+		$cache = self::config('core.path.cache');
 		
-		if($file = self::find_file( self::config('core.path.cache'), $path, false, 'css' ))
+		if($path == "")
 		{
-			Utils::stop($file);
-			unlink($file);
+			$path = $cache;
+		}
+
+		if( is_file( $path ) && file_exists($path) )
+		{
+			Utils::stop(dirname(basename($path)));
+			unlink($path);
 			return true;
 		}
-		
-		$path .= "/";
-
-		foreach(scandir($path) as $file)
+		elseif(is_dir($path))
 		{
-			if($file[0] == ".")
+			$path .= "/";
+			
+			foreach(scandir($path) as $file)
 			{
-				continue;
-			}
-			elseif(is_dir($path.$file))
-			{
-				self::cache_clear($path.$file);
-				rmdir($path.$file);
-			}
-			elseif(file_exists($path.$file))
-			{
-				unlink($path.$file);
+				if($file[0] == ".")
+				{
+					continue;
+				}
+				elseif(is_dir($path.$file))
+				{
+					self::cache_clear($path.$file);
+					rmdir($path.$file);
+				}
+				elseif(file_exists($path.$file))
+				{
+					unlink($path.$file);
+				}
 			}
 		}
 	}

@@ -26,7 +26,7 @@ class Scaffold_CSS
 	 */
 	public function __construct($css)
 	{
-		self::$css = file_get_contents($css);
+		$this->css = file_get_contents($css);
 	}
 
 	/**
@@ -70,7 +70,7 @@ class Scaffold_CSS
 	 */	
 	public function compress()
 	{
-		$css =& self::$css;
+		$css =& $this->css;
 		
 		# Remove comments
 		$css = self::remove_comments($css);

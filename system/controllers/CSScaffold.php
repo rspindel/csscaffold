@@ -155,7 +155,7 @@ class CSScaffold extends Scaffold_Controller
 		$request['relative_dir'] = pathinfo($request['relative_file'], PATHINFO_DIRNAME);
 
 		# Otherwise we'll try to find it inside the CSS directory
-		$request['path'] = self::find_file($request['relative_dir'], basename($requested_file, '.css'), true, 'css');
+		$request['path'] = self::find_file($requested_file, false, true);
 		
 		# Set the directory
 		$request['directory'] = dirname($request['path']);
@@ -314,8 +314,11 @@ class CSScaffold extends Scaffold_Controller
 				)
 			)
 			{
-				# Clear the cache for this file
-				unlink( $cached_file );
+				# sRemove the cached file 
+				if(file_exists($cached_file)) unlink($cached_file);
+				
+				# Find the file, so we can use it
+				$file = self::find_file($file, false, true);
 				
 				# Parse the CSS string
 				$css = self::parse( $file, $output );
@@ -340,9 +343,7 @@ class CSScaffold extends Scaffold_Controller
 	 * @return void
 	 */
 	public static function parse($file, $output)
-	{
-		Utils::stop('deleted');
-		
+	{			
 		# Load it into the CSS object
 		$css = new Scaffold_CSS( $file );
 		
@@ -358,6 +359,8 @@ class CSScaffold extends Scaffold_Controller
 		# Import CSS files
 		if(class_exists('Import'))
 			Import::parse();
+			
+		Utils::stop($css);
 													
 		# Parse our css through the plugins
 		foreach(self::$loaded_modules as $module)
