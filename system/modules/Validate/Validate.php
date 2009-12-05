@@ -5,9 +5,9 @@
  **/
 class Validate extends Scaffold_Module
 {
-	public static function output()
+	public static function output($mode = "")
 	{
-		if($output == "validate")
+		if($mode == "validate")
 		{
 			# Clean it up so we can use the line numbers
 			CSS::pretty();

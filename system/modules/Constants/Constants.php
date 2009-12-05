@@ -26,16 +26,10 @@ class Constants extends Scaffold_Module
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	public static function parse()
+	public static function parse($css)
 	{				
 		# Find the constants group and values
-		$found = CSS::find_at_group('constants');
-		
-		# Set the global constants
-		foreach(CSScaffold::config('core.constants') as $key => $value)
-		{
-			self::set($key, $value);
-		}
+		$found = Scaffold_CSS::find_at_group('constants', $css);
 
 		# If there are some constants, let do it.
 		if($found !== false)
@@ -51,8 +45,10 @@ class Constants extends Scaffold_Module
 			}
 	
 			# Remove the @constants groups
-			CSS::replace($found['groups'], array());		
+			$css = str_replace($found['groups'], array(), $css);		
 		}
+		
+		return $css;
 	}
 	
 	/**
@@ -111,7 +107,7 @@ class Constants extends Scaffold_Module
 	 * @param $
 	 * @return return type
 	 */
-	public static function replace()
+	public static function replace($css)
 	{
 		if (!empty(self::$constants))
 		{
@@ -121,11 +117,11 @@ class Constants extends Scaffold_Module
 				{
 					if(CSScaffold::config('core.use_css_constants') === true)
 					{
-						CSS::replace( "const({$key})", unquote($value));
+						$css = str_replace( "const({$key})", Scaffold_Utils::unquote($value), $css);
 					}
 					else
 					{
-						CSS::replace( "!{$key}", Utils::unquote($value));
+						$css = str_replace( "!{$key}", Scaffold_Utils::unquote($value), $css);
 					}
 				}
 			}
@@ -134,7 +130,7 @@ class Constants extends Scaffold_Module
 		}
 		else
 		{
-			if(preg_match_all('/![a-zA-Z0-9-_]+/', CSS::$css, $matches))
+			if(preg_match_all('/![a-zA-Z0-9-_]+/', $css, $matches))
 			{
 				$missing = array_values(array_unique($matches[0]));
 				
@@ -144,10 +140,12 @@ class Constants extends Scaffold_Module
 				if(!empty($missing))
 				{
 					$missing = "<ul><li>" . implode("</li><li>", $missing) . "</li></ul>";
-					throw new Scaffold_Exception("The following constants are used, but not defined: $missing");
+					throw new Exception("The following constants are used, but not defined: $missing");
 				}
 			}
 		}
+		
+		return $css;
 	}
 
 }

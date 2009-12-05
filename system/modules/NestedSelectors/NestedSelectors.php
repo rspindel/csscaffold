@@ -27,9 +27,9 @@ class NestedSelectors extends Scaffold_Module
 	 * @author Anthony Short
 	 * @return $css string
 	 */
-	public static function parse()
+	public static function parse($css)
 	{
-		$xml = CSS::to_xml();
+		$xml = Scaffold_CSS::to_xml($css);
 		
 		$css = "";
 		
@@ -38,7 +38,7 @@ class NestedSelectors extends Scaffold_Module
 			$css .= self::parse_rule($value);
 		}
 
-		CSS::$css = CSS::convert_entities('decode', $css);
+		return Scaffold_CSS::convert_entities('decode', $css);
 	}
 	
 	/**

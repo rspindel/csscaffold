@@ -15,10 +15,10 @@ class Iteration extends Scaffold_Module
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	public static function parse()
+	public static function parse($css)
 	{		
 		# Find all the @server imports
-		self::parse_fors(CSS::$css);
+		return self::parse_fors($css);
 	}
 	
 	/**
@@ -28,9 +28,9 @@ class Iteration extends Scaffold_Module
 	 * @param $string
 	 * @return string
 	 */
-	public static function parse_fors($string)
+	public static function parse_fors($css)
 	{
-		if($found = self::find_fors($string))
+		if($found = self::find_fors($css))
 		{			
 			foreach($found[0] as $key => $value)
 			{				
@@ -45,9 +45,11 @@ class Iteration extends Scaffold_Module
 					$s .= str_replace("!{$var}", $i, $found[5][$key]);	
 				}
 				
-				CSS::replace($found[0][$key], $s);				
+				$css = str_replace($found[0][$key], $s, $css);				
 			}
 		}
+		
+		return $css;
 	}
 	
 	/**

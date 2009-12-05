@@ -7,9 +7,9 @@
  **/
 class Typography extends Scaffold_Module
 {
-	public static function output()
+	public static function output($mode = "")
 	{
-		if(CSScaffold::config('core.output') == "typography")
+		if($mode == "typography")
 		{
 			# Make sure we're sending HTML
 			header('Content-Type: text/html');

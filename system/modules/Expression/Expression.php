@@ -17,9 +17,9 @@ class Expression extends Scaffold_Module
 	 * @author Anthony Short
 	 * @param $css
 	*/
-	public static function parse()
+	public static function parse($css)
 	{
-		CSS::$css = self::parse_expressions();
+		return self::parse_expressions($css);
 	}
 	
 	/**
@@ -30,7 +30,7 @@ class Expression extends Scaffold_Module
 	 */
 	public static function find_expressions($css)
 	{
-		return Utils::match('/(\#\[[\'\"]?([^]]*?)[\'\"]?\])/', $css);
+		return Scaffold_Utils::match('/(\#\[[\'\"]?([^]]*?)[\'\"]?\])/', $css);
 	}
 	
 	/**
@@ -39,11 +39,8 @@ class Expression extends Scaffold_Module
 	 * @author Anthony Short
 	 * @return null
 	 */
-	public static function parse_expressions($css = "")
-	{
-		# If theres no css string given, use the master css
-		if($css == "") $css = CSS::$css;
-		
+	public static function parse_expressions($css)
+	{		
 		# Find all of the property values which have [] in them.
 		if($matches = self::find_expressions($css))
 		{

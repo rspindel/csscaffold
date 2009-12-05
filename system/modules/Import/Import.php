@@ -24,10 +24,10 @@ class Import extends Scaffold_Module
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	public static function parse()
+	public static function parse($css)
 	{
 		# Find all the @server imports
-		CSS::$css = self::server_import(CSS::$css);
+		return self::server_import($css);
 	}
 	
 	/**
@@ -41,45 +41,41 @@ class Import extends Scaffold_Module
 		if(preg_match_all('/\@include\s+(?:\'|\")([^\'\"]+)(?:\'|\")\;/', $css, $matches))
 		{
 			$unique = array_unique($matches[1]);
-			$include = str_replace("\\", "/", Utils::unquote($unique[0]));
+			$include = str_replace("\\", "/", Scaffold_Utils::unquote($unique[0]));
 			
 			# If they haven't supplied an extension, we'll assume its a css file
 			if(pathinfo($include, PATHINFO_EXTENSION) == "")
 				$include .= '.css';
 			
 			# Make sure it's a CSS file
-			if(!Utils::is_css($include))
-				throw new Scaffold_Exception("Included file isn't a CSS file ($include)");
+			if(pathinfo($include, PATHINFO_EXTENSION) != 'css')
+				throw new Exception("Included file isn't a CSS file ($include)");
 
-			# Find the file
-			$include = CSScaffold::find_file($include);
+			$include = preg_replace( '#^~#', CSScaffold::config('core.path.css'), $include );
 			
-			if(file_exists($include))
-			{	
-				# Make sure it hasn't already been included	
-				if(!in_array($include, self::$loaded))
-				{
-					self::$loaded[] = $include;
-					$css = str_replace($matches[0][0], file_get_contents($include), $css);
-				}
-
-				# It's already been included, we don't need to import it again
-				else
-				{
-					$css = str_replace($matches[0][0], '', $css);
-				}
-				
-				# Removes any commented out @imports
-				CSS::remove_comments($css);
-
-				# Check the file again for more imports
-				$css = self::server_import($css);
+			# Find the file
+			$include = CSScaffold::find_file($include, false, true);
+			
+			# Make sure it hasn't already been included	
+			if(!in_array($include, self::$loaded))
+			{
+				self::$loaded[] = $include;
+				$css = str_replace($matches[0][0], file_get_contents($include), $css);
 			}
+
+			# It's already been included, we don't need to import it again
 			else
 			{
-				throw new Scaffold_Exception("Included CSS file doesn't exist ($include)");
+				#$css = str_replace($matches[0][0], '', $css);
 			}
+			
+			# Removes any commented out @imports
+			$css = Scaffold_CSS::remove_comments($css);
+
+			# Check the file again for more imports
+			$css = self::server_import($css);
 		}
+
 		return $css;
 	}
 }

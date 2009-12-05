@@ -67,10 +67,10 @@ class Layout extends Scaffold_Module
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	public static function parse_grid()
+	public static function parse_grid($css)
 	{		
 		# Find the @grid - this returns an array of 'groups' and 'values'		
-		if( $settings = CSS::find_at_group('grid') )
+		if( $settings = Scaffold_CSS::find_at_group('grid', $css) )
 		{
 			# All the @grids
 			$groups = $settings['groups'];
@@ -88,7 +88,7 @@ class Layout extends Scaffold_Module
 			}
 			
 			# Remove it from the css
-			CSS::replace($groups, array()); 
+			$css = str_replace($groups, array(), $css); 
 			
 			# The number of columns, baseline and unit
 			$cc 	= $settings['column-count'];
@@ -128,12 +128,12 @@ class Layout extends Scaffold_Module
 			# Generate the grid.png
 			self::create_grid_image($cw, $bl, $lgw, $rgw, $img);
 			
-			$img = str_replace(CSScaffold::config('core.path.docroot'),'/',$img);
+			$img = str_replace($_SERVER['DOCUMENT_ROOT'],'/',$img);
 			
-			CSS::append(".showgrid{background:url('".$img."');}");
+			$css .= ".showgrid{background:url('".$img."');}";
 
 			# Round to baselines
-			self::round_to_baseline($bl);
+			$css = self::round_to_baseline($bl, $css);
 			
 			# Make each of the column variables a member variable
 			self::$column_count = $cc;
@@ -143,12 +143,15 @@ class Layout extends Scaffold_Module
 			self::$right_gutter_width = $rgw;
 			self::$grid_width = $grid;
 			self::$baseline = $bl;
+			
 		}
+		
+		return $css;
 	}
 	
-	public static function output()
+	public static function output($mode = "")
 	{
-		if(CSScaffold::config('core.output') == "grid" && isset(self::$column_width))
+		if($mode == "grid" && isset(self::$column_width))
 		{
 			# Make sure we're sending HTML
 			header('Content-Type: text/html');
@@ -169,16 +172,17 @@ class Layout extends Scaffold_Module
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	private static function round_to_baseline($baseline)
+	private static function round_to_baseline($baseline, $css)
 	{
-		if($found = CSS::find_functions('round'))
+		if($found = Scaffold_CSS::find_functions('round', '', $css))
 		{
 			foreach($found[0] as $key => $match)
 			{
-				
-				CSS::replace($match, round($found[1][$key]/$baseline)*$baseline."px");
+				$css = str_replace($match, round($found[1][$key]/$baseline)*$baseline."px", $css);
 			}
 		}
+		
+		return $css;
 	}
 
 	/**

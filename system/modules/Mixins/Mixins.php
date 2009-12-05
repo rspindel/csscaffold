@@ -24,7 +24,7 @@ class Mixins extends Scaffold_Module
 	 * @author Anthony Short
 	 * @return $css string
 	 */
-	public static function parse()
+	public static function parse($css)
 	{
 		global $bases;
 	
@@ -35,7 +35,7 @@ class Mixins extends Scaffold_Module
 		$bases = array();
 		
 		# Finds any selectors starting with =mixin-name
-		if( $found = CSS::find_selectors('\=(?P<name>[0-9a-zA-Z_-]*)(\((?P<args>.*?)\))?', 5) )
+		if( $found = Scaffold_CSS::find_selectors('\=(?P<name>[0-9a-zA-Z_-]*)(\((?P<args>.*?)\))?', 5, $css) )
 		{
 			# Just to make life a little easier
 			$full_base 		= $found[0];
@@ -59,27 +59,29 @@ class Mixins extends Scaffold_Module
 			self::$mixins = $bases;
 			
 			# Remove all of the mixin bases
-			CSS::remove($full_base);
+			$css = str_replace($full_base,'',$css);
 			
 			# Clean up memory
 			unset($full_base, $base_names, $base_args, $base_props);
 			
 			# Find the mixins
-			if($mixins = self::find_mixins(CSS::$css))
+			if($mixins = self::find_mixins($css))
 			{
 				# Loop through each of the found +mixins
 				foreach($mixins[2] as $mixin_key => $mixin_name)
 				{
-					CSS::replace($mixins[0][$mixin_key], self::build_mixins($mixin_key, $mixins));
+					$css = str_replace($mixins[0][$mixin_key], self::build_mixins($mixin_key, $mixins), $css);
 				}
 				
 				# Remove all of the +mixins (if they still exist)
-				CSS::replace($mixins[0], '');
+				$css = str_replace($mixins[0], '', $css);
 			}
 			
 			# Clean up
 			unset($bases, $mixins);
 		}
+		
+		return $css;
 	}
 	
 	/**
@@ -134,7 +136,7 @@ class Mixins extends Scaffold_Module
 		}
 		else
 		{
-			throw new Scaffold_Exception("The mixin doesn't exist - $mixin_name");
+			throw new Exception("The mixin doesn't exist - $mixin_name");
 		}
 		
 	}
@@ -148,7 +150,7 @@ class Mixins extends Scaffold_Module
 	 */
 	public static function find_mixins($string)
 	{	
-		return Utils::match('/\+(([0-9a-zA-Z_-]*?)(\((.*?)\))?)\;/', $string);
+		return Scaffold_Utils::match('/\+(([0-9a-zA-Z_-]*?)(\((.*?)\))?)\;/', $string);
 	}
 	
 	/**
@@ -187,19 +189,19 @@ class Mixins extends Scaffold_Module
 				# If there is a default value for the param			
 				if(strstr($value, '='))
 				{
-					$parsed[trim($v[0])] = Utils::unquote(trim($v[1]));
+					$parsed[trim($v[0])] = Scaffold_Utils::unquote( trim($v[1]) );
 				}
 				
 				# Otherwise they've left one out
 				else
 				{
-					throw new Scaffold_Exception("Mixins.missing_param", $mixin_name);
+					throw new Exception("Missing mixin parameter - " . $mixin_name);
 				}
 			}
 			else
 			{
 				$p = explode(",", $params);
-				$value = Utils::unquote(trim($p[$key]));
+				$value = (string)Scaffold_Utils::unquote(trim($p[$key]));
 				$parsed[trim($v[0])] = str_replace('#COMMA#',',',$value);
 			}		
 		}
