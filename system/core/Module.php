@@ -48,13 +48,5 @@ class Scaffold_Module
 	 * For loading views and display a page other than the CSS
 	 */
 	public static function output() {}
-	
-	/**
-	 * Loads a library
-	 */
-	public static function load_library($library) 
-	{
-		require_once( CSScaffold::find_file(get_called_class() . '/libraries', $library, TRUE) );
-	}
 
 }

@@ -7,8 +7,10 @@ class Minify extends Scaffold_Module
 {
 	public static function compress()
 	{
-		self::load_library('Minify_Compressor');
-		
-		CSS::$css = Minify_CSS_Compressor::process(CSS::$css);
+		if (!class_exists('Minify_CSS_Compressor'))
+		{
+			include(dirname(__FILE__).'/libraries/Minify_Compressor.php');
+			CSS::$css = Minify_CSS_Compressor::process(CSS::$css);
+		}
 	}
 } 
