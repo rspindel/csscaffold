@@ -101,8 +101,8 @@
 
 =columns-base
 {
-	position:relative;
 	float:left;
+	display:inline;
 	margin-right:!right-gutter-width;
 	margin-left:!left-gutter-width;	
 }
