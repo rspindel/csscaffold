@@ -100,7 +100,7 @@ class Scaffold_Exception
 				
 			}
 			
-			require self::find_file('Exception.php','views',true);
+			require CSScaffold::find_file('Exception.php','views',true);
 			
 			
 			
