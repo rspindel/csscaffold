@@ -39,6 +39,22 @@ $config['in_production'] = false;
 $config['cache_lifetime'] = 3600; // 3600 will check if it needs to recache every hour
 
 /**
+ * Log threshold
+ *
+ * This determines the maximum log level that Scaffold will log to. Higher log levels
+ * will be thrown as errors.
+ *
+ * 1. Errors
+ * 2. Warnings
+ * 3. Info
+ * 4. Debug
+ *
+ * Leaving this at 2 is a good level, as errors will be thrown as errors, but the
+ * rest will be logged.
+ */
+$config['log_threshold'] = 2;
+
+/**
  * Document Root
  *
  * The document root for the server. If you're server doesn't set the $_SERVER['DOCUMENT_ROOT']
@@ -78,7 +94,4 @@ $config['cache'] = 'system/cache';
  * disabling any of the major modules (Nested Selectors, constants, mixins), as
  * you might get some unexpected results. 
  */
-$config['disable'] = array
-(
-	'XML_constants'
-);
+$config['disable'] = array();
