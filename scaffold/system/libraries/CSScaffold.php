@@ -128,21 +128,9 @@ class CSScaffold extends Scaffold_Controller
 			# Set the error reporting level.
 			ini_set('display_errors', TRUE);
 			error_reporting(E_ALL & ~E_STRICT);
-			
-			if(class_exists('FB'))
-				FB::setEnabled(true);
-			
-			# Set error handler
-			set_error_handler(array('Scaffold_Exception', 'exception_handler'));
-		
-			# Set exception handler
-			set_exception_handler(array('Scaffold_Exception', 'exception_handler'));
 		}
 		else
 		{
-			if(class_exists('FB'))
-				FB::setEnabled(false);
-				
 			# Turn off errors
 			error_reporting(0);
 		}	
@@ -281,19 +269,6 @@ class CSScaffold extends Scaffold_Controller
 			# Log the time taken
 			Scaffold_Benchmark::stop($file);
 			
-			# Log the time and size
-			if( self::config('core.in_production') === false)
-			{
-				$contents = file_get_contents($cached_file);
-				$gzipped = gzcompress($contents, 9);
-				
-			    $table = array();
-			    $table[] = array('Name','Value');
-			    $table[] = array('Speed', Scaffold_Benchmark::get($file,'time') . " seconds");
-			    $table[] = array('Compressed Size', Scaffold_Utils::readable_size($contents));
-			    $table[] = array('Gzipped Size', Scaffold_Utils::readable_size($gzipped));
-				FB::table($file,$table);
-			}
 		}		
 
 		if(count($files_to_join) > 1)
@@ -317,20 +292,6 @@ class CSScaffold extends Scaffold_Controller
 				# $cache->write($css);
 				self::cache_write($css,$combined);
 			}
-			
-			# Log the time and size
-			if( self::config('core.in_production') === false)
-			{
-				$gzipped = gzcompress($css, 9);
-				
-			    $table = array();
-			    $table[] = array('Name','Value');
-			    $table[] = array('Compressed Size', Scaffold_Utils::readable_size($css));
-			    $table[] = array('Gzipped Size', Scaffold_Utils::readable_size($gzipped));
-				FB::table('Combined',$table);
-			}
-			
-			$output = $combined;
 		}
 		else
 		{
@@ -598,18 +559,7 @@ class CSScaffold extends Scaffold_Controller
 			foreach(self::modules() as $module)
 			{
 				call_user_func(array($module,'output'), $css);
-				
-				if(method_exists($module,'log'))
-				{
-					FB::group($module);
-					call_user_func(array($module,'log'), $css);
-					FB::groupEnd();
-				}
 			}
-			
-			Scaffold_Logger::log('Flags', self::flags() );
-			Scaffold_Logger::log('Include Paths', self::include_paths() );
-			Scaffold_Logger::log('Modules', self::modules() );
 		}
 
 		# We want the CSS, baby!

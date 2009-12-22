@@ -32,18 +32,6 @@ class Import extends Scaffold_Module
 	 */
 	private static $missing = array();
 
-	/**
-	 * Outputs some logging information
-	 *
-	 * @author Anthony Short
-	 * @return void
-	 */
-	public static function log()
-	{
-		Scaffold_Logger::log('Files', self::$loaded, 3);
-		Scaffold_Logger::log('Missing', self::$missing, 2);
-		Scaffold_Logger::log('Invalid', self::$invalid, 2);
-	}
 
 	/**
 	 * This function occurs before everything else

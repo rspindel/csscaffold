@@ -16,16 +16,6 @@ class Absolute_Urls extends Scaffold_Module
 	 */
 	private static $missing_images = false;
 
-	/**
-	 * Outputs some logging information
-	 *
-	 * @author Anthony Short
-	 * @return void
-	 */
-	public static function log()
-	{
-		Scaffold_Logger::log('Missing Files' , self::$missing_images, 2);
-	}
 
 	/**
 	 * Takes a CSS string, rewrites all URL's using Scaffold's built-in find_file method

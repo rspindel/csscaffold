@@ -23,26 +23,6 @@ class Constants extends Scaffold_Module
 	 * @var array
 	 */
 	private static $missing = array();
-	
-	/**
-	 * Outputs some logging information
-	 *
-	 * @author Anthony Short
-	 * @return void
-	 */
-	public static function log()
-	{
-		$table = array();
-		$table[] = array('Constants Name', 'Value');
-
-		foreach(self::$constants as $key => $value)
-		{
-			$table[] = array($key,$value);
-		}
-		
-		FB::table('Available', $table);
-		Scaffold_Logger::log('Missing', self::$missing);
-	}
 		
 	/**
 	 * The pre-processing function occurs after the importing,

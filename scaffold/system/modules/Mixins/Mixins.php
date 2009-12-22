@@ -39,27 +39,6 @@ class Mixins extends Scaffold_Module
 	 */
 	private static $recursion = array();
 
-	/**
-	 * Outputs some logging information
-	 *
-	 * @author Anthony Short
-	 * @return void
-	 */
-	public static function log()
-	{
-		$table = array();
-		$table[] = array('Mixin Name', 'Parameters', 'Properties');
-
-		foreach(self::$mixins as $key => $value)
-		{
-			$table[] = array($key,implode(',',$value['params']),$value['properties']);
-		}
-
-		FB::table('Available', $table);
-
-		Scaffold_Logger::log('Recursion',self::$recursion);
-		Scaffold_Logger::log('Missing', self::$missing,2);
-	}
 
 	/**
 	 * The main processing function called by Scaffold. MUST return $css!
