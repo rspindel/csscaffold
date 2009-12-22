@@ -4,9 +4,9 @@
 	+min-width(200px);
 }
 
-=min-height(!h)
+=min-height($h)
 {
-    & { min-height:!h; }
+    & { min-height:$h; }
 
     * html & 
     {
@@ -14,9 +14,9 @@
     }
 }
 
-=min-width(!w)
+=min-width($w)
 {
-    & { min-width:!w; }
+    & { min-width:$w; }
     
     * html & 
     {

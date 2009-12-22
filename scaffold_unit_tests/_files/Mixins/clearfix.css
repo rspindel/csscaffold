@@ -9,7 +9,7 @@
 	
 	&:after 
 	{
-		content:'\\0020';
+		content:' ';
 		display:block;
 		height:0;
 		clear:both;

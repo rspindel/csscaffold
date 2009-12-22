@@ -8,9 +8,9 @@
 	+conditional-test;
 }
 
-=conditional-test(!bg = false)
+=conditional-test($bg = false)
 {
-	@if(!bg == false)
+	@if($bg == false)
 	{
 		+another-mixin;
 	}
