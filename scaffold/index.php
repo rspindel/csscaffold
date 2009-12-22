@@ -7,14 +7,6 @@
  * @package CSScaffold
  */
  
-/**
- * These will get overidden later by the in_production
- * setting. However, we need them now in case anything
- * goes wrong before we even start.
- */
-ini_set('display_errors', TRUE);
-error_reporting(E_ALL & ~E_STRICT);
- 
 # Include the config file
 include 'config.php';
 
@@ -22,7 +14,6 @@ include 'config.php';
 include 'system/libraries/Bootstrap.php';
 
 /**
- * OPTIONAL - FUCK YOU WINDOWS
  * Set the server variable for document root. A lot of 
  * the utility functions depend on this. Windows servers
  * don't set this, so we'll add it manually if it isn't set.
@@ -33,7 +24,6 @@ if(!isset($_SERVER['DOCUMENT_ROOT']))
 }
 
 /**
- * OPTIONAL
  * Set timezone, just in case it isn't set. PHP 5.2+ 
  * throws a tantrum if you try and use time() without
  * this being set.
@@ -46,6 +36,9 @@ if (function_exists('date_default_timezone_set'))
 # And we're off!
 if(isset($_GET['f']))
 {
+	# Set up the global config options
+	CSScaffold::setup($config);
+
 	/**
 	 * The files we want to parse. Full absolute URL file paths work best.
 	 * eg. request=/themes/stylesheets/master.css,/themes/stylesheets/screen.css
@@ -75,11 +68,6 @@ if(isset($_GET['f']))
 			$files[$key] = Scaffold_Utils::join_path($_GET['d'],$file);
 		}
 	}
-
-	/**
-	 * Set up the global config options
-	 */
-	CSScaffold::setup($config);
 	
 	/**
 	 * Parse and join an array of files
