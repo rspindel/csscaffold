@@ -9,6 +9,8 @@
  */
 class Gradient extends Scaffold_Module
 {
+	
+
 	public static function post_process($css)
 	{
 		if($found = Scaffold_CSS::find_properties_with_value('gradient', '.*?', $css) ) 

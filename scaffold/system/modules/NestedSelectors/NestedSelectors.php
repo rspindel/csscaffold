@@ -8,6 +8,7 @@
  **/
 class NestedSelectors extends Scaffold_Module
 {
+
 	/**
 	 * Array of selectors to skip and keep them nested.
 	 * It just checks if the string is present, so it can

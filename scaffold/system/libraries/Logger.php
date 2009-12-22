@@ -39,36 +39,7 @@ class Scaffold_Logger
 	 */
 	public static function log($group,$message,$level = 4)
 	{
-		if(!$message)
-			return;
-			
-		if(class_exists('FB'))
-		{
-			FB::group($group);
-			
-			if(is_array($message))
-			{
-				foreach($message as $key => $value)
-				{
-					if(is_numeric($key))
-					{
-						call_user_func(array('FB',self::$log_levels[$level - 1]), $value);
-					}
-					else
-					{
-						self::log($key,$value,$level);
-					}
-				}
-			}
-			else
-			{
-				call_user_func(array('FB',self::$log_levels[$level - 1]), $message);
-			}
-			
-			FB::groupEnd();
-		}
-
-		return self::$log[$level][$group] = $message;			
+		return self::$log[$group][] = array($message,$level);			
 	}
 
 }

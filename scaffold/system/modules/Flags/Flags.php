@@ -21,6 +21,7 @@
  */
 class Flags extends Scaffold_Module
 {
+
 	/**
 	 * Post Process. Needs to come after the nested selectors.
 	 *

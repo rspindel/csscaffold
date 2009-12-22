@@ -9,7 +9,7 @@
  * @author Anthony Short
  */
 class Scaffold_Module
-{ 
+{
 	/**
 	 * Sets cache flags
 	 *

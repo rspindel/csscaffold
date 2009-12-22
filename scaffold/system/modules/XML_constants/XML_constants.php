@@ -25,6 +25,7 @@
  */
 class XML_constants extends Scaffold_Module
 {
+
 	/**
 	 * Gets the XML and sets each of the nodes as constants
 	 *
@@ -38,7 +39,7 @@ class XML_constants extends Scaffold_Module
 		# If the xml file doesn't exist
 		if(!file_exists($file))
 		{
-			Scaffold_Logger::log("XML Constants : XML File doesn't exist - $file");
+			Scaffold_Logger::log("Missing XML file",$file,2);
 			return $css;
 		}
 		
