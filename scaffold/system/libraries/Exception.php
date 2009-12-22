@@ -69,7 +69,7 @@ class Scaffold_Exception
 			
 			// Remove the self::config('core.path.docroot') from the path, as a security precaution
 			$file = str_replace('\\', '/', realpath($file));
-			$file = preg_replace('|^'.preg_quote(self::config('core.path.docroot')).'|', '', $file);
+			$file = preg_replace('|^'.preg_quote($_SERVER['DOCUMENT_ROOT']).'|', '', $file);
 
 			if($PHP_ERROR)
 			{
