@@ -11,27 +11,13 @@
  **/
 class Import extends Scaffold_Module
 {
+
 	/**
 	 * Stores which files have already been included
 	 *
 	 * @var array
 	 */
-	private static $loaded = array();
-	
-	/**
-	 * Invalid include files
-	 *
-	 * @var array
-	 */
-	private static $invalid = array();
-	
-	/**
-	 * Missing include files
-	 *
-	 * @var array
-	 */
-	private static $missing = array();
-
+	public static $loaded = array();
 
 	/**
 	 * This function occurs before everything else
@@ -69,7 +55,7 @@ class Import extends Scaffold_Module
 			if(pathinfo($include, PATHINFO_EXTENSION) != 'css')
 			{
 				$css = str_replace($matches[0][0], '', $css);
-				self::$invalid[] = $include;
+				self::$errors['Invalid'][] = $include;
 				self::server_import($css,$base);
 			}
 
@@ -97,7 +83,7 @@ class Import extends Scaffold_Module
 			}
 			else
 			{
-				self::$missing[] = $include;
+				self::$errors['Missing'][] = $include;
 			}
 		}
 

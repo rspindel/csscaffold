@@ -10,19 +10,14 @@
  */
 class Custom_Properties extends Scaffold_Module
 {
+	
+
 	/**
 	 * The list of created properties
 	 *
 	 * @var array
 	 */
-	private static $properties = array();
-	
-	/**
-	 * List of invalid properties/values
-	 *
-	 * @var array
-	 */
-	private static $invalid = array();
+	public static $properties = array();
 
 	/**
 	 * Loads each of the property functions and parses them.
@@ -56,7 +51,7 @@ class Custom_Properties extends Scaffold_Module
 					}
 					else
 					{
-						self::$invalid[$property_name][] = $originals[$key]; 
+						self::$errors['Invalid'][$property_name][] = $originals[$key]; 
 					}
 				}
 			}

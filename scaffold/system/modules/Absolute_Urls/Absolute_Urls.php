@@ -9,13 +9,6 @@
  */
 class Absolute_Urls extends Scaffold_Module
 {
-	/**
-	 * Array of missing images
-	 *
-	 * @var array
-	 */
-	private static $missing_images = false;
-
 
 	/**
 	 * Takes a CSS string, rewrites all URL's using Scaffold's built-in find_file method
@@ -79,7 +72,7 @@ class Absolute_Urls extends Scaffold_Module
 				
 				# If the file doesn't exist
 				if(!CSScaffold::find_file($absolute))
-					self::$missing_images[] = $absolute;
+					Scaffold_Logger::log('Missing Images', $absolute, 2);
 					
 				# Rewrite it
 				$css = str_replace($found[0][$key], 'url('.$absolute.')', $css);

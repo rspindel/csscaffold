@@ -5,13 +5,7 @@
  **/
 class Validate extends Scaffold_Module
 {
-	/**
-	 * List of validation errors
-	 *
-	 * @var array
-	 */
-	public static $errors = array();
-	
+
 	/**
 	 * Outputs some logging information
 	 *

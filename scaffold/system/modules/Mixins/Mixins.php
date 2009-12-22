@@ -11,6 +11,7 @@
  */
 class Mixins extends Scaffold_Module
 {
+
 	/**
 	 * Stores the mixins for debugging purposes
 	 *
@@ -24,21 +25,6 @@ class Mixins extends Scaffold_Module
 	 * @var array
 	 */
 	public static $bases = array();
-	
-	/**
-	 * The missing mixins
-	 *
-	 * @var array
-	 */
-	private static $missing = array();
-	
-	/**
-	 * Mixin recursion
-	 *
-	 * @var array
-	 */
-	private static $recursion = array();
-
 
 	/**
 	 * The main processing function called by Scaffold. MUST return $css!
@@ -160,12 +146,12 @@ class Mixins extends Scaffold_Module
 			}
 			elseif(in_array($mixin_name, $already_mixed))
 			{
-				self::$recursion[] = $mixin_name;
+				self::$errors['Recursion'][] = $mixin_name;
 			}
 		}
 		else
 		{
-			self::$missing[] = $mixin_name;
+			self::$errors['Missing'][] = $mixin_name;
 		}
 		
 	}

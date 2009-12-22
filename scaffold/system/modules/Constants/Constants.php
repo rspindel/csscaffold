@@ -9,20 +9,15 @@
  * @author Anthony Short
  */
 class Constants extends Scaffold_Module
-{	
+{
+	
+	
 	/**
 	 * Stores all of the constants for the app
 	 *
 	 * @var array
 	 */
 	public static $constants = array();
-	
-	/**
-	 * Missing constants
-	 *
-	 * @var array
-	 */
-	private static $missing = array();
 		
 	/**
 	 * The pre-processing function occurs after the importing,
@@ -113,7 +108,7 @@ class Constants extends Scaffold_Module
 			if(!isset($$value))
 			{
 				$css = preg_replace('/\{?\$'.$value.'\}?/', '',$css);
-				self::$missing[] = $value;
+				self::$errors['missing'][] = $value;
 			}
 		}
 

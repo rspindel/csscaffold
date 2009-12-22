@@ -15,14 +15,7 @@ class Custom_Functions extends Scaffold_Module
 	 *
 	 * @var array
 	 */
-	private static $functions = array();
-	
-	/**
-	 * Invalid function calls
-	 *
-	 * @var array
-	 */
-	private static $invalid = array();
+	public static $functions = array();
 	
 	/**
 	 * Outputs some logging information
@@ -72,7 +65,7 @@ class Custom_Functions extends Scaffold_Module
 					}
 					else
 					{
-						self::$invalid[$function_name][] = $originals[$key]; 
+						self::$errors['Invalid'][$function_name][] = $originals[$key]; 
 					}
 				}
 			}
