@@ -1,0 +1,19 @@
+@flag(christmas,newyears)
+{
+	color:red;
+	
+	#id
+	{
+		color:red;
+		
+		@flag(night)
+		{
+			background:black;
+		}
+		
+		@flag(day)
+		{
+			background:lightblue;
+		}
+	}
+}

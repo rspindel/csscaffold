@@ -1,0 +1,6 @@
+blah.jpg
+blah.txt
+blah.jpeg
+blah.gif
+blah.png
+blah.exe

@@ -1,0 +1,4 @@
+@include 'adjacent.css'; // Try and include a file relative to this file.
+@include '../in.css'; // Try and include the original file
+tv foo { background: red url(/red.gif); }
+tv bar { background: url('../green.gif') }

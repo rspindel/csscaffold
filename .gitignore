@@ -1,5 +1,5 @@
 */.DS_STORE
-*/cache/*
+scaffold/system/cache/*
 index.html
 CSScaffold.esproj/
 stylesheets

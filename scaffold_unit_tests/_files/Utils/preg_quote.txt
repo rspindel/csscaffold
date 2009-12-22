@@ -1,0 +1,6 @@
+#id
+{
+	content:'\\0111';
+	background:url('blah.png');
+	border-color:#fff;
+}

@@ -1,0 +1,1 @@
+#id\s*\{\s*content\:'\\\\0111';\s*background\:url\('blah\.png'\);\s*border\-color\:#fff;\s*\}
