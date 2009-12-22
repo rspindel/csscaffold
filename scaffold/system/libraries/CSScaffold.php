@@ -55,11 +55,11 @@ class CSScaffold extends Scaffold_Controller
 	 **/
 	public static function setup( $config ) 
 	{
-		Scaffold_Benchmark::start('Setup');
+		# Set the debugging
+		self::debug( $config['in_production'] );
 
 		# Set the current cache path
 		self::cache_set( $config['cache'] );
-		# $cache = new Scaffold_Cache( $config['cache'] );
 		
 		if ( self::$cache_lifetime = $config['cache_lifetime'] && $config['in_production'] === true )
 		{
@@ -81,9 +81,6 @@ class CSScaffold extends Scaffold_Controller
 				$config['document_root'] 
 			);
 		}
-		
-		# Set the debugging
-		self::debug( $config['in_production'] );
 		
 		# If we've got it from the internal cache already
 		if(isset(self::$internal_cache['modules']))
@@ -109,8 +106,6 @@ class CSScaffold extends Scaffold_Controller
 		{
 			self::$config = self::$internal_cache['config'];
 		}
-
-		Scaffold_Benchmark::stop('Setup');
 	}
 	
 	/**
@@ -195,8 +190,6 @@ class CSScaffold extends Scaffold_Controller
 	
 			# Consistent naming			
 			$file = Scaffold_Utils::urlpath( $request );
-			
-			Scaffold_Benchmark::start($file);
 
 			# Find the name of the we need to create in the cache directory.
 			$cached_file = self::$cache_path . self::cache_id(array($request,$flags)) . '.css';
@@ -265,10 +258,6 @@ class CSScaffold extends Scaffold_Controller
 
 			# Add to output list
 			$files_to_join[] = $cached_file;
-			
-			# Log the time taken
-			Scaffold_Benchmark::stop($file);
-			
 		}		
 
 		if(count($files_to_join) > 1)
@@ -292,16 +281,17 @@ class CSScaffold extends Scaffold_Controller
 				# $cache->write($css);
 				self::cache_write($css,$combined);
 			}
+
+			self::$internal_cache['output'] = $combined;
 		}
 		else
 		{
-			$output = $files_to_join[0];
+			self::$internal_cache['output'] = $files_to_join[0];
 		}
 
-		self::$internal_cache['output'] = $output;
 		self::internal_cache_save('output');
 		
-		return self::output( $output, $return );
+		return self::output( self::$internal_cache['output'], $return );
 	}
 	
 	/**
@@ -326,7 +316,7 @@ class CSScaffold extends Scaffold_Controller
 	 * @param $param
 	 * @return $array The array of flags
 	 */
-	private static function flags()
+	public static function flags()
 	{
 		if(isset(self::$internal_cache['flags']))
 			return self::$internal_cache['flags'];
@@ -345,7 +335,7 @@ class CSScaffold extends Scaffold_Controller
 	 *
 	 * @return Array The names of the loaded addons
 	 */
-	private static function modules()
+	public static function modules()
 	{
 		# If the modules have already been loaded
 		if(isset(self::$internal_cache['modules']))
