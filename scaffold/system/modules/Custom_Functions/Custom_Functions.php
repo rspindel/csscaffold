@@ -28,7 +28,7 @@ class Custom_Functions extends Scaffold_Module
 		FB::group('Invalid');
 		foreach(self::$invalid as $name => $value)
 		{
-			Scaffold_Logger::log($name, $value, 1);
+			CSScaffold::log("Custom Functions: $value failed", 1);
 		}
 		FB::groupEnd();
 	}

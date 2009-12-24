@@ -83,7 +83,7 @@ class Layout extends Scaffold_Module
 			{
 				if(!isset($settings[$option]))
 				{
-					Scaffold_Logger::log('Layout module requires the column-count and column-width properties');
+					CSScaffold::log('Layout module requires the column-count and column-width properties',2);
 					return $css;
 				}
 			}

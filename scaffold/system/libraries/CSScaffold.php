@@ -19,7 +19,7 @@
  * @link https://github.com/anthonyshort/csscaffold/master
  */
 
-class CSScaffold extends Scaffold_Controller
+class CSScaffold extends Scaffold_Core
 {
 	/**
 	 * CSScaffold Version. Two point oh!
@@ -57,6 +57,12 @@ class CSScaffold extends Scaffold_Controller
 	{
 		# Set the debugging
 		self::debug( $config['in_production'] );
+		
+		$system = str_replace('\\', '/', realpath($config['system'])).'/';
+		
+		# Prepare the logger
+		self::log_threshold( $config['log_threshold'] );
+		self::log_directory( $system . 'logs/' );
 
 		# Set the current cache path
 		self::cache_set( $config['cache'] );
@@ -76,8 +82,8 @@ class CSScaffold extends Scaffold_Controller
 		{
 			# Add include paths
 			self::add_include_path(
-				$config['system'], 
-				$config['system'].'/modules', 
+				$system, 
+				$system.'modules/', 
 				$config['document_root'] 
 			);
 		}
@@ -117,16 +123,13 @@ class CSScaffold extends Scaffold_Controller
 	 */
 	public static function debug($debug)
 	{
-		# If we want to debug (turn on errors and FirePHP)
 		if($debug === false)
 		{	
-			# Set the error reporting level.
 			ini_set('display_errors', TRUE);
 			error_reporting(E_ALL & ~E_STRICT);
 		}
 		else
 		{
-			# Turn off errors
 			error_reporting(0);
 		}	
 	}
@@ -151,10 +154,7 @@ class CSScaffold extends Scaffold_Controller
 		# Options set via the URL... usually
 		self::$options = array_flip($options);
 		
-		# Get the cache id
 		$cache_id = self::cache_id($files);
-
-		# Create the cache folder
 		$cache_folder = Scaffold_Utils::join_path(self::config('core.cache'),$cache_id);
 		
 		if(!is_dir($cache_folder))
@@ -162,10 +162,7 @@ class CSScaffold extends Scaffold_Controller
 			self::cache_create($cache_id);
 		}
 
-		# Set the current cache path
 		self::cache_set( $cache_folder );
-		
-		#$cache = new Scaffold_Cache($cache_folder);
 
 		# Get the cached files
 		if ( self::$cache_lifetime )
@@ -178,7 +175,6 @@ class CSScaffold extends Scaffold_Controller
 			return self::output( self::$internal_cache['output'], $return );
 		}
 		
-		# Get the flags if we haven't already
 		$flags = self::flags();
 	
 		# Go through each of the files, test them individually for changes, and 
@@ -187,25 +183,20 @@ class CSScaffold extends Scaffold_Controller
 		{
 			# Find the CSS file
 			$request = self::find_file($file, false, true);	
-	
-			# Consistent naming			
 			$file = Scaffold_Utils::urlpath( $request );
 
 			# Find the name of the we need to create in the cache directory.
 			$cached_file = self::$cache_path . self::cache_id(array($request,$flags)) . '.css';
 	
-			# or if it's not a css file
 			if (!Scaffold_Utils::is_css($file))
 				self::error("Requested file isn't a css file: $file" );
 				
 			if(file_exists($cached_file))
 			{
-				# When was the cache last modified
 				$cached_mod_time = (int) filemtime($cached_file);
 			}
 			else
 			{
-				# Default cache mod time
 				$cached_mod_time = 0;
 			}
 
@@ -236,33 +227,25 @@ class CSScaffold extends Scaffold_Controller
 
 			)
 			{
-				# Turn off error reporting for a mo.
 				$ER = error_reporting(0);
-
-				# Remove the cached file 
 				if(file_exists($cached_file)) unlink($cached_file);
-				
-				# Turn it back on
 				error_reporting($ER);
 				
 				# Parse the CSS string
 				$css = self::parse_file( $request );
 
 				# Write the css file to the cache
-				# $cache->write($css);
 				self::cache_write( $css, $cached_file );
 				
 				# We'll need to recache the combined css too
 				$recache = true;
 			}
 
-			# Add to output list
 			$files_to_join[] = $cached_file;
 		}		
 
 		if(count($files_to_join) > 1)
 		{
-			# The cache name of the combined files
 			$combined = self::$cache_path . self::cache_id( array($files_to_join,self::$flags) ) . '.css';
 			
 			# If any of the files has changed, we need to recache the group	
@@ -271,14 +254,11 @@ class CSScaffold extends Scaffold_Controller
 			{
 				$css = '';
 				
-				# Now we'll combine all of the files together
 				foreach($files_to_join as $file)
 				{
 					$css .= file_get_contents( $file );
 				}
 	
-				# Write it sucker!
-				# $cache->write($css);
 				self::cache_write($css,$combined);
 			}
 
@@ -398,29 +378,21 @@ class CSScaffold extends Scaffold_Controller
 	 * Parses the single CSS file
 	 *
 	 * @author Anthony Short
-	 * @param $file The file to the parsed
-	 * @param $output The output type. Used in the output functions in the modules to display custom views.
-	 * @return void
+	 * @param $file 	The file to the parsed
+	 * @return $css 	string
 	 */
 	public static function parse_file($file)
 	{
-		# Add the include path for locating files
 		self::add_include_path(dirname($file));
-		
-		# The current working paths for this file
+
+		# Handy info for some modules
 		$dir = Scaffold_Utils::fix_path(dirname($file));
-		
 		self::config_set('current.file', $file);
 		self::config_set('current.path', $dir);
 		self::config_set('current.url', Scaffold_Utils::urlpath($dir) );
 		
-		# Load it into the CSS object
-		if(file_exists($file))
-		{	
-			$css = file_get_contents($file);
-		}
+		$css = file_get_contents($file);
 
-		# Import CSS files
 		if(class_exists('Import'))
 			$css = Import::parse($css);
 		
@@ -430,13 +402,11 @@ class CSScaffold extends Scaffold_Controller
 		
 		---------------------------------------------------------- */
 													
-		# Parse our css through the plugins
 		foreach(self::modules() as $module)
 		{
 			$css = call_user_func( array($module,'import_process'), $css);
 		}
 
-		# Parse the constants
 		if(class_exists('Constants'))
 			$css = Constants::parse($css);
 
@@ -451,15 +421,12 @@ class CSScaffold extends Scaffold_Controller
 			$css = call_user_func( array($module,'pre_process'), $css);
 		}
 		
-		# Parse the @grid
 		if(class_exists('Layout'))
 			$css = Layout::parse($css);
 		
-		# Parse @for loops
 		if(class_exists('Iteration'))
 			$css = Iteration::parse($css);	
 		
-		# Replace the constants
 		if(class_exists('Constants'))
 			$css = Constants::replace($css);
 			
@@ -474,19 +441,15 @@ class CSScaffold extends Scaffold_Controller
 			$css = call_user_func( array($module,'process'), $css);
 		}
 		
-		# Parse the mixins
 		if(class_exists('Mixins'))
 			$css = Mixins::parse($css);
 
-		# Find missing constants
 		if(class_exists('Constants'))
 			$css = Constants::replace($css);
 		
-		# Parse the expressions
 		if(class_exists('Expression'))
 			$css = Expression::parse($css);
 		
-		# Parse the nested selectors
 		if(class_exists('NestedSelectors'))
 			$css = NestedSelectors::parse($css);
 			
@@ -500,13 +463,10 @@ class CSScaffold extends Scaffold_Controller
 		{
 			$css = call_user_func( array($module,'post_process'), $css);
 		}
-		
-		# Rewrite all URL's to be absolute paths. This means no matter
-		# where they call Scaffold from, the images will work.
+
 		if(class_exists('Absolute_Urls'))
 			$css = Absolute_Urls::rewrite($css);
 
-		# If they want to minify it
 		if(class_exists('Minify'))
 			$css = Minify::compress($css);
 		
@@ -516,7 +476,6 @@ class CSScaffold extends Scaffold_Controller
 		
 		---------------------------------------------------------- */
 		
-		# Formatting hook
 		foreach(self::modules() as $module)
 		{
 			$css = call_user_func(array($module,'formatting_process'), $css);
@@ -573,6 +532,8 @@ class CSScaffold extends Scaffold_Controller
 			echo self::$output;
 			return;
 		}
+		
+		self::log_save();
 		
 		# Hooray!
 		if($return)
