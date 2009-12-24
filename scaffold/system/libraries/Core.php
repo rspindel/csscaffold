@@ -3,11 +3,12 @@
 /**
  * Controller
  *
- * Base controller
+ * This file handles the caching, logging, config, flags, options
+ * and everything else that is the foundation of Scaffold's functionality.
  * 
  * @author Anthony Short
  */
-class Scaffold_Controller
+class Scaffold_Core
 {
 	/**
 	 * The config settings
@@ -58,6 +59,162 @@ class Scaffold_Controller
 	 * @var array
 	 */
 	public static $options = array();
+
+	/**
+	 * Logs
+	 *
+	 * @var array
+	 */
+	public static $log = array();
+		
+	/**
+	 * Log Levels
+	 *
+	 * @var array
+	 */
+	private static $log_levels = array
+	(
+		'error',
+		'warn',
+		'info',
+		'debug',
+	);
+	
+	/**
+	 * The log directory
+	 *
+	 * @var string
+	 */
+	public static $log_directory;
+	
+	/**
+	 * The log threshold
+	 *
+	 * @var int
+	 */
+	private static $threshold = 2;
+	
+	/**
+	 * The level of logged message to display as errors.
+	 * 0 will only display error logs, 1 will display
+	 * error logs and warning logs etc.
+	 *
+	 * @var int
+	 */
+	private static $error_level = 0;
+	
+	/**
+	 * Displays an error and halts the parsing.
+	 *	
+	 * @param $message
+	 * @return void
+	 */
+	public static function error($message)
+	{
+		self::log($message,0);
+		self::log_save();
+
+		if (!headers_sent())
+		{
+			header('HTTP/1.1 500 Internal Server Error');
+		}
+
+		include self::find_file('scaffold_error.php', 'views', true);
+		exit;
+	}
+
+	/**
+	 * Logs a message
+	 *
+	 * @param $message
+	 * @return void
+	 */
+	public static function log($message,$level = 4)
+	{
+		if ($level <= self::$threshold)
+		{
+			self::$log[] = array(date('Y-m-d H:i:s P'), $level, $message);
+		}	
+	}
+
+	/**
+	 * Sets the logging threshold
+	 *
+	 * @param $level
+	 * @return void
+	 */
+	public static function log_threshold($level)
+	{
+		self::$threshold = $level;
+	}
+
+	/**
+	 * Save all currently logged messages.
+	 *
+	 * @return  void
+	 */
+	public static function log_save()
+	{
+		if (empty(self::$log) OR self::$threshold < 1)
+			return;
+
+		$filename = self::log_directory().date('Y-m-d').'.log.php';
+
+		if (!is_file($filename))
+		{
+			touch($filename);
+			chmod($filename, 0644);
+		}
+
+		// Messages to write
+		$messages = array();
+		$log = self::$log;
+
+		do
+		{
+			list ($date, $type, $text) = array_shift($log);
+			$messages[] = $date.' --- '.self::$log_levels[$type].': '.$text;
+		}
+		while (!empty($log));
+
+		file_put_contents($filename, implode(PHP_EOL, $messages).PHP_EOL.PHP_EOL, FILE_APPEND);
+	}
+
+	/**
+	 * Get or set the logging directory.
+	 *
+	 * @param   string  new log directory
+	 * @return  string
+	 */
+	public static function log_directory($dir = NULL)
+	{
+		if (!empty($dir))
+		{
+			// Get the directory path
+			$dir = realpath($dir);
+
+			if (is_dir($dir) AND is_writable($dir))
+			{
+				// Change the log directory
+				self::$log_directory = str_replace('\\', '/', $dir).'/';
+			}
+			else
+			{
+				echo "Can't write to log directory - {$dir}";
+				exit;
+			}
+		}
+		
+		if(isset(self::$log_directory))
+		{
+			return self::$log_directory;
+		}
+		else
+		{
+			echo "No log directory set";
+			exit;
+		}
+	}
 
 	/**
 	 * Find a resource file in a given directory. Files will be located according
@@ -407,9 +564,6 @@ class Scaffold_Controller
 	 */
 	public static function load_view( $view, $render = false, $return = false )
 	{
-		if ($view == '')
-				return;
-
 		# Find the view file
 		$view = self::find_file($view, 'views', true);
 		
@@ -417,7 +571,7 @@ class Scaffold_Controller
 		if ($render === true)
 		{
 			include $view;
-			exit;
+			return;
 		}
 
 		# Buffering on
@@ -430,7 +584,7 @@ class Scaffold_Controller
 		
 		if($return)
 		{
-			return $view;
+			return self::$internal_cache['output'];
 		}
 	}
 	
@@ -725,7 +879,7 @@ class Scaffold_Controller
 	public static function cache_create($path)
 	{	
 		# If the cache path is included, get rid of it.
-		$path = preg_replace('#^'.self::config('core.path.cache').'#', '', $path);
+		$path = preg_replace('#'.self::$cache_path.'#', '', $path);
 
 		# If it already exists
 		if(is_dir(self::$cache_path.$path))
@@ -748,179 +902,5 @@ class Scaffold_Controller
 		}
 		
 		return true;
-	}
-
-	/**
-	 * Handles Exceptions
-	 *
-	 * @param   integer|object  exception object or error code
-	 * @param   string          error message
-	 * @param   string          filename
-	 * @param   integer         line number
-	 * @return  void
-	 */
-	public static function exception_handler($exception, $message = NULL, $file = NULL, $line = NULL)
-	{
-		try
-		{
-			# PHP errors have 5 args, always
-			$PHP_ERROR = (func_num_args() === 5);
-	
-			# Test to see if errors should be displayed
-			if ($PHP_ERROR AND error_reporting() === 0)
-				die;
-				
-			# Error handling will use exactly 5 args, every time
-			if ($PHP_ERROR)
-			{
-				$code     = $exception;
-				$type     = 'PHP Error';
-			}
-			else
-			{
-				$code     = $exception->getCode();
-				$type     = get_class($exception);
-				$message  = $exception->getMessage();
-				$file     = $exception->getFile();
-				$line     = $exception->getLine();
-			}
-
-			if(is_numeric($code))
-			{
-				//$codes = self::lang('errors');
-	
-				if (!empty($codes[$code]))
-				{
-					list($level, $error, $description) = $codes[$code];
-				}
-				else
-				{
-					$level = 1;
-					$error = $PHP_ERROR ? 'Unknown Error' : get_class($exception);
-					$description = '';
-				}
-			}
-			else
-			{
-				// Custom error message, this will never be logged
-				$level = 5;
-				$error = $code;
-				$description = '';
-			}
-			
-			// Remove the self::config('core.path.docroot') from the path, as a security precaution
-			$file = str_replace('\\', '/', realpath($file));
-			$file = preg_replace('|^'.preg_quote($_SERVER['DOCUMENT_ROOT']).'|', '', $file);
-
-			if($PHP_ERROR)
-			{
-				$description = 'An error has occurred which has stopped Scaffold';
-	
-				if (!headers_sent())
-				{
-					# Send the 500 header
-					header('HTTP/1.1 500 Internal Server Error');
-				}
-			}
-			else
-			{
-				if (method_exists($exception, 'sendHeaders') AND !headers_sent())
-				{
-					# Send the headers if they have not already been sent
-					$exception->sendHeaders();
-				}
-			}
-			
-			if ($line != FALSE)
-			{
-				// Remove the first entry of debug_backtrace(), it is the exception_handler call
-				$trace = $PHP_ERROR ? array_slice(debug_backtrace(), 1) : $exception->getTrace();
-
-				// Beautify backtrace
-				$trace = self::backtrace($trace);
-				
-			}
-			
-			require self::find_file('Exception.php','views',true);
-			
-			
-			
-			# Turn off error reporting
-			error_reporting(0);
-			exit;
-		}
-		catch(Exception $e)
-		{
-			die('Fatal Error: '.$e->getMessage().' File: '.$e->getFile().' Line: '.$e->getLine());
-		}
-	}
-
-	/**
-	 * Displays nice backtrace information.
-	 * @see http://php.net/debug_backtrace
-	 *
-	 * @param   array   backtrace generated by an exception or debug_backtrace
-	 * @return  string
-	 */
-	public static function backtrace($trace)
-	{
-		if ( ! is_array($trace))
-			return;
-
-		// Final output
-		$output = array();
-
-		foreach ($trace as $entry)
-		{
-			$temp = '<li>';
-			$temp .= '<pre>';
-			
-			if (isset($entry['file']))
-			{
-				$file = preg_replace('!^'.preg_quote( $_SERVER['DOCUMENT_ROOT'] ).'!', '', $entry['file']);
-				$line = (string)$entry['line'];
-
-				$temp .= "<tt>{$file}<strong>[{$line}]:</strong></tt>";
-			}
-
-			if (isset($entry['class']))
-			{
-				// Add class and call type
-				$temp .= $entry['class'].$entry['type'];
-			}
-
-			// Add function
-			$temp .= $entry['function'].'( ';
-
-			// Add function args
-			if (isset($entry['args']) AND is_array($entry['args']))
-			{
-				// Separator starts as nothing
-				$sep = '';
-
-				while ($arg = array_shift($entry['args']))
-				{
-					if(is_object($arg))
-						$arg = $trace;
-					
-					if (is_string($arg) AND is_file($arg))
-					{
-						// Remove docroot from filename
-						$arg = preg_replace('!^'.preg_quote($_SERVER['DOCUMENT_ROOT']).'!', '', $arg);
-					}
-
-					$temp .= $sep.htmlspecialchars((string)$arg, ENT_QUOTES, 'UTF-8');
-
-					// Change separator to a comma
-					$sep = ', ';
-				}
-			}
-
-			$temp .= ' )</pre></li>';
-
-			$output[] = $temp;
-		}
-
-		return '<ul class="backtrace">'.implode("\n", $output).'</ul>';
 	}
 }
