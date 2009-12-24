@@ -7,7 +7,7 @@
 	
 	<style>
 		html { background:#e7e7e7; }
-		.content { width:70%; margin:30px auto; font:15px/18px Arial; padding:20px; background:#fff; color:#595959; border:1px solid #aaa; margin-bottom: 20px; }
+		.content { width:40%; margin:30px auto; font:15px/18px Arial; padding:20px; background:#fff; color:#595959; border:1px solid #aaa; margin-bottom: 20px; }
 		h1 { color:#000;}
 		pre { background:#eee; padding:10px; font-size:11px; overflow:auto; }
 		.backtrace { list-style:none; padding:0; margin:0; }
@@ -19,22 +19,7 @@
 <body>
 	
 	<div class="content">
-		<h1><?php echo $error ?></h1>
 		<p id="message"><?php echo $message; ?></p>
-		
-		<?php if($PHP_ERROR): ?>
-		<pre><code>line <?php echo $line; ?><br/><?php echo $file ?></code></pre>
-		<?php endif; ?>
-	</div>
-	
-	<div class="content">
-		<?php 
-			if(isset($trace))
-			{
-				echo "<h2>Back Trace</h2>";
-				echo $trace;
-			}
-		?>
 	</div>
 
 </body>
