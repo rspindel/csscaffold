@@ -14,7 +14,13 @@ class Firelog extends Scaffold_Module
 	 *
 	 * @var array
 	 */
-	private static $log_levels;
+	private static $log_levels = array
+	(
+		'error',
+		'warn',
+		'info',
+		'log',
+	);
 
 	/**
 	 * During the output phase, gather all the logs and send them to FireBug
@@ -37,22 +43,25 @@ class Firelog extends Scaffold_Module
 			
 			# Log about the completed file
 			self::_file(CSScaffold::$internal_cache['output'],'File');
-			
+
 			/* --------------------------------------------------------
 			
 			Constants
 			
 			---------------------------------------------------------- */
 			
-			$table = array();
-			$table[] = array('Constants Name', 'Value');
-	
-			foreach(Constants::$constants as $key => $value)
+			if(Constants::$constants)
 			{
-				$table[] = array($key,$value);
+				$table = array();
+				$table[] = array('Constants Name', 'Value');
+		
+				foreach(Constants::$constants as $key => $value)
+				{
+					$table[] = array($key,$value);
+				}
+	
+				FB::table('Constants', $table);
 			}
-
-			FB::table('Constants', $table);
 			
 			/* --------------------------------------------------------
 			
@@ -60,41 +69,18 @@ class Firelog extends Scaffold_Module
 			
 			---------------------------------------------------------- */
 			
-			$table = array();
-			$table[] = array('Mixin Name', 'Parameters', 'Properties');
-			
-			foreach(Mixins::$mixins as $key => $value)
+			if(Mixins::$mixins)
 			{
-				$table[] = array($key,implode(',',$value['params']),$value['properties']);
+				$table = array();
+				$table[] = array('Mixin Name', 'Parameters', 'Properties');
+				
+				foreach(Mixins::$mixins as $key => $value)
+				{
+					$table[] = array($key,implode(',',$value['params']),$value['properties']);
+				}
+		
+				FB::table('Mixins', $table);
 			}
-	
-			FB::table('Mixins', $table);
-			
-			/* --------------------------------------------------------
-			
-			Custom functions and properties
-			
-			---------------------------------------------------------- */
-			
-			$table = array();
-			$table[] = array('Name');
-			
-			foreach(Custom_Functions::$functions as $key => $value)
-			{
-				$table[] = array($value);
-			}
-	
-			FB::table('Custom Functions', $table);
-					
-			$table = array();
-			$table[] = array('Name');
-			
-			foreach(Custom_Properties::$properties as $key => $value)
-			{
-				$table[] = array($value);
-			}
-	
-			FB::table('Custom Properties', $table);
 			
 			/* --------------------------------------------------------
 			
@@ -110,6 +96,7 @@ class Firelog extends Scaffold_Module
 			
 			---------------------------------------------------------- */	
 			
+			/*
 			foreach(Scaffold_Logger::$log as $group => $value)
 			{
 				FB::group($group);
@@ -119,11 +106,12 @@ class Firelog extends Scaffold_Module
 				}
 				FB::groupEnd();
 			}
+			*/
 			
 			# Log the basics
 			self::_group('Flags',CSScaffold::flags());
-			self::_group('Include Paths', CSScaffold::include_paths());
-			self::_group('Modules', CSScaffold::modules());
+			#self::_group('Include Paths', CSScaffold::include_paths());
+			#self::_group('Modules', CSScaffold::modules());
 		}	
 	}
 
@@ -136,7 +124,6 @@ class Firelog extends Scaffold_Module
 	 */
 	private static function _enable()
 	{
-		# Extra Classes
 		if(!class_exists('FB'))
 			require dirname(__FILE__) . '/libraries/FirePHPCore/fb.php';
 		
@@ -180,7 +167,7 @@ class Firelog extends Scaffold_Module
 	 * @param $group
 	 * @return void
 	 */
-	private static function _group($group,$message,$level)
+	private static function _group($group,$message,$level=4)
 	{
 		FB::group($group);
 		self::_log($message,$level);
