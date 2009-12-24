@@ -342,7 +342,6 @@ abstract class Scaffold_CSS
 	 */
 	public static function remove_properties($property, $value, $css = "")
 	{
-		if($css == "") $css =& self::$css;
 		return preg_replace('/'.$property.'\s*\:\s*'.$value.'\s*\;/', '', $css);
 	}
 	
