@@ -3,3 +3,4 @@ scaffold/system/cache/*
 index.html
 CSScaffold.esproj/
 stylesheets
+*/logs/*.php
