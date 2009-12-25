@@ -41,7 +41,10 @@ class Import extends Scaffold_Module
 	 * @param $css
 	 */
 	public static function server_import($css,$base)
-	{					
+	{
+		# Removes any commented out @imports
+		$css = Scaffold_CSS::remove_comments($css);
+				
 		if(preg_match_all('/\@include\s+(?:\'|\")([^\'\"]+)(?:\'|\")\;/', $css, $matches))
 		{
 			$unique = array_unique($matches[1]);
@@ -55,18 +58,24 @@ class Import extends Scaffold_Module
 			if(pathinfo($include, PATHINFO_EXTENSION) != 'css')
 			{
 				$css = str_replace($matches[0][0], '', $css);
-				self::$errors['Invalid'][] = $include;
+				CSScaffold::log('Invalid @include file - ' . $include);
 				self::server_import($css,$base);
 			}
 
 			# Find the file
-			if($include = CSScaffold::find_file($include,$base))
+			if($path = CSScaffold::find_file($include,$base))
 			{		
 				# Make sure it hasn't already been included	
-				if(!in_array($include, self::$loaded))
+				if(!in_array($path, self::$loaded))
 				{
-					self::$loaded[] = $include;
-					$css = str_replace($matches[0][0], file_get_contents($include), $css);
+					self::$loaded[] = $path;
+					
+					$contents = file_get_contents($path);
+					
+					# Check the file again for more imports
+					$contents = self::server_import($contents, realpath(dirname($path)) . '/');
+					
+					$css = str_replace($matches[0][0], $contents, $css);
 				}
 	
 				# It's already been included, we don't need to import it again
@@ -74,17 +83,13 @@ class Import extends Scaffold_Module
 				{
 					$css = str_replace($matches[0][0], '', $css);
 				}
-				
-				# Removes any commented out @imports
-				$css = Scaffold_CSS::remove_comments($css);
-	
-				# Check the file again for more imports
-				$css = self::server_import($css, realpath(dirname($include)) . '/');		
 			}
 			else
 			{
-				self::$errors['Missing'][] = $include;
+				CSScaffold::error('Can\'t find the @include file - <strong>' . $unique[0] . '</strong>');
 			}
+			
+			$css = self::server_import($css,$base);
 		}
 
 		return $css;
