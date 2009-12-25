@@ -16,22 +16,6 @@ class Custom_Functions extends Scaffold_Module
 	 * @var array
 	 */
 	public static $functions = array();
-	
-	/**
-	 * Outputs some logging information
-	 *
-	 * @author Anthony Short
-	 * @return void
-	 */
-	public static function log()
-	{
-		FB::group('Invalid');
-		foreach(self::$invalid as $name => $value)
-		{
-			CSScaffold::log("Custom Functions: $value failed", 1);
-		}
-		FB::groupEnd();
-	}
 
 	/**
 	 * Find and load all of the functions
@@ -39,7 +23,7 @@ class Custom_Functions extends Scaffold_Module
 	 * @author Anthony Short
 	 * @param $css
 	*/
-	public static function process($css)
+	public static function post_process($css)
 	{
 		$functions = CSScaffold::list_files('extensions/functions');
 		
@@ -65,7 +49,7 @@ class Custom_Functions extends Scaffold_Module
 					}
 					else
 					{
-						self::$errors['Invalid'][$function_name][] = $originals[$key]; 
+						CSScaffold::error('Invalid function - <strong>' . $originals[$key] . '</strong>');
 					}
 				}
 			}

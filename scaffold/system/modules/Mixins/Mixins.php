@@ -146,12 +146,12 @@ class Mixins extends Scaffold_Module
 			}
 			elseif(in_array($mixin_name, $already_mixed))
 			{
-				self::$errors['Recursion'][] = $mixin_name;
+				CSScaffold::log('Recursion in mixin - ' . $mixin_name,1);
 			}
 		}
 		else
 		{
-			self::$errors['Missing'][] = $mixin_name;
+			CSScaffold::log('Missing mixin - ' . $mixin_name,2);
 		}
 		
 	}
@@ -223,30 +223,6 @@ class Mixins extends Scaffold_Module
 		}
 
 		return $parsed;
-	}		
-
-	/**
-	 * Import mixins
-	 *
-	 * @author Anthony Short
-	 * @return string
-	 */
-	public static function import_mixins($dir)
-	{		
-		if($mixin_files = CSScaffold::list_files($dir, true))
-		{
-			foreach($mixin_files as $item)
-			{
-				if (!Utils::is_css($item)) { continue; }
-				
-				# Add it to our css
-				CSS::append(file_get_contents($item));
-			}
-		}
-		else
-		{
-			throw new Scaffold_Exception('Cannot find the mixin directory - ' . $dir);
-		}
 	}
 	
 	/**

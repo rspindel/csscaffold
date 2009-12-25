@@ -158,7 +158,7 @@ class Layout extends Scaffold_Module
 			header('Content-Type: text/html');
 			
 			# Load the test suite markup
-			$page = CSScaffold::load_view('Layout_grid.php', 'Layout/views/');
+			$page = CSScaffold::load_view('scaffold_grid.php');
 
 			# Echo and out!
 			echo($page); 

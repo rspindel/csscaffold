@@ -762,49 +762,6 @@ class Scaffold_Core
 		# No cache found
 		return NULL;
 	}
-	
-	/**
-	 * Empty the entire cache, removing every cached css file.
-	 *
-	 * @return void
-	 * @author Anthony Short
-	 */
-	public static function cache_clear($path = "")
-	{
-		$cache = self::config('core.path.cache');
-		
-		if($path == "")
-		{
-			$path = $cache;
-		}
-
-		if( is_file( $path ) && file_exists($path) )
-		{
-			unlink($path);
-			return true;
-		}
-		elseif(is_dir($path))
-		{
-			$path .= "/";
-			
-			foreach(scandir($path) as $file)
-			{
-				if($file[0] == ".")
-				{
-					continue;
-				}
-				elseif(is_dir($path.$file))
-				{
-					self::cache_clear($path.$file);
-					rmdir($path.$file);
-				}
-				elseif(file_exists($path.$file))
-				{
-					unlink($path.$file);
-				}
-			}
-		}
-	}
 		
 	/**
 	 * Sets the cache path
@@ -819,10 +776,10 @@ class Scaffold_Core
 
 		# Make sure the files/folders are writeable
 		if (!is_dir($path))
-			throw new Exception("Cache path does not exist. $path");
+			self::error("Cache path does not exist. $path");
 			
 		if (!is_writable($path))
-			throw new Exception("Cache path is not writable. $path");
+			self::error("Cache path is not writable. $path");
 
 		self::$cache_path = $path;
 	}

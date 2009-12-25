@@ -7,6 +7,13 @@ class Validate extends Scaffold_Module
 {
 
 	/**
+	 * Validation Errors
+	 *
+	 * @var array
+	 */
+	public static $errors;
+
+	/**
 	 * Outputs some logging information
 	 *
 	 * @author Anthony Short
@@ -50,14 +57,8 @@ class Validate extends Scaffold_Module
 			
 			# Start CURL
 			$handle = curl_init();
-			
-			# Set the CURL options
 			curl_setopt_array($handle, $options);
-			
-			# Store the response in a buffer
 			$buffer = curl_exec($handle);
-			
-			# Close it
 			curl_close($handle);
 			
 			# If something was returned
@@ -68,14 +69,11 @@ class Validate extends Scaffold_Module
 				
 				# Let it be xml!
 			    $results = simplexml_load_string($buffer);
-			    
-			    # Is it valid?
 			    $is_valid = (string)$results->envBody->mcssvalidationresponse->mvalidity;
 				
 				# Oh noes! Display the errors
 			    if($is_valid == "false")
 			    {
-			    	# Lets get the errors into a nice array
 			    	$errors = $results->envBody->mcssvalidationresponse->mresult->merrors;
 			    	
 			    	foreach($errors->merrorlist->merror as $key => $error)
@@ -84,7 +82,9 @@ class Validate extends Scaffold_Module
 			    		$message = trim((string)$error->mmessage);
 			    		$near = (string)$error->mcontext;
 			    		
-			    		self::$errors[] = array('line' => $line, 'message' => $message, 'near' => $near);
+			    		self::$errors[] = array('line' => $line, 'near' => $near, 'message' => $near);
+			    		
+			    		CSScaffold::log("Validation Error on line {$line} near {$near} => {$message}",2);
 			    	}
 			    }
 			}

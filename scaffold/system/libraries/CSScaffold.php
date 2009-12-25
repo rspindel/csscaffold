@@ -63,6 +63,13 @@ class CSScaffold extends Scaffold_Core
 		# Prepare the logger
 		self::log_threshold( $config['log_threshold'] );
 		self::log_directory( $system . 'logs/' );
+		
+		# Add include paths
+		self::add_include_path(
+			$system, 
+			$system.'modules/', 
+			$config['document_root'] 
+		);
 
 		# Set the current cache path
 		self::cache_set( $config['cache'] );
@@ -76,7 +83,7 @@ class CSScaffold extends Scaffold_Core
 		
 		# Set the options and paths in the config by merging the default
 		# with the options set by the user.
-		self::config_set('core', array_merge(self::$default, $config));
+		self::$config = array_merge(self::$default, $config);
 		
 		if(!isset(self::$internal_cache['include_paths']))
 		{
@@ -155,7 +162,7 @@ class CSScaffold extends Scaffold_Core
 		self::$options = array_flip($options);
 		
 		$cache_id = self::cache_id($files);
-		$cache_folder = Scaffold_Utils::join_path(self::config('core.cache'),$cache_id);
+		$cache_folder = Scaffold_Utils::join_path(self::config('cache'),$cache_id);
 		
 		if(!is_dir($cache_folder))
 		{
@@ -170,7 +177,7 @@ class CSScaffold extends Scaffold_Core
 			self::$internal_cache['output']	= self::cache('output', self::$cache_lifetime);
 		}
 		
-		if(isset(self::$internal_cache['output']) && self::config('core.in_production') === true)
+		if(isset(self::$internal_cache['output']) && self::config('in_production') === true)
 		{
 			return self::output( self::$internal_cache['output'], $return );
 		}
@@ -183,6 +190,10 @@ class CSScaffold extends Scaffold_Core
 		{
 			# Find the CSS file
 			$request = self::find_file($file, false, true);	
+
+			if($request === false)
+				self::error('The file '.$file.' doesn\'t exist');
+			
 			$file = Scaffold_Utils::urlpath( $request );
 
 			# Find the name of the we need to create in the cache directory.
@@ -204,13 +215,13 @@ class CSScaffold extends Scaffold_Core
 			if
 			(
 				# We're not in production
-				self::config('core.in_production') === false
+				self::config('in_production') === false
 				
 				OR
 				
 				(
 					# We are in production
-					self::config('core.in_production') === true
+					self::config('in_production') === true
 					
 					AND 
 					
@@ -307,7 +318,14 @@ class CSScaffold extends Scaffold_Core
 			call_user_func(array($module,'flag'));
 		}
 		
-		return self::$internal_cache['flags'];
+		if(isset(self::$internal_cache['flags']))
+		{
+			return self::$internal_cache['flags'];
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	/**
@@ -325,7 +343,7 @@ class CSScaffold extends Scaffold_Core
 		$modules = self::list_files('modules');
 		
 		# The list of disabled modules
-		$disabled = self::config('core.disable');
+		$disabled = self::config('disable');
 
 		foreach($modules as $module)
 		{			
@@ -426,9 +444,6 @@ class CSScaffold extends Scaffold_Core
 		
 		if(class_exists('Iteration'))
 			$css = Iteration::parse($css);	
-		
-		if(class_exists('Constants'))
-			$css = Constants::replace($css);
 			
 		/* --------------------------------------------------------
 		
@@ -503,7 +518,7 @@ class CSScaffold extends Scaffold_Core
 		
 		---------------------------------------------------------- */
 
-		if( self::config('core.in_production') === false )
+		if( self::config('in_production') === false )
 		{				
 			foreach(self::modules() as $module)
 			{
