@@ -55,6 +55,15 @@ $config['cache_lifetime'] = 3600; // 3600 will check if it needs to recache ever
 $config['log_threshold'] = 2;
 
 /**
+ * Error Level
+ *
+ * Set the minimum log level required to be displayed as an error. 0 will display
+ * only error messages, 1 will display error AND warning messages etc.
+ *
+ */
+$config['error_threshold'] = 1;
+
+/**
  * Document Root
  *
  * The document root for the server. If you're server doesn't set the $_SERVER['DOCUMENT_ROOT']
@@ -95,3 +104,69 @@ $config['cache'] = 'system/cache';
  * you might get some unexpected results. 
  */
 $config['disable'] = array();
+
+/**
+ * Layout Module
+ */
+
+/**
+ * Grid Image
+ *
+ * Automatically generate a grid image based on your @grid settings and append
+ * a .showgrid class to the css. 
+ */
+$config['Layout']['grid_image'] = true;
+
+/**
+ * Grid Classes
+ *
+ * Automatically generate and append layout classes to your CSS. These include
+ * classes for columns, appending columns etc, similar to Blueprint or 960.gs.
+ */
+$config['Layout']['grid_classes'] = true; 
+
+/**
+ * Time Module
+ */
+ 
+/** 
+ * Time offset from GMT
+ *
+ * Adjust the offset from GMT time for the time module so that the flags
+ * accurately trigger according to the timezone of where you live.
+ */
+$config['Time']['offset'] = -13;
+
+/**
+ * Time Flags
+ *
+ * Here you can create special flags for different times of the day, 
+ * week, month or year. 
+ */
+$config['Time']['flags'] = array
+(
+	# Morning is the name of the flag
+	'morning' => array
+	(
+		# Then we can set date, day, hour, month, week or year
+		'hour' => array
+		(
+			'from' => '5',
+			'to'   => '11'
+		)
+	)
+);
+
+/**
+ * Validate Module
+ */
+
+/**
+ * The CSS level to check - css1, css2, css21, css3, svg, svgbasic, svgtiny, mobile, atsc-tv, tv or none
+ */ 
+$config['Validate']['profile'] = 'css3';
+
+/**
+ * # The warning level, no for no warnings, 0 for less warnings, 1 or 2 for more warnings
+ */
+$config['Validate']['warning'] = 1;
