@@ -6,14 +6,15 @@
  *
  * @package CSScaffold
  */
+ 
 ini_set('display_errors', TRUE);
 error_reporting(E_ALL & ~E_STRICT);
 
 # Include the config file
-include 'config.php';
+include 'config/Scaffold.php';
 
 # Load the libraries. Do it manually if you don't like this way.
-include 'system/libraries/Bootstrap.php';
+include 'libraries/Bootstrap.php';
 
 /**
  * Set the server variable for document root. A lot of 
@@ -22,7 +23,7 @@ include 'system/libraries/Bootstrap.php';
  */
 if(!isset($_SERVER['DOCUMENT_ROOT']))
 {
-	$_SERVER['DOCUMENT_ROOT'] = $config['path']['document_root'];
+	$_SERVER['DOCUMENT_ROOT'] = $config['document_root'];
 }
 
 /**
@@ -53,7 +54,7 @@ if(isset($_GET['f']))
 	 * for modules to activate functionality if they are 
 	 * present.
 	 */
-	$options = (isset($_GET['options'])) ? explode(',',$_GET['options']) : array();
+	$options = (isset($_GET['options'])) ? array_flip(explode(',',$_GET['options'])) : array();
 	
 	/**
 	 * Return the CSS rather than displaying it
@@ -70,7 +71,7 @@ if(isset($_GET['f']))
 			$files[$key] = Scaffold_Utils::join_path($_GET['d'],$file);
 		}
 	}
-	
+
 	/**
 	 * Parse and join an array of files
 	 */
