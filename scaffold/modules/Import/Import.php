@@ -58,7 +58,7 @@ class Import extends Scaffold_Module
 			if(pathinfo($include, PATHINFO_EXTENSION) != 'css')
 			{
 				$css = str_replace($matches[0][0], '', $css);
-				CSScaffold::log('Invalid @include file - ' . $include);
+				Scaffold_Log::log('Invalid @include file - ' . $include);
 				self::server_import($css,$base);
 			}
 

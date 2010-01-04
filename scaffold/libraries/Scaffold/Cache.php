@@ -159,7 +159,7 @@ class Scaffold_Cache
 	 * @param   integer  expiration in seconds
 	 * @return  mixed
 	 */
-	public function temp($name)
+	public function temp($name,$unserialize = true)
 	{
 		if ($this->lifetime > 0)
 		{
@@ -168,7 +168,14 @@ class Scaffold_Cache
 				# If the file is older than the cache lifetime (eg an hour)
 				if ( (time() - filemtime($this->find($name))) < $this->lifetime )
 				{
-					return unserialize($this->open($name));
+					if($unserialize === true)
+					{
+						return unserialize($this->open($name));
+					}
+					else
+					{
+						return $this->open($name);
+					}
 				}
 				else
 				{
@@ -177,7 +184,7 @@ class Scaffold_Cache
 			}
 		}
 
-		return NULL;
+		return null;
 	}
 	
 	/**

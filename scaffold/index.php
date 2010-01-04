@@ -11,7 +11,7 @@ ini_set('display_errors', TRUE);
 error_reporting(E_ALL & ~E_STRICT);
 
 # Include the config file
-include 'config/Scaffold.php';
+include 'config.php';
 
 # Load the libraries. Do it manually if you don't like this way.
 include 'libraries/Bootstrap.php';
@@ -23,7 +23,17 @@ include 'libraries/Bootstrap.php';
  */
 if(!isset($_SERVER['DOCUMENT_ROOT']))
 {
-	$_SERVER['DOCUMENT_ROOT'] = $config['document_root'];
+	if (isset($_SERVER['SERVER_SOFTWARE']) && 0 === strpos($_SERVER['SERVER_SOFTWARE'], 'Microsoft-IIS/'))
+	{
+	    $_SERVER['DOCUMENT_ROOT'] = rtrim(substr(
+	        $_SERVER['PATH_TRANSLATED']
+	        ,0
+	        ,strlen($_SERVER['PATH_TRANSLATED']) - strlen($_SERVER['SCRIPT_NAME'])
+	    ), '\\');
+	    if ($unsetPathInfo) {
+	        unset($_SERVER['PATH_INFO']);
+	    }
+	}
 }
 
 /**
@@ -39,9 +49,6 @@ if (function_exists('date_default_timezone_set'))
 # And we're off!
 if(isset($_GET['f']))
 {
-	# Set up the global config options
-	CSScaffold::setup($config);
-
 	/**
 	 * The files we want to parse. Full absolute URL file paths work best.
 	 * eg. request=/themes/stylesheets/master.css,/themes/stylesheets/screen.css
@@ -75,7 +82,7 @@ if(isset($_GET['f']))
 	/**
 	 * Parse and join an array of files
 	 */
-	CSScaffold::parse($files,$options,$return);
+	CSScaffold::parse($files,$config,$options,$return);
 }
 
 /**

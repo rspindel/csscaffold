@@ -31,7 +31,7 @@ class Firelog extends Scaffold_Module
 	 */
 	public static function output($css)
 	{
-		if( CSScaffold::config('in_production') === false)
+		if( CSScaffold::$config['in_production'] === false)
 		{
 			self::_enable();
 			

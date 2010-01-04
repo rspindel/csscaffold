@@ -146,12 +146,12 @@ class Mixins extends Scaffold_Module
 			}
 			elseif(in_array($mixin_name, $already_mixed))
 			{
-				CSScaffold::log('Recursion in mixin - ' . $mixin_name,1);
+				Scaffold_Log::log('Recursion in mixin - ' . $mixin_name,1);
 			}
 		}
 		else
 		{
-			CSScaffold::log('Missing mixin - ' . $mixin_name,2);
+			Scaffold_Log::log('Missing mixin - ' . $mixin_name,2);
 		}
 		
 	}

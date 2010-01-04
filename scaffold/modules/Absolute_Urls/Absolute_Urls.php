@@ -72,7 +72,7 @@ class Absolute_Urls extends Scaffold_Module
 				
 				# If the file doesn't exist
 				if(!CSScaffold::find_file($absolute))
-					CSScaffold::log("Missing image - {$absolute}", 1);
+					Scaffold_Log::log("Missing image - {$absolute}", 1);
 					
 				# Rewrite it
 				$css = str_replace($found[0][$key], 'url('.$absolute.')', $css);

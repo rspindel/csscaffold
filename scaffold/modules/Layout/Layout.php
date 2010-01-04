@@ -78,7 +78,7 @@ class Layout extends Scaffold_Module
 			
 			if(count($groups) > 1)
 			{
-				CSScaffold::log('Layout module can only use one @grid rule',1);
+				Scaffold_Log::log('Layout module can only use one @grid rule',1);
 			}
 
 			$code = '<pre><code>' . $groups[0] . '<pre></code>';
@@ -141,7 +141,7 @@ class Layout extends Scaffold_Module
 				Constants::set($key,$value);
 			}
 			
-			if( CSScaffold::config('Layout.grid_image') )
+			if( CSScaffold::$config['Layout']['grid_image'] )
 			{
 				# Path to the image
 				$img = CSScaffold::$cache_path . "Layout/{$lgw}_{$cw}_{$rgw}_{$bl}_grid.png";
@@ -154,7 +154,7 @@ class Layout extends Scaffold_Module
 				$css .= "=show-grid{background:url('".$img."');}";		
 			}
 			
-			if( CSScaffold::config('Layout.grid_classes') )
+			if( CSScaffold::$config['Layout']['grid_classes'] )
 			{
 				$css .= file_get_contents( CSScaffold::find_file('Layout/css/grid.css') );
 				$css .= file_get_contents( CSScaffold::find_file('Layout/css/grid-classes.css') );

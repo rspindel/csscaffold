@@ -18,7 +18,7 @@ class Validate extends Scaffold_Module
 		if( CSScaffold::option('validate') )
 		{					
 			# Get the validator options from the config
-			$validator_options = CSScaffold::config('Validate');
+			$validator_options = CSScaffold::$config['Validate']['options'];
 			
 			# Add our options
 			$validator_options['text'] = $css;
@@ -65,7 +65,7 @@ class Validate extends Scaffold_Module
 			    		
 			    		self::$errors[] = array('line' => $line, 'near' => $near, 'message' => $near);
 			    		
-			    		CSScaffold::log("Validation Error on line {$line} near {$near} => {$message}",2);
+			    		Scaffold_Log::log("Validation Error on line {$line} near {$near} => {$message}",2);
 			    	}
 			    }
 			}

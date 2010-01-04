@@ -33,13 +33,13 @@ class Time extends Scaffold_Module
 	 */
 	public static function flag()
 	{
-		$now = time() + (60 * 60 * CSScaffold::config('Time.offset'));
+		$now = time() + (60 * 60 * CSScaffold::$config['Time']['offset']);
 		
 		self::set_current_time($now);
 
 		$condition_types = array_keys(self::$types);
 		
-		foreach(CSScaffold::config('Time.flags') as $flag_name => $conditions)
+		foreach(CSScaffold::$config['Time']['flags'] as $flag_name => $conditions)
 		{
 			foreach($condition_types as $check)
 			{
