@@ -59,9 +59,10 @@ class Scaffold_Log
 	 * @param $threshold
 	 * @return boolean
 	 */
-	public static function setup($threshold,$dir)
+	public static function setup($threshold,$error_level,$dir)
 	{
 		self::$threshold = $threshold;
+		self::$error_level = $error_level;
 		self::log_directory($dir);
 	}
 
@@ -77,7 +78,30 @@ class Scaffold_Log
 		if ($level <= self::$threshold)
 		{
 			self::$log[] = array(date('Y-m-d H:i:s P'), $level, $message);
-		}	
+		}
+		
+		if ($level <= self::$error_level)
+		{
+			self::error($message);
+		}
+	}
+	
+	/**
+	 * If the log message is within the error threshold, it will
+	 * be thrown as an error here.
+	 *
+	 * @param $message
+	 * @return mixed
+	 */
+	private static function error($message)
+	{
+		self::save();
+
+		if (!headers_sent())
+			header('HTTP/1.1 500 Internal Server Error');
+			
+		include CSScaffold::find_file('scaffold_error.php', 'views', true);
+		exit;
 	}
 
 	/**
@@ -109,7 +133,7 @@ class Scaffold_Log
 		}
 		while (!empty($log));
 
-		file_put_contents($filename, implode(PHP_EOL, $messages).PHP_EOL.PHP_EOL, FILE_APPEND);
+		file_put_contents($filename, implode(PHP_EOL, $messages).PHP_EOL, FILE_APPEND);
 	}
 
 	/**

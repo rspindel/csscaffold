@@ -48,11 +48,8 @@ $config['cache_lifetime'] = 3600; // 3600 will check if it needs to recache ever
  * 2. Warnings
  * 3. Info
  * 4. Debug
- *
- * Leaving this at 2 is a good level, as errors will be thrown as errors, but the
- * rest will be logged.
  */
-$config['log_threshold'] = 2;
+$config['log_threshold'] = 1;
 
 /**
  * Error Level
@@ -60,8 +57,11 @@ $config['log_threshold'] = 2;
  * Set the minimum log level required to be displayed as an error. 0 will display
  * only error messages, 1 will display error AND warning messages etc.
  *
+ * For example. A non-existent CSS file is an level 0 message (an error), whereas
+ * a missing image is a level 1 message (a warning). Setting this to 1 will display
+ * these missing images as errors.
  */
-$config['error_threshold'] = 1;
+$config['error_threshold'] = 0;
 
 /**
  * Document Root

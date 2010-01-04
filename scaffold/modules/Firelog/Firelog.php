@@ -42,7 +42,7 @@ class Firelog extends Scaffold_Module
 			---------------------------------------------------------- */
 			
 			# Log about the completed file
-			self::_file(CSScaffold::$internal_cache['output'],'File');
+			self::_file(CSScaffold::$current['file'],'File');
 
 			/* --------------------------------------------------------
 			

@@ -265,7 +265,7 @@ class CSScaffold
 		$config['cache'] = Scaffold_Utils::fix_path($config['cache']);
 		
 		# Prepare the logger
-		Scaffold_Log::setup($config['log_threshold'],$config['system'].'logs/');
+		Scaffold_Log::setup($config['log_threshold'],$config['error_threshold'],$config['system'].'logs/');
 
 		# Set the current cache path
 		$cache = new Scaffold_Cache( $config['cache'], $config['cache_lifetime'], $config['in_production'] );
@@ -316,13 +316,6 @@ class CSScaffold
 	public static function error($message)
 	{
 		Scaffold_Log::log($message,0);
-		Scaffold_log::save();
-
-		if (!headers_sent())
-			header('HTTP/1.1 500 Internal Server Error');
-
-		include self::find_file('scaffold_error.php', 'views', true);
-		exit;
 	}
 
 	/**
@@ -624,6 +617,13 @@ class CSScaffold
 		$css 		= file_get_contents($file);
 		$modified 	= (int) filemtime($file);
 		
+		self::$current = array
+		(
+			'file' => $file,
+			'path' => dirname($file),
+			'url' => self::url_path(dirname($file))
+		);
+		
 		/**
 		 * Output Hook
 		 * Modules can use this hook to alter what is displayed to the browser
@@ -649,11 +649,12 @@ class CSScaffold
 		}
 		else
 		{
+			// Far future expires header
 			self::header('Expires',gmdate('D, d M Y H:i:s', $_SERVER['REQUEST_TIME'] + 315360000) . ' GMT');
 		}
 
 		$protocol 		= isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0';
-		$modified_since = $_SERVER['HTTP_IF_MODIFIED_SINCE'];
+		$modified_since = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? $_SERVER['HTTP_IF_MODIFIED_SINCE'] : 0;
 		$size 			= filesize($file);
 		
 		self::header('Content-Type','text/css');
