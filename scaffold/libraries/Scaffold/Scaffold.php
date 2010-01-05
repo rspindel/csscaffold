@@ -277,8 +277,8 @@ class Scaffold extends Scaffold_Utils
 		}
 		
 		# Get the full paths
-		$config['system'] = self::fix_path($config['system']);
-		$config['cache']  = self::fix_path($config['cache']);
+		$config['system'] = Scaffold_Utils::fix_path($config['system']);
+		$config['cache']  = Scaffold_Utils::fix_path($config['cache']);
 		
 		# Prepare the logger
 		Scaffold_Log::setup(
@@ -542,13 +542,13 @@ class Scaffold extends Scaffold_Utils
 	 * @param $params
 	 * @return boolean
 	 */
-	private static function hook($name)
+	private static function hook($name,&$params='')
 	{
 		foreach(self::modules() as $module)
 		{
 			if(method_exists($module,$name))
 			{
-				call_user_func(array($module,$name));
+				$params = call_user_func(array($module,$name),$params);
 			}
 		}
 	}
@@ -573,7 +573,7 @@ class Scaffold extends Scaffold_Utils
 		/**
 		 * Import Process Hook
 		 */
-		self::hook('import_process');
+		self::hook('import_process',$css);
 
 		if(class_exists('Constants'))
 			$css = Constants::parse($css);
@@ -589,7 +589,7 @@ class Scaffold extends Scaffold_Utils
 		/**
 		 * Process Hook
 		 */
-		self::hook('process');
+		self::hook('process',$css);
 		
 		if(class_exists('Mixins'))
 			$css = Mixins::parse($css);

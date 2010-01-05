@@ -32,7 +32,7 @@ class XML_constants extends Scaffold_Module
 	 * @return Void
 	 */
 	public static function pre_process($css)
-	{
+	{	
 		$file = Scaffold::$config['XML_constants']['xml_path'];
 
 		# If the xml file doesn't exist
