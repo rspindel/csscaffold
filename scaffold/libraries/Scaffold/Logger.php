@@ -100,7 +100,7 @@ class Scaffold_Log
 		if (!headers_sent())
 			header('HTTP/1.1 500 Internal Server Error');
 			
-		include CSScaffold::find_file('scaffold_error.php', 'views', true);
+		include Scaffold::find_file('scaffold_error.php', 'views', true);
 		exit;
 	}
 

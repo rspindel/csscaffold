@@ -11,7 +11,6 @@
  **/
 class Import extends Scaffold_Module
 {
-
 	/**
 	 * Stores which files have already been included
 	 *
@@ -28,10 +27,10 @@ class Import extends Scaffold_Module
 	public static function parse($css)
 	{
 		# Add the original file to the loaded array
-		self::$loaded[] = CSScaffold::$current['file'];
+		self::$loaded[] = Scaffold::$current['file'];
 		
 		# Find all the @server imports
-		return self::server_import($css, CSScaffold::$current['path'] );
+		return self::server_import($css, Scaffold::$current['path'] );
 	}
 	
 	/**
@@ -63,7 +62,7 @@ class Import extends Scaffold_Module
 			}
 
 			# Find the file
-			if($path = CSScaffold::find_file($include,$base))
+			if($path = Scaffold::find_file($include,$base))
 			{
 				# Make sure it hasn't already been included	
 				if(!in_array($path, self::$loaded))
@@ -86,7 +85,7 @@ class Import extends Scaffold_Module
 			}
 			else
 			{
-				CSScaffold::error('Can\'t find the @include file - <strong>' . $unique[0] . '</strong>');
+				Scaffold::error('Can\'t find the @include file - <strong>' . $unique[0] . '</strong>');
 			}
 			
 			$css = self::server_import($css,$base);

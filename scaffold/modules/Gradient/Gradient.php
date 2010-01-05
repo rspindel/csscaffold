@@ -14,7 +14,7 @@ class Gradient extends Scaffold_Module
 		if (!class_exists('GradientGD'))
 			include(dirname(__FILE__).'/libraries/gradientgd.php');
 			
-		$file = CSScaffold::$cache_path . 'gradients/' . md5( serialize( func_get_args() )) . '.png';
+		$file = Scaffold::$cache_path . 'gradients/' . md5( serialize( func_get_args() )) . '.png';
 
 		if($direction == 'horizontal')
 		{
@@ -31,7 +31,7 @@ class Gradient extends Scaffold_Module
 
 		if(!file_exists($file)) 
 		{
-			CSScaffold::cache_create('gradients');
+			Scaffold::cache_create('gradients');
 			$gradient = new GradientGD($width,$height,$direction,$from,$to,$stops);
 			$gradient->save($file);
 		}
@@ -39,7 +39,7 @@ class Gradient extends Scaffold_Module
 		$properties = "
 			background-position: top left;
 		    background-repeat: repeat-$repeat;
-		    background-image: url(".CSScaffold::url_path($file).");
+		    background-image: url(".Scaffold::url_path($file).");
 		";
 		
 		return $properties;

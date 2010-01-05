@@ -39,7 +39,7 @@ class Flags extends Scaffold_Module
 				# See if any of the flags are set
 				foreach($flags as $flag_key => $flag)
 				{
-					if(CSScaffold::flag($flag))
+					if(Scaffold::flag($flag))
 					{
 						$parse = true;
 						break;

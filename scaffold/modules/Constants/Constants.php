@@ -103,7 +103,7 @@ class Constants extends Scaffold_Module
 			if(!isset($$value))
 			{
 				$css = preg_replace('/\{?\$'.$value.'\}?/', '',$css);
-				CSScaffold::error('Missing constant - ' . $value);
+				Scaffold::error('Missing constant - ' . $value);
 			}
 		}
 

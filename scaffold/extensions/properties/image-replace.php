@@ -16,7 +16,7 @@ function Scaffold_image_replace($url)
 	$url = preg_replace('/\s+/','',$url);
 	$url = preg_replace('/url\\([\'\"]?|[\'\"]?\)$/', '', $url);
 
-	$path = CSScaffold::find_file($url);
+	$path = Scaffold::find_file($url);
 	
 	if($path === false)
 		return false;
@@ -33,7 +33,7 @@ function Scaffold_image_replace($url)
 	}
 	
 	// Build the selector
-	$properties = "background:url(".CSScaffold::url_path($path).") no-repeat 0 0;
+	$properties = "background:url(".Scaffold::url_path($path).") no-repeat 0 0;
 		height:{$height}px;
 		width:{$width}px;
 		display:block;

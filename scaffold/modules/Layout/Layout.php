@@ -91,12 +91,12 @@ class Layout extends Scaffold_Module
 			)
 			{
 				$error = "@grid rule requires the <strong>column-count, left-gutter-width or right-gutter-width and column-width or grid-width</strong> properties.\n\n$code";
-				CSScaffold::error($error);
+				Scaffold::error($error);
 			}
 
 			elseif( isset($settings['column-width']) && isset($settings['grid-width']) )
 			{
-				CSScaffold::error("You can only have either the column-width or grid-width property set.\n\n$code");
+				Scaffold::error("You can only have either the column-width or grid-width property set.\n\n$code");
 			}
 			
 			# Remove it from the css
@@ -141,23 +141,23 @@ class Layout extends Scaffold_Module
 				Constants::set($key,$value);
 			}
 			
-			if( CSScaffold::$config['Layout']['grid_image'] )
+			if( Scaffold::$config['Layout']['grid_image'] )
 			{
 				# Path to the image
-				$img = CSScaffold::$cache_path . "Layout/{$lgw}_{$cw}_{$rgw}_{$bl}_grid.png";
+				$img = Scaffold::$cache_path . "Layout/{$lgw}_{$cw}_{$rgw}_{$bl}_grid.png";
 				
 				# Generate the grid.png
 				self::create_grid_image($cw, $bl, $lgw, $rgw, $img);
 				
-				$img = CSScaffold::url_path($img);
+				$img = Scaffold::url_path($img);
 				
 				$css .= "=show-grid{background:url('".$img."');}";		
 			}
 			
-			if( CSScaffold::$config['Layout']['grid_classes'] )
+			if( Scaffold::$config['Layout']['grid_classes'] )
 			{
-				$css .= file_get_contents( CSScaffold::find_file('Layout/css/grid.css') );
-				$css .= file_get_contents( CSScaffold::find_file('Layout/css/grid-classes.css') );
+				$css .= file_get_contents( Scaffold::find_file('Layout/css/grid.css') );
+				$css .= file_get_contents( Scaffold::find_file('Layout/css/grid-classes.css') );
 			}
 
 			# Make each of the column variables a member variable
@@ -182,7 +182,7 @@ class Layout extends Scaffold_Module
 			header('Content-Type: text/html');
 			
 			# Load the test suite markup
-			$page = CSScaffold::load_view('scaffold_grid.php');
+			$page = Scaffold::load_view('scaffold_grid.php');
 
 			# Echo and out!
 			echo($page); 
@@ -203,7 +203,7 @@ class Layout extends Scaffold_Module
 	{		
 		if(!file_exists($file))
 		{
-			CSScaffold::cache_create('Layout');
+			Scaffold::cache_create('Layout');
 			
 			$image = ImageCreate($cw + $lgw + $rgw,$bl);
 			

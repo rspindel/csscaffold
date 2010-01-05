@@ -20,7 +20,7 @@ class Absolute_Urls extends Scaffold_Module
 	public static function rewrite($css)
 	{
 		# The absolute url to the directory of the current CSS file
-		$dir = CSScaffold::url_path( CSScaffold::$current['path'] );
+		$dir = Scaffold::url_path( Scaffold::$current['path'] );
 
 		# @imports - Thanks to the guys from Minify for the regex :)
 		if(
@@ -71,7 +71,7 @@ class Absolute_Urls extends Scaffold_Module
 				$absolute = self::up_directory($dir, substr_count($url, '../', 0)) . str_replace('../','',$url);
 				
 				# If the file doesn't exist
-				if(!CSScaffold::find_file($absolute))
+				if(!Scaffold::find_file($absolute))
 					Scaffold_Log::log("Missing image - {$absolute}", 1);
 					
 				# Rewrite it

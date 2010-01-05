@@ -21,6 +21,17 @@ class Firelog extends Scaffold_Module
 		'info',
 		'log',
 	);
+	
+	/**
+	 * Load FirePHP at the start
+	 *
+	 * @param $css
+	 * @return $css string
+	 */
+	public static function test($input)
+	{
+		self::_enable();
+	}
 
 	/**
 	 * During the output phase, gather all the logs and send them to FireBug
@@ -31,10 +42,8 @@ class Firelog extends Scaffold_Module
 	 */
 	public static function output($css)
 	{
-		if( CSScaffold::$config['in_production'] === false)
-		{
-			self::_enable();
-			
+		if( Scaffold::$config['in_production'] === false)
+		{			
 			/* --------------------------------------------------------
 			
 			General
@@ -42,7 +51,7 @@ class Firelog extends Scaffold_Module
 			---------------------------------------------------------- */
 			
 			# Log about the completed file
-			self::_file(CSScaffold::$current['file'],'File');
+			self::_file(Scaffold::$current['file'],'Compiled CSS');
 
 			/* --------------------------------------------------------
 			
@@ -95,11 +104,11 @@ class Firelog extends Scaffold_Module
 			Modules
 			
 			---------------------------------------------------------- */	
-			
+
 			/*
-			foreach(Scaffold_Logger::$log as $group => $value)
+			foreach(Scaffold_Log::$log as $group => $value)
 			{
-				FB::group($group);
+				FB::group('blah');
 				foreach($value as $error)
 				{
 					self::_log($error[0],$error[1]);
@@ -107,11 +116,12 @@ class Firelog extends Scaffold_Module
 				FB::groupEnd();
 			}
 			*/
-			
-			# Log the basics
-			self::_group('Flags',CSScaffold::flags());
-			#self::_group('Include Paths', CSScaffold::include_paths());
-			#self::_group('Modules', CSScaffold::modules());
+
+			if(Scaffold::flags())
+				self::_group('Flags',Scaffold::flags());
+
+			self::_group('Include Paths', Scaffold::include_paths());
+			self::_group('Modules', Scaffold::modules());
 		}	
 	}
 
@@ -146,7 +156,7 @@ class Firelog extends Scaffold_Module
 			{
 				if(is_numeric($key))
 				{
-					call_user_func(array('FB',self::$log_levels[$level - 1]), $value);
+					call_user_func(array('FB',self::$log_levels[$level]), $value);
 				}
 				else
 				{
@@ -156,7 +166,7 @@ class Firelog extends Scaffold_Module
 		}
 		else
 		{
-			call_user_func(array('FB',self::$log_levels[$level - 1]), $message);
+			call_user_func(array('FB',self::$log_levels[$level]), $message);
 		}
 	}
 	

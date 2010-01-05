@@ -39,10 +39,10 @@ class Scaffold_Cache
 	public function __construct($path,$lifetime,$frozen)
 	{
 		if (!is_dir($path))
-			trigger_error("Cache path does not exist. $path");
+			Scaffold_Log::log("Cache path does not exist. $path",0);
 			
 		if (!is_writable($path))
-			trigger_error("Cache path is not writable. $path");
+			Scaffold_Log::log("Cache path is not writable. $path",0);
 
 		$this->cache_path = $path;
 		$this->lifetime($lifetime);

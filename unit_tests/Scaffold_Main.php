@@ -12,12 +12,12 @@ class MainTests extends UnitTestCase
 		$config['system']  = realpath('../scaffold/') . '/';
 		$config['cache']   = $config['system'] . 'cache/';
 		
-		$this->assertTrue( CSScaffold::setup($config) );
-		$this->assertFalse( CSScaffold::config('in_production') );
-		$this->assertTrue( is_array(CSScaffold::include_paths()) );
-		$this->assertTrue( is_array(CSScaffold::modules()) );
+		$this->assertTrue( Scaffold::setup($config) );
+		$this->assertFalse( Scaffold::config('in_production') );
+		$this->assertTrue( is_array(Scaffold::include_paths()) );
+		$this->assertTrue( is_array(Scaffold::modules()) );
 		
-		foreach(CSScaffold::modules() as $module)
+		foreach(Scaffold::modules() as $module)
 		{
 			$this->assertTrue( class_exists($module) );
 		}
@@ -31,12 +31,12 @@ class MainTests extends UnitTestCase
 		$config['cache']   = $config['system'] . 'cache/';
 		$config['in_production'] = true;
 
-		$this->assertTrue( CSScaffold::setup($config) );
-		$this->assertTrue( CSScaffold::config('in_production') );
-		$this->assertTrue( is_array(CSScaffold::include_paths()) );
-		$this->assertTrue( is_array(CSScaffold::modules()) );
+		$this->assertTrue( Scaffold::setup($config) );
+		$this->assertTrue( Scaffold::config('in_production') );
+		$this->assertTrue( is_array(Scaffold::include_paths()) );
+		$this->assertTrue( is_array(Scaffold::modules()) );
 		
-		foreach(CSScaffold::modules() as $module)
+		foreach(Scaffold::modules() as $module)
 		{
 			$this->assertTrue( class_exists($module) );
 		}
@@ -67,12 +67,12 @@ class MainTests extends UnitTestCase
 		$config['cache']   = $config['system'] . 'cache/';
 		$config['in_production'] = false;
 		
-		$this->assertTrue( CSScaffold::setup($config) );
-		$this->assertFalse( CSScaffold::config('in_production') );
-		$this->assertTrue( is_array(CSScaffold::include_paths()) );
-		$this->assertTrue( is_array(CSScaffold::modules()) );
+		$this->assertTrue( Scaffold::setup($config) );
+		$this->assertFalse( Scaffold::config('in_production') );
+		$this->assertTrue( is_array(Scaffold::include_paths()) );
+		$this->assertTrue( is_array(Scaffold::modules()) );
 		
-		foreach(CSScaffold::modules() as $module)
+		foreach(Scaffold::modules() as $module)
 		{
 			$this->assertTrue( class_exists($module) );
 		}
@@ -80,9 +80,9 @@ class MainTests extends UnitTestCase
 	
 	function testUrlPath()
 	{
-		$this->assertEqual( CSScaffold::url_path(dirname(__FILE__)), '/unit_tests');
-		$this->assertEqual( CSScaffold::url_path(dirname(__FILE__) . '/..'), '/');
-		$this->assertEqual( CSScaffold::url_path(dirname(__FILE__) . '/../scaffold/'), '/scaffold');
+		$this->assertEqual( Scaffold::url_path(dirname(__FILE__)), '/unit_tests');
+		$this->assertEqual( Scaffold::url_path(dirname(__FILE__) . '/..'), '/');
+		$this->assertEqual( Scaffold::url_path(dirname(__FILE__) . '/../scaffold/'), '/scaffold');
 	}
 	
 	function testParse()
@@ -91,12 +91,12 @@ class MainTests extends UnitTestCase
 		$config['system']  = realpath('../scaffold/') . '/';
 		$config['cache']   = realpath($config['system'] . 'cache/');
 
-		CSScaffold::setup($config);
+		Scaffold::setup($config);
 		
 		// Single files
 		$files = array('/unit_tests/_files/Misc/general.css');
 		$options = array();
-		$this->assertNotNull( CSScaffold::parse($files,$options,true) );
+		$this->assertNotNull( Scaffold::parse($files,$options,true) );
 		
 		// Multiple Files
 		$files = array(
@@ -104,7 +104,7 @@ class MainTests extends UnitTestCase
 			'/unit_tests/_files/Misc/minified.css'
 		);
 		$options = array();
-		$this->assertNotNull( CSScaffold::parse($files,$options,true) );
+		$this->assertNotNull( Scaffold::parse($files,$options,true) );
 		
 		// Same file twice
 		$files = array(
@@ -112,32 +112,32 @@ class MainTests extends UnitTestCase
 			'/unit_tests/_files/Misc/general.css'
 		);
 		$options = array();
-		$this->assertNotNull( CSScaffold::parse($files,$options,true) );
+		$this->assertNotNull( Scaffold::parse($files,$options,true) );
 		
 		// Via a url
 		$files = array(
 			'http://scaffold/unit_tests/_files/Misc/general.css'
 		);
 		$options = array();
-		//$this->assertError( CSScaffold::parse($files,$options,true) );
+		//$this->assertError( Scaffold::parse($files,$options,true) );
 		
 		/*
 		
 		$files = array('/unit_tests/_files/Misc/selectors.css');
 		$options = array();
-		$this->assertNotNull( CSScaffold::parse($files,$options,true) );
+		$this->assertNotNull( Scaffold::parse($files,$options,true) );
 		
 		$files = array('/unit_tests/_files/Misc/hacks.css');
 		$options = array();
-		$this->assertNotNull( CSScaffold::parse($files,$options,true) );
+		$this->assertNotNull( Scaffold::parse($files,$options,true) );
 		
 		$files = array('/unit_tests/_files/Misc/styles.css');
 		$options = array();
-		$this->assertNotNull( CSScaffold::parse($files,$options,true) );
+		$this->assertNotNull( Scaffold::parse($files,$options,true) );
 		
 		$files = array('/unit_tests/_files/Misc/unusual_strings.css');
 		$options = array();
-		$this->assertNotNull( CSScaffold::parse($files,$options,true) );
+		$this->assertNotNull( Scaffold::parse($files,$options,true) );
 		
 		// Multiple Files
 		$files = array(
@@ -149,7 +149,7 @@ class MainTests extends UnitTestCase
 			'/unit_tests/_files/Misc/unusual_strings.css'
 		);
 		$options = array();
-		$this->assertNotNull( CSScaffold::parse($files,$options,true) );
+		$this->assertNotNull( Scaffold::parse($files,$options,true) );
 		*/
 		
 	}

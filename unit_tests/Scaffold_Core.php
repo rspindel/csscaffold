@@ -6,7 +6,7 @@ class CoreTests extends UnitTestCase
 {
 	function testSetFlag()
 	{
-		$this->assertTrue( CSScaffold::flag_set('Flag') );
+		$this->assertTrue( Scaffold::flag_set('Flag') );
 	}
 	
 	function testLogThreshold()

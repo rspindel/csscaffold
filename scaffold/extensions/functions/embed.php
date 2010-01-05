@@ -8,7 +8,7 @@
  */
 function Scaffold_embed($file)
 {
-	$path = CSScaffold::find_file( Scaffold_Utils::unquote($file) );
+	$path = Scaffold::find_file( Scaffold_Utils::unquote($file) );
 	
 	# Couldn't find it
 	if($path === false)

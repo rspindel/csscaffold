@@ -8,4 +8,4 @@ include '../scaffold/config/Scaffold.php';
 $config['system']  = realpath('../scaffold/') . '/';
 $config['cache']   = $config['system'] . 'cache/';
 
-CSScaffold::setup($config);
+Scaffold::setup($config);

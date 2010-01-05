@@ -25,7 +25,7 @@ class Custom_Functions extends Scaffold_Module
 	*/
 	public static function post_process($css)
 	{
-		$functions = CSScaffold::list_files('extensions/functions');
+		$functions = Scaffold::list_files('extensions/functions');
 		
 		foreach ($functions as $path)
 		{
@@ -48,7 +48,7 @@ class Custom_Functions extends Scaffold_Module
 					}
 					else
 					{
-						CSScaffold::error('Invalid function - <strong>' . $originals[$key] . '</strong>');
+						Scaffold::error('Invalid function - <strong>' . $originals[$key] . '</strong>');
 					}
 				}
 			}

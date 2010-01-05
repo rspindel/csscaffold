@@ -28,7 +28,7 @@ class Custom_Properties extends Scaffold_Module
 	 */
 	public static function post_process($css)
 	{
-		$properties = CSScaffold::list_files('extensions/properties');
+		$properties = Scaffold::list_files('extensions/properties');
 				
 		foreach ($properties as $path)
 		{
@@ -51,7 +51,7 @@ class Custom_Properties extends Scaffold_Module
 					}
 					else
 					{
-						CSScaffold::error('Invalid property - <strong>' . $originals[$key] . '</strong>');
+						Scaffold::error('Invalid property - <strong>' . $originals[$key] . '</strong>');
 					}
 				}
 			}

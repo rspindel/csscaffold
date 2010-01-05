@@ -15,10 +15,10 @@ class Validate extends Scaffold_Module
 
 	public static function output($css)
 	{
-		if( CSScaffold::option('validate') )
+		if( Scaffold::option('validate') )
 		{					
 			# Get the validator options from the config
-			$validator_options = CSScaffold::$config['Validate']['options'];
+			$validator_options = Scaffold::$config['Validate']['options'];
 			
 			# Add our options
 			$validator_options['text'] = $css;

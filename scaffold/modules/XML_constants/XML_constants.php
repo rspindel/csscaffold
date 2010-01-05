@@ -33,8 +33,8 @@ class XML_constants extends Scaffold_Module
 	 */
 	public static function pre_process($css)
 	{
-		$file = CSScaffold::$config['XML_constants']['xml_path'];
-		
+		$file = Scaffold::$config['XML_constants']['xml_path'];
+
 		# If the xml file doesn't exist
 		if(!file_exists($file))
 		{
@@ -50,7 +50,5 @@ class XML_constants extends Scaffold_Module
 		{
 			Constants::set((string)$value->name, (string)$value->value);
 		}
-		
-		return $css;
 	}
 }

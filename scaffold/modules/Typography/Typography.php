@@ -9,13 +9,13 @@ class Typography extends Scaffold_Module
 {
 	public static function output($css)
 	{
-		if( CSScaffold::option('typography') )
+		if( Scaffold::option('typography') )
 		{
 			# Make sure we're sending HTML
 			header('Content-Type: text/html');
 			
 			# Load the test suite markup
-			CSScaffold::load_view('scaffold_typography.php');
+			Scaffold::load_view('scaffold_typography.php');
 			exit;
 		}
 	}

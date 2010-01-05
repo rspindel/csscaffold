@@ -11,7 +11,7 @@ class ModulesTests extends UnitTestCase
 		if($name)
 		{
 			$directory =  dirname(__FILE__) . '/_files/'.$name.'/';
-			CSScaffold::$current['path'] = $directory;
+			Scaffold::$current['path'] = $directory;
 		}
 		return $directory;
 	}
@@ -38,8 +38,8 @@ class ModulesTests extends UnitTestCase
 	function test_Flags()
 	{
 		$this->dir('Flags');
-		CSScaffold::flag_set('flag2');
-		CSScaffold::flag_set('flag3');
+		Scaffold::flag_set('flag2');
+		Scaffold::flag_set('flag3');
 		$original = file_get_contents( $this->dir() . 'in.css');
 		$expected = file_get_contents( $this->dir() . 'out.css');
 		$css = Flags::post_process($original);
@@ -51,8 +51,8 @@ class ModulesTests extends UnitTestCase
 		$this->dir('Import');
 		$original = file_get_contents( $this->dir() . 'in.css' );
 		$expected = file_get_contents( $this->dir() . 'out.css' );
-		CSScaffold::$current['file'] = $this->dir() . 'in.css';
-		CSScaffold::add_include_path( $this->dir() );
+		Scaffold::$current['file'] = $this->dir() . 'in.css';
+		Scaffold::add_include_path( $this->dir() );
 		$css = Import::parse($original);
 		$this->assertEqual($expected,$css);
 	}

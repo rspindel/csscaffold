@@ -33,13 +33,13 @@ class Time extends Scaffold_Module
 	 */
 	public static function flag()
 	{
-		$now = time() + (60 * 60 * CSScaffold::$config['Time']['offset']);
+		$now = time() + (60 * 60 * Scaffold::$config['Time']['offset']);
 		
 		self::set_current_time($now);
 
 		$condition_types = array_keys(self::$types);
 		
-		foreach(CSScaffold::$config['Time']['flags'] as $flag_name => $conditions)
+		foreach(Scaffold::$config['Time']['flags'] as $flag_name => $conditions)
 		{
 			foreach($condition_types as $check)
 			{
@@ -59,7 +59,7 @@ class Time extends Scaffold_Module
 			# It met all the conditions! Set the flag me hearties!
 			if( array_search(false, $result) === false )
 			{
-				CSScaffold::flag_set($flag_name);
+				Scaffold::flag_set($flag_name);
 			}
 			
 			# Reset the results array

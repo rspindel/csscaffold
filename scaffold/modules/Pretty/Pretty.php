@@ -21,7 +21,7 @@ class Pretty extends Scaffold_Module
 	 */
 	public static function output($css)
 	{	
-		if( CSScaffold::option('pretty') )
+		if( Scaffold::option('pretty') )
 		{
 			$css = preg_replace('#(/\*[^*]*\*+([^/*][^*]*\*+)*/|url\(data:[^\)]+\))#e', "'esc('.base64_encode('$1').')'", $css); // escape comments, data protocol to prevent processing
 				
@@ -47,7 +47,7 @@ class Pretty extends Scaffold_Module
 			}
 			
 			header('Content-Type: text/css');
-			CSScaffold::set_output($css);
+			Scaffold::set_output($css);
 		}
 	}
 }

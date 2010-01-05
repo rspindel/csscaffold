@@ -82,7 +82,7 @@ if(isset($_GET['f']))
 	/**
 	 * Parse and join an array of files
 	 */
-	CSScaffold::parse($files,$config,$options,$return);
+	Scaffold::parse($files,$config,$options,$return);
 }
 
 /**
