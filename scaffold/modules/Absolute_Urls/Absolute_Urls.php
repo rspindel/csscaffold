@@ -9,7 +9,6 @@
  */
 class Absolute_Urls extends Scaffold_Module
 {
-
 	/**
 	 * Takes a CSS string, rewrites all URL's using Scaffold's built-in find_file method
 	 *

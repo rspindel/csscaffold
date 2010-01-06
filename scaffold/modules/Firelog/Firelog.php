@@ -40,7 +40,7 @@ class Firelog extends Scaffold_Module
 	 * @param $css
 	 * @return void
 	 */
-	public static function output($css)
+	public static function display($css)
 	{
 		if( Scaffold::$config['in_production'] === false)
 		{			
