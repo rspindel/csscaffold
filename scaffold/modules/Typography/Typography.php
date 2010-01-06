@@ -7,7 +7,7 @@
  */
 class Typography extends Scaffold_Module
 {
-	public static function output($css)
+	public static function display($css)
 	{
 		if( Scaffold::option('typography') )
 		{
@@ -18,5 +18,7 @@ class Typography extends Scaffold_Module
 			Scaffold::load_view('scaffold_typography.php');
 			exit;
 		}
+		
+		return $css;
 	}
 }

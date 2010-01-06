@@ -174,9 +174,9 @@ class Layout extends Scaffold_Module
 		return $css;
 	}
 	
-	public static function output($mode = "")
+	public static function display($css)
 	{
-		if($mode == "grid" && isset(self::$column_width))
+		if(Scaffold::option("grid") && isset(self::$column_width))
 		{
 			# Make sure we're sending HTML
 			header('Content-Type: text/html');
@@ -188,6 +188,8 @@ class Layout extends Scaffold_Module
 			echo($page); 
 			exit;
 		}
+		
+		return $css;
 	}
 
 	/**

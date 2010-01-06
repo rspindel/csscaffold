@@ -13,7 +13,7 @@ class Validate extends Scaffold_Module
 	 */
 	public static $errors;
 
-	public static function output($css)
+	public static function display($css)
 	{
 		if( Scaffold::option('validate') )
 		{					
