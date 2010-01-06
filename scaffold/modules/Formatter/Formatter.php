@@ -1,0 +1,265 @@
+<?php
+
+/**
+ * Formatter
+ *
+ * This module uses the methods from Minify_Compressor.php from Minify.
+ * I've modified it to allow for optional compression in certain parts.
+ * 
+ * @author Stephen Clay <steve@mrclay.org>
+ * @author Anthony Short
+ */
+class Formatter extends Scaffold_Module
+{
+	public static function formatting_process($css)
+	{
+		if(Scaffold::$config['Formatter']['compress'] === true)
+		{
+			$css = self::minify($css);
+		}
+		else
+		{
+			$css = self::prettify($css);
+		}
+
+		return $css;
+	}
+
+    /**
+     * Minify a CSS string
+     * 
+     * @param string $css
+     * @return string
+     */
+    protected function minify($css)
+    {
+        $css = str_replace("\r\n", "\n", $css);
+        
+        if(Scaffold::$config['Formatter']['preserve_hacks'])
+        {
+	        // preserve empty comment after '>'
+	        // http://www.webdevout.net/css-hacks#in_css-selectors
+	        $css = preg_replace('@>/\\*\\s*\\*/@', '>/*keep*/', $css);
+	        
+	        // preserve empty comment between property and value
+	        // http://css-discuss.incutio.com/?page=BoxModelHack
+	        $css = preg_replace('@/\\*\\s*\\*/\\s*:@', '/*keep*/:', $css);
+	        $css = preg_replace('@:\\s*/\\*\\s*\\*/@', ':/*keep*/', $css);
+        }
+
+        // apply callback to all valid comments (and strip out surrounding ws
+        $css = preg_replace_callback('@\\s*/\\*([\\s\\S]*?)\\*/\\s*@',array('Formatter', '_commentCB'), $css);
+
+        // remove ws around { } and last semicolon in declaration block
+        $css = preg_replace('/\\s*{\\s*/', '{', $css);
+        $css = preg_replace('/;?\\s*}\\s*/', '}', $css);
+        
+        // remove ws surrounding semicolons
+        $css = preg_replace('/\\s*;\\s*/', ';', $css);
+        
+        // remove ws around urls
+        $css = preg_replace('/
+                url\\(      # url(
+                \\s*
+                ([^\\)]+?)  # 1 = the URL (really just a bunch of non right parenthesis)
+                \\s*
+                \\)         # )
+            /x', 'url($1)', $css);
+        
+        // remove ws between rules and colons
+        $css = preg_replace('/
+                \\s*
+                ([{;])              # 1 = beginning of block or rule separator 
+                \\s*
+                ([\\*_]?[\\w\\-]+)  # 2 = property (and maybe IE filter)
+                \\s*
+                :
+                \\s*
+                (\\b|[#\'"])        # 3 = first character of a value
+            /x', '$1$2:$3', $css);
+        
+        // remove ws in selectors
+        $css = preg_replace_callback('/
+                (?:              # non-capture
+                    \\s*
+                    [^~>+,\\s]+  # selector part
+                    \\s*
+                    [,>+~]       # combinators
+                )+
+                \\s*
+                [^~>+,\\s]+      # selector part
+                {                # open declaration block
+            /x'
+            ,array('Formatter', '_selectorsCB'), $css);
+        
+        // minimize hex colors
+        $css = preg_replace('/([^=])#([a-f\\d])\\2([a-f\\d])\\3([a-f\\d])\\4([\\s;\\}])/i'
+            , '$1#$2$3$4$5', $css);
+        
+        // remove spaces between font families
+        $css = preg_replace_callback('/font-family:([^;}]+)([;}])/'
+            ,array('Formatter', '_fontFamilyCB'), $css);
+        
+        $css = preg_replace('/@import\\s+url/', '@import url', $css);
+        
+        // replace any ws involving newlines with a single newline
+        $css = preg_replace('/[ \\t]*\\n+\\s*/', "\n", $css);
+        
+        if(Scaffold::$config['Formatter']['limit_line_lengths'])
+        {
+	        // separate common descendent selectors w/ newlines (to limit line lengths)
+	        $css = preg_replace('/([\\w#\\.\\*]+)\\s+([\\w#\\.\\*]+){/', "$1\n$2{", $css);
+	        
+	        // Use newline after 1st numeric value (to limit line lengths).
+	        $css = preg_replace('/
+	            ((?:padding|margin|border|outline):\\d+(?:px|em)?) # 1 = prop : 1st numeric value
+	            \\s+
+	            /x'
+	            ,"$1\n", $css);
+        }
+
+        return trim($css);
+    }
+    
+    /**
+     * Replace what looks like a set of selectors  
+     *
+     * @param array $m regex matches
+     * @return string
+     */
+    protected function _selectorsCB($m)
+    {
+        // remove ws around the combinators
+        return preg_replace('/\\s*([,>+~])\\s*/', '$1', $m[0]);
+    }
+    
+    /**
+     * Process a comment and return a replacement
+     * 
+     * @param array $m regex matches
+     * @return string
+     */
+    protected function _commentCB($m)
+    {
+        $m = $m[1]; 
+        // $m is the comment content w/o the surrounding tokens, 
+        // but the return value will replace the entire comment.
+       
+        if(Scaffold::$config['Formatter']['preserve_hacks'])
+        {
+        	if ($m === 'keep') 
+        	{
+        	    return '/**/';
+        	}
+			
+			// component of http://tantek.com/CSS/Examples/midpass.html
+        	if ($m === '" "')
+        	{
+        	    return '/*" "*/';
+        	}
+			
+			// component of http://tantek.com/CSS/Examples/midpass.html
+        	if (preg_match('@";\\}\\s*\\}/\\*\\s+@', $m))
+        	{
+        	    return '/*";}}/* */';
+        	}
+
+            // inversion: feeding only to one browser
+            if (preg_match('@
+                    ^/               # comment started like /*/
+                    \\s*
+                    (\\S[\\s\\S]+?)  # has at least some non-ws content
+                    \\s*
+                    /\\*             # ends like /*/ or /**/
+                @x', $m, $n))
+			{
+                return "/*/{$n[1]}/**/";
+            }
+            
+            // comment ends like \*/
+            elseif (substr($m, -1) === '\\')
+            {
+                return '/*\\*/';
+            }
+           
+            // comment looks like /*/ foo */
+            elseif ($m !== '' && $m[0] === '/')
+            {
+                return '/*/*/';
+            }
+    		
+    		else
+    		{
+	            return '/**/';
+            }
+        }
+		
+		if(Scaffold::$config['Formatter']['preserve_comments'] === true)
+		{
+			return $m[1];
+		}
+		else
+		{
+			return ''; // remove all other comments
+		}
+    }
+    
+    /**
+     * Process a font-family listing and return a replacement
+     * 
+     * @param array $m regex matches
+     * 
+     * @return string   
+     */
+    protected function _fontFamilyCB($m)
+    {
+        $m[1] = preg_replace('/
+                \\s*
+                (
+                    "[^"]+"      # 1 = family in double qutoes
+                    |\'[^\']+\'  # or 1 = family in single quotes
+                    |[\\w\\-]+   # or 1 = unquoted family
+                )
+                \\s*
+            /x', '$1', $m[1]);
+        return 'font-family:' . $m[1] . $m[2];
+    }
+    
+    /**
+     * Makes a CSS string easier to read by adding line breaks where
+     * needed and stripping out unneeded whitespace
+     *
+     * @param $css
+     * @return string
+     */
+    private static function prettify($css)
+    {
+    	$css = preg_replace('#(/\*[^*]*\*+([^/*][^*]*\*+)*/|url\(data:[^\)]+\))#e', "'esc('.base64_encode('$1').')'", $css); // escape comments, data protocol to prevent processing
+    		
+    	$css = str_replace('*/',"*/\n",$css);
+    	$css = str_replace(';', ";\r\r", $css); // line break after semi-colons (for @import)
+    	$css = preg_replace('#([-a-z]+):\s*([^;}{]+);\s*#i', "$1: $2;\r\t", $css); // normalize property name/value space
+    	$css = preg_replace('#\s*\{\s*#', "\r{\r\t", $css); // normalize space around opening brackets
+    	$css = preg_replace('#\s*\}\s*#', "\r}\r\r", $css); // normalize space around closing brackets
+    	$css = preg_replace('#,\s*#', ",\r", $css); // new line for each selector in a compound selector
+   
+    	// remove returns after commas in property values
+    	if (preg_match_all('#:[^;]+,[^;]+;#', $css, $m))
+    	{
+    		foreach($m[0] as $oops)
+    		{
+    			$css = str_replace($oops, preg_replace('#,\r#', ', ', $oops), $css);
+    		}
+    	}
+    	
+    	$css = preg_replace('#esc\(([^\)]+)\)#e', "base64_decode('$1')", $css); // unescape escaped blocks
+    	
+    	// indent nested @media rules
+    	if (preg_match('#@media[^\{]*\{(.*\}\s*)\}#', $css, $m))
+    	{
+    		$css = str_replace($m[0], str_replace($m[1], "\r\t".preg_replace("#\r#", "\r\t", trim($m[1]))."\r", $m[0]), $css);
+    	}
+    	
+    	return $css;
+    }
+} 

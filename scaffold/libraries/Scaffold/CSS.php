@@ -21,7 +21,7 @@ abstract class Scaffold_CSS
 	{		
 		# Remove comments
 		$css = self::remove_comments($css);
-			
+
 		# Remove extra white space
 		$css = preg_replace('/\s+/', ' ', $css);
 		
@@ -43,46 +43,9 @@ abstract class Scaffold_CSS
 		# Remove normal CSS comments
 		$css = trim(preg_replace('#/\*[^*]*\*+([^/*][^*]*\*+)*/#', '', $css));
 		
-		# Remove single line comments. Thanks Naonak!
-		$css = preg_replace('#(\s|$)//.*$#Umsi', '', $css);
-		
 		$css = self::convert_entities('decode', $css);
 
 		return $css;
-	}
-
-	/**
-	 * Transforms CSS into XML
-	 *
-	 * @return string $css
-	 */
-	public static function to_xml($css)
-	{
-		# Strip comments to prevent parsing errors
-		$xml = self::remove_comments($css);
-		
-		# These will break the xml, so we'll transform them for now
-		$xml = self::convert_entities('encode', $xml);
-
-		# Add semi-colons to the ends of property lists which don't have them
-		$xml = preg_replace('/((\:|\+)[^;])*?\}/', "$1;}", $xml);
-
-		# Transform properties
-		$xml = preg_replace('/([-_A-Za-z*]+)\s*:\s*([^;}{]+)(?:;)/ie', "'<property name=\"'.trim('$1').'\" value=\"'.trim('$2').'\" />\n'", $xml);
-
-		# Transform selectors
-		$xml = preg_replace('/(\s*)([_@#.0-9A-Za-z\+~*\|\(\)\[\]^\"\'=\$:,\s-]*?)\{/me', "'$1\n<rule selector=\"'.preg_replace('/\s+/', ' ', trim('$2')).'\">\n'", $xml);
-		
-		# Close rules
-		$xml = preg_replace('/\;?\s*\}/', "\n</rule>", $xml);
-		
-		# Indent everything one tab
-		$xml = preg_replace('/\n/', "\r\t", $xml);
-		
-		# Tie it up with a bow
-		$xml = '<?xml version="1.0" ?'.">\r<css>\r\t$xml\r</css>\r"; 
-
-		return simplexml_load_string($xml);
 	}
 
 	/**

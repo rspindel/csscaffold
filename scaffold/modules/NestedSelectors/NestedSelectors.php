@@ -29,16 +29,72 @@ class NestedSelectors extends Scaffold_Module
 	 */
 	public static function parse($css)
 	{
-		$xml = Scaffold_CSS::to_xml($css);
-		
+		# These will break the xml, so we'll transform them for now
+		$css = Scaffold_CSS::convert_entities('encode', $css);
+		$xml = self::to_xml($css);
 		$css = "";
-		
-		foreach($xml->rule as $key => $value)
+
+		foreach($xml->children() as $key => $value)
 		{
-			$css .= self::parse_rule($value);
+			$attributes = (array)$value->attributes();
+			$attributes = $attributes['@attributes'];
+	
+			/*
+				Comments are given the same <property> node as actual properties
+				so that they are output next to their respective property in a list
+				rather than being all put together at the end of the list.
+				So we need to search for these properties as well as the normal rules.
+			*/
+			if($key == 'property')
+			{
+				if($attributes['name'] == 'comment')
+				{		
+					$css .= self::parse_comment($attributes['value']);
+				}
+			}
+			
+			/*
+				Imports should be at the root level, so we'll assume they are.
+				If they're nested inside a rule, they'll just be ignored.
+			*/
+			elseif($key == 'import')
+			{
+				$imports[] = array
+				(
+					'url' => $attributes['url'],
+					'media' => $attributes['media']
+				);
+			}
+			
+			/*
+				Otherwise it's just a rule
+			*/
+			else
+			{
+				$css .= self::parse_rule($value);
+			}
+		}
+		
+		if(isset($imports))
+		{
+			foreach(array_reverse($imports) as $import)
+			{
+				$css = "@import '{$import['url']}' " . $import['media'] . ";" . $css;
+			}
 		}
 
 		return Scaffold_CSS::convert_entities('decode', $css);
+	}
+	
+	/**
+	 * Parses the comment nodes
+	 *
+	 * @param $comment
+	 * @return string
+	 */
+	private static function parse_comment($comment)
+	{
+		return "/* {$comment} */";
 	}
 	
 	/**
@@ -73,6 +129,12 @@ class NestedSelectors extends Scaffold_Module
 				$parent = implode(",", $parent);
 			}
 			
+			elseif( strstr($child,'@media') )
+			{
+				$skip = true;
+				$parent = $child;
+			}
+			
 			# Otherwise it's a root selector
 			else
 			{
@@ -85,11 +147,18 @@ class NestedSelectors extends Scaffold_Module
 			$property = (array)$p->attributes(); 
 			$property = $property['@attributes'];
 			
-			$property_list .= $property['name'].":".$property['value'].";";
+			if($property['name'] == 'comment')
+			{
+				$property_list .= self::parse_comment($property['value']);
+			}
+			else
+			{
+				$property_list .= $property['name'].":".$property['value'].";";
+			}
 		}
 		
 		# Create the css string
-		if($property_list != "")
+		if($property_list != "" && $skip !== true)
 		{
 			$css_string .= $parent . "{" . $property_list . "}";
 		}
@@ -186,6 +255,54 @@ class NestedSelectors extends Scaffold_Module
 		}
 		
 		return implode(",",$children);
+	}
+	
+
+	/**
+	 * Transforms CSS into XML
+	 *
+	 * @return string $css
+	 */
+	public static function to_xml($css)
+	{		
+		# Convert comments
+		$xml = preg_replace('/\/\*(.*?)\*\//sx',"<property name=\"comment\" value=\"$1\" />",$css);
+		
+		# Convert imports
+		$xml = preg_replace(
+		    '/
+		        @import\\s+
+		        (?:url\\(\\s*)?      # maybe url(
+		        [\'"]?               # maybe quote
+		        (.*?)                # 1 = URI
+		        [\'"]?               # maybe end quote
+		        (?:\\s*\\))?         # maybe )
+		        ([a-zA-Z,\\s]*)?     # 2 = media list
+		        ;                    # end token
+		    /x',
+		    "<import url=\"$1\" media=\"$2\" />",
+		    $xml
+		);
+
+		# Add semi-colons to the ends of property lists which don't have them
+		$xml = preg_replace('/((\:|\+)[^;])*?\}/', "$1;}", $xml);
+
+		# Transform properties
+		$xml = preg_replace('/([-_A-Za-z*]+)\s*:\s*([^;}{]+)(?:;)/ie', "'<property name=\"'.trim('$1').'\" value=\"'.trim('$2').'\" />\n'", $xml);
+
+		# Transform selectors
+		$xml = preg_replace('/(\s*)([_@#.0-9A-Za-z\+~*\|\(\)\[\]^\"\'=\$:,\s-]*?)\{/me', "'$1\n<rule selector=\"'.preg_replace('/\s+/', ' ', trim('$2')).'\">\n'", $xml);
+		
+		# Close rules
+		$xml = preg_replace('/\;?\s*\}/', "\n</rule>", $xml);
+		
+		# Indent everything one tab
+		$xml = preg_replace('/\n/', "\r\t", $xml);
+		
+		# Tie it up with a bow
+		$xml = '<?xml version="1.0" ?'.">\r<css>\r\t$xml\r</css>\r"; 
+
+		return simplexml_load_string($xml);
 	}
 
 }
