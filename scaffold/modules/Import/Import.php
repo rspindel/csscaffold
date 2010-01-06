@@ -40,10 +40,7 @@ class Import extends Scaffold_Module
 	 * @param $css
 	 */
 	public static function server_import($css,$base)
-	{
-		# Removes any commented out @imports
-		$css = Scaffold_CSS::remove_comments($css);
-				
+	{				
 		if(preg_match_all('/\@include\s+(?:\'|\")([^\'\"]+)(?:\'|\")\;/', $css, $matches))
 		{
 			$unique = array_unique($matches[1]);

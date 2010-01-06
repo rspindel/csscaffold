@@ -61,15 +61,6 @@ class Scaffold extends Scaffold_Utils
 	public static $current = array();
 	
 	/**
-	 * The current CSS string being processed. This is refreshed for each
-	 * file that is parsed, but gives modules a way to determine what
-	 * Scaffold is currently working with.
-	 *
-	 * @var string
-	 */
-	public static $css;
-	
-	/**
 	 * List of included modules. They are stored with the module name
 	 * as the key, and the path to the module as the value. However,
 	 * calling the modules method will return just the names of the modules.
@@ -184,7 +175,7 @@ class Scaffold extends Scaffold_Utils
 		 */
 		if(self::$config['in_production'] === true)
 		{
-			$output = $cache->temp('output',false);
+			$output = $cache->temp('output');
 
 			if($output !== null)
 			{
@@ -194,6 +185,11 @@ class Scaffold extends Scaffold_Utils
 
 		# Get the flags from each of the loaded modules.
 		$flags = self::flags();
+		
+		/**
+		 * Pre-parsing hook
+		 */
+		self::hook('pre_parse', array( &$files, &self::$flags, &self::$modules ));
 		
 		# Combined CSS filename
 		$combined = md5(serialize(array($files,$flags))) . '.css';
@@ -243,11 +239,21 @@ class Scaffold extends Scaffold_Utils
 			$join[] = $css;
 		}
 		
+		/**
+		 * Post-parsing hook
+		 */
+		self::hook('post_parse', array( &$join, &$combined ));
+		
 		# If any of the files has changed we need to recache the combined
 		if($cache->fetch($combined) === null)
 		{
 			$cache->write(implode('',$join),$combined);
 		}
+		
+		/**
+		 * Pre-output hook
+		 */
+		self::hook('pre_output', array(&$combined) );
 
 		$cache->write($combined,'output');
 
@@ -277,8 +283,8 @@ class Scaffold extends Scaffold_Utils
 		}
 		
 		# Get the full paths
-		$config['system'] = Scaffold_Utils::fix_path($config['system']);
-		$config['cache']  = Scaffold_Utils::fix_path($config['cache']);
+		$config['system'] = self::fix_path($config['system']);
+		$config['cache']  = self::fix_path($config['cache']);
 		
 		# Prepare the logger
 		Scaffold_Log::setup(
@@ -287,44 +293,233 @@ class Scaffold extends Scaffold_Utils
 			$config['system'].'logs/'
 		);
 
-		# Set the current cache path
-		$cache = new Scaffold_Cache( $config['cache'], $config['cache_lifetime'], $config['in_production'] );
-		
-		# We'll try and load everything we can from the cache
-		if( $config['in_production'] === true )
-		{
-			self::$modules 			= $cache->temp('modules');
-			self::$include_paths 	= $cache->temp('include_paths');
-		}
-
-		if(empty(self::$include_paths))
-		{
-			self::add_include_path(
-				$config['system'], 
-				$config['system'].'modules/', 
-				$config['document_root']
-			);
-		}
+		self::add_include_path(
+			$config['system'], 
+			$config['system'].'modules/', 
+			$config['document_root']
+		);
 		
 		# Load the configs for the modules
 		foreach(self::list_files('config') as $file)
 		{
 			include $file;
 		}
-
-		if(empty(self::$modules))
-		{
-			self::modules($config['disable']);
-			$cache->write(self::$modules,'modules');
-			$cache->write(self::$include_paths,'include_paths');
-		}
-		else
-		{	
-			foreach(self::$modules as $module)
-				require_once $module;
-		}
+		
+		# Load all the modules
+		self::modules(self::$config['disable']);
+		
+		/**
+		 * Post-setup hook
+		 */
+		self::hook('setup');
 		
 		return true;
+	}
+	
+	/**
+	 * Allows modules to hook into the processing at any point
+	 *
+	 * @param $hook
+	 * @param $params
+	 * @return boolean
+	 */
+	private static function hook($name,$params = array())
+	{
+		foreach(self::modules() as $module_name => $module)
+		{
+			if(method_exists($module,$name))
+			{
+				call_user_func_array( array($module_name,$name), $params);
+			}
+		}
+	}
+	
+	/**
+	 * Loads modules
+	 *
+	 * @return Array The names of the loaded addons
+	 */
+	public static function modules($disabled = array())
+	{
+		# If the modules have already been loaded
+		if(isset(self::$modules))
+			return self::$modules;
+		
+		# Get each of the folders inside the Plugins and Modules directories
+		$modules = self::list_files('modules');
+
+		foreach($modules as $module)
+		{			
+			$name = basename($module);
+			
+			if(in_array($name, $disabled))
+				continue;
+			
+			# Add this module folder to the include paths
+			self::add_include_path($module);
+			
+			# Include the addon controller
+			if( $controller = self::find_file($name.'.php', false, true) )
+			{
+				require_once($controller);
+				self::$modules[$name] = new $name;
+			}
+		}
+		
+		return self::$modules;
+	}
+
+	/**
+	 * Parses the single CSS file
+	 *
+	 * @param $file 	The file to the parsed
+	 * @return $css 	string
+	 */
+	public static function parse_file($file)
+	{
+		$css = self::set_current($file);
+		
+		/**
+		 * Remove inline comments. These are only 
+		 * used by Scaffold and should never be output
+		 * into the final CSS.
+		 */
+		$css = preg_replace('#(\s|$)//.*$#Umsi', '', $css);
+
+		/**
+		 * Import Process Hook
+		 */
+		self::hook('import_process',array(&$css));
+		
+		if(class_exists('Import'))
+			$css = Import::parse($css);
+
+		if(class_exists('Constants'))
+			$css = Constants::parse($css);
+		
+		/**
+		 * Pre-process Hook
+		 */
+		self::hook('pre_process',array(&$css));
+		
+		if(class_exists('Layout'))
+			$css = Layout::parse($css);
+			
+		/**
+		 * Process Hook
+		 */
+		self::hook('process',array(&$css));
+		
+		if(class_exists('Mixins'))
+			$css = Mixins::parse($css);
+
+		if(class_exists('Constants'))
+			$css = Constants::replace($css);
+						
+		if(class_exists('Iteration'))
+			$css = Iteration::parse($css);
+		
+		if(class_exists('Expression'))
+			$css = Expression::parse($css);
+		
+		if(class_exists('NestedSelectors'))
+			$css = NestedSelectors::parse($css);
+			
+		/**
+		 * Post-process Hook
+		 */
+		self::hook('post_process',array(&$css));
+
+		if(class_exists('Absolute_Urls'))
+			$css = Absolute_Urls::rewrite($css);
+
+		/**
+		 * Formatting Hook
+		 */
+		self::hook('formatting_process',array(&$css));
+		
+		return $css;
+	}
+	
+	/**
+	 * Output the CSS to the browser
+	 *
+	 * @return void
+	 */
+	public static function output($file,$return = false)
+	{
+		/**
+		 * The current working file is now the compiled
+		 * CSS file from the cache
+		 */
+
+		$css = self::set_current($file);
+		$modified = (int) filemtime($file);
+	
+		/**
+		 * Output Hook
+		 * Modules can use this hook to alter what is displayed to the browser
+		 * by loading views or however else they want to.
+		 */
+
+		if(self::$config['in_production'] === false)
+		{
+			self::hook('display',array(&$css));			
+		}
+		
+		/**
+		 * Set the HTTP headers for the request. Scaffold will set
+		 * all the headers required to score a A grade on YSlow. This
+		 * means your CSS will be sent as quickly as possible to the browser.
+		 */
+
+		if(self::$config['cache_lifetime'] != false)
+		{
+			self::header('Expires',gmdate('D, d M Y H:i:s', $_SERVER['REQUEST_TIME'] + self::$config['cache_lifetime']) . ' GMT');
+			self::header('Cache-Control','max-age='.self::$config['cache_lifetime'].', public');
+		}
+		else
+		{
+			// Far future expires header
+			self::header('Expires',gmdate('D, d M Y H:i:s', $_SERVER['REQUEST_TIME'] + 315360000) . ' GMT');
+		}
+
+		$protocol 		= isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0';
+		$modified_since = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? $_SERVER['HTTP_IF_MODIFIED_SINCE'] : 0;
+		$size 			= filesize($file);	
+		$etag			= md5(serialize(array($file,$modified,$size)));
+		$last_modified	= gmdate('D, d M Y H:i:s', $modified) .' GMT';	
+		
+		self::header('Content-Type','text/css');
+		self::header('Last-Modified',$last_modified);
+		self::header('Content-Length',$size);
+		self::header('ETag',$etag);
+
+		if(isset($modified_since) && $modified <= strtotime($modified_since))
+		{
+			self::header('_responseCode',"{$protocol} 304 Not Modified");
+		}
+		
+		/** 
+		 * Output hook
+		 */
+		self::hook('output');
+
+		/**
+		 * Finally, we either return or output the CSS
+		 */
+		self::send_headers();
+		Scaffold_Log::save();
+
+		if($return === false)
+			echo $css;
+		else
+			return array(
+			    'error'   => self::$has_error,
+			    'content' => $css,
+			    'headers' => self::$headers,
+			    'flags'   => self::$flags,
+			);
 	}
 
 	/**
@@ -373,18 +568,6 @@ class Scaffold extends Scaffold_Utils
 	private static function header($name,$value)
 	{
 		return self::$headers[$name] = $value;
-	}
-
-	/**
-	 * Takes a relative path, gets the full server path, removes
-	 * the www root path, leaving only the url path to the file/folder
-	 *
-	 * @author Anthony Short
-	 * @param $relative_path
-	 */
-	public static function url_path($path) 
-	{
-		return self::reduce_double_slashes(str_replace( $_SERVER['DOCUMENT_ROOT'], '/', realpath($path) ));
 	}
 	
 	/**
@@ -484,227 +667,6 @@ class Scaffold extends Scaffold_Utils
 		return isset(self::$options[$name]);
 	}
 
-	/**
-	 * Loads modules
-	 *
-	 * @return Array The names of the loaded addons
-	 */
-	public static function modules($disabled = array())
-	{
-		# If the modules have already been loaded
-		if(isset(self::$modules))
-			return array_keys(self::$modules);
-		
-		# Get each of the folders inside the Plugins and Modules directories
-		$modules = self::list_files('modules');
-
-		foreach($modules as $module)
-		{			
-			$name = basename($module);
-			
-			if(in_array($name, $disabled))
-				continue;
-			
-			# Add this module folder to the include paths
-			self::add_include_path($module);
-
-			# The config file for the plugin (Optional)
-			$config_file = $module.'/config.php';
-			
-			if(!isset(self::$config[$module]))
-			{
-				if(file_exists($config_file))
-				{
-					include $config_file;
-					
-					foreach($config as $key => $value)
-						self::$config[$name][$key] = $value;
-					
-					unset($config);
-				}
-			}
-			
-			# Include the addon controller
-			if( $controller = self::find_file($name.'.php', false, true) )
-			{
-				require_once($controller);
-				self::$modules[$name] = $controller;
-			}
-		}
-		
-		return array_keys(self::$modules);
-	}
-	
-	/**
-	 * Allows modules to hook into the processing at any point
-	 *
-	 * @param $hook
-	 * @param $params
-	 * @return boolean
-	 */
-	private static function hook($name,&$params='')
-	{
-		foreach(self::modules() as $module)
-		{
-			if(method_exists($module,$name))
-			{
-				$params = call_user_func(array($module,$name),$params);
-			}
-		}
-	}
-
-	/**
-	 * Parses the single CSS file
-	 *
-	 * @param $file 	The file to the parsed
-	 * @return $css 	string
-	 */
-	public static function parse_file($file)
-	{
-		self::add_include_path(dirname($file));
-		self::set_current($file);
-
-		self::$css = file_get_contents($file);
-		$css =& self::$css;
-		
-		if(class_exists('Import'))
-			$css = Import::parse($css);
-
-		/**
-		 * Import Process Hook
-		 */
-		self::hook('import_process',$css);
-
-		if(class_exists('Constants'))
-			$css = Constants::parse($css);
-		
-		/**
-		 * Pre-process Hook
-		 */
-		self::hook('pre_process',$css);
-		
-		if(class_exists('Layout'))
-			$css = Layout::parse($css);
-			
-		/**
-		 * Process Hook
-		 */
-		self::hook('process',$css);
-		
-		if(class_exists('Mixins'))
-			$css = Mixins::parse($css);
-
-		if(class_exists('Constants'))
-			$css = Constants::replace($css);
-						
-		if(class_exists('Iteration'))
-			$css = Iteration::parse($css);
-		
-		if(class_exists('Expression'))
-			$css = Expression::parse($css);
-		
-		if(class_exists('NestedSelectors'))
-			$css = NestedSelectors::parse($css);
-			
-		/**
-		 * Post-process Hook
-		 */
-		self::hook('post_process',$css);
-
-		if(class_exists('Absolute_Urls'))
-			$css = Absolute_Urls::rewrite($css);
-
-		if(class_exists('Minify'))
-			$css = Minify::compress($css);
-		
-		/**
-		 * Formatting Hook
-		 */
-		self::hook('formatting_process',$css);
-
-		self::remove_include_path(dirname($file));
-		
-		return $css;
-	}
-	
-	/**
-	 * Output the CSS to the browser
-	 *
-	 * @return void
-	 */
-	public static function output($file,$return = false)
-	{		
-		$css 		= file_get_contents($file);
-		$modified 	= (int) filemtime($file);
-		
-		/**
-		 * The current working file is now the compiled
-		 * CSS file from the cache
-		 */
-
-		self::set_current($file);
-		
-		/**
-		 * Output Hook
-		 * Modules can use this hook to alter what is displayed to the browser
-		 * by loading views or however else they want to.
-		 */
-
-		if(self::$config['in_production'] === false)
-		{				
-			foreach(self::modules() as $module)
-				call_user_func(array($module,'output'), $css);
-		}
-		
-		/**
-		 * Set the HTTP headers for the request. Scaffold will set
-		 * all the headers required to score a A grade on YSlow. This
-		 * means your CSS will be sent as quickly as possible to the browser.
-		 */
-
-		if(self::$config['cache_lifetime'] != false)
-		{
-			self::header('Expires',gmdate('D, d M Y H:i:s', $_SERVER['REQUEST_TIME'] + self::$config['cache_lifetime']) . ' GMT');
-			self::header('Cache-Control','max-age='.self::$config['cache_lifetime'].', public');
-		}
-		else
-		{
-			// Far future expires header
-			self::header('Expires',gmdate('D, d M Y H:i:s', $_SERVER['REQUEST_TIME'] + 315360000) . ' GMT');
-		}
-
-		$protocol 		= isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0';
-		$modified_since = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? $_SERVER['HTTP_IF_MODIFIED_SINCE'] : 0;
-		$size 			= filesize($file);	
-		$etag			= md5(serialize(array($file,$modified,$size)));
-		$last_modified	= gmdate('D, d M Y H:i:s', $modified) .' GMT';	
-		
-		self::header('Content-Type','text/css');
-		self::header('Last-Modified',$last_modified);
-		self::header('Content-Length',$size);
-		self::header('ETag',$etag);
-
-		if(isset($modified_since) && $modified <= strtotime($modified_since))
-		{
-			self::header('_responseCode',"{$protocol} 304 Not Modified");
-		}
-
-		/**
-		 * Finally, we either return or output the CSS
-		 */
-		self::send_headers();
-		Scaffold_Log::save();
-
-		if($return === false)
-			echo $css;
-		else
-			return array(
-			    'error'   => self::$has_error,
-			    'content' => $css,
-			    'headers' => self::$headers,
-			    'flags'   => self::$flags,
-			);
-	}
 	
 	/**
 	 * Sets the currently active file information
@@ -714,12 +676,27 @@ class Scaffold extends Scaffold_Utils
 	 */
 	private static function set_current($file)
 	{
+		static $previous;
+		
+		$dir = dirname($file) . '/';
+		$contents = file_get_contents($file);
+		
+		if($previous != null)
+			self::remove_include_path($previous);
+
+		self::add_include_path($dir);
+	
 		self::$current = array
 		(
 			'file' => $file,
-			'path' => dirname($file) . '/',
-			'url'  => self::url_path(dirname($file))
+			'path' => $dir,
+			'url'  => self::url_path($dir),
+			'contents' => $contents
 		);
+
+		$previous = $dir;
+		
+		return $contents;
 	}
 	
 	/**
