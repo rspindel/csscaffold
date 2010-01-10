@@ -10,6 +10,13 @@
 class Scaffold_Log
 {
 	/**
+	 * If the log is enabled
+	 *
+	 * @var boolean
+	 */
+	public static $enabled = false;
+
+	/**
 	 * Logs
 	 *
 	 * @var array
@@ -37,33 +44,27 @@ class Scaffold_Log
 	public static $log_directory;
 	
 	/**
-	 * The log threshold
-	 *
-	 * @var int
-	 */
-	private static $threshold = 2;
-	
-	/**
-	 * The level of logged message to display as errors.
-	 * 0 will only display error logs, 1 will display
-	 * error logs and warning logs etc.
-	 *
-	 * @var int
-	 */
-	private static $error_level = 0;
-	
-	/**
 	 * Adds the log directory and threshold. Should be run before using this class
 	 *
 	
 	 * @param $threshold
 	 * @return boolean
 	 */
-	public static function setup($threshold,$error_level,$dir)
+	public static function setup($dir)
 	{
-		self::$threshold = $threshold;
-		self::$error_level = $error_level;
 		self::log_directory($dir);
+	}
+	
+	/**
+	 * Enable logging
+	 *
+	
+	 * @param $enable
+	 * @return void
+	 */
+	public static function enable($enable)
+	{
+		self::$enabled = $enable;
 	}
 
 	/**
@@ -73,35 +74,12 @@ class Scaffold_Log
 	 * @param $level The severity of the log message
 	 * @return void
 	 */
-	public static function log($message,$level = 4)
+	public static function log($message,$level = 3)
 	{
-		if ($level <= self::$threshold)
-		{
-			self::$log[] = array(date('Y-m-d H:i:s P'), $level, $message);
-		}
-		
-		if ($level <= self::$error_level)
-		{
-			self::error($message);
-		}
-	}
-	
-	/**
-	 * If the log message is within the error threshold, it will
-	 * be thrown as an error here.
-	 *
-	 * @param $message
-	 * @return mixed
-	 */
-	private static function error($message)
-	{
-		self::save();
+		if(self::$enabled === false)
+			return false;
 
-		if (!headers_sent())
-			header('HTTP/1.1 500 Internal Server Error');
-			
-		include Scaffold::find_file('scaffold_error.php', 'views', true);
-		exit;
+		self::$log[] = array(date('Y-m-d H:i:s P'), $level, $message);
 	}
 
 	/**
@@ -111,8 +89,8 @@ class Scaffold_Log
 	 */
 	public static function save()
 	{
-		if (empty(self::$log) OR self::$threshold < 1)
-			return;
+		if (empty(self::$log) OR self::$enabled === false)
+			return false;
 
 		$filename = self::log_directory().date('Y-m-d').'.log.php';
 
@@ -133,7 +111,7 @@ class Scaffold_Log
 		}
 		while (!empty($log));
 
-		file_put_contents($filename, implode(PHP_EOL, $messages).PHP_EOL, FILE_APPEND);
+		return file_put_contents($filename, implode(PHP_EOL, $messages).PHP_EOL, FILE_APPEND);
 	}
 
 	/**
@@ -144,6 +122,9 @@ class Scaffold_Log
 	 */
 	public static function log_directory($dir = NULL)
 	{
+		if(self::$enabled === false)
+			return false;
+
 		if (!empty($dir))
 		{
 			// Get the directory path
@@ -166,8 +147,7 @@ class Scaffold_Log
 		}
 		else
 		{
-			echo "No log directory set";
-			exit;
+			return false;
 		}
 	}
 }

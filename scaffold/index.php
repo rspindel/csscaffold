@@ -10,12 +10,6 @@
 ini_set('display_errors', TRUE);
 error_reporting(E_ALL & ~E_STRICT);
 
-# Include the config file
-include 'config.php';
-
-# Load the libraries. Do it manually if you don't like this way.
-include 'libraries/Bootstrap.php';
-
 /**
  * Set the server variable for document root. A lot of 
  * the utility functions depend on this. Windows servers
@@ -35,6 +29,12 @@ if(!isset($_SERVER['DOCUMENT_ROOT']))
 	    }
 	}
 }
+
+# Include the config file
+include 'config.php';
+
+# Load the libraries. Do it manually if you don't like this way.
+include 'libraries/Bootstrap.php';
 
 /**
  * Set timezone, just in case it isn't set. PHP 5.2+ 

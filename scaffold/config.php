@@ -22,7 +22,17 @@
 $config['in_production'] = false;
 
 /**
- * Internal Cache
+ * Display Errors
+ *
+ * When an error is found, Scaffold can display a HTML page describing the error.
+ * In production mode, errors will never be shown.
+ */
+$config['display_errors'] = true;
+
+/**
+ * Cache Lifetime
+ *
+ * This has no effect when no in production mode.
  *
  * Scaffold can cache it's flags, config values and more to save on 
  * rendering time when a file isn't being recached and just being delivered
@@ -32,27 +42,22 @@ $config['in_production'] = false;
  *
  * This value, in seconds, determines how long the internal cache will last.
  *
- * Setting this to false means the internal cache will never be used, and for
- * every request made the to CSS, Scaffold will check and make sure it is completely
- * up-to-date and cache any changes.
+ * Setting this to false means that Scaffold will check to see if the original
+ * files are modified every time, resulting in a slightly slower parsing time
+ * when in production.
  */
 $config['cache_lifetime'] = 3600; // 3600 will check if it needs to recache every hour
 
 /**
- * Log threshold
+ * Enable Logging
  *
- * This determines the maximum log level that Scaffold will log to. Higher log levels
- * will be thrown as errors.
- *
- * 1. Errors
- * 2. Warnings
- * 3. Info
- * 4. Debug
+ * If you enable logging, errors, warnings and messages will be saved to the logs directory
+ * inside the system folder.
  */
-$config['log_threshold'] = 1;
+$config['enable_log'] = true;
 
 /**
- * Error Level
+ * Error Threshold
  *
  * Set the minimum log level required to be displayed as an error. 0 will display
  * only error messages, 1 will display error AND warning messages etc.
@@ -60,6 +65,11 @@ $config['log_threshold'] = 1;
  * For example. A non-existent CSS file is an level 0 message (an error), whereas
  * a missing image is a level 1 message (a warning). Setting this to 1 will display
  * these missing images as errors.
+ *
+ * 0 = error
+ * 1 = warning
+ * 2 = message
+ * 3 = debug
  */
 $config['error_threshold'] = 0;
 

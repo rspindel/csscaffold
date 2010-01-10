@@ -32,6 +32,13 @@ class Scaffold extends Scaffold_Utils
 	public static $config;
 	
 	/**
+	 * The final output
+	 *
+	 * @var string
+	 */
+	private static $output = null;
+	
+	/**
 	 * Include paths
 	 *
 	 * These are used for finding files on the system. Rather than
@@ -97,6 +104,15 @@ class Scaffold extends Scaffold_Utils
 	public static $has_error = false;
 	
 	/**
+	 * The level of logged message to display as errors.
+	 * 0 will only display error logs, 1 will display
+	 * error logs and warning logs etc.
+	 *
+	 * @var int
+	 */
+	private static $error_level = 0;
+	
+	/**
 	 * Stores the headers for sending to the browser.
 	 *
 	 * @var array
@@ -138,6 +154,8 @@ class Scaffold extends Scaffold_Utils
 		$files = array_unique($files);
 
 		self::$options = $options;
+		self::$has_error = false;
+		self::$headers = array();
 		
 		/** 
 		 * We create a folder inside the cache based on this particular
@@ -175,11 +193,12 @@ class Scaffold extends Scaffold_Utils
 		 */
 		if(self::$config['in_production'] === true)
 		{
-			$output = $cache->temp('output');
+			$output = $cache->temp('output.css');
 
 			if($output !== null)
 			{
-				return self::output($cache->find($output),$return);
+				self::output($cache->find('output.css'));
+				return self::shutdown($return);
 			}
 		}
 
@@ -189,10 +208,10 @@ class Scaffold extends Scaffold_Utils
 		/**
 		 * Pre-parsing hook
 		 */
-		self::hook('pre_parse', array( &$files, &self::$flags, &self::$modules ));
+		self::hook('pre_parse');
 		
 		# Combined CSS filename
-		$combined = md5(serialize(array($files,$flags))) . '.css';
+		$combined = 'output.css';
 	
 		/**
 		 * We loop through each of the files the user is requesting, make
@@ -210,7 +229,7 @@ class Scaffold extends Scaffold_Utils
 		{
 			# If it's a url
 			if( substr($file, 0, 4) == "http" )
-				Scaffold_Log::log('Scaffold cannot parse CSS files sent as URLs - ' . $file,0);
+				self::error('Scaffold cannot parse CSS files sent as URLs - ' . $file);
 
 			# Find the CSS file
 			$request = self::find_file($file, false, true);
@@ -219,13 +238,13 @@ class Scaffold extends Scaffold_Utils
 			$cached_file = md5(serialize(array($request,$flags))) . '.css';
 			
 			if (!Scaffold_Utils::is_css($file))
-				Scaffold_Log::log("Requested file isn't a css file: $file",0);
+				self::error("Requested file isn't a css file: $file");
 
 			# Try and load it from the cache
 			$css = $cache->fetch($cached_file,filemtime($request));
 			
 			if(!isset($css))
-			{				
+			{	
 				# Parse the CSS string
 				$css = self::parse_file($request);
 
@@ -242,7 +261,7 @@ class Scaffold extends Scaffold_Utils
 		/**
 		 * Post-parsing hook
 		 */
-		self::hook('post_parse', array( &$join, &$combined ));
+		self::hook('post_parse', array(&$join));
 		
 		# If any of the files has changed we need to recache the combined
 		if($cache->fetch($combined) === null)
@@ -253,11 +272,10 @@ class Scaffold extends Scaffold_Utils
 		/**
 		 * Pre-output hook
 		 */
-		self::hook('pre_output', array(&$combined) );
+		self::hook('pre_output');
 
-		$cache->write($combined,'output');
-
-		return self::output($cache->find($combined),$return);
+		self::output($cache->find($combined));
+		return self::shutdown($return);
 	}
 
 	/**
@@ -271,7 +289,7 @@ class Scaffold extends Scaffold_Utils
 		self::$config =& $config;
 
 		# Set the errors to display
-		if($config['in_production'] === false)
+		if($config['in_production'] === false && $config['display_errors'] === true)
 		{	
 			ini_set('display_errors', true);
 			error_reporting(E_ALL & ~E_STRICT);
@@ -287,20 +305,20 @@ class Scaffold extends Scaffold_Utils
 		$config['cache']  = self::fix_path($config['cache']);
 		
 		# Prepare the logger
-		Scaffold_Log::setup(
-			$config['log_threshold'],
-			$config['error_threshold'],
-			$config['system'].'logs/'
-		);
+		if($config['enable_log'] === true)
+		{
+			Scaffold_Log::enable(true);
+			Scaffold_Log::setup($config['system'].'logs/');
+		}
 
 		self::add_include_path(
 			$config['system'], 
 			$config['system'].'modules/', 
 			$config['document_root']
 		);
-		
+
 		# Load the configs for the modules
-		foreach(self::list_files('config') as $file)
+		foreach(self::list_files($config['system'].'config/') as $file)
 		{
 			include $file;
 		}
@@ -446,7 +464,7 @@ class Scaffold extends Scaffold_Utils
 	 *
 	 * @return void
 	 */
-	public static function output($file,$return = false)
+	public static function output($file)
 	{
 		/**
 		 * The current working file is now the compiled
@@ -486,7 +504,7 @@ class Scaffold extends Scaffold_Utils
 
 		$protocol 		= isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0';
 		$modified_since = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? $_SERVER['HTTP_IF_MODIFIED_SINCE'] : 0;
-		$size 			= filesize($file);	
+		$size 			= strlen($css);	
 		$etag			= md5(serialize(array($file,$modified,$size)));
 		$last_modified	= gmdate('D, d M Y H:i:s', $modified) .' GMT';	
 		
@@ -508,18 +526,33 @@ class Scaffold extends Scaffold_Utils
 		/**
 		 * Finally, we either return or output the CSS
 		 */
-		self::send_headers();
+		self::$output = $css;
+	}
+	
+	/**
+	 * Cleans up Scaffold, saves the log and exits.
+	 *
+	 * @return void
+	 */
+	private function shutdown($return = false)
+	{
 		Scaffold_Log::save();
-
+		self::send_headers();
+		
 		if($return === false)
-			echo $css;
+		{
+			echo self::$output;
+			exit;
+		}
 		else
+		{
 			return array(
 			    'error'   => self::$has_error,
-			    'content' => $css,
+			    'content' => self::$output,
 			    'headers' => self::$headers,
 			    'flags'   => self::$flags,
 			);
+		}
 	}
 
 	/**
@@ -532,6 +565,31 @@ class Scaffold extends Scaffold_Utils
 	{
 		Scaffold_Log::log($message,0);
 		self::$has_error = true;
+		self::$output = $message;
+
+		self::header('_responseCode','HTTP/1.1 500 Internal Server Error');
+		
+		if (self::$config['display_errors'] === true AND self::$config['in_production'] === false)
+		{
+			include self::find_file('scaffold_error.php', 'views', true);
+		}
+
+		self::shutdown(true);
+	}
+	
+	/**
+	 * Uses the logging class to log a message
+	 *
+	 * @author your name
+	 * @param $message
+	 * @return void
+	 */
+	public static function log($message,$level)
+	{
+		if ($level <= self::$error_level)
+		{
+			self::error($message);
+		}
 	}
 
 	/**
@@ -667,7 +725,6 @@ class Scaffold extends Scaffold_Utils
 		return isset(self::$options[$name]);
 	}
 
-	
 	/**
 	 * Sets the currently active file information
 	 *
@@ -679,6 +736,7 @@ class Scaffold extends Scaffold_Utils
 		static $previous;
 		
 		$dir = dirname($file) . '/';
+		
 		$contents = file_get_contents($file);
 		
 		if($previous != null)
@@ -828,12 +886,16 @@ class Scaffold extends Scaffold_Utils
 
 		if ($path === FALSE)
 		{
-			$paths = array_reverse(self::include_paths());
-
-			foreach ($paths as $path)
+			if(is_dir($directory))
 			{
-				// Recursively get and merge all files
-				$files = array_merge($files, self::list_files($directory, $recursive, $path.$directory));
+				$files = array_merge($files, self::list_files($directory, $recursive, $directory));
+			}
+			else
+			{
+				foreach (array_reverse(self::include_paths()) as $path)
+				{
+					$files = array_merge($files, self::list_files($directory, $recursive, $path.$directory));
+				}
 			}
 		}
 		else

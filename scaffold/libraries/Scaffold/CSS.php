@@ -170,9 +170,10 @@ abstract class Scaffold_CSS
 	public static function find_properties_with_value($property, $value = ".*?", $css = "")
 	{		
 		# Make the property name regex-friendly
-		#$property = str_replace('-', '\-', preg_quote($property));
-		
-		if(preg_match_all("/\{(?:[^\}]*({$property}\:\s*({$value})\s*\;).*?)\}/sx", $css, $match))
+		$property = Scaffold_Utils::preg_quote($property);
+		$regex = "/ ({$property}) \s*\:\s* ({$value}) /sx";
+			
+		if(preg_match_all($regex, $css, $match))
 		{
 			return $match;
 		}
@@ -223,36 +224,6 @@ abstract class Scaffold_CSS
 	}
 	
 	/**
-	 * Finds all selectors of a certain name in the css. This finds
-	 * the selector in any context. eg #id or .class, #id, .class etc.
-	 *
-	 * @author Anthony Short
-	 * @param $selector
-	 * @param $css
-	 * @return array
-	 */
-	public static function find_selector_names($selector, $css = "")
-	{		
-		# Get it ready to be put in regex
-		$selector = Scaffold_Utils::preg_quote($selector);
-		
-		$regex = "/
-			[^}]*
-			{$selector}
-			[^{]*
-		/sx";
-
-		if(preg_match_all($regex, $css, $match))
-		{
-			return $match;
-		}
-		else
-		{
-			return false;
-		}
-	}
-	
-	/**
 	 * Finds all properties within a css string
 	 *
 	 * @author Anthony Short
@@ -277,9 +248,9 @@ abstract class Scaffold_CSS
 	 * @param $name
 	 * @return boolean
 	 */
-	public static function selector_exists($name)
+	public static function selector_exists($name,$css)
 	{
-		return preg_match('/'.preg_quote($name).'\s*?({|,)/', $this->css);
+		return preg_match('/'.preg_quote($name).'\s*?({|,)/', $css);
 	}
 		
 	/**

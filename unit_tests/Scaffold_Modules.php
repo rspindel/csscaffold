@@ -106,3 +106,46 @@ class ModulesTests extends UnitTestCase
 	}
 
 }
+
+/*
+// Selector Tests		
+$files = array(
+	'/unit_tests/_files/Misc/selectors.css'
+);
+$result = Scaffold::parse($files,$this->config,$options,true);
+$this->assertFalse( $result['error'] );
+
+// Hacks test
+$files = array(
+	'/unit_tests/_files/Misc/hacks.css'
+);
+$this->config['display_errors'] = true;
+$result = Scaffold::parse($files,$this->config,$options,true);
+$this->assertFalse( $result['error'] );
+
+// General styles
+$files = array(
+	'/unit_tests/_files/Misc/styles.css'
+);
+$result = Scaffold::parse($files,$this->config,$options,true);
+$this->assertFalse( $result['error'] );
+
+// Unusual CSS strings
+$files = array(
+	'/unit_tests/_files/Misc/unusual_strings.css'
+);
+$result = Scaffold::parse($files,$this->config,$options,true);
+$this->assertFalse( $result['error'] );
+
+// Multiple Files
+$files = array(
+	'/unit_tests/_files/Misc/general.css',
+	'/unit_tests/_files/Misc/minified.css',
+	'/unit_tests/_files/Misc/selectors.css',
+	'/unit_tests/_files/Misc/hacks.css',
+	'/unit_tests/_files/Misc/styles.css',
+	'/unit_tests/_files/Misc/unusual_strings.css'
+);
+$result = Scaffold::parse($files,$this->config,$options,true);
+$this->assertFalse( $result['error'] );
+*/

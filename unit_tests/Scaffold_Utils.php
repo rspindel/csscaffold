@@ -5,6 +5,14 @@ require_once('../scaffold/libraries/Scaffold/Utils.php');
 
 class UtilityTests extends UnitTestCase
 {
+	
+	function testUrlPath()
+	{
+		$this->assertEqual( Scaffold_Utils::url_path(dirname(__FILE__)), '/unit_tests');
+		$this->assertEqual( Scaffold_Utils::url_path(dirname(__FILE__) . '/..'), '/');
+		$this->assertEqual( Scaffold_Utils::url_path(dirname(__FILE__) . '/../scaffold/'), '/scaffold');
+	}
+
 	function testFixPath()
 	{
 		$path = Scaffold_Utils::fix_path('/Library///WebServer/Documents\_projects/CSScaffold/unit_tests');

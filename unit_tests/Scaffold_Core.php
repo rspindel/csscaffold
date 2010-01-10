@@ -4,50 +4,123 @@ include '_load.php';
 
 class CoreTests extends UnitTestCase
 {
+	var $config;
+	var $cache;
+
 	function testSetFlag()
 	{
 		$this->assertTrue( Scaffold::flag_set('Flag') );
 	}
 	
-	function testLogThreshold()
+	function setupCore()
 	{
-		Scaffold_Core::log_threshold(4);
-		Scaffold_Core::log('Foo',4);
-		Scaffold_Core::log('bar',3);
-		Scaffold_Core::log('bar',2);
-		Scaffold_Core::log('bar',1);
-		$this->assertEqual(count(Scaffold_Core::$log),4);
+		if($this->config == null)
+			$this->loadConfig();
+
+		$this->assertTrue( Scaffold::setup($this->config) );
+
+		foreach(Scaffold::modules() as $module)
+		{
+			$this->assertTrue( is_object($module) );
+		}
 		
-		Scaffold_Core::$log = array();
-		
-		Scaffold_Core::log_threshold(3);
-		Scaffold_Core::log('Foo',4);
-		Scaffold_Core::log('bar',3);
-		Scaffold_Core::log('bar',2);
-		Scaffold_Core::log('bar',1);
-		$this->assertEqual(count(Scaffold_Core::$log),3);
-		
-		Scaffold_Core::$log = array();
-		
-		Scaffold_Core::log_threshold(2);
-		Scaffold_Core::log('Foo',4);
-		Scaffold_Core::log('bar',3);
-		Scaffold_Core::log('bar',2);
-		Scaffold_Core::log('bar',1);
-		$this->assertEqual(count(Scaffold_Core::$log),2);
-		
-		Scaffold_Core::$log = array();
-		
-		Scaffold_Core::log_threshold(1);
-		Scaffold_Core::log('Foo',4);
-		Scaffold_Core::log('bar',3);
-		Scaffold_Core::log('bar',2);
-		Scaffold_Core::log('bar',1);
-		$this->assertEqual(count(Scaffold_Core::$log),1);
+		$this->assertTrue( is_array(Scaffold::include_paths()) );
+		$this->assertTrue( is_array(Scaffold::modules()) );
+		return true;
 	}
 	
-	function testLogDirectory()
+	function loadConfig()
 	{
-		$this->assertEqual(Scaffold_Core::log_directory(),'/Library/WebServer/Documents/_projects/CSScaffold/scaffold/logs/');
+		include '../scaffold/config.php';
+		$config['system']  = realpath('../scaffold/') . '/';
+		$config['cache']   = $config['system'] . 'cache/';
+		$this->config = $config;
+		return true;
 	}
+	
+	function testLoadConfig()
+	{
+		$this->assertTrue( $this->loadConfig() );
+	}
+	
+	function testSetupCore()
+	{
+		$this->assertTrue( $this->setupCore() );
+	}
+	
+	function testSetupDevelopment()
+	{
+		$this->loadConfig();
+		$this->config['in_production'] = false;
+		$this->setupCore();
+		$this->assertFalse( Scaffold::$config['in_production'] );
+	}
+	
+	function testSetupProduction()
+	{
+		$this->loadConfig();
+		$this->config['in_production'] = true;
+		$this->setupCore();
+		$this->assertTrue( Scaffold::$config['in_production'] );
+	}
+
+	function testSetupCache()
+	{
+		$this->loadConfig();
+		
+		$cache = new Scaffold_Cache
+		(
+			$this->config['cache'],
+			$this->config['cache_lifetime'],
+			$this->config['in_production'] 
+		);
+		
+		$this->assertTrue( is_object($cache) );
+	}
+	
+	// General stress-testing of the parsing function.
+	function testParse()
+	{
+		$this->loadConfig();
+		$this->config['display_errors'] = false;
+		$this->setupCore();
+		$options = array();
+
+		// Single files
+		$files = array('/unit_tests/_files/Misc/general.css');
+		$result = Scaffold::parse($files,$this->config,$options,true);
+		$this->assertFalse( $result['error'] );
+
+		// Multiple Files
+		$files = array(
+			'/unit_tests/_files/Misc/general.css',
+			'/unit_tests/_files/Misc/minified.css'
+		);
+		$result = Scaffold::parse($files,$this->config,$options,true);
+		$this->assertFalse( $result['error'] );
+		
+		// Same file twice
+		$files = array(
+			'/unit_tests/_files/Misc/general.css',
+			'/unit_tests/_files/Misc/general.css'
+		);
+		$result = Scaffold::parse($files,$this->config,$options,true);
+		$this->assertFalse( $result['error'] );
+	}
+	
+	function testErrors()
+	{
+		$this->loadConfig();
+		$this->config['display_errors'] = false;
+		$this->setupCore();
+		$options = array();
+
+		// Via a url 
+		$files = array(
+			'http://scaffold/unit_tests/_files/Misc/general.css'
+		);
+		$result = Scaffold::parse($files,$this->config,$options,true);
+		$this->assertTrue( $result['error'] );
+	}
+
 }

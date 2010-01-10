@@ -4,11 +4,6 @@ include '_load.php';
 
 class CacheTests extends UnitTestCase
 {
-	/**
-	 * Global cache for testing to save time
-	 *
-	 * @var obj
-	 */
 	private $cache;
 
 	function testCreateCache()

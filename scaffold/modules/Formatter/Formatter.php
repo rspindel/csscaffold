@@ -49,6 +49,25 @@ class Formatter extends Scaffold_Module
 
         // apply callback to all valid comments (and strip out surrounding ws
         $css = preg_replace_callback('@\\s*/\\*([\\s\\S]*?)\\*/\\s*@',array('Formatter', '_commentCB'), $css);
+        
+        // Convert rgb() values to hex
+        if(Scaffold::$config['Formatter']['rgb_to_hex'])
+        {
+            $css = self::rgb_to_hex($css);
+        }
+        
+        // Strip out the units on 0 measurements eg 0px
+        if(Scaffold::$config['Formatter']['remove_empty_measurements'])
+        {
+            $css = preg_replace('/([^0-9])0(px|em|\%)/', '$1 0', $css);
+            $css = preg_replace('/([^0-9])0\.([0-9]+)em/', '$1.$2em', $css);
+        }
+        
+        // Convert font-weights to numbers
+        if(Scaffold::$config['Formatter']['font_weights_to_numbers'])
+        {
+            $css = self::font_weights_to_numbers($css);
+        }
 
         // remove ws around { } and last semicolon in declaration block
         $css = preg_replace('/\\s*{\\s*/', '{', $css);
@@ -119,6 +138,59 @@ class Formatter extends Scaffold_Module
         }
 
         return trim($css);
+    }
+    
+    /**
+     * Converts font-weights into numbers
+     *
+     * @param $css
+     * @return return type
+     */
+    private function font_weights_to_numbers($css)
+    {
+    	if( $found = Scaffold_CSS::find_properties_with_value('font-weight','bold|normal',$css) )
+    	{	
+	    	foreach($found[2] as $key => $value)
+	    	{
+	    		if($value == 'bold')
+	    		{
+	    			$css = str_replace($found[0][$key],'font-weight:700',$css);
+	    		}
+	    		elseif($value == 'normal')
+	    		{
+	    			$css = str_replace($found[0][$key],'font-weight:400',$css);
+	    		}
+	    	}
+    	}
+    	
+    	return $css;
+    }
+    
+    /**
+     * Takes a CSS string, finds all rgb() values and converts them to hex format
+     *
+     * @param $css
+     * @return string
+     */
+    private static function rgb_to_hex($css)
+    {
+    	if( $rgbs = Scaffold_CSS::find_functions('rgb',$css) )
+    	{
+	    	foreach( $rgbs[2] as $key => $found )
+	    	{
+	    		$color = null;
+	    		
+	    		foreach(explode(',',$found) as $value)
+	    		{
+	    			$hex = dechex($value);
+	    			$color .= ( strlen($hex) == 1 ) ? 0 . $hex : $hex;
+	    		}
+	
+	    		$css = str_replace($rgbs[0][$key],"#" . $color,$css);
+	    	}
+    	}
+    	
+    	return $css;
     }
     
     /**
@@ -234,14 +306,28 @@ class Formatter extends Scaffold_Module
      */
     private static function prettify($css)
     {
-    	$css = preg_replace('#(/\*[^*]*\*+([^/*][^*]*\*+)*/|url\(data:[^\)]+\))#e', "'esc('.base64_encode('$1').')'", $css); // escape comments, data protocol to prevent processing
-    		
-    	$css = str_replace('*/',"*/\n",$css);
-    	$css = str_replace(';', ";\r\r", $css); // line break after semi-colons (for @import)
-    	$css = preg_replace('#([-a-z]+):\s*([^;}{]+);\s*#i', "$1: $2;\r\t", $css); // normalize property name/value space
-    	$css = preg_replace('#\s*\{\s*#', "\r{\r\t", $css); // normalize space around opening brackets
-    	$css = preg_replace('#\s*\}\s*#', "\r}\r\r", $css); // normalize space around closing brackets
-    	$css = preg_replace('#,\s*#', ",\r", $css); // new line for each selector in a compound selector
+    	// /\*[^*]*\*+([^/*][^*]*\*+)*/|
+  		
+  		// escape data protocol to prevent processing
+    	$css = preg_replace('#(url\(data:[^\)]+\))#e', "'esc('.base64_encode('$1').')'", $css);
+  
+  		// line break after semi-colons (for @import)
+    	$css = str_replace(';', ";\r\r", $css);
+    	
+    	// normalize property name/value space
+    	$css = preg_replace('#([-a-z]+):\s*([^;}{]+);\s*#i', "$1: $2;\r", $css); 
+    	
+    	// normalize comments spacing and lines
+    	$css = preg_replace('#\*/#sx',"*/\r",$css);
+    	
+    	// normalize space around opening brackets
+    	$css = preg_replace('#\s*\{\s*#', "\r{\r", $css); 
+    	
+    	// normalize space around closing brackets
+    	$css = preg_replace('#\s*\}\s*#', "\r}\r\r", $css);
+    	
+    	// new line for each selector in a compound selector
+    	$css = preg_replace('#,\s*#', ",\r", $css);
    
     	// remove returns after commas in property values
     	if (preg_match_all('#:[^;]+,[^;]+;#', $css, $m))
@@ -259,7 +345,7 @@ class Formatter extends Scaffold_Module
     	{
     		$css = str_replace($m[0], str_replace($m[1], "\r\t".preg_replace("#\r#", "\r\t", trim($m[1]))."\r", $m[0]), $css);
     	}
-    	
+
     	return $css;
     }
 } 
