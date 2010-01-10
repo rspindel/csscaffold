@@ -112,6 +112,7 @@ class CoreTests extends UnitTestCase
 	{
 		$this->loadConfig();
 		$this->config['display_errors'] = false;
+		$this->config['in_production'] = false;
 		$this->setupCore();
 		$options = array();
 
@@ -121,6 +122,12 @@ class CoreTests extends UnitTestCase
 		);
 		$result = Scaffold::parse($files,$this->config,$options,true);
 		$this->assertTrue( $result['error'] );
+	}
+	
+	function testReset()
+	{
+		$this->loadConfig();
+		Scaffold::setup($this->config);
 	}
 
 }

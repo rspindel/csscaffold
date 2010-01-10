@@ -1,3 +1,2 @@
-/* @include 'bad.css' bad; */
 adjacent foo { background: red url(/red.gif); }
 adjacent bar { background: url('../green.gif') }

@@ -28,7 +28,7 @@ class Firelog extends Scaffold_Module
 	 * @param $css
 	 * @return $css string
 	 */
-	public static function test($input)
+	public static function pre_parse()
 	{
 		self::_enable();
 	}
@@ -121,7 +121,6 @@ class Firelog extends Scaffold_Module
 				self::_group('Flags',Scaffold::flags());
 
 			self::_group('Include Paths', Scaffold::include_paths());
-			self::_group('Modules', Scaffold::modules());
 		}	
 	}
 
@@ -148,7 +147,7 @@ class Firelog extends Scaffold_Module
 	 * @param $group
 	 * @return void
 	 */
-	private static function _log($message,$level=4)
+	private static function _log($message,$level=3)
 	{		
 		if(is_array($message))
 		{
@@ -177,7 +176,7 @@ class Firelog extends Scaffold_Module
 	 * @param $group
 	 * @return void
 	 */
-	private static function _group($group,$message,$level=4)
+	private static function _group($group,$message,$level=3)
 	{
 		FB::group($group);
 		self::_log($message,$level);

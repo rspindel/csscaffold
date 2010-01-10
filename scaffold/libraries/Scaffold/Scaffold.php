@@ -36,7 +36,7 @@ class Scaffold extends Scaffold_Utils
 	 *
 	 * @var string
 	 */
-	private static $output = null;
+	private static $output = false;
 	
 	/**
 	 * Include paths
@@ -156,6 +156,10 @@ class Scaffold extends Scaffold_Utils
 		self::$options = $options;
 		self::$has_error = false;
 		self::$headers = array();
+		self::$output = false;
+		
+		# The final, combined CSS file in the cache
+		$combined = 'output.css';
 		
 		/** 
 		 * We create a folder inside the cache based on this particular
@@ -171,11 +175,13 @@ class Scaffold extends Scaffold_Utils
 			chmod($cache_folder, 0777);
 		}
 		
-		self::$cache = $cache = new Scaffold_Cache(
+		self::$cache = new Scaffold_Cache(
 			$cache_folder,
 			self::$config['cache_lifetime'],
 			self::$config['in_production']
 		);
+		
+		$cache =& self::$cache;
 
 		/**
 		 * We'll try and load the already combined and processed
@@ -191,27 +197,26 @@ class Scaffold extends Scaffold_Utils
 		 * and even when it does, it might not need to reprocess each and every
 		 * file that the user requested if they haven't actually changed.
 		 */
-		if(self::$config['in_production'] === true)
-		{
-			$output = $cache->temp('output.css');
-
-			if($output !== null)
+		if(self::$config['in_production'] === true && self::$config['cache_lifetime'] !== false)
+		{		
+			if($cache->temp($combined) !== null)
 			{
-				self::output($cache->find('output.css'));
-				return self::shutdown($return);
+				self::output($cache->find($combined));
 			}
 		}
-
-		# Get the flags from each of the loaded modules.
-		$flags = self::flags();
 		
 		/**
 		 * Pre-parsing hook
 		 */
 		self::hook('pre_parse');
 		
-		# Combined CSS filename
-		$combined = 'output.css';
+		if(self::$output !== false)
+		{
+			return self::shutdown($return);
+		}
+		
+		# Get the flags from each of the loaded modules.
+		$flags = self::flags();
 	
 		/**
 		 * We loop through each of the files the user is requesting, make
@@ -230,17 +235,17 @@ class Scaffold extends Scaffold_Utils
 			# If it's a url
 			if( substr($file, 0, 4) == "http" )
 				self::error('Scaffold cannot parse CSS files sent as URLs - ' . $file);
+				
+			if (!Scaffold_Utils::is_css($file))
+				self::error("Requested file isn't a css file: $file");
 
 			# Find the CSS file
 			$request = self::find_file($file, false, true);
 
 			# Find the name of the we need to create in the cache directory.
 			$cached_file = md5(serialize(array($request,$flags))) . '.css';
-			
-			if (!Scaffold_Utils::is_css($file))
-				self::error("Requested file isn't a css file: $file");
 
-			# Try and load it from the cache
+			# Try and load it from the cache. It will return null if the requested file is newer
 			$css = $cache->fetch($cached_file,filemtime($request));
 			
 			if(!isset($css))
@@ -273,8 +278,11 @@ class Scaffold extends Scaffold_Utils
 		 * Pre-output hook
 		 */
 		self::hook('pre_output');
-
+		
+		# Set the current output
 		self::output($cache->find($combined));
+		
+		# Save the log, send headers etc
 		return self::shutdown($return);
 	}
 
@@ -491,7 +499,7 @@ class Scaffold extends Scaffold_Utils
 		 * means your CSS will be sent as quickly as possible to the browser.
 		 */
 
-		if(self::$config['cache_lifetime'] != false)
+		if(self::$config['cache_lifetime'] !== false)
 		{
 			self::header('Expires',gmdate('D, d M Y H:i:s', $_SERVER['REQUEST_TIME'] + self::$config['cache_lifetime']) . ' GMT');
 			self::header('Cache-Control','max-age='.self::$config['cache_lifetime'].', public');
@@ -513,7 +521,7 @@ class Scaffold extends Scaffold_Utils
 		self::header('Content-Length',$size);
 		self::header('ETag',$etag);
 
-		if(isset($modified_since) && $modified <= strtotime($modified_since))
+		if($modified <= strtotime($modified_since))
 		{
 			self::header('_responseCode',"{$protocol} 304 Not Modified");
 		}
@@ -538,7 +546,7 @@ class Scaffold extends Scaffold_Utils
 	{
 		Scaffold_Log::save();
 		self::send_headers();
-		
+
 		if($return === false)
 		{
 			echo self::$output;
@@ -565,16 +573,18 @@ class Scaffold extends Scaffold_Utils
 	{
 		Scaffold_Log::log($message,0);
 		self::$has_error = true;
-		self::$output = $message;
 
 		self::header('_responseCode','HTTP/1.1 500 Internal Server Error');
 		
 		if (self::$config['display_errors'] === true AND self::$config['in_production'] === false)
 		{
 			include self::find_file('scaffold_error.php', 'views', true);
+			self::shutdown();
 		}
-
-		self::shutdown(true);
+		else
+		{
+			self::shutdown(true);
+		}
 	}
 	
 	/**

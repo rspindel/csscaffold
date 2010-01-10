@@ -30,8 +30,8 @@ require_once('Scaffold_Core.php');
 $test->addTestCase(new CoreTests());
 
 // Stress-tests for each of the included modules
-//require_once('Scaffold_Modules.php');
-//$test->addTestCase(new ModulesTests());
+require_once('Scaffold_Modules.php');
+$test->addTestCase(new ModulesTests());
 
 // Makes sure the correct headers are sent
 require_once('Scaffold_HTTP.php');

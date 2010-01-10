@@ -33,40 +33,4 @@ class HTTPTests extends UnitTestCase
 		// Make sure the content length is set
 		$this->assertNotEqual( strlen($result['headers']['Content-Length']), 0);
 	}
-	
-	// The CSS file has not been modified
-	function testProductionNotModified()
-	{
-		$files = array('/unit_tests/_files/HTTP/standard.css');
-		$options = array();
-		$this->loadConfig();
-		$this->config['in_production'] = true;
-		
-		// Parse it once to make sure the file is already cached
-		Scaffold::parse($files,$this->config,$options,true);
-		
-		// Parse it again. It hasn't been modified so it should return the correct headers
-		$result = Scaffold::parse($files,$this->config,$options,true);
-		
-		print_r($result);
-
-		// Make sure the response code is corrent
-		$this->assertTrue( strstr($result['headers']['_responseCode'],'304 Not Modified') ); 
-	}
-	
-	// The CSS file has been modified
-	function testProductionModified()
-	{
-	
-	}
-
-	function testDevelopmentNotModified()
-	{
-	
-	}
-	
-	function testDevelopmentModified()
-	{
-	
-	}
 }

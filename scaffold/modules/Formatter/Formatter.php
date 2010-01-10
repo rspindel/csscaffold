@@ -31,7 +31,7 @@ class Formatter extends Scaffold_Module
      * @param string $css
      * @return string
      */
-    protected function minify($css)
+    public static function minify($css)
     {
         $css = str_replace("\r\n", "\n", $css);
         
@@ -304,7 +304,7 @@ class Formatter extends Scaffold_Module
      * @param $css
      * @return string
      */
-    private static function prettify($css)
+    public static function prettify($css)
     {
     	// /\*[^*]*\*+([^/*][^*]*\*+)*/|
   		

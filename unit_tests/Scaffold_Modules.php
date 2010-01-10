@@ -80,7 +80,7 @@ class ModulesTests extends UnitTestCase
 			$list[] = $entry;
 		}
 		$d->close();
-		
+
 		foreach($list as $item)
 		{ 
 			$item = str_replace('.css','',$item);
@@ -89,13 +89,13 @@ class ModulesTests extends UnitTestCase
 			
 			$css = Mixins::parse($original);
 			
-			$css = Minify::compress($css);
-			$expected = Minify::compress($expected);
+			$css = Formatter::minify($css);
+			$expected = Formatter::minify($expected);
 			
 			$this->assertEqual($expected,$css);
 		}
 	}
-
+	/*
 	function test_Nested_Selectors()
 	{
 		$this->dir('NestedSelectors');
@@ -104,6 +104,7 @@ class ModulesTests extends UnitTestCase
 		$css = NestedSelectors::parse($original);
 		$this->assertEqual($css,$expected);
 	}
+	*/
 
 }
 

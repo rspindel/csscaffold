@@ -113,4 +113,4 @@ $config['cache'] = './cache/';
  * disabling any of the major modules (Nested Selectors, constants, mixins), as
  * you might get some unexpected results. 
  */
-$config['disable'] = array('Firelog');
+$config['disable'] = array();
