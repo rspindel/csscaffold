@@ -148,76 +148,30 @@ class Scaffold extends Scaffold_Utils
 	 * @return string The processed css file as a string
 	 */
 	public static function parse( $files, $config, $options = array(), $return = false )
-	{
-		self::setup($config);
-
-		$files = array_unique($files);
-
+	{		
+		# Setup Scaffold with this config
+		self::setup($config,$options);
 		self::$options = $options;
-		self::$has_error = false;
-		self::$headers = array();
-		self::$output = false;
 		
-		# The final, combined CSS file in the cache
-		$combined = 'output.css';
-		
-		/** 
-		 * We create a folder inside the cache based on this particular
-		 * request of files. We can then used this folder inside for caching
-		 * further files within this request. Each request of files will have
-		 * it's own folder inside the cache.
-		 */
-		$cache_folder = self::$config['cache'] . md5(serialize($files)) . '/';
-		
-		if(!is_dir($cache_folder))
-		{
-			mkdir($cache_folder);
-			chmod($cache_folder, 0777);
-		}
-		
-		self::$cache = new Scaffold_Cache(
-			$cache_folder,
-			self::$config['cache_lifetime'],
-			self::$config['in_production']
-		);
-		
-		$cache =& self::$cache;
-
-		/**
-		 * We'll try and load the already combined and processed
-		 * CSS file from the cache before we do anything else. 
-		 * This particular cache file will only exist for a limited
-		 * amount of time, as set in the config.
-		 *
-		 * When the time is up, this cache file is removed and Scaffold
-		 * will continue as normal and reprocess the file.
-		 *
-		 * This only occurs in production mode to save unnecessary processing
-		 * as Scaffold will only check the files every hour or so for changes,
-		 * and even when it does, it might not need to reprocess each and every
-		 * file that the user requested if they haven't actually changed.
-		 */
-		if(self::$config['in_production'] === true && self::$config['cache_lifetime'] !== false)
-		{		
-			if($cache->temp($combined) !== null)
-			{
-				self::output($cache->find($combined));
-			}
-		}
-		
-		/**
-		 * Pre-parsing hook
-		 */
+		# Module Hook
 		self::hook('pre_parse');
 		
-		if(self::$output !== false)
+		# Get the flags from each of the loaded modules.
+		$flags = (self::$config['disable_flags'] === true) ? array() : self::flags();
+		
+		# The final, combined CSS file in the cache
+		$output = md5(serialize(array($files,$flags))) . '.css';
+		
+		# Module Hook
+		self::hook('pre_loop');
+		
+		# Look for the already cached version for this request.
+		if( self::$config['in_production'] === true AND Scaffold_Cache::temp($output) !== null )
 		{
+			self::output( Scaffold_Cache::find($output) );
 			return self::shutdown($return);
 		}
-		
-		# Get the flags from each of the loaded modules.
-		$flags = self::flags();
-	
+
 		/**
 		 * We loop through each of the files the user is requesting, make
 		 * checks to make sure it's able to be parsed and then check the
@@ -235,52 +189,56 @@ class Scaffold extends Scaffold_Utils
 			# If it's a url
 			if( substr($file, 0, 4) == "http" )
 				self::error('Scaffold cannot parse CSS files sent as URLs - ' . $file);
-				
-			if (!Scaffold_Utils::is_css($file))
-				self::error("Requested file isn't a css file: $file");
+			
+			if ( substr($file, -4, 4) != ".css" )
+				self::error("Requested file isn't a css file - $file");
 
 			# Find the CSS file
 			$request = self::find_file($file, false, true);
+	
+			# What the save this file as
+			if( self::$config['disable_flags'] === true )
+			{
+				$cached_file = $file;
+			}
+			else
+			{
+				$cached_file = md5(serialize(array($request,$flags))) . '.css';
+			}
 
-			# Find the name of the we need to create in the cache directory.
-			$cached_file = md5(serialize(array($request,$flags))) . '.css';
-
-			# Try and load it from the cache. It will return null if the requested file is newer
-			$css = $cache->fetch($cached_file,filemtime($request));
-			
-			if(!isset($css))
-			{	
+			# Try and load it from the cache. It will return null if the requested file is newer			
+			if( ( $css = Scaffold_Cache::fetch($cached_file,filemtime($request)) ) === null)
+			{
 				# Parse the CSS string
 				$css = self::parse_file($request);
 
 				# Write the css file to the cache
-				$cache->write($css,$cached_file);
+				Scaffold_Cache::write($css,$cached_file);
 
 				# We'll need to recache the combined css too
-				$cache->remove($combined);
+				Scaffold_Cache::remove($output);
 			}
 
 			$join[] = $css;
 		}
 		
-		/**
-		 * Post-parsing hook
-		 */
-		self::hook('post_parse', array(&$join));
+		# Module Hook
+		self::hook('post_parse', array(&$join) );
 		
 		# If any of the files has changed we need to recache the combined
-		if($cache->fetch($combined) === null)
+		if( Scaffold_Cache::fetch($output) === null )
 		{
-			$cache->write(implode('',$join),$combined);
+			Scaffold_Cache::write(implode('',$join),$output);
 		}
 		
-		/**
-		 * Pre-output hook
-		 */
+		# Module Hook
 		self::hook('pre_output');
 		
 		# Set the current output
-		self::output($cache->find($combined));
+		self::output( Scaffold_Cache::find($output) );
+		
+		# Module Hook
+		self::hook('post_output');
 		
 		# Save the log, send headers etc
 		return self::shutdown($return);
@@ -295,6 +253,11 @@ class Scaffold extends Scaffold_Utils
 	public static function setup($config) 
 	{
 		self::$config =& $config;
+		
+		# Reset everything
+		self::$has_error = false;
+		self::$headers = array();
+		self::$output = false;
 
 		# Set the errors to display
 		if($config['in_production'] === false && $config['display_errors'] === true)
@@ -334,9 +297,13 @@ class Scaffold extends Scaffold_Utils
 		# Load all the modules
 		self::modules(self::$config['disable']);
 		
-		/**
-		 * Post-setup hook
-		 */
+		Scaffold_Cache::setup(
+			self::$config['cache'],
+			self::$config['cache_lifetime'],
+			self::$config['in_production']
+		);
+
+		# Module Hook
 		self::hook('setup');
 		
 		return true;
@@ -408,23 +375,20 @@ class Scaffold extends Scaffold_Utils
 		/**
 		 * Remove inline comments. These are only 
 		 * used by Scaffold and should never be output
-		 * into the final CSS.
+		 * into the final CSS. Ever.
 		 */
 		$css = preg_replace('#(\s|$)//.*$#Umsi', '', $css);
 
 		/**
 		 * Import Process Hook
+		 * This hook is for doing any type of importing/including in the CSS
 		 */
 		self::hook('import_process',array(&$css));
 		
-		if(class_exists('Import'))
-			$css = Import::parse($css);
-
-		if(class_exists('Constants'))
-			$css = Constants::parse($css);
-		
 		/**
 		 * Pre-process Hook
+		 * There shouldn't be any heavy processing of the string here. Just pulling
+		 * out @ rules, constants and other bits and pieces.
 		 */
 		self::hook('pre_process',array(&$css));
 		
@@ -433,34 +397,30 @@ class Scaffold extends Scaffold_Utils
 			
 		/**
 		 * Process Hook
+		 * The main process. None of the processes should conflict in any of the modules
 		 */
 		self::hook('process',array(&$css));
 		
 		if(class_exists('Mixins'))
 			$css = Mixins::parse($css);
-
-		if(class_exists('Constants'))
-			$css = Constants::replace($css);
 						
 		if(class_exists('Iteration'))
 			$css = Iteration::parse($css);
-		
-		if(class_exists('Expression'))
-			$css = Expression::parse($css);
 		
 		if(class_exists('NestedSelectors'))
 			$css = NestedSelectors::parse($css);
 			
 		/**
 		 * Post-process Hook
+		 * After any non-standard CSS has been processed and removed. This is where
+		 * the nested selectors are parsed. It's not perfectly standard CSS yet, but
+		 * there shouldn't be an Scaffold syntax left at all.
 		 */
 		self::hook('post_process',array(&$css));
 
-		if(class_exists('Absolute_Urls'))
-			$css = Absolute_Urls::rewrite($css);
-
 		/**
 		 * Formatting Hook
+		 * Stylise the string, rewriting urls and other parts of the string. No heavy processing.
 		 */
 		self::hook('formatting_process',array(&$css));
 		

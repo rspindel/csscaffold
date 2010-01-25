@@ -9,7 +9,7 @@
  * 
  * @author Anthony Short
  */
-class Mixins extends Scaffold_Module
+class Mixins
 {
 
 	/**

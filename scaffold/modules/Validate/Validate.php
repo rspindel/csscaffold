@@ -3,7 +3,7 @@
 /**
  * Validate
  **/
-class Validate extends Scaffold_Module
+class Validate
 {
 
 	/**
@@ -63,9 +63,9 @@ class Validate extends Scaffold_Module
 			    		$message = trim((string)$error->mmessage);
 			    		$near = (string)$error->mcontext;
 			    		
-			    		self::$errors[] = array('line' => $line, 'near' => $near, 'message' => $near);
+			    		self::$errors[] = array('line' => $line, 'near' => $near, 'message' => $message);
 			    		
-			    		Scaffold_Log::log("Validation Error on line {$line} near {$near} => {$message}",2);
+			    		Scaffold_Log::log("Validation Error on line {$line} near {$near} => {$message}",1);
 			    	}
 			    }
 			}

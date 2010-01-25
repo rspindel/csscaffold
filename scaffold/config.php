@@ -106,11 +106,13 @@ $config['system'] = './';
 $config['cache'] = './cache/';
 
 /**
- * Disabled Modules
+ * Disable Modules
  *
  * If a particular module isn't taking your fancy, you can just disable it
- * here. You might get some unexpected results by doing so. I wouldn't recomend
+ * here. You might get some unexpected results by doing so. I wouldn't recommend
  * disabling any of the major modules (Nested Selectors, constants, mixins), as
  * you might get some unexpected results. 
  */
 $config['disable'] = array();
+
+$config['disable_flags'] = true;

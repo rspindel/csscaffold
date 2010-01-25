@@ -7,7 +7,7 @@
  * 
  * @author Anthony Short
  */
-class Time extends Scaffold_Module
+class Time
 {
 	protected static $types = array
 	(

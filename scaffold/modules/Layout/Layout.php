@@ -6,7 +6,7 @@
  * @author Anthony Short
  * @dependencies None
  **/
-class Layout extends Scaffold_Module
+class Layout
 {
 
 	/**
@@ -62,6 +62,8 @@ class Layout extends Scaffold_Module
 	 * The unit the grid is based on
 	 */
 	public static $unit;
+	
+	public static $columns;
 
 	/**
 	 * Parse the @grid rule and calculate the grid.
@@ -76,28 +78,12 @@ class Layout extends Scaffold_Module
 			$groups = $settings['groups'];
 			$settings = $settings['values'];
 			
+			# You really should only have one @grid
 			if(count($groups) > 1)
-			{
 				Scaffold_Log::log('Layout module can only use one @grid rule',1);
-			}
-
-			$code = '<pre><code>' . $groups[0] . '<pre></code>';
-
-			# Make sure none of the required options are missing
-			if( 
-				!isset($settings['column-count']) || 
-				( !isset($settings['left-gutter-width']) && !isset($settings['right-gutter-width']) ) ||
-				( !isset($settings['grid-width']) && !isset($settings['column-width']) )
-			)
-			{
-				$error = "@grid rule requires the <strong>column-count, left-gutter-width or right-gutter-width and column-width or grid-width</strong> properties.\n\n$code";
-				Scaffold::error($error);
-			}
-
-			elseif( isset($settings['column-width']) && isset($settings['grid-width']) )
-			{
-				Scaffold::error("You can only have either the column-width or grid-width property set.\n\n$code");
-			}
+				
+			# Make sure the groups have all the right properties
+			self::check_grid($groups[0],$settings);
 			
 			# Remove it from the css
 			$css = str_replace($groups, array(), $css); 
@@ -143,21 +129,19 @@ class Layout extends Scaffold_Module
 			
 			if( Scaffold::$config['Layout']['grid_image'] )
 			{
-				# Path to the image
-				$img = Scaffold::$cache_path . "Layout/{$lgw}_{$cw}_{$rgw}_{$bl}_grid.png";
-				
 				# Generate the grid.png
-				self::create_grid_image($cw, $bl, $lgw, $rgw, $img);
-				
-				$img = Scaffold::url_path($img);
-				
-				$css .= "=show-grid{background:url('".$img."');}";		
+				$img = self::create_grid_image($cw, $bl, $lgw, $rgw);
+				$css .= "=grid{background:url('".$img."');}";
 			}
 			
 			if( Scaffold::$config['Layout']['grid_classes'] )
 			{
+				for ($i = 1; $i <= $cc; $i++)
+				{
+					self::$columns[$i] = ($i * $cw) + (($i * $gw) - $gw);
+				}	
+				
 				$css .= file_get_contents( Scaffold::find_file('Layout/css/grid.css') );
-				$css .= file_get_contents( Scaffold::find_file('Layout/css/grid-classes.css') );
 			}
 
 			# Make each of the column variables a member variable
@@ -201,8 +185,12 @@ class Layout extends Scaffold_Module
 	* @param $gw Gutter Width
 	* @return null
 	*/
-	private static function create_grid_image($cw, $bl, $lgw, $rgw, $file)
-	{		
+	private static function create_grid_image($cw, $bl, $lgw, $rgw)
+	{
+		# Path to the image
+		$file = Scaffold::$cache_path . "Layout/{$lgw}_{$cw}_{$rgw}_{$bl}_grid.png";
+		$file = Scaffold::url_path($file);
+			
 		if(!file_exists($file))
 		{
 			Scaffold::cache_create('Layout');
@@ -230,5 +218,33 @@ class Layout extends Scaffold_Module
 		    # Kill it
 		    ImageDestroy($image);
 	    }
+	    
+	    return $file;
+	}
+	
+	/**
+	 * Checks if all the needed settings are present in a group
+	 *
+	
+	 * @param $group
+	 * @return boolean
+	 */
+	private static function check_grid($group,$settings)
+	{
+		$code = '<pre><code>' . $group . '<pre></code>';
+
+		# Make sure none of the required options are missing
+		if(!isset($settings['column-count']) || ( !isset($settings['left-gutter-width']) && !isset($settings['right-gutter-width']) ) || ( !isset($settings['grid-width']) && !isset($settings['column-width']) ))
+		{
+			$error = "@grid rule requires the <strong>column-count, left-gutter-width or right-gutter-width and column-width or grid-width</strong> properties.\n\n$code";
+			Scaffold::error($error);
+		}
+
+		elseif( isset($settings['column-width']) && isset($settings['grid-width']) )
+		{
+			Scaffold::error("You can only have either the column-width or grid-width property set.\n\n$code");
+		}
+		
+		return true;
 	}
 }

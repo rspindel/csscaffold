@@ -15,28 +15,28 @@ class Scaffold_Cache
 	 *
 	 * @var string
 	 */
-	private $cache_path;
+	private static $cache_path;
 	
 	/**
 	 * Cache lifetime
 	 *
 	 * @var string
 	 */
-	private $lifetime = 0;
+	private static $lifetime = 0;
 	
 	/**
-	 * Is the cache frozen/locked?
+	 * Is the cache locked?
 	 *
 	 * @var boolan
 	 */
-	private $frozen = false;
+	private static $frozen = false;
 
 	/**
 	 * Sets up the cache path
 	 *
 	 * @return return type
 	 */
-	public function __construct($path,$lifetime,$frozen)
+	public function setup($path,$lifetime,$frozen)
 	{
 		if (!is_dir($path))
 			Scaffold_Log::log("Cache path does not exist. $path",0);
@@ -44,9 +44,9 @@ class Scaffold_Cache
 		if (!is_writable($path))
 			Scaffold_Log::log("Cache path is not writable. $path",0);
 
-		$this->cache_path = $path;
-		$this->lifetime($lifetime);
-		$this->freeze($frozen);
+		self::$cache_path = $path;
+		self::lifetime($lifetime);
+		self::freeze($frozen);
 	}
 	
 	/**
@@ -57,7 +57,7 @@ class Scaffold_Cache
 	 */
 	public function freeze($locked)
 	{
-		$this->frozen = $locked;
+		self::$frozen = $locked;
 	}
 	
 	/**
@@ -69,8 +69,8 @@ class Scaffold_Cache
 	public function recache($file,$time)
 	{
 		if( 
-			$this->frozen === false OR 
-			( $this->frozen === true AND ( $this->exists($file) === false OR $this->modified($file) <= $time ) )
+			self::$frozen === false OR 
+			( self::$frozen === true AND ( self::exists($file) === false OR self::modified($file) <= $time ) )
 		)
 		{
 			return true;
@@ -87,7 +87,7 @@ class Scaffold_Cache
 	 */
 	public function lifetime($time)
 	{
-		$this->lifetime = $time;
+		self::$lifetime = $time;
 	}
 	
 	/**
@@ -98,9 +98,9 @@ class Scaffold_Cache
 	 */
 	public function open($file)
 	{
-		if($this->exists($file))
+		if(self::exists($file))
 		{
-			return file_get_contents($this->find($file));
+			return file_get_contents(self::find($file));
 		}
 		
 		return false;
@@ -114,10 +114,10 @@ class Scaffold_Cache
 	 */
 	public function exists($file)
 	{
-		if(is_file($this->cache_path.$file))
+		if(is_file(self::$cache_path.$file))
 			return true;
 
-		if(is_dir($this->cache_path.$file))
+		if(is_dir(self::$cache_path.$file))
 		{
 			return true;
 		}
@@ -133,7 +133,7 @@ class Scaffold_Cache
 	 */
 	public function modified($file)
 	{
-		return ( $this->exists($file) ) ? (int) filemtime($this->find($file)) : 0 ;
+		return ( self::exists($file) ) ? (int) filemtime(self::find($file)) : 0 ;
 	}
 	
 	/**
@@ -144,13 +144,13 @@ class Scaffold_Cache
 	 */
 	public function find($file)
 	{
-		if($this->exists($file))
-			return $this->cache_path.$file;
+		if(self::exists($file))
+			return self::$cache_path.$file;
 			
 		return false;
 	}
 	
-	/**
+	/** 
 	 * Load data file from the cache. Use for storing configs and
 	 * other temporary internal data. Only lasts for the lifetime of the cache
 	 * which by default, is an hour.
@@ -161,18 +161,23 @@ class Scaffold_Cache
 	 */
 	public function temp($name)
 	{
-		if ($this->lifetime > 0)
+		# We're not using the temporary file cache
+		if(self::$lifetime === false)
 		{
-			if($this->exists($name))
+			return null;
+		}
+		elseif (self::$lifetime > 0)
+		{
+			if(self::exists($name))
 			{
 				# If the file is older than the cache lifetime (eg an hour)
-				if ( (time() - filemtime($this->find($name))) < $this->lifetime )
+				if ( (time() - filemtime(self::find($name))) < self::$lifetime )
 				{
-					return $this->open($name);
+					return self::open($name);
 				}
 				else
 				{
-					$this->remove($name);
+					self::remove($name);
 				}
 			}
 		}
@@ -188,16 +193,16 @@ class Scaffold_Cache
 	 */
 	public function fetch($name,$time = 0)
 	{
-		if($this->exists($name))
+		if(self::exists($name))
 		{
-			if ( $this->recache($name,$time) === false )
+			if ( self::recache($name,$time) === false )
 			{
-				return $this->open($name);
+				return self::open($name);
 			}
 			else
 			{
 				# Cache is invalid, delete it
-				$this->remove($name);
+				self::remove($name);
 			}
 		}
 
@@ -213,9 +218,9 @@ class Scaffold_Cache
 	public function write( $data, $target = '', $append = false )
 	{	
 		# Create the cache file
-		$this->create(dirname($target));
+		self::create(dirname($target));
 
-		$target = $this->cache_path.$target;
+		$target = self::$cache_path.$target;
 		
 		if(is_array($data))
 			$data = serialize($data);
@@ -261,9 +266,9 @@ class Scaffold_Cache
 	 */
 	public function remove($file)
 	{
-		if($this->find($file))
+		if(self::find($file))
 		{
-			unlink($this->find($file));
+			unlink(self::find($file));
 			return true;
 		}
 			
@@ -280,7 +285,7 @@ class Scaffold_Cache
 	{
 		if(!is_dir($dir))
 		{
-			$dir = $this->find($dir);
+			$dir = self::find($dir);
 		}
 
 		$files = glob( $dir . '*', GLOB_MARK ); 
@@ -289,7 +294,7 @@ class Scaffold_Cache
 		{ 
 			if( is_dir($file) )
 			{ 
-				$this->remove_dir( $file );
+				self::remove_dir( $file );
 				rmdir( $file ); 
 			}
 			else 
@@ -307,7 +312,7 @@ class Scaffold_Cache
 	public function create($path)
 	{	
 		# If it already exists
-		if(is_dir($this->cache_path.$path))
+		if(is_dir(self::$cache_path.$path))
 			return true;
 
 		# Create the directories inside the cache folder
@@ -317,10 +322,10 @@ class Scaffold_Cache
 		{
 			$next = '/' . $next . '/' . $dir;
 
-			if(!is_dir($this->cache_path.$next)) 
+			if(!is_dir(self::$cache_path.$next)) 
 			{
-				mkdir($this->cache_path.$next);
-				chmod($this->cache_path.$next, 0777);
+				mkdir(self::$cache_path.$next);
+				chmod(self::$cache_path.$next, 0777);
 			}
 		}
 		

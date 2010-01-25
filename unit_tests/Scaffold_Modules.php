@@ -15,13 +15,30 @@ class ModulesTests extends UnitTestCase
 		}
 		return $directory;
 	}
+	
+	function load_files($name)
+	{
+		$this->dir($name);
+		$list = array();
+		$d = dir($this->dir());
+		while (false !== ($entry = $d->read())) 
+		{
+		    if (preg_match('/_out\.css$/', $entry, $m) || $entry[0] == ".") 
+		     	continue;
+		     	
+			$list[] = $entry;
+		}
+		$d->close();
+		
+		return $list;
+	}
 
 	function test_Absolute_Urls()
 	{
 		$this->dir('Absolute_Urls');
 		$original = file_get_contents( $this->dir() . 'original.css');
 		$expected = file_get_contents( $this->dir() . 'expected.css');
-		$css = Absolute_Urls::rewrite($original);
+		$css = Absolute_Urls::formatting_process($original);
 		$this->assertEqual($css,$expected);
 	}
 
@@ -30,7 +47,7 @@ class ModulesTests extends UnitTestCase
 		$this->dir('Constants');
 		$original = file_get_contents( $this->dir() . 'in.css');
 		$expected = file_get_contents( $this->dir() . 'out.css');
-		$css = Constants::parse($original);
+		$css = Constants::pre_process($original);
 		$css = Constants::replace($css);
 		$this->assertEqual($css,$expected);
 	}
@@ -53,7 +70,7 @@ class ModulesTests extends UnitTestCase
 		$expected = file_get_contents( $this->dir() . 'out.css' );
 		Scaffold::$current['file'] = $this->dir() . 'in.css';
 		Scaffold::add_include_path( $this->dir() );
-		$css = Import::parse($original);
+		$css = Import::import_process($original);
 		$this->assertEqual($expected,$css);
 	}
 	
@@ -68,24 +85,11 @@ class ModulesTests extends UnitTestCase
 	
 	function test_Mixins()
 	{
-		$this->dir('Mixins');
-		$list = array();
-
-		$d = dir($this->dir());
-		while (false !== ($entry = $d->read())) 
-		{
-		    if (preg_match('/_out\.css$/', $entry, $m) || $entry[0] == ".") 
-		     	continue;
-		     	
-			$list[] = $entry;
-		}
-		$d->close();
-
-		foreach($list as $item)
+		foreach($this->load_files('Mixins') as $item)
 		{ 
-			$item = str_replace('.css','',$item);
-			$original = file_get_contents( $this->dir() . "/{$item}.css");
-			$expected = file_get_contents( $this->dir() . "/{$item}_out.css");
+			$out = str_replace('.css','_out.css',$item);
+			$original = file_get_contents($item);
+			$expected = file_get_contents($out);
 			
 			$css = Mixins::parse($original);
 			

@@ -9,8 +9,6 @@
  */
 function Scaffold_background_gradient($params)
 {
-	# Make sure any commas inside ()'s, such as rgba(255,255,255,0.5) are 
-	# encoded before exploding so that it doesn't break the rule.
 	if(preg_match_all('/\([^)]*?,[^)]*?\)/',$params, $matches))
 	{
 		foreach($matches as $key => $original)

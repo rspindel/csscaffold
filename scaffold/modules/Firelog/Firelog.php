@@ -7,7 +7,7 @@
  * 
  * @author Anthony Short
  */
-class Firelog extends Scaffold_Module
+class Firelog
 {
 	/**
 	 * Log Levels
@@ -15,6 +15,14 @@ class Firelog extends Scaffold_Module
 	 * @var array
 	 */
 	private static $log_levels = array
+	(
+		'Errors',
+		'Warnings',
+		'Information',
+		'Debug',
+	);
+	
+	private static $fb_methods = array
 	(
 		'error',
 		'warn',
@@ -32,6 +40,22 @@ class Firelog extends Scaffold_Module
 	{
 		self::_enable();
 	}
+	
+	/**
+	 * Loads FirePHP
+	 *
+	 * @author Anthony Short
+	 * @param $param
+	 * @return return type
+	 */
+	private static function _enable()
+	{
+		if(!class_exists('FB'))
+			require dirname(__FILE__) . '/libraries/FirePHPCore/fb.php';
+
+		# Enable it
+		FB::setEnabled(true);
+	}
 
 	/**
 	 * During the output phase, gather all the logs and send them to FireBug
@@ -40,26 +64,18 @@ class Firelog extends Scaffold_Module
 	 * @param $css
 	 * @return void
 	 */
-	public static function display($css)
+	public static function output()
 	{
 		if( Scaffold::$config['in_production'] === false)
-		{			
-			/* --------------------------------------------------------
-			
-			General
-			
-			---------------------------------------------------------- */
-			
+		{
 			# Log about the completed file
-			self::_file(Scaffold::$current['file'],'Compiled CSS');
+			if(Scaffold::$config['Firelog']['file_information'] === true)
+			{
+				self::_file(Scaffold::$current['file'],'File Information');
+			}
 
-			/* --------------------------------------------------------
-			
-			Constants
-			
-			---------------------------------------------------------- */
-			
-			if(Constants::$constants)
+			# Constants
+			if(Scaffold::$config['Firelog']['constants'] === true && class_exists('Constants') && Constants::$constants)
 			{
 				$table = array();
 				$table[] = array('Constants Name', 'Value');
@@ -72,13 +88,8 @@ class Firelog extends Scaffold_Module
 				FB::table('Constants', $table);
 			}
 			
-			/* --------------------------------------------------------
-			
-			Mixins
-			
-			---------------------------------------------------------- */
-			
-			if(Mixins::$mixins)
+			# Mixins
+			if(Scaffold::$config['Firelog']['mixins'] === true && class_exists('Mixins') && Mixins::$mixins)
 			{
 				$table = array();
 				$table[] = array('Mixin Name', 'Parameters', 'Properties');
@@ -90,56 +101,134 @@ class Firelog extends Scaffold_Module
 		
 				FB::table('Mixins', $table);
 			}
-			
-			/* --------------------------------------------------------
-			
-			Import
-			
-			---------------------------------------------------------- */
-			
-			self::_group('Included Files', Import::$loaded, 3);
-							
-			/* --------------------------------------------------------
-			
-			Modules
-			
-			---------------------------------------------------------- */	
-
-			/*
-			foreach(Scaffold_Log::$log as $group => $value)
+	
+			# Included files
+			if(Scaffold::$config['Firelog']['included_files'] === true && class_exists('Import') && Import::$loaded)
 			{
-				FB::group('blah');
-				foreach($value as $error)
+				self::_group('Included Files', Import::$loaded, 3);
+			}
+			
+			# Flags
+			if(Scaffold::$config['Firelog']['flags'] === true)
+			{
+				self::_group('Flags', (Scaffold::flags()) ? Scaffold::flags() : 'No flags are set');
+			}
+			
+			# Include Paths
+			if(Scaffold::$config['Firelog']['include_paths'] === true)
+			{
+				self::_group('Include Paths', Scaffold::include_paths());
+			}
+
+			# Error Log
+			if(Scaffold::$config['Firelog']['error_log'] === true)
+			{
+				foreach(Scaffold_Log::$log as $type => $value)
 				{
-					self::_log($error[0],$error[1]);
+					FB::group(self::$log_levels[$type]);
+		
+					foreach($value as $date => $message)
+					{
+						self::_log($message,$type);
+					}
+
+					FB::groupEnd();
 				}
+			}
+			
+			# Custom Functions
+			if(Scaffold::$config['Firelog']['custom_functions'] === true && class_exists('Extensions') && Extensions::$functions)
+			{
+				self::_group('Custom Functions', Extensions::$functions);
+			}
+			
+			# Custom Properties
+			if(Scaffold::$config['Firelog']['custom_properties'] === true && class_exists('Extensions') && Extensions::$properties)
+			{
+				self::_group('Custom Properties', Extensions::$properties);
+			}
+			
+			# Gradients
+			if(Scaffold::$config['Firelog']['gradients'] === true && class_exists('Gradient') && Gradient::$gradients)
+			{
+				$table = array();
+				$table[] = array('Direction', 'Size', 'From', 'To', 'Location');
+		
+				foreach(Gradient::$gradients as $key => $value)
+				{
+					$table[] = array($value[0],$value[1],$value[2],$value[3], str_replace($_SERVER['DOCUMENT_ROOT'], '', $value[4]));
+				}
+	
+				FB::table('Gradients', $table);
+			}
+		
+			# Layout module
+			if(Scaffold::$config['Firelog']['layout'] === true)
+			{
+				FB::group('Layout');
+
+				$table = array();
+				$table[] = array
+				(
+					'Column Count', 
+					'Column Width', 
+					'Total Gutter', 
+					'Left Gutter', 
+					'Right Gutter', 
+					'Total Width', 
+					'Baseline', 
+					'Unit'
+				);
+
+				$table[] = array
+				(
+					Layout::$column_count,
+					Layout::$column_width,
+					Layout::$gutter_width,
+					Layout::$left_gutter_width,
+					Layout::$right_gutter_width,
+					Layout::$grid_width,
+					Layout::$baseline,
+					Layout::$unit
+				);
+				
+				FB::table('Grid Structure', $table);
+				
+				# Columns
+				$table = array();
+				$table[] = array
+				(
+					'Column #',
+					'Width'
+				);
+				
+				foreach(Layout::$columns as $key => $width)
+				{
+					$table[] = array($key,$width);
+				}
+				
+				FB::table('Columns', $table);
+				
+				# Grid Classes
+				
 				FB::groupEnd();
 			}
-			*/
-
-			if(Scaffold::flags())
-				self::_group('Flags',Scaffold::flags());
-
-			self::_group('Include Paths', Scaffold::include_paths());
-		}	
+			
+			# Validation Errors
+			if(Scaffold::$config['Firelog']['validation_errors'] === true && Validate::$errors)
+			{
+				FB::group('Validation Errors');
+				
+				foreach(Validate::$errors as $error)
+				{
+					self::_log("line {$error['line']} near {$error['near']} => {$error['message']}",1);				
+				}
+				
+				FB::groupEnd();
+			}
+		}
 	}
 
-	/**
-	 * Loads FirePHP
-	 *
-	 * @author Anthony Short
-	 * @param $param
-	 * @return return type
-	 */
-	private static function _enable()
-	{
-		if(!class_exists('FB'))
-			require dirname(__FILE__) . '/libraries/FirePHPCore/fb.php';
-		
-		# Enable it
-		FB::setEnabled(true);
-	}
-	
 	/**
 	 * Logs a string or array to Firebug
 	 *
@@ -155,7 +244,7 @@ class Firelog extends Scaffold_Module
 			{
 				if(is_numeric($key))
 				{
-					call_user_func(array('FB',self::$log_levels[$level]), $value);
+					call_user_func(array('FB',self::$fb_methods[$level]), $value);
 				}
 				else
 				{
@@ -165,7 +254,7 @@ class Firelog extends Scaffold_Module
 		}
 		else
 		{
-			call_user_func(array('FB',self::$log_levels[$level]), $message);
+			call_user_func(array('FB',self::$fb_methods[$level]), $message);
 		}
 	}
 	

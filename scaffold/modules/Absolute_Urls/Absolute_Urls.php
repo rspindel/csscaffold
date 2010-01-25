@@ -7,7 +7,7 @@
  * 
  * @author Anthony Short
  */
-class Absolute_Urls extends Scaffold_Module
+class Absolute_Urls
 {
 	/**
 	 * Takes a CSS string, rewrites all URL's using Scaffold's built-in find_file method
@@ -16,7 +16,7 @@ class Absolute_Urls extends Scaffold_Module
 	 * @param $css
 	 * @return $css string
 	 */
-	public static function rewrite($css)
+	public static function formatting_process($css)
 	{
 		# The absolute url to the directory of the current CSS file
 		$dir = Scaffold::url_path( Scaffold::$current['path'] );

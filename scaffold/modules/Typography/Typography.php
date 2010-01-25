@@ -5,7 +5,7 @@
  *
  * Outputs a HTML page of every type element using the parsed CSS
  */
-class Typography extends Scaffold_Module
+class Typography
 {
 	public static function display($css)
 	{

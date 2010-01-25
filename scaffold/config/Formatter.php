@@ -11,7 +11,6 @@ $config['Formatter']['compress'] = true;
 
 /**
  * Compression Options
- *
  * If you've set compress to true, the options below will also apply.
  */
 

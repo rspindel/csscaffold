@@ -18,7 +18,7 @@
 
  * 
  */
-class Flags extends Scaffold_Module
+class Flags
 {
 
 	/**

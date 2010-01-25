@@ -18,8 +18,8 @@ require_once('Scaffold_CSS.php');
 $test->addTestCase(new CSSUtilityTests());
 
 // Cache tests
-require_once('Scaffold_Cache.php');
-$test->addTestCase(new CacheTests());
+//require_once('Scaffold_Cache.php');
+//$test->addTestCase(new CacheTests());
 
 // Logging tests
 require_once('Scaffold_Log.php');

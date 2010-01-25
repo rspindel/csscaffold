@@ -15,8 +15,10 @@ class UtilityTests extends UnitTestCase
 
 	function testFixPath()
 	{
-		$path = Scaffold_Utils::fix_path('/Library///WebServer/Documents\_projects/CSScaffold/unit_tests');
-		$this->assertEqual($path,'/Library/WebServer/Documents/_projects/CSScaffold/unit_tests/');
+		$path = dirname(__FILE__);
+		$path = str_replace('/','\\',$path);
+		$path = Scaffold_Utils::fix_path($path);
+		$this->assertEqual($path,dirname(__FILE__) . '/');
 	}
 	
 	function testPregQuote()

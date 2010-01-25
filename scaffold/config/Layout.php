@@ -19,3 +19,5 @@ $config['Layout']['grid_image'] = false;
  * classes for columns, appending columns etc, similar to Blueprint or 960.gs.
  */
 $config['Layout']['grid_classes'] = false; 
+
+$config['Layout']['column_class_name'] = 'columns-%s';

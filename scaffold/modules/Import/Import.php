@@ -9,7 +9,7 @@
  * @author Anthony Short
  * @dependencies None
  **/
-class Import extends Scaffold_Module
+class Import
 {
 	/**
 	 * Stores which files have already been included
@@ -24,7 +24,7 @@ class Import extends Scaffold_Module
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	public static function parse($css)
+	public static function import_process($css)
 	{
 		# Add the original file to the loaded array
 		self::$loaded[] = Scaffold::$current['file'];

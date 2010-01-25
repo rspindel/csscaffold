@@ -79,7 +79,7 @@ class Scaffold_Log
 		if(self::$enabled === false)
 			return false;
 
-		self::$log[] = array(date('Y-m-d H:i:s P'), $level, $message);
+		self::$log[$level][date('Y-m-d H:i:s P')] = $message;
 	}
 
 	/**
@@ -104,12 +104,13 @@ class Scaffold_Log
 		$messages = array();
 		$log = self::$log;
 
-		do
+		foreach($log as $type => $value)
 		{
-			list ($date, $type, $text) = array_shift($log);
-			$messages[] = $date.' --- '.self::$log_levels[$type].': '.$text;
+			foreach($value as $date => $message)
+			{
+				$messages[] = $date.' --- '.self::$log_levels[$type].': '.$message;
+			}
 		}
-		while (!empty($log));
 
 		return file_put_contents($filename, implode(PHP_EOL, $messages).PHP_EOL, FILE_APPEND);
 	}
