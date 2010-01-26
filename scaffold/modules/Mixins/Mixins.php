@@ -126,12 +126,12 @@ class Mixins
 			}
 			elseif(in_array($mixin_name, $already_mixed))
 			{
-				Scaffold_Log::log('Recursion in mixin - ' . $mixin_name,1);
+				Scaffold::log('Recursion in mixin - ' . $mixin_name,1);
 			}
 		}
 		else
 		{
-			Scaffold_Log::log('Missing mixin - ' . $mixin_name,2);
+			Scaffold::log('Missing mixin - ' . $mixin_name,2);
 		}
 		
 	}
