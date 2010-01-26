@@ -7,7 +7,7 @@
  * If set to false, Scaffold will make your CSS
  * human-readable with nice indentation.
  */
-$config['Formatter']['compress'] = true;
+$config['Formatter']['compress'] = false;
 
 /**
  * Compression Options
