@@ -62,37 +62,17 @@ class Mixins
 			
 			# Remove all of the mixin bases
 			$css = str_replace($full_base,'',$css);
-			
-			# Clean up memory
-			unset($full_base, $base_names, $base_args, $base_props);
-			
-			# Find the mixins
-			if($mixins = self::find_mixins($css))
-			{
-				# Loop through each of the found +mixins
-				foreach($mixins[2] as $mixin_key => $mixin_name)
-				{
-					$css = str_replace($mixins[0][$mixin_key], self::build_mixins($mixin_key, $mixins), $css);
-				}
-			}
-			
-			# Clean up
-			unset($bases, $mixins);
 		}
-
-		return $css;
-	}
-	
-	/**
-	 * Encodes a string for use in regex
-	 *
-	 * @author Anthony Short
-	 * @param $str
-	 * @return return type
-	 */
-	public static function regexerize($str)
-	{
-		return str_replace('-','\-',preg_quote($str));
+		
+		# Find the mixins
+		if($mixins = self::find_mixins($css))
+		{
+			# Loop through each of the found +mixins
+			foreach($mixins[2] as $mixin_key => $mixin_name)
+			{
+				$css = str_replace($mixins[0][$mixin_key], self::build_mixins($mixin_key, $mixins), $css);
+			}
+		}
 	}
 	
 	/**
