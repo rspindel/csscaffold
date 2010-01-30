@@ -4,7 +4,7 @@
 	<meta charset=utf-8 />
 	<title>Typography | CSScaffold</title>
 	
-	<style type="text/css"><?php echo $css; ?></style>
+	<style type="text/css"><?php echo Scaffold::$output; ?></style>
 	
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
 	<script>

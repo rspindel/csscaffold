@@ -15,7 +15,7 @@ class Typography
 			header('Content-Type: text/html');
 			
 			# Load the test suite markup
-			Scaffold::load_view('scaffold_typography.php');
+			Scaffold::view('scaffold_typography',true);
 			exit;
 		}
 	}
