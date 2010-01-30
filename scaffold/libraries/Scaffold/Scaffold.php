@@ -132,91 +132,128 @@ class Scaffold extends Scaffold_Utils
 	 */
 	public static function parse( $files, $config, $options = array(), $display = false )
 	{
-		Scaffold::setup($config);
-		self::$options = $options;
-		$css = false;
-		
-		# Get the flags from each of the loaded modules.
-		$flags = (self::$flags === false) ? array() : self::flags();
-		
-		# The final, combined CSS file in the cache
-		$combined = md5(serialize(array($files,$flags))) . '.css';
-		
-		/**
-		 * Check if we should use the combined cache right now and skip unneeded processing
-		 */
-		if(SCAFFOLD_PRODUCTION AND Scaffold_Cache::exists($combined) AND Scaffold_Cache::is_fresh($combined))
+		try
 		{
-			Scaffold::$output = Scaffold_Cache::open($combined);
-		}
-		
-		if(Scaffold::$output === null)
-		{
-			foreach($files as $file)
+			Scaffold::setup($config);
+			self::$options = $options;
+			$css = false;
+			
+			# Get the flags from each of the loaded modules.
+			$flags = (self::$flags === false) ? array() : self::flags();
+			
+			# The final, combined CSS file in the cache
+			$combined = md5(serialize(array($files,$flags))) . '.css';
+			
+			/**
+			 * Check if we should use the combined cache right now and skip unneeded processing
+			 */
+			if(SCAFFOLD_PRODUCTION AND Scaffold_Cache::exists($combined) AND Scaffold_Cache::is_fresh($combined))
 			{
-				if(substr($file, 0, 4) == "http" OR substr($file, -4, 4) != ".css")
+				Scaffold::$output = Scaffold_Cache::open($combined);
+			}
+			
+			if(Scaffold::$output === null)
+			{
+				foreach($files as $file)
 				{
-					Scaffold::error('Scaffold cannot the requested file - ' . $file);
+					if(substr($file, 0, 4) == "http" OR substr($file, -4, 4) != ".css")
+					{
+						Scaffold::error('Scaffold cannot the requested file - ' . $file);
+					}
+					
+					/**
+					 * If there are flags, we'll include them in the filename
+					 */
+					if(!empty($flags))
+					{
+						$cached_file = dirname($file) . '/' . pathinfo($file, PATHINFO_FILENAME) . '_' . implode('_', $flags) . '.css';
+					}
+					else
+					{
+						$cached_file = $file;
+					}
+	
+					$request = Scaffold::find_file($file, false, true);
+					
+					/**
+					 * While not in production, we want to to always recache, so we'll fake the time
+					 */
+					$modified = (SCAFFOLD_PRODUCTION) ? Scaffold_Cache::modified($cached_file) : 0;
+		
+					/**
+					 * If the CSS file has been changed, or the cached version doesn't exist
+					 */			
+					if(!Scaffold_Cache::exists($cached_file) OR $modified < filemtime($request))
+					{
+						Scaffold_Cache::write( Scaffold::process($request), $cached_file );
+						Scaffold_Cache::remove($combined);
+					}
+		
+					$css .= Scaffold_Cache::open($cached_file);
 				}
-				
-				/**
-				 * If there are flags, we'll include them in the filename
-				 */
-				if(!empty($flags))
-				{
-					$cached_file = dirname($file) . '/' . pathinfo($file, PATHINFO_FILENAME) . '_' . implode('_', $flags) . '.css';
-				}
-				else
-				{
-					$cached_file = $file;
-				}
-
-				$request = Scaffold::find_file($file, false, true);
-				
-				/**
-				 * While not in production, we want to to always recache, so we'll fake the time
-				 */
-				$modified = (SCAFFOLD_PRODUCTION) ? Scaffold_Cache::modified($cached_file) : 0;
+	
+				Scaffold::$output = $css;
 	
 				/**
-				 * If the CSS file has been changed, or the cached version doesn't exist
-				 */			
-				if(!Scaffold_Cache::exists($cached_file) OR $modified < filemtime($request))
+				 * If any of the files have changed we need to recache the combined
+				 */
+				if(!Scaffold_Cache::exists($combined))
 				{
-					Scaffold_Cache::write( Scaffold::process($request), $cached_file );
-					Scaffold_Cache::remove($combined);
+					Scaffold_Cache::write(self::$output,$combined);
 				}
-	
-				$css .= Scaffold_Cache::open($cached_file);
+			
+				/**
+				 * Hook to modify what is sent to the browser
+				 */
+				if(!SCAFFOLD_PRODUCTION) Scaffold::hook('display');
 			}
-
-			Scaffold::$output = $css;
-
+			
 			/**
-			 * If any of the files have changed we need to recache the combined
+			 * Set the HTTP headers for the request. Scaffold will set
+			 * all the headers required to score an A grade on YSlow. This
+			 * means your CSS will be sent as quickly as possible to the browser.
 			 */
-			if(!Scaffold_Cache::exists($combined))
+			Scaffold::set_headers(
+				Scaffold_Cache::find($combined),
+				Scaffold_Cache::modified($combined),
+				$config['cache_lifetime']
+			);
+			
+			/** 
+			 * If the user wants us to render the CSS to the browser, we run this event.
+			 * This will send the headers and output the processed CSS.
+			 */
+			if($display === true)
 			{
-				Scaffold_Cache::write(self::$output,$combined);
+				Scaffold::render(Scaffold::$output,$config['gzip_compression']);
 			}
-		
-			/**
-			 * Hook to modify what is sent to the browser
-			 */
-			if(!SCAFFOLD_PRODUCTION) Scaffold::hook('display');
 		}
 		
 		/**
-		 * Set the HTTP headers for the request. Scaffold will set
-		 * all the headers required to score an A grade on YSlow. This
-		 * means your CSS will be sent as quickly as possible to the browser.
+		 * If any errors were encountered
 		 */
-		Scaffold::set_headers(Scaffold_Cache::find($combined),Scaffold_Cache::modified($combined),$config['cache_lifetime']);
+		catch( Exception $e )
+		{
+			/** 
+			 * The message returned by the error 
+			 */
+			$message = $e->getMessage();
+			
+			/** 
+			 * Load in the error view
+			 */
+			if(SCAFFOLD_PRODUCTION === false && $display === true)
+			{
+				require Scaffold::find_file('scaffold_error.php','views');
+			}
+		}
 		
 		/**
 		 * Save the logs and exit 
 		 */
 		Scaffold_Event::run('system.shutdown');
+
+		return self::$output;
 	}
 
 	/**
@@ -244,7 +281,7 @@ class Scaffold extends Scaffold_Utils
 		/**
 		 * Define contstants for system paths for easier access.
 		 */
-		if(!defined('SCAFFOLD_SYSPATH'))
+		if(!defined('SCAFFOLD_SYSPATH') && !defined('SCAFFOLD_DOCROOT'))
 		{
 			define('SCAFFOLD_SYSPATH', self::fix_path($config['system']));
 			define('SCAFFOLD_DOCROOT', $config['document_root']);
@@ -390,9 +427,10 @@ class Scaffold extends Scaffold_Utils
 		$protocol 		= isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0';
 		$modified_since = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? $_SERVER['HTTP_IF_MODIFIED_SINCE'] : 0;
 		
-		if(self::$output !== null)
+		# Sending Content-Length in CGI can result in unexpected behavior
+		if(stripos(PHP_SAPI, 'cgi') === FALSE AND self::$output !== null)
 		{
-			self::header('Content-Length',strlen(self::$output));
+			self::header('Content-Length',strlen(file_get_contents($file)));
 		}
 
 		if($modified <= strtotime($modified_since))
@@ -415,7 +453,6 @@ class Scaffold extends Scaffold_Utils
 		self::header('Last-Modified',gmdate('D, d M Y H:i:s', $modified) .' GMT');
 		self::header('ETag', md5(serialize(array($file,$modified))) );
 		self::header('Content-Type','text/css');
-		self::header('Vary','Accept-Encoding');
 	}
 	
 	/**
@@ -436,48 +473,91 @@ class Scaffold extends Scaffold_Utils
 		
 		Scaffold_Event::run('system.' . $method);
 	}
+	
+	/**
+	 * Renders the CSS
+	 *
+	 * @param $output What to display
+	 * @return void
+	 */
+	public static function render($output,$level = false)
+	{
+		if ($level AND ini_get('output_handler') !== 'ob_gzhandler' AND (int) ini_get('zlib.output_compression') === 0)
+		{
+			if ($level < 1 OR $level > 9)
+			{
+				// Normalize the level to be an integer between 1 and 9. This
+				// step must be done to prevent gzencode from triggering an error
+				$level = max(1, min($level, 9));
+			}
+
+			if (stripos(@$_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE)
+			{
+				$compress = 'gzip';
+			}
+			elseif (stripos(@$_SERVER['HTTP_ACCEPT_ENCODING'], 'deflate') !== FALSE)
+			{
+				$compress = 'deflate';
+			}
+		}
+
+		if (isset($compress) AND $level > 0)
+		{
+			switch ($compress)
+			{
+				case 'gzip':
+					// Compress output using gzip
+					$output = gzencode($output, $level);
+				break;
+				case 'deflate':
+					// Compress output using zlib (HTTP deflate)
+					$output = gzdeflate($output, $level);
+				break;
+			}
+
+			// This header must be sent with compressed content to prevent
+			// browser caches from breaking
+			Scaffold::header('Vary','Accept-Encoding');
+
+			// Send the content encoding header
+			Scaffold::header('Content-Encoding',$compress);
+		}
+	
+		# Send the headers
+		if(!headers_sent())
+		{
+			self::$headers = array_unique(self::$headers);
+
+			foreach(self::$headers as $name => $value)
+			{
+				if($name[0] != '_')
+				{
+					header($name . ':' . $value);
+				}
+				else
+				{
+					header($value);
+				}
+			}
+		}
+	
+		echo $output;
+	}
 
 	/**
-	 * Cleans up Scaffold, saves the log and exits.
+	 * Prepares the final output and cleans up
 	 *
 	 * @return void
 	 */
-	public function shutdown($display = true)
+	public static function shutdown()
 	{
-		if($display === true)
-		{
-			# Send the headers
-			if(!headers_sent())
-			{
-				self::$headers = array_unique(self::$headers);
-	
-				foreach(self::$headers as $name => $value)
-				{
-					if($name[0] != '_')
-					{
-						header($name . ':' . $value);
-					}
-					else
-					{
-						header($value);
-					}
-				}
-			}
-		
-			echo self::$output;
-			exit;
-		}
-		else
-		{
-			self::$output = array(
-			    'error'   => self::$has_error,
-			    'content' => self::$output,
-			    'headers' => self::$headers,
-			    'flags'   => self::$flags,
-			);
-			
-			exit;
-		}
+		return self::$output = array(
+			'status'  => self::$has_error,
+		    'content' => self::$output,
+		    'headers' => self::$headers,
+		    'flags'   => self::$flags,
+		    'log'	  => Scaffold_Log::$log
+		);
 	}
 
 	/**
@@ -488,17 +568,25 @@ class Scaffold extends Scaffold_Utils
 	 */
 	public static function error($message)
 	{
+		/**
+		 * Log the message before we throw the error
+		 */
 		Scaffold_Log::log($message,0);
+		
+		/**
+		 * Useful variable to let other objects know there was an error with the parsing
+		 */
 		self::$has_error = true;
-
+		
+		/**
+		 * Add the error header. If the CSS is rendered, this will be sent
+		 */
 		self::header('_responseCode','HTTP/1.1 500 Internal Server Error');
 		
-		if(!SCAFFOLD_PRODUCTION)
-		{
-			include self::find_file('scaffold_error.php', 'views', true);
-		}
-
-		self::shutdown(false);
+		/**
+		 * This will be caught in the parse method
+		 */
+		throw new Exception($message);
 	}
 	
 	/**
@@ -642,10 +730,10 @@ class Scaffold extends Scaffold_Utils
 	 * @return	void	If the view is rendered
 	 * @return	string	The contents of the view
 	 */
-	public static function load_view( $view, $render = false, $return = false )
+	public static function view( $view, $render = false )
 	{
 		# Find the view file
-		$view = self::find_file($view, 'views', true);
+		$view = self::find_file($view . '.php', 'views', true);
 		
 		# Display the view
 		if ($render === true)
@@ -653,17 +741,14 @@ class Scaffold extends Scaffold_Utils
 			include $view;
 			return;
 		}
-
-		# Buffering on
-		ob_start();
-		$view = file_get_contents($view);
-		echo $view;
 		
-		# Fetch the output and close the buffer
-		$output = ob_get_clean();
-		
-		if($return)
-			return $output;
+		# Return the view
+		else
+		{
+			ob_start();
+			echo file_get_contents($view);
+			return ob_get_clean();
+		}
 	}
 	
 	/**

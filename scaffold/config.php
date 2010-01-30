@@ -103,3 +103,14 @@ $config['enable_log'] = true;
  * 3 = debug
  */
 $config['error_threshold'] = 1;
+
+/**
+ * Use PHP compression
+ *
+ * If you don't want to use the .htaccess to gzip your files, you can have Scaffold
+ * do it for you before it outputs the CSS to the browser. Not that this takes longer
+ * to do than to just use Apache to compress your components.
+ *
+ * Set this from 1-9, with 9 being the highest compression, and false being no compression.
+ */
+$config['gzip_compression'] = false;
