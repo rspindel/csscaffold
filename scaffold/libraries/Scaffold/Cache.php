@@ -38,10 +38,10 @@ class Scaffold_Cache
 	public function setup($path,$lifetime)
 	{
 		if (!is_dir($path))
-			Scaffold_Log::log("Cache path does not exist. $path",0);
+			Scaffold::log("Cache path does not exist. $path",0);
 			
 		if (!is_writable($path))
-			Scaffold_Log::log("Cache path is not writable. $path",0);
+			Scaffold::log("Cache path is not writable. $path",0);
 
 		self::$cache_path = $path;
 		self::lifetime($lifetime);
