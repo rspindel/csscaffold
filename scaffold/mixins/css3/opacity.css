@@ -9,6 +9,6 @@
 	opacity:!opacity;
 	-moz-opacity:!opacity;
 	-khtml-opacity:!opacity;
-	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=#[!opacity*100])";
-	filter:alpha(opacity=#[!opacity*100]);
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=calc(!opacity*100))";
+	filter:alpha(opacity=calc(!opacity*100));
 }
