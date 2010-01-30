@@ -16,10 +16,10 @@ class Absolute_Urls
 	 * @param $css
 	 * @return $css string
 	 */
-	public static function formatting_process($css)
-	{
+	public static function formatting_process()
+	{	
 		# The absolute url to the directory of the current CSS file
-		$dir = Scaffold::url_path( Scaffold::$current['path'] );
+		$dir = Scaffold::url_path(Scaffold::$css->path);
 
 		# @imports - Thanks to the guys from Minify for the regex :)
 		if(
@@ -34,7 +34,7 @@ class Absolute_Urls
 			        ([a-zA-Z,\\s]*)?     # 2 = media list
 			        ;                    # end token
 			    /x'
-			    ,$css
+			    ,Scaffold::$css
 			    ,$found
 			)
 		)
@@ -51,12 +51,12 @@ class Absolute_Urls
 				$absolute = self::up_directory($dir, substr_count($value, '../', 0)) . str_replace('../','',$value);
 					
 				# Rewrite it
-				$css = str_replace($found[0][$key], '@import \''.$absolute.'\'' . $media . ';', $css);
+				Scaffold::$css->string = str_replace($found[0][$key], '@import \''.$absolute.'\'' . $media . ';', Scaffold::$css);
 			}
 		}
 		
 		# Convert all url()'s to absolute paths if required
-		if( preg_match_all('/url\\(\\s*([^\\)\\s]+)\\s*\\)/', $css, $found) )
+		if( preg_match_all('/url\\(\\s*([^\\)\\s]+)\\s*\\)/', Scaffold::$css, $found) )
 		{
 			foreach($found[1] as $key => $value)
 			{
@@ -71,14 +71,12 @@ class Absolute_Urls
 				
 				# If the file doesn't exist
 				if(!Scaffold::find_file($absolute))
-					Scaffold_Log::log("Missing image - {$absolute}", 1);
+					Scaffold::log("Missing image - {$absolute}", 1);
 					
 				# Rewrite it
-				$css = str_replace($found[0][$key], 'url('.$absolute.')', $css);
+				Scaffold::$css->string = str_replace($found[0][$key], 'url('.$absolute.')', Scaffold::$css);
 			}
 		}
-		
-		return $css;
 	}
 	
 	/**

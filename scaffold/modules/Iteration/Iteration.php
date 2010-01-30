@@ -1,26 +1,21 @@
 <?php
 
 /**
- * Iterator
+ * Iteration
  *
  * @author Anthony Short
- * @dependencies None
- **/
+ * @dependencies Constants
+ */
 class Iteration
 {
-	
 	/**
-	 * This function occurs before everything else
+	 * Extracts the iteration loops from the CSS
 	 *
-	 * @author Anthony Short
-	 * @param $css
+	 * @return return type
 	 */
-	public static function parse($css)
+	public static function pre_process()
 	{
-		# Find all the @server imports
-		$css = self::parse_fors($css);
-		
-		return $css;
+		Scaffold::$css->string = self::parse(Scaffold::$css->string);
 	}
 	
 	/**
@@ -30,21 +25,23 @@ class Iteration
 	 * @param $string
 	 * @return string
 	 */
-	public static function parse_fors($css)
+	public static function parse($css)
 	{
 		if($found = self::find_fors($css))
-		{			
+		{	
 			foreach($found[0] as $key => $value)
 			{				
 				$s = "";
 				
-				$from = $found[2][$key];
-				$to = $found[3][$key];
-				$var = $found[1][$key];
+				$constant 	= $found[1][$key];
+				$from 		= Constants::replace($found[2][$key]);
+				$to 		= Constants::replace($found[3][$key]);
+				$content 	= $found[6][$key];
 				
 				for ($i = $from; $i <= $to; $i++)
 				{
-					$s .= str_replace("!{$var}", $i, $found[5][$key]);	
+					Constants::set($constant,$i);
+					$s .= Constants::replace($content);
 				}
 				
 				$css = str_replace($found[0][$key], $s, $css);				
@@ -62,24 +59,20 @@ class Iteration
 	 * @return array
 	 */
 	public static function find_fors($string = "")
-	{
-		$recursive = '4'; 
-		
+	{		
 		$regex = 
-			"/
-				
-				# Find the @if's
-				(?:@(?:for))\s\!(.*?)\sfrom\s(\d+)\sto\s(\d+)\s*
-				
-				# Return all inner selectors and properties
+			'/
+				# For info
+				\@for\s\$(.+?)\sfrom\s(.+?)\sto\s([^{]+)
+	
 				(
-					(?:[0-9a-zA-Z\_\-\*&]*?)\s*
+					([0-9a-zA-Z\_\-\@*&]*?)\s*
 					\{	
-						((?:[^{}]+|(?{$recursive}))*)
+						( (?: [^{}]+ | (?4) )*)
 					\}
 				)
-				
-			/xs";
+	
+			/ixs';
 		
 		if(preg_match_all($regex, $string, $match))
 		{

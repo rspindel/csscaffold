@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Scaffold_Cache
  *
@@ -36,7 +35,7 @@ class Scaffold_Cache
 	 *
 	 * @return return type
 	 */
-	public function setup($path,$lifetime,$frozen)
+	public function setup($path,$lifetime)
 	{
 		if (!is_dir($path))
 			Scaffold_Log::log("Cache path does not exist. $path",0);
@@ -46,37 +45,19 @@ class Scaffold_Cache
 
 		self::$cache_path = $path;
 		self::lifetime($lifetime);
-		self::freeze($frozen);
 	}
+
 	
-	/**
-	 * Freeze/lock the cache
-	 *
-	 * @param $locked
-	 * @return return type
-	 */
-	public function freeze($locked)
-	{
-		self::$frozen = $locked;
-	}
-	
-	/**
-	 * Return whether or not a file is still fresh and can be used
-	 *
-	 * @param $file
-	 * @return boolan
-	 */
-	public function recache($file,$time)
-	{
-		if( 
-			self::$frozen === false OR 
-			( self::$frozen === true AND ( self::exists($file) === false OR self::modified($file) <= $time ) )
-		)
+	public function is_fresh($file)
+	{		
+		if(self::modified($file) <= ( self::$lifetime + time() ) )
 		{
 			return true;
 		}
-
-		return false;
+		else
+		{
+			return false;
+		}
 	}
 	
 	/**
@@ -149,65 +130,6 @@ class Scaffold_Cache
 			
 		return false;
 	}
-	
-	/** 
-	 * Load data file from the cache. Use for storing configs and
-	 * other temporary internal data. Only lasts for the lifetime of the cache
-	 * which by default, is an hour.
-	 *
-	 * @param   string   unique name of cache
-	 * @param   integer  expiration in seconds
-	 * @return  mixed
-	 */
-	public function temp($name)
-	{
-		# We're not using the temporary file cache
-		if(self::$lifetime === false)
-		{
-			return null;
-		}
-		elseif (self::$lifetime > 0)
-		{
-			if(self::exists($name))
-			{
-				# If the file is older than the cache lifetime (eg an hour)
-				if ( (time() - filemtime(self::find($name))) < self::$lifetime )
-				{
-					return self::open($name);
-				}
-				else
-				{
-					self::remove($name);
-				}
-			}
-		}
-
-		return null;
-	}
-	
-	/**
-	 * Get a cache file, or delete it if it's older than the original
-	 *
-	 * @param $name
-	 * @return mixed
-	 */
-	public function fetch($name,$time = 0)
-	{
-		if(self::exists($name))
-		{
-			if ( self::recache($name,$time) === false )
-			{
-				return self::open($name);
-			}
-			else
-			{
-				# Cache is invalid, delete it
-				self::remove($name);
-			}
-		}
-
-		return NULL;
-	}
 
 	/**
 	 * Write to the set cache
@@ -241,23 +163,7 @@ class Scaffold_Cache
 		
 		return true;
 	}
-	
-	/**
-	 * Creates an ID for using the cache
-	 *
-	 * @param $input
-	 * @return string The md5 hashed string
-	 */
-	public static function id($input)
-	{
-		if( is_array($input) )
-		{
-			$input = serialize($input);
-		}
-		
-		return md5($input);
-	}
-	
+
 	/**
 	 * Removes a cache item
 	 *

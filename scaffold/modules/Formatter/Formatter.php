@@ -11,18 +11,16 @@
  */
 class Formatter
 {
-	public static function formatting_process($css)
+	public static function formatting_process()
 	{
 		if(Scaffold::$config['Formatter']['compress'] === true)
 		{
-			$css = self::minify($css);
+			Scaffold::$css->string = self::minify(Scaffold::$css->string);
 		}
 		else
 		{
-			$css = self::prettify($css);
+			Scaffold::$css->string = self::prettify(Scaffold::$css->string);
 		}
-
-		return $css;
 	}
 
     /**
@@ -306,22 +304,20 @@ class Formatter
      */
     public static function prettify($css)
     {
-    	// /\*[^*]*\*+([^/*][^*]*\*+)*/|
-  		
   		// escape data protocol to prevent processing
     	$css = preg_replace('#(url\(data:[^\)]+\))#e', "'esc('.base64_encode('$1').')'", $css);
   
   		// line break after semi-colons (for @import)
     	$css = str_replace(';', ";\r\r", $css);
-    	
-    	// normalize property name/value space
-    	$css = preg_replace('#([-a-z]+):\s*([^;}{]+);\s*#i', "$1: $2;\r", $css); 
-    	
+ 	
     	// normalize comments spacing and lines
     	$css = preg_replace('#\*/#sx',"*/\r",$css);
     	
     	// normalize space around opening brackets
     	$css = preg_replace('#\s*\{\s*#', "\r{\r", $css); 
+    	
+    	// normalize property name/value space
+    	$css = preg_replace('#([-a-z]+):\s*([^;}{]+);\s*#i', "\t$1: $2;\r", $css); 
     	
     	// normalize space around closing brackets
     	$css = preg_replace('#\s*\}\s*#', "\r}\r\r", $css);

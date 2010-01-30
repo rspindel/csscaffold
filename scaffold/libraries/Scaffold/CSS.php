@@ -9,26 +9,78 @@
  * @package CSScaffold
  * @author Anthony Short
  */
-abstract class Scaffold_CSS
+class Scaffold_CSS
 {
+	/**
+	 * Server path to this CSS file
+	 *
+	 * @var string
+	 */
+	public $path;
+	
+	/**
+	 * The name of this CSS file
+	 *
+	 * @var string
+	 */
+	public $file;
+	
+	/**
+	 * The string of CSS code
+	 *
+	 * @var string
+	 */
+	public $string;
+	
+	/**
+	 * Constructor
+	 *
+	 * @param $file
+	 * @return void
+	 */
+	public function __construct($file)
+	{
+		$this->path = dirname($file);
+		$this->file = $file;
+		$this->string = $this->remove_inline_comments(file_get_contents($file));
+	}
+	
+	/**
+	 * Returns the CSS string when treated as a string
+	 *
+	 * @return string
+	 */
+	public function __toString()
+	{
+		return $this->string;
+	}
+
 	/**
 	 * Compresses down the CSS file. Not a complete compression,
 	 * but enough to minimize parsing time.
 	 *
 	 * @return string $css
 	 */	
-	public static function compress($css)
+	public function compress($css)
 	{		
 		# Remove comments
-		$css = self::remove_comments($css);
+		$this->string = $this->remove_comments($this->string);
 
 		# Remove extra white space
-		$css = preg_replace('/\s+/', ' ', $css);
+		$this->string = preg_replace('/\s+/', ' ', $css);
 		
 		# Remove line breaks
-		$css = preg_replace('/\n|\r/', '', $css);
-		
-		return $css;
+		$this->string = preg_replace('/\n|\r/', '', $css);
+	}
+	
+	/**
+	 * Removes inline comments
+	 *
+	 * @return return type
+	 */
+	public function remove_inline_comments($css)
+	{
+		 return preg_replace('#(\s|$)//.*$#Umsi', '', $css);
 	}
 
 	/**
@@ -36,14 +88,12 @@ abstract class Scaffold_CSS
 	 *
 	 * @return string $css
 	 */
-	public static function remove_comments($css)
+	public function remove_comments($css)
 	{
-		$css = self::convert_entities('encode', $css);
-		
-		# Remove normal CSS comments
+		$css = $this->convert_entities('encode', $css);
 		$css = trim(preg_replace('#/\*[^*]*\*+([^/*][^*]*\*+)*/#', '', $css));
-		
-		$css = self::convert_entities('decode', $css);
+		$css = $this->convert_entities('decode', $css);
+		$css = $this->remove_inline_comments($css);
 
 		return $css;
 	}
@@ -56,7 +106,7 @@ abstract class Scaffold_CSS
 	 * @param $capture_group
 	 * @return array
 	 */
-	public static function find_functions($name, $css, $capture_group = "")
+	public function find_functions($name, $capture_group = "")
 	{
 		$regex =
 		"/
@@ -68,7 +118,7 @@ abstract class Scaffold_CSS
 			)
 		/sx";
 
-		if(preg_match_all($regex, $css, $match))
+		if(preg_match_all($regex, $this->string, $match))
 		{
 			return ($capture_group == "") ? $match : $match[$capture_group];
 		}
@@ -86,7 +136,7 @@ abstract class Scaffold_CSS
 	 * @param $group string
 	 * @param $css string
 	 */
-	public static function find_at_group($group, $css)
+	public function find_at_group($group, $remove = true)
 	{
 		$found = array();
 		
@@ -111,7 +161,7 @@ abstract class Scaffold_CSS
 
 		/ixs";
 			
-		if(preg_match_all($regex, $css, $matches))
+		if(preg_match_all($regex, $this->string, $matches))
 		{
 			$found['groups'] = $matches[0];
 			$found['flag'] = $matches[1];
@@ -119,17 +169,31 @@ abstract class Scaffold_CSS
 						
 			foreach($matches[4] as $key => $value)
 			{
-				$a = explode(";", substr($value, 0, -1));
-									
-				foreach($a as $value)
+				// Remove comments to prevent breaking it
+				$value = $this->remove_comments($value);
+
+				foreach(explode(";", substr($value, 0, -1)) as $value)
 				{
-					$t = explode(":", $value);	
-					
-					if(isset($t[1]))
+					// Encode any colons inside quotations
+					if( preg_match_all('/[\'"](.*?\:.*?)[\'"]/',$value,$m) )
 					{
-						$found['values'][trim($t[0])] = $t[1];
+						$value = str_replace($m[0][0],str_replace(':','#COLON#',$m[0][0]),$value);
+					}
+
+					$value = explode(":", $value);	
+					
+					// Make sure it's set
+					if(isset($value[1]))
+					{
+						$found['values'][trim($value[0])] = str_replace('#COLON#', ':', Scaffold::unquote($value[1]));
 					}
 				}
+			}
+			
+			// Remove the found @ groups
+			if($remove === true)
+			{
+				$this->string = str_replace($found['groups'], array(), $this->string);	
 			}
 
 			return $found;		
@@ -146,9 +210,9 @@ abstract class Scaffold_CSS
 	 * @param $property string
 	 * @param $value string
 	 */
-	public static function find_selectors_with_property($property, $value = ".*?", $css = "")
+	public function find_selectors_with_property($property, $value = ".*?")
 	{		
-		if(preg_match_all("/([^{}]*)\s*\{\s*[^}]*(".$property."\s*\:\s*(".$value.")\s*\;).*?\s*\}/sx", $css, $match))
+		if(preg_match_all("/([^{}]*)\s*\{\s*[^}]*(".$property."\s*\:\s*(".$value.")\s*\;).*?\s*\}/sx", $this->string, $match))
 		{
 			return $match;
 		}
@@ -167,13 +231,13 @@ abstract class Scaffold_CSS
 	 * @param $css
 	 * @return array
 	 */
-	public static function find_properties_with_value($property, $value = ".*?", $css = "")
+	public function find_properties_with_value($property, $value = ".*?")
 	{		
 		# Make the property name regex-friendly
 		$property = Scaffold_Utils::preg_quote($property);
 		$regex = "/ ({$property}) \s*\:\s* ({$value}) /sx";
 			
-		if(preg_match_all($regex, $css, $match))
+		if(preg_match_all($regex, $this->string, $match))
 		{
 			return $match;
 		}
@@ -190,7 +254,7 @@ abstract class Scaffold_CSS
 	 * @param $selector string
 	 * @param $css string
 	 */
-	public static function find_selectors($selector, $css = "", $recursive = "")
+	public function find_selectors($selector, $recursive = "")
 	{		
 		if($recursive != "")
 		{
@@ -213,7 +277,7 @@ abstract class Scaffold_CSS
 				
 			/xs";
 		
-		if(preg_match_all($regex, $css, $match))
+		if(preg_match_all($regex, $this->string, $match))
 		{
 			return $match;
 		}
@@ -230,9 +294,9 @@ abstract class Scaffold_CSS
 	 * @param $property string
 	 * @param $css string
 	 */
-	public static function find_property($property, $css = "")
+	public function find_property($property)
 	{ 		
-		if(preg_match_all('/('.Scaffold_Utils::preg_quote($property).')\s*\:\s*(.*?)\s*\;/sx', $css, $matches))
+		if(preg_match_all('/('.Scaffold_Utils::preg_quote($property).')\s*\:\s*(.*?)\s*\;/sx', $this->string, $matches))
 		{
 			return (array)$matches;
 		}
@@ -248,9 +312,9 @@ abstract class Scaffold_CSS
 	 * @param $name
 	 * @return boolean
 	 */
-	public static function selector_exists($name,$css)
+	public function selector_exists($name)
 	{
-		return preg_match('/'.preg_quote($name).'\s*?({|,)/', $css);
+		return preg_match('/'.preg_quote($name).'\s*?({|,)/', $this->string);
 	}
 		
 	/**
@@ -261,9 +325,9 @@ abstract class Scaffold_CSS
 	 * @param $value string
 	 * @param $css string
 	 */
-	public static function remove_properties($property, $value, $css = "")
+	public function remove_properties($property, $value)
 	{
-		return preg_replace('/'.$property.'\s*\:\s*'.$value.'\s*\;/', '', $css);
+		return preg_replace('/'.$property.'\s*\:\s*'.$value.'\s*\;/', '', $this->string);
 	}
 	
 	/**
@@ -273,8 +337,11 @@ abstract class Scaffold_CSS
 	 * @param $css
 	 * @return string
 	 */
-	public static function convert_entities($action = 'encode', $css)
+	public function convert_entities($action = 'encode', $css = false)
 	{
+		if($css === false)
+			$css =& $this->string;
+		
 		$css_replacements = array(
 			'"' => '#SCAFFOLD-QUOTE#',
 			'>' => '#SCAFFOLD-GREATER#',
@@ -289,14 +356,14 @@ abstract class Scaffold_CSS
 		switch ($action)
 		{
 		    case 'decode':
-		        $css = str_replace(array_values($css_replacements),array_keys($css_replacements), $css);
+		        $this->string = str_replace(array_values($css_replacements),array_keys($css_replacements), $this->string);
 		        break;
 		    
 		    case 'encode':
-		        $css = str_replace(array_keys($css_replacements),array_values($css_replacements), $css);
+		        $this->string = str_replace(array_keys($css_replacements),array_values($css_replacements), $this->string);
 		        break;  
 		}
-	    
+		
 		return $css;
 	}
 

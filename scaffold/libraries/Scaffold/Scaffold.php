@@ -32,11 +32,30 @@ class Scaffold extends Scaffold_Utils
 	public static $config;
 	
 	/**
-	 * The final output
+	 * CSS object for each processing phase. As Scaffold loops
+	 * through the files, it creates an new CSS object in this member 
+	 * variable. It is through this variable that modules can access
+	 * the current CSS string being processed
 	 *
-	 * @var string
+	 * @var object
 	 */
-	private static $output = false;
+	public static $css;
+	
+	/**
+	 * The level of logged message to be thrown as an error. Setting this
+	 * to 0 will mean only error-level messages are thrown. However, setting
+	 * it to 1 will throw warnings as errors and halt the process.
+	 *
+	 * @var int
+	 */
+	private static $error_threshold;
+
+	/**
+	 * The final, combined output of the CSS.
+	 *
+	 * @var Mixed
+	 */
+	public static $output;
 	
 	/**
 	 * Include paths
@@ -56,16 +75,7 @@ class Scaffold extends Scaffold_Utils
 	 *
 	 * @var array
 	 */
-	private static $find_file_paths;	
-
-	/**
-	 * The current file being processed. Scaffold stores the directory,
-	 * name and url of the currently processed file. This is used by 
-	 * modules who want information about the current file.
-	 *
-	 * @var array
-	 */
-	public static $current = array();
+	private static $find_file_paths;
 	
 	/**
 	 * List of included modules. They are stored with the module name
@@ -93,7 +103,7 @@ class Scaffold extends Scaffold_Utils
 	 *
 	 * @var array
 	 */
-	public static $options = array();
+	public static $options;
 	
 	/**
 	 * If Scaffold encounted an error. You can check this variable to
@@ -102,44 +112,17 @@ class Scaffold extends Scaffold_Utils
 	 * @var boolean
 	 */
 	public static $has_error = false;
-	
-	/**
-	 * The level of logged message to display as errors.
-	 * 0 will only display error logs, 1 will display
-	 * error logs and warning logs etc.
-	 *
-	 * @var int
-	 */
-	private static $error_level = 0;
-	
+
 	/**
 	 * Stores the headers for sending to the browser.
 	 *
 	 * @var array
 	 */
-	private static $headers = array();
-	
-	/**
-	 * The current cache object
-	 *
-	 * @var object
-	 */
-	private static $cache;
+	private static $headers;
 	
 	/**
 	 * Parse the CSS. This takes an array of files, options and configs
 	 * and parses the CSS, outputing the processed CSS string.
-	 *
-	 * The required configuration options:
-	 *
-	 * 'in_production' 		- Whether Scaffold is in a production environment.
-	 * 'cache_lifetime' 	- The time, in seconds, that the temporary cache files will last.
-	 * 'log_threshold' 		- The minimum level for messages to be logged.
-	 * 'error_threshold' 	- The minimum level for messages to be thrown as errors
-	 * 'document_root' 		- The file path to the document root.
-	 * 'system' 			- The path to the system folder.
-	 * 'cache' 				- The path to the cache folder.
-	 * 'disable' 			- An array of module names that will be disabled and not loaded.
 	 *
 	 * @param array List of files
 	 * @param array Configuration options
@@ -147,101 +130,93 @@ class Scaffold extends Scaffold_Utils
 	 * @param boolean Return the CSS rather than displaying it
 	 * @return string The processed css file as a string
 	 */
-	public static function parse( $files, $config, $options = array(), $return = false )
-	{		
-		# Setup Scaffold with this config
-		self::setup($config,$options);
+	public static function parse( $files, $config, $options = array(), $display = false )
+	{
+		Scaffold::setup($config);
 		self::$options = $options;
-		
-		# Module Hook
-		self::hook('pre_parse');
+		$css = false;
 		
 		# Get the flags from each of the loaded modules.
-		$flags = (self::$config['disable_flags'] === true) ? array() : self::flags();
+		$flags = (self::$flags === false) ? array() : self::flags();
 		
 		# The final, combined CSS file in the cache
-		$output = md5(serialize(array($files,$flags))) . '.css';
+		$combined = md5(serialize(array($files,$flags))) . '.css';
 		
-		# Module Hook
-		self::hook('pre_loop');
-		
-		# Look for the already cached version for this request.
-		if( self::$config['in_production'] === true AND Scaffold_Cache::temp($output) !== null )
-		{
-			self::output( Scaffold_Cache::find($output) );
-			return self::shutdown($return);
-		}
-
 		/**
-		 * We loop through each of the files the user is requesting, make
-		 * checks to make sure it's able to be parsed and then check the
-		 * cache to see if it's already been processed.
-		 *
-		 * We compare the cache file to the original file to see if any 
-		 * changes have been made. If so, or the cache file doesn't exist
-		 * at all, we'll reprocess and recache the file.
-		 *
-		 * If any of the files needs to be reprocessed, we'll need to recache
-		 * the combined CSS file as well. So we remove it and then rewrite it.
+		 * Check if we should use the combined cache right now and skip unneeded processing
 		 */
-		foreach($files as $file)
+		if(SCAFFOLD_PRODUCTION AND Scaffold_Cache::exists($combined) AND Scaffold_Cache::is_fresh($combined))
 		{
-			# If it's a url
-			if( substr($file, 0, 4) == "http" )
-				self::error('Scaffold cannot parse CSS files sent as URLs - ' . $file);
-			
-			if ( substr($file, -4, 4) != ".css" )
-				self::error("Requested file isn't a css file - $file");
+			Scaffold::$output = Scaffold_Cache::open($combined);
+		}
+		
+		if(Scaffold::$output === null)
+		{
+			foreach($files as $file)
+			{
+				if(substr($file, 0, 4) == "http" OR substr($file, -4, 4) != ".css")
+				{
+					Scaffold::error('Scaffold cannot the requested file - ' . $file);
+				}
+				
+				/**
+				 * If there are flags, we'll include them in the filename
+				 */
+				if(!empty($flags))
+				{
+					$cached_file = dirname($file) . '/' . pathinfo($file, PATHINFO_FILENAME) . '_' . implode('_', $flags) . '.css';
+				}
+				else
+				{
+					$cached_file = $file;
+				}
 
-			# Find the CSS file
-			$request = self::find_file($file, false, true);
+				$request = Scaffold::find_file($file, false, true);
+				
+				/**
+				 * While not in production, we want to to always recache, so we'll fake the time
+				 */
+				$modified = (SCAFFOLD_PRODUCTION) ? Scaffold_Cache::modified($cached_file) : 0;
 	
-			# What the save this file as
-			if( self::$config['disable_flags'] === true )
-			{
-				$cached_file = $file;
-			}
-			else
-			{
-				$cached_file = md5(serialize(array($request,$flags))) . '.css';
-			}
-
-			# Try and load it from the cache. It will return null if the requested file is newer			
-			if( ( $css = Scaffold_Cache::fetch($cached_file,filemtime($request)) ) === null)
-			{
-				# Parse the CSS string
-				$css = self::parse_file($request);
-
-				# Write the css file to the cache
-				Scaffold_Cache::write($css,$cached_file);
-
-				# We'll need to recache the combined css too
-				Scaffold_Cache::remove($output);
+				/**
+				 * If the CSS file has been changed, or the cached version doesn't exist
+				 */			
+				if(!Scaffold_Cache::exists($cached_file) OR $modified < filemtime($request))
+				{
+					Scaffold_Cache::write( Scaffold::process($request), $cached_file );
+					Scaffold_Cache::remove($combined);
+				}
+	
+				$css .= Scaffold_Cache::open($cached_file);
 			}
 
-			$join[] = $css;
+			Scaffold::$output = $css;
+
+			/**
+			 * If any of the files have changed we need to recache the combined
+			 */
+			if(!Scaffold_Cache::exists($combined))
+			{
+				Scaffold_Cache::write(self::$output,$combined);
+			}
+		
+			/**
+			 * Hook to modify what is sent to the browser
+			 */
+			if(!SCAFFOLD_PRODUCTION) Scaffold::hook('display');
 		}
 		
-		# Module Hook
-		self::hook('post_parse', array(&$join) );
+		/**
+		 * Set the HTTP headers for the request. Scaffold will set
+		 * all the headers required to score an A grade on YSlow. This
+		 * means your CSS will be sent as quickly as possible to the browser.
+		 */
+		Scaffold::set_headers(Scaffold_Cache::find($combined),Scaffold_Cache::modified($combined),$config['cache_lifetime']);
 		
-		# If any of the files has changed we need to recache the combined
-		if( Scaffold_Cache::fetch($output) === null )
-		{
-			Scaffold_Cache::write(implode('',$join),$output);
-		}
-		
-		# Module Hook
-		self::hook('pre_output');
-		
-		# Set the current output
-		self::output( Scaffold_Cache::find($output) );
-		
-		# Module Hook
-		self::hook('post_output');
-		
-		# Save the log, send headers etc
-		return self::shutdown($return);
+		/**
+		 * Save the logs and exit 
+		 */
+		Scaffold_Event::run('system.shutdown');
 	}
 
 	/**
@@ -252,15 +227,10 @@ class Scaffold extends Scaffold_Utils
 	 */
 	public static function setup($config) 
 	{
-		self::$config =& $config;
-		
-		# Reset everything
-		self::$has_error = false;
-		self::$headers = array();
-		self::$output = false;
-
-		# Set the errors to display
-		if($config['in_production'] === false && $config['display_errors'] === true)
+		/**
+		 * Choose whether to show or hide errors
+		 */
+		if(SCAFFOLD_PRODUCTION === false)
 		{	
 			ini_set('display_errors', true);
 			error_reporting(E_ALL & ~E_STRICT);
@@ -271,144 +241,119 @@ class Scaffold extends Scaffold_Utils
 			error_reporting(0);
 		}
 		
-		# Get the full paths
-		$config['system'] = self::fix_path($config['system']);
-		$config['cache']  = self::fix_path($config['cache']);
+		/**
+		 * Define contstants for system paths for easier access.
+		 */
+		if(!defined('SCAFFOLD_SYSPATH'))
+		{
+			define('SCAFFOLD_SYSPATH', self::fix_path($config['system']));
+			define('SCAFFOLD_DOCROOT', $config['document_root']);
+		}
 		
-		# Prepare the logger
+		/**
+		 * Add include paths for finding files
+		 */
+		Scaffold::add_include_path(SCAFFOLD_SYSPATH,SCAFFOLD_DOCROOT);
+	
+		/**
+		 * Tell the cache where to save files and for how long to keep them for
+		 */
+		Scaffold_Cache::setup( Scaffold::fix_path($config['cache']), $config['cache_lifetime'] );
+		
+		/**
+		 * The level at which logged messages will halt processing and be thrown as errors
+		 */
+		self::$error_threshold = $config['error_threshold'];
+		
+		/**
+		 * Disabling flags allows for quicker processing
+		 */
+		if($config['disable_flags'] === true)
+		{
+			self::$flags = false;
+		}
+		
+		/**
+		 * Tell the log where to save it's files. Set it to automatically save the log on exit
+		 */
 		if($config['enable_log'] === true)
 		{
-			Scaffold_Log::enable(true);
-			Scaffold_Log::setup($config['system'].'logs/');
+			Scaffold_Log::log_directory(SCAFFOLD_SYSPATH.'logs');			
+			Scaffold_Event::add('system.shutdown', array('Scaffold_Log','save'));
 		}
 
-		self::add_include_path(
-			$config['system'], 
-			$config['system'].'modules/', 
-			$config['document_root']
-		);
-
-		# Load the configs for the modules
-		foreach(self::list_files($config['system'].'config/') as $file)
+		/**
+		 * Load each of the modules
+		 */
+		foreach(Scaffold::list_files(SCAFFOLD_SYSPATH.'modules') as $module)
 		{
-			include $file;
-		}
-		
-		# Load all the modules
-		self::modules(self::$config['disable']);
-		
-		Scaffold_Cache::setup(
-			self::$config['cache'],
-			self::$config['cache_lifetime'],
-			self::$config['in_production']
-		);
-
-		# Module Hook
-		self::hook('setup');
-		
-		return true;
-	}
-	
-	/**
-	 * Allows modules to hook into the processing at any point
-	 *
-	 * @param $hook
-	 * @param $params
-	 * @return boolean
-	 */
-	private static function hook($name,$params = array())
-	{
-		foreach(self::modules() as $module_name => $module)
-		{
-			if(method_exists($module,$name))
-			{
-				call_user_func_array( array($module_name,$name), $params);
-			}
-		}
-	}
-	
-	/**
-	 * Loads modules
-	 *
-	 * @return Array The names of the loaded addons
-	 */
-	public static function modules($disabled = array())
-	{
-		# If the modules have already been loaded
-		if(isset(self::$modules))
-			return self::$modules;
-		
-		# Get each of the folders inside the Plugins and Modules directories
-		$modules = self::list_files('modules');
-
-		foreach($modules as $module)
-		{			
 			$name = basename($module);
+			$module_config = SCAFFOLD_SYSPATH.'config/' . $name . '.php';
 			
-			if(in_array($name, $disabled))
-				continue;
+			if(file_exists($module_config))
+			{
+				unset($config);
+				include $module_config;				
+				self::$config[$name] = $config;
+			}
 			
-			# Add this module folder to the include paths
 			self::add_include_path($module);
 			
-			# Include the addon controller
-			if( $controller = self::find_file($name.'.php', false, true) )
+			if( $controller = Scaffold::find_file($name.'.php', false, true) )
 			{
 				require_once($controller);
 				self::$modules[$name] = new $name;
 			}
 		}
-		
-		return self::$modules;
-	}
 
+		Scaffold_Event::add('system.shutdown', array('Scaffold','shutdown'));
+	}
+	
 	/**
 	 * Parses the single CSS file
 	 *
 	 * @param $file 	The file to the parsed
 	 * @return $css 	string
 	 */
-	public static function parse_file($file)
+	public static function process($file)
 	{
-		$css = self::set_current($file);
+		/**
+		 * This allows Scaffold to find files in the directory of the CSS file
+		 */
+		Scaffold::add_include_path($file);
+
+		/** 
+		 * We create a new CSS object for each file. This object
+		 * allows modules to easily manipulate the CSS string.
+		 * Note:Inline comments are stripped when the file is loaded.
+		 */
+		Scaffold::$css = new Scaffold_CSS($file);
 		
 		/**
-		 * Remove inline comments. These are only 
-		 * used by Scaffold and should never be output
-		 * into the final CSS. Ever.
+		 * Module Initialization Hook
+		 * This hook allows modules to load libraries and create events
+		 * before any processing is done at all. 
 		 */
-		$css = preg_replace('#(\s|$)//.*$#Umsi', '', $css);
+		self::hook('initialize');
 
 		/**
 		 * Import Process Hook
 		 * This hook is for doing any type of importing/including in the CSS
 		 */
-		self::hook('import_process',array(&$css));
+		self::hook('import_process');
 		
 		/**
 		 * Pre-process Hook
 		 * There shouldn't be any heavy processing of the string here. Just pulling
 		 * out @ rules, constants and other bits and pieces.
 		 */
-		self::hook('pre_process',array(&$css));
-		
-		if(class_exists('Layout'))
-			$css = Layout::parse($css);
+		self::hook('pre_process');
 			
 		/**
 		 * Process Hook
 		 * The main process. None of the processes should conflict in any of the modules
 		 */
-		self::hook('process',array(&$css));
-		
-		if(class_exists('Mixins'))
-			$css = Mixins::parse($css);
-						
-		if(class_exists('Iteration'))
-			$css = Iteration::parse($css);
-		
-		if(class_exists('NestedSelectors'))
-			$css = NestedSelectors::parse($css);
+		self::hook('process');
 			
 		/**
 		 * Post-process Hook
@@ -416,110 +361,122 @@ class Scaffold extends Scaffold_Utils
 		 * the nested selectors are parsed. It's not perfectly standard CSS yet, but
 		 * there shouldn't be an Scaffold syntax left at all.
 		 */
-		self::hook('post_process',array(&$css));
+		self::hook('post_process');
 
 		/**
 		 * Formatting Hook
 		 * Stylise the string, rewriting urls and other parts of the string. No heavy processing.
 		 */
-		self::hook('formatting_process',array(&$css));
+		self::hook('formatting_process');
 		
-		return $css;
+		/**
+		 * Clean up the include paths
+		 */
+		self::remove_include_path($file);
+
+		return (string)Scaffold::$css;
 	}
-	
+
 	/**
-	 * Output the CSS to the browser
+	 * Sets the HTTP headers for a particular file
 	 *
-	 * @return void
+	 * @param $param
+	 * @return return type
 	 */
-	public static function output($file)
+	private static function set_headers($file,$modified,$lifetime)
 	{
-		/**
-		 * The current working file is now the compiled
-		 * CSS file from the cache
-		 */
-
-		$css = self::set_current($file);
-		$modified = (int) filemtime($file);
-	
-		/**
-		 * Output Hook
-		 * Modules can use this hook to alter what is displayed to the browser
-		 * by loading views or however else they want to.
-		 */
-
-		if(self::$config['in_production'] === false)
-		{
-			self::hook('display',array(&$css));			
-		}
-		
-		/**
-		 * Set the HTTP headers for the request. Scaffold will set
-		 * all the headers required to score a A grade on YSlow. This
-		 * means your CSS will be sent as quickly as possible to the browser.
-		 */
-
-		if(self::$config['cache_lifetime'] !== false)
-		{
-			self::header('Expires',gmdate('D, d M Y H:i:s', $_SERVER['REQUEST_TIME'] + self::$config['cache_lifetime']) . ' GMT');
-			self::header('Cache-Control','max-age='.self::$config['cache_lifetime'].', public');
-		}
-		else
-		{
-			// Far future expires header
-			self::header('Expires',gmdate('D, d M Y H:i:s', $_SERVER['REQUEST_TIME'] + 315360000) . ' GMT');
-		}
+		self::$headers = array();
 
 		$protocol 		= isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0';
 		$modified_since = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? $_SERVER['HTTP_IF_MODIFIED_SINCE'] : 0;
-		$size 			= strlen($css);	
-		$etag			= md5(serialize(array($file,$modified,$size)));
-		$last_modified	= gmdate('D, d M Y H:i:s', $modified) .' GMT';	
 		
-		self::header('Content-Type','text/css');
-		self::header('Last-Modified',$last_modified);
-		self::header('Content-Length',$size);
-		self::header('ETag',$etag);
+		if(self::$output !== null)
+		{
+			self::header('Content-Length',strlen(self::$output));
+		}
 
 		if($modified <= strtotime($modified_since))
 		{
 			self::header('_responseCode',"{$protocol} 304 Not Modified");
 		}
 		
-		/** 
-		 * Output hook
-		 */
-		self::hook('output');
-
-		/**
-		 * Finally, we either return or output the CSS
-		 */
-		self::$output = $css;
+		if($lifetime > 0)
+		{	
+			# There's a fixed time on the cache
+			self::header('Expires',gmdate('D, d M Y H:i:s', $modified + $lifetime) . ' GMT');
+			self::header('Cache-Control','max-age='.$lifetime.', public');
+		}
+		else
+		{
+			# Set it far in the future
+			self::header('Expires',gmdate('D, d M Y H:i:s', $_SERVER['REQUEST_TIME'] + 315360000) . ' GMT');
+		}
+		
+		self::header('Last-Modified',gmdate('D, d M Y H:i:s', $modified) .' GMT');
+		self::header('ETag', md5(serialize(array($file,$modified))) );
+		self::header('Content-Type','text/css');
+		self::header('Vary','Accept-Encoding');
 	}
 	
+	/**
+	 * Allows modules to hook into the processing at any point
+	 *
+	 * @param $method The method to check for in each of the modules
+	 * @return boolean
+	 */
+	private static function hook($method)
+	{
+		foreach(self::$modules as $module_name => $module)
+		{
+			if(method_exists($module,$method))
+			{
+				Scaffold_Event::add('system.' . $method, array($module_name,$method));
+			}
+		}
+		
+		Scaffold_Event::run('system.' . $method);
+	}
+
 	/**
 	 * Cleans up Scaffold, saves the log and exits.
 	 *
 	 * @return void
 	 */
-	private function shutdown($return = false)
+	public function shutdown($display = true)
 	{
-		Scaffold_Log::save();
-		self::send_headers();
-
-		if($return === false)
+		if($display === true)
 		{
+			# Send the headers
+			if(!headers_sent())
+			{
+				self::$headers = array_unique(self::$headers);
+	
+				foreach(self::$headers as $name => $value)
+				{
+					if($name[0] != '_')
+					{
+						header($name . ':' . $value);
+					}
+					else
+					{
+						header($value);
+					}
+				}
+			}
+		
 			echo self::$output;
 			exit;
 		}
 		else
 		{
-			return array(
+			self::$output = array(
 			    'error'   => self::$has_error,
 			    'content' => self::$output,
 			    'headers' => self::$headers,
 			    'flags'   => self::$flags,
 			);
+			
+			exit;
 		}
 	}
 
@@ -536,15 +493,12 @@ class Scaffold extends Scaffold_Utils
 
 		self::header('_responseCode','HTTP/1.1 500 Internal Server Error');
 		
-		if (self::$config['display_errors'] === true AND self::$config['in_production'] === false)
+		if(!SCAFFOLD_PRODUCTION)
 		{
 			include self::find_file('scaffold_error.php', 'views', true);
-			self::shutdown();
 		}
-		else
-		{
-			self::shutdown(true);
-		}
+
+		self::shutdown(false);
 	}
 	
 	/**
@@ -556,32 +510,13 @@ class Scaffold extends Scaffold_Utils
 	 */
 	public static function log($message,$level)
 	{
-		if ($level <= self::$error_level)
+		if ($level <= self::$error_threshold)
 		{
 			self::error($message);
 		}
-	}
-
-	/**
-	 * Sends the headers
-	 *
-	 * @return boolean
-	 */
-	private static function send_headers()
-	{
-		if(!headers_sent())
+		else
 		{
-			self::$headers = array_unique(self::$headers);
-
-			foreach(self::$headers as $name => $value)
-			{
-				if($name[0] != '_')
-					header($name . ':' . $value);
-				else
-					header($value);
-			}
-			
-			return true;
+			Scaffold_Log::log($message,$level);
 		}
 	}
 	
@@ -627,12 +562,11 @@ class Scaffold extends Scaffold_Utils
 	 * @return $array The array of flags
 	 */
 	public static function flags()
-	{
-		if(isset(self::$flags))
+	{		
+		if(!empty(self::$flags))
 			return self::$flags;
-
-		foreach(self::modules() as $module)
-			call_user_func(array($module,'flag'));
+			
+		self::hook('flag');
 
 		return (isset(self::$flags)) ? self::$flags : false;
 	}
@@ -662,12 +596,16 @@ class Scaffold extends Scaffold_Utils
 			foreach($args as $inc)
 				self::add_include_path($inc);
 		}
-		else
+	
+		if(is_file($path))
+		{
+			$path = dirname($path);
+		}
+	
+		if(!in_array($path,self::$include_paths))
 		{
 			self::$include_paths[] = Scaffold_Utils::fix_path($path);
 		}
-		
-		self::$include_paths = array_unique(self::$include_paths);
 	}
 	
 	/**
@@ -693,38 +631,6 @@ class Scaffold extends Scaffold_Utils
 	public static function option($name)
 	{
 		return isset(self::$options[$name]);
-	}
-
-	/**
-	 * Sets the currently active file information
-	 *
-	 * @param $file
-	 * @return void
-	 */
-	private static function set_current($file)
-	{
-		static $previous;
-		
-		$dir = dirname($file) . '/';
-		
-		$contents = file_get_contents($file);
-		
-		if($previous != null)
-			self::remove_include_path($previous);
-
-		self::add_include_path($dir);
-	
-		self::$current = array
-		(
-			'file' => $file,
-			'path' => $dir,
-			'url'  => self::url_path($dir),
-			'contents' => $contents
-		);
-
-		$previous = $dir;
-		
-		return $contents;
 	}
 	
 	/**

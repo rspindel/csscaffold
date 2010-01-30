@@ -28,11 +28,10 @@ class Extensions
 	 * @param $css
 	 * @return string
 	 */
-	public static function post_process($css)
+	public static function post_process()
 	{
-		$css = self::load_custom_properties($css);
-		$css = self::load_custom_functions($css);
-		return $css;
+		Scaffold::$css->string = self::load_custom_properties(Scaffold::$css->string);
+		Scaffold::$css->string = self::load_custom_functions(Scaffold::$css->string);
 	}
 
 	/**
@@ -52,7 +51,7 @@ class Extensions
 			$property_name = pathinfo($path, PATHINFO_FILENAME);
 			self::$properties[] = $property_name;
 			
-			if($found = Scaffold_CSS::find_property($property_name, $css))
+			if( $found = Scaffold::$css->find_property($property_name) )
 			{
 				$originals = array_unique($found[0]);
 
@@ -91,7 +90,7 @@ class Extensions
 			$function_name = pathinfo($path, PATHINFO_FILENAME);
 			self::$functions[] = $function_name;
 
-			if($found = Scaffold_CSS::find_functions($function_name,$css))
+			if($found = Scaffold::$css->find_functions($function_name))
 			{			
 				$originals = array_unique($found[0]);
 

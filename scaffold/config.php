@@ -19,59 +19,7 @@
  * Also, in production mode, errors are disabled and any modules which change
  * the output will not be available - like the Typography module. 
  */
-$config['in_production'] = false;
-
-/**
- * Display Errors
- *
- * When an error is found, Scaffold can display a HTML page describing the error.
- * In production mode, errors will never be shown.
- */
-$config['display_errors'] = true;
-
-/**
- * Cache Lifetime
- *
- * This has no effect when no in production mode.
- *
- * Scaffold can cache it's flags, config values and more to save on 
- * rendering time when a file isn't being recached and just being delivered
- * to the browser. Rather than finding the config files, loading modules,
- * loading flags, checking modified times etc. It can just skip straight
- * to outputting the CSS.
- *
- * This value, in seconds, determines how long the internal cache will last.
- *
- * Setting this to false means that Scaffold will check to see if the original
- * files are modified every time, resulting in a slightly slower parsing time
- * when in production.
- */
-$config['cache_lifetime'] = 3600; // 3600 will check if it needs to recache every hour
-
-/**
- * Enable Logging
- *
- * If you enable logging, errors, warnings and messages will be saved to the logs directory
- * inside the system folder.
- */
-$config['enable_log'] = true;
-
-/**
- * Error Threshold
- *
- * Set the minimum log level required to be displayed as an error. 0 will display
- * only error messages, 1 will display error AND warning messages etc.
- *
- * For example. A non-existent CSS file is an level 0 message (an error), whereas
- * a missing image is a level 1 message (a warning). Setting this to 1 will display
- * these missing images as errors.
- *
- * 0 = error
- * 1 = warning
- * 2 = message
- * 3 = debug
- */
-$config['error_threshold'] = 0;
+define('SCAFFOLD_PRODUCTION',false);
 
 /**
  * Document Root
@@ -106,13 +54,52 @@ $config['system'] = './';
 $config['cache'] = './cache/';
 
 /**
- * Disable Modules
+ * Cache Lifetime
  *
- * If a particular module isn't taking your fancy, you can just disable it
- * here. You might get some unexpected results by doing so. I wouldn't recommend
- * disabling any of the major modules (Nested Selectors, constants, mixins), as
- * you might get some unexpected results. 
+ * This has no effect when no in production mode.
+ *
+ * Scaffold can cache it's flags, config values and more to save on 
+ * rendering time when a file isn't being recached and just being delivered
+ * to the browser. Rather than finding the config files, loading modules,
+ * loading flags, checking modified times etc. It can just skip straight
+ * to outputting the CSS.
+ *
+ * This value, in seconds, determines how long the internal cache will last.
+ *
+ * Setting this to false means that Scaffold will check to see if the original
+ * files are modified every time, resulting in a slightly slower parsing time
+ * when in production.
  */
-$config['disable'] = array();
+$config['cache_lifetime'] = 3600; // 3600 will check if it needs to recache every hour
 
-$config['disable_flags'] = true;
+/**
+ * Disable Flags
+ *
+ * Speeds up the processing, but you can't use cache flags
+ */
+$config['disable_flags'] = false;
+
+/**
+ * Enable Logging
+ *
+ * If you enable logging, errors, warnings and messages will be saved to the logs directory
+ * inside the system folder.
+ */
+$config['enable_log'] = true;
+
+/**
+ * Error Threshold
+ *
+ * Set the minimum log level required to be displayed as an error. 0 will display
+ * only error messages, 1 will display error AND warning messages etc.
+ *
+ * For example. A non-existent CSS file is an level 0 message (an error), whereas
+ * a missing image is a level 1 message (a warning). Setting this to 1 will display
+ * these missing images as errors.
+ *
+ * 0 = error
+ * 1 = warning
+ * 2 = message
+ * 3 = debug
+ */
+$config['error_threshold'] = 1;

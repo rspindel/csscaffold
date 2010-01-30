@@ -62,11 +62,6 @@ if(isset($_GET['f']))
 	 * present.
 	 */
 	$options = (isset($_GET['options'])) ? array_flip(explode(',',$_GET['options'])) : array();
-	
-	/**
-	 * Return the CSS rather than displaying it
-	 */
-	$return = false;
 
 	/**
 	 * Set a base directory
@@ -82,9 +77,7 @@ if(isset($_GET['f']))
 	/**
 	 * Parse and join an array of files
 	 */
-	$result = Scaffold::parse($files,$config,$options,$return);
-	
-	print_r($result);
+	$result = Scaffold::parse($files,$config,$options,true);
 }
 
 /**

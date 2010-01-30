@@ -10,13 +10,6 @@
 class Scaffold_Log
 {
 	/**
-	 * If the log is enabled
-	 *
-	 * @var boolean
-	 */
-	public static $enabled = false;
-
-	/**
 	 * Logs
 	 *
 	 * @var array
@@ -24,48 +17,24 @@ class Scaffold_Log
 	public static $log = array();
 	
 	/**
+	 * The log directory
+	 *
+	 * @var string
+	 */
+	public static $log_directory;
+
+	/**
 	 * Log Levels
 	 *
 	 * @var array
 	 */
 	private static $log_levels = array
 	(
-		'error',
-		'warn',
-		'info',
-		'debug',
+		'Error',
+		'Warning',
+		'Info',
+		'Debug',
 	);
-	
-	/**
-	 * The log directory
-	 *
-	 * @var string
-	 */
-	public static $log_directory;
-	
-	/**
-	 * Adds the log directory and threshold. Should be run before using this class
-	 *
-	
-	 * @param $threshold
-	 * @return boolean
-	 */
-	public static function setup($dir)
-	{
-		self::log_directory($dir);
-	}
-	
-	/**
-	 * Enable logging
-	 *
-	
-	 * @param $enable
-	 * @return void
-	 */
-	public static function enable($enable)
-	{
-		self::$enabled = $enable;
-	}
 
 	/**
 	 * Logs a message
@@ -76,9 +45,6 @@ class Scaffold_Log
 	 */
 	public static function log($message,$level = 3)
 	{
-		if(self::$enabled === false)
-			return false;
-
 		self::$log[$level][date('Y-m-d H:i:s P')] = $message;
 	}
 
@@ -89,7 +55,7 @@ class Scaffold_Log
 	 */
 	public static function save()
 	{
-		if (empty(self::$log) OR self::$enabled === false)
+		if (empty(self::$log))
 			return false;
 
 		$filename = self::log_directory().date('Y-m-d').'.log.php';
@@ -123,9 +89,6 @@ class Scaffold_Log
 	 */
 	public static function log_directory($dir = NULL)
 	{
-		if(self::$enabled === false)
-			return false;
-
 		if (!empty($dir))
 		{
 			// Get the directory path
@@ -136,19 +99,12 @@ class Scaffold_Log
 				// Change the log directory
 				self::$log_directory = $dir;
 			}
-			else
-			{
-				self::error("Can't write to log directory - {$dir}");
-			}
+
 		}
 		
 		if(isset(self::$log_directory))
 		{
 			return self::$log_directory;
-		}
-		else
-		{
-			return false;
 		}
 	}
 }

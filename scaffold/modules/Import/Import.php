@@ -24,13 +24,13 @@ class Import
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	public static function import_process($css)
+	public static function import_process()
 	{
 		# Add the original file to the loaded array
-		self::$loaded[] = Scaffold::$current['file'];
+		self::$loaded[] = Scaffold::$css->file;
 		
 		# Find all the @server imports
-		return self::server_import($css, Scaffold::$current['path'] );
+		Scaffold::$css->string = self::server_import(Scaffold::$css->string,Scaffold::$css->path);
 	}
 	
 	/**
@@ -54,7 +54,7 @@ class Import
 			if(pathinfo($include, PATHINFO_EXTENSION) != 'css')
 			{
 				$css = str_replace($matches[0][0], '', $css);
-				Scaffold_Log::log('Invalid @include file - ' . $include);
+				Scaffold::log('Invalid @include file - ' . $include);
 				self::server_import($css,$base);
 			}
 
@@ -79,6 +79,7 @@ class Import
 				{
 					$css = str_replace($matches[0][0], '', $css);
 				}
+				
 			}
 			else
 			{
@@ -86,6 +87,7 @@ class Import
 			}
 			
 			$css = self::server_import($css,$base);
+
 		}
 
 		return $css;

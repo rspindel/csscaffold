@@ -1,14 +1,14 @@
 <?php
 
-$config['Firelog']['file_information'] = false;
-$config['Firelog']['include_paths'] = false;
-$config['Firelog']['flags'] = false;
-$config['Firelog']['included_files'] = false;
-$config['Firelog']['constants'] = false;
-$config['Firelog']['mixins'] = false;
-$config['Firelog']['error_log'] = false;
-$config['Firelog']['custom_functions'] = false;
-$config['Firelog']['custom_properties'] = false;
-$config['Firelog']['gradients'] = false;
-$config['Firelog']['layout'] = false;
-$config['Firelog']['validation_errors'] = false;
+$config['file_information'] = false;
+$config['include_paths'] = false;
+$config['flags'] = false;
+$config['included_files'] = false;
+$config['constants'] = false;
+$config['mixins'] = false;
+$config['error_log'] = false;
+$config['custom_functions'] = false;
+$config['custom_properties'] = false;
+$config['gradients'] = false;
+$config['layout'] = false;
+$config['validation_errors'] = false;

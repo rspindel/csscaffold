@@ -20,34 +20,65 @@ class Mixins
 	public static $mixins = array();
 	
 	/**
-	 * Holds the base mixins
+	 * Imports all of the mixins in the mixins folder automatically. All comments
+	 * are stripped from these included mixins.
 	 *
-	 * @var array
+	 * @return void
 	 */
-	public static $bases = array();
-
-	/**
-	 * The main processing function called by Scaffold. MUST return $css!
-	 *
-	 * @author Anthony Short
-	 * @return $css string
-	 */
-	public static function parse($css)
+	public static function import_process()
 	{
-		$bases =& self::$bases;
-		
+		$folder = Scaffold::$config['Mixins']['auto_include'];
+
+		if($folder === false) 
+			return;
+
+		foreach(Scaffold::list_files($folder,true) as $file)
+		{
+			if(is_dir($file))
+				continue;
+				
+			Scaffold::$css->string .= Scaffold::$css->remove_comments(file_get_contents($file));
+		}
+	}
+	
+	/**
+	 * Pull out all the found base mixins at the start
+	 *
+	 * @return void
+	 */
+	public static function pre_process()
+	{
+		self::extract_bases();
+	}
+	
+	/**
+	 * Replaces the mixins in the CSS with their bases
+	 *
+	 * @return void
+	 */
+	public static function process()
+	{
+		self::replace_mixins();
+	}
+	
+	/**
+	 * Extracts the mixin bases
+	 *
+	
+	 * @param $param
+	 * @return return type
+	 */
+	public static function extract_bases()
+	{				
 		# Finds any selectors starting with =mixin-name
-		if( $found = Scaffold_CSS::find_selectors('\=(?P<name>[0-9a-zA-Z_-]*)(\((?P<args>.*?)\))?', $css, 5) )
+		if( $found = Scaffold::$css->find_selectors('\=(?P<name>[0-9a-zA-Z_-]*)(\((?P<args>.*?)\))?', 5) )
 		{
 			# Just to make life a little easier
 			$full_base 		= $found[0];
 			$base_names 	= $found['name'];
 			$base_args 		= $found['args'];
 			$base_props 	= $found['properties'];
-			
-			# Clean up memory
-			unset($found);
-			
+
 			# Puts the mixin bases into a more suitable array
 			foreach($base_names as $key => $value)
 			{	
@@ -61,16 +92,25 @@ class Mixins
 			self::$mixins = $bases;
 			
 			# Remove all of the mixin bases
-			$css = str_replace($full_base,'',$css);
+			Scaffold::$css->string = str_replace($full_base,'',Scaffold::$css);
 		}
-		
+	}
+
+	/**
+	 * The main processing function called by Scaffold. MUST return $css!
+	 *
+	 * @author Anthony Short
+	 * @return $css string
+	 */
+	public static function replace_mixins()
+	{
 		# Find the mixins
-		if($mixins = self::find_mixins($css))
+		if($mixins = self::find_mixins(Scaffold::$css->string))
 		{
 			# Loop through each of the found +mixins
 			foreach($mixins[2] as $mixin_key => $mixin_name)
 			{
-				$css = str_replace($mixins[0][$mixin_key], self::build_mixins($mixin_key, $mixins), $css);
+				Scaffold::$css->string = str_replace($mixins[0][$mixin_key], self::build_mixins($mixin_key, $mixins), Scaffold::$css);
 			}
 		}
 	}
@@ -85,7 +125,7 @@ class Mixins
 	 */
 	public static function build_mixins($mixin_key, $mixins, $already_mixed = array())
 	{
-		$bases =& self::$bases;
+		$bases =& self::$mixins;
 		
 		$mixin_name = $mixins[2][$mixin_key];
 				
@@ -176,7 +216,7 @@ class Mixins
 		# Loop through each function arg and create the parsed params array
 		foreach($function_args as $key => $value)
 		{
-			$v = explode('=', $value);			
+			$v = explode('=', $value);
 
 			# If the user didn't include one of the params, we'll check to see if a default is available			
 			if(count($mixin_params) == 0 || !isset($mixin_params[$key]))

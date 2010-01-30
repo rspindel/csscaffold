@@ -20,18 +20,18 @@ class NestedSelectors
 	(
 		'@media'
 	);
-	
+
 	/**
 	 * The main processing function called by Scaffold. MUST return $css!
 	 *
 	 * @author Anthony Short
 	 * @return $css string
 	 */
-	public static function parse($css)
+	public static function post_process()
 	{
 		# These will break the xml, so we'll transform them for now
-		$css = Scaffold_CSS::convert_entities('encode', $css);
-		$xml = self::to_xml($css);
+		Scaffold::$css->convert_entities('encode');
+		$xml = self::to_xml(Scaffold::$css);
 		$css = "";
 
 		foreach($xml->children() as $key => $value)
@@ -83,7 +83,8 @@ class NestedSelectors
 			}
 		}
 
-		return Scaffold_CSS::convert_entities('decode', $css);
+		Scaffold::$css->string = str_replace('#NEWLINE#', "\n", $css);
+		Scaffold::$css->convert_entities('decode');
 	}
 	
 	/**
@@ -94,7 +95,7 @@ class NestedSelectors
 	 */
 	private static function parse_comment($comment)
 	{
-		return "/* {$comment} */";
+		return "/*{$comment}*/";
 	}
 	
 	/**
@@ -266,7 +267,7 @@ class NestedSelectors
 	public static function to_xml($css)
 	{		
 		# Convert comments
-		$xml = preg_replace('/\/\*(.*?)\*\//sx',"<property name=\"comment\" value=\"$1\" />",$css);
+		$xml = preg_replace_callback('/\/\*(.*?)\*\//sx', array('NestedSelectors','encode_comment') ,$css);
 		
 		# Convert imports
 		$xml = preg_replace(
@@ -298,11 +299,25 @@ class NestedSelectors
 		
 		# Indent everything one tab
 		$xml = preg_replace('/\n/', "\r\t", $xml);
-		
+				
 		# Tie it up with a bow
-		$xml = '<?xml version="1.0" ?'.">\r<css>\r\t$xml\r</css>\r"; 
+		$xml = '<?xml version="1.0" ?'.">\r<css>\r\t$xml\r</css>\r"; 		
 
 		return simplexml_load_string($xml);
+	}
+	
+	/**
+	 * Turns CSS comments into an xml format
+	 *
+	 * @param $comment
+	 * @return return type
+	 */
+	protected function encode_comment($comment)
+	{
+		// Encode new lines
+		$comment = preg_replace('/\n|\r/', '#NEWLINE#',$comment[1]);	
+		$comment = "<property name=\"comment\" value=\"" . $comment . "\" />";
+		return $comment;
 	}
 
 }

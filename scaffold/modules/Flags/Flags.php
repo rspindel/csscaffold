@@ -20,17 +20,24 @@
  */
 class Flags
 {
+	/**
+	 * Post Process Hook
+	 */
+	public static function process()
+	{
+		Scaffold::$css = self::replace_flags(Scaffold::$css);
+	}
 
 	/**
 	 * Post Process. Needs to come after the nested selectors.
 	 *
 	 * @author Anthony Short
-	 * @param $css string
+	 * @param $css object
 	 * @return $css string
 	 */
-	public static function post_process($css)
+	public static function replace_flags($css)
 	{
-		if( $found = Scaffold_CSS::find_at_group('flag', $css) )
+		if( $found = $css->find_at_group('flag',false) )
 		{
 			foreach($found['groups'] as $group_key => $group)
 			{
@@ -53,19 +60,19 @@ class Flags
 				if($parse)
 				{
 					# Just remove the flag name, and it should just work.
-					$css = str_replace($found['groups'][$group_key],$found['content'][$group_key],$css);
+					$css->string = str_replace($found['groups'][$group_key],$found['content'][$group_key],$css->string);
 				}
 				else
 				{
 					# Get it out of there, that flag isn't set!
-					$css = str_replace($found['groups'][$group_key],'',$css);
+					$css->string = str_replace($found['groups'][$group_key],'',$css->string);
 				}
 			}
 			
 			# Loop through the newly parsed CSS to look for more flags
-			$css = self::post_process($css);
+			$css = self::replace_flags($css);
 		}
-
+		
 		return $css;
 	}
 }

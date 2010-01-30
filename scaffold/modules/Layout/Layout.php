@@ -71,22 +71,21 @@ class Layout
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	public static function parse($css)
-	{		
-		if( $settings = Scaffold_CSS::find_at_group('grid', $css) )
+	public static function pre_process()
+	{
+		if( $settings = Scaffold::$css->find_at_group('grid') )
 		{
 			$groups = $settings['groups'];
 			$settings = $settings['values'];
 			
 			# You really should only have one @grid
 			if(count($groups) > 1)
-				Scaffold_Log::log('Layout module can only use one @grid rule',1);
-				
+			{
+				Scaffold::error('Layout module can only use one @grid rule');
+			}
+	
 			# Make sure the groups have all the right properties
 			self::check_grid($groups[0],$settings);
-			
-			# Remove it from the css
-			$css = str_replace($groups, array(), $css); 
 			
 			# The number of columns, baseline and unit
 			$cc 	= $settings['column-count'];
@@ -131,7 +130,7 @@ class Layout
 			{
 				# Generate the grid.png
 				$img = self::create_grid_image($cw, $bl, $lgw, $rgw);
-				$css .= "=grid{background:url('".$img."');}";
+				Scaffold::$css->string .= "=grid{background:url('".$img."');}";
 			}
 			
 			if( Scaffold::$config['Layout']['grid_classes'] )
@@ -141,7 +140,7 @@ class Layout
 					self::$columns[$i] = ($i * $cw) + (($i * $gw) - $gw);
 				}	
 				
-				$css .= file_get_contents( Scaffold::find_file('Layout/css/grid.css') );
+				Scaffold::$css->string .= file_get_contents( Scaffold::find_file('Layout/css/grid.css') );
 			}
 
 			# Make each of the column variables a member variable
@@ -154,11 +153,9 @@ class Layout
 			self::$baseline = $bl;
 			self::$unit = $unit;
 		}
-		
-		return $css;
 	}
 	
-	public static function display($css)
+	public static function display()
 	{
 		if(Scaffold::option("grid") && isset(self::$column_width))
 		{
@@ -172,8 +169,6 @@ class Layout
 			echo($page); 
 			exit;
 		}
-		
-		return $css;
 	}
 
 	/**

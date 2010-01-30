@@ -10,7 +10,7 @@
  * Adjust the offset from GMT time for the time module so that the flags
  * accurately trigger according to the timezone of where you live.
  */
-$config['Time']['offset'] = -13;
+$config['offset'] = +11;
 
 /**
  * Time Flags
@@ -18,8 +18,18 @@ $config['Time']['offset'] = -13;
  * Here you can create special flags for different times of the day, 
  * week, month or year. 
  */
-$config['Time']['flags'] = array
+$config['flags'] = array
 (
+	'tuesday' => array
+	(
+		'day' => 'Tuesday' 
+	),
+	
+	'night' => array
+	(
+		'hour' => 23
+	),
+
 	# Morning is the name of the flag
 	'morning' => array
 	(

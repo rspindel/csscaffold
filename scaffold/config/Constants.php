@@ -6,9 +6,6 @@
  * This is also a good place to add any PHP environment constants
  * you might want to use.
  */
-$config['Constants']['global'] = array
-(
-	'test_variable' => 'blah'
-);
+$config['global'] = array();
 
-$config['Constants']['xml_path'] = './constants.xml';
+$config['xml_path'] = false;

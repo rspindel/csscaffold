@@ -13,7 +13,7 @@ class Validate
 	 */
 	public static $errors;
 
-	public static function display($css)
+	public static function display()
 	{
 		if( Scaffold::option('validate') )
 		{					
@@ -21,7 +21,7 @@ class Validate
 			$validator_options = Scaffold::$config['Validate']['options'];
 			
 			# Add our options
-			$validator_options['text'] = $css;
+			$validator_options['text'] = Scaffold::$output;
 			$validator_options['output'] = 'soap12';
 			
 			# Encode them
@@ -65,12 +65,10 @@ class Validate
 			    		
 			    		self::$errors[] = array('line' => $line, 'near' => $near, 'message' => $message);
 			    		
-			    		Scaffold_Log::log("Validation Error on line {$line} near {$near} => {$message}",1);
+			    		Scaffold::log("Validation Error on line {$line} near {$near} => {$message}",1);
 			    	}
 			    }
 			}
 		}
-	
-		return $css;
 	}
 } 
