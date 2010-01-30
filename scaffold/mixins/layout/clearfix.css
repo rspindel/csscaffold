@@ -5,9 +5,8 @@
 *
 * @type Mixin
 */
-=quick-clearfix
+=clear
 {
-	+has-layout; /* For IE6, the overflow is enough for IE7+ */
 	overflow:hidden;
 }
 
