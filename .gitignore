@@ -1,3 +1,6 @@
 */.DS_STORE
-config.php
-system/cache/*
+*/cache/*
+index.html
+CSScaffold.esproj/
+stylesheets
+*/logs/*.php

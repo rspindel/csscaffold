@@ -1,0 +1,5 @@
+Scaffold Release Notes
+
+Version 2.0.0
+	* Comments can now be left within the CSS after parsing
+	* Folder structure changed
