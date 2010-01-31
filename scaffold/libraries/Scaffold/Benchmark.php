@@ -59,7 +59,7 @@ final class Scaffold_Benchmark
 	 * @param   integer  number of decimal places to count to
 	 * @return  array
 	 */
-	public static function get($name, $type, $decimals = 4)
+	public static function get($name, $decimals = 4)
 	{
 		if ($name === TRUE)
 		{
@@ -94,19 +94,12 @@ final class Scaffold_Benchmark
 			$memory += self::$marks[$name][$i]['memory_stop'] - self::$marks[$name][$i]['memory_start'];
 		}
 
-		if ($type = 'time')
-		{
-			return number_format($time, $decimals);
-		}
-		elseif($type = "memory")
-		{
-			return $memory;
-		}
-		elseif($type = "count")
-		{
-			return count(self::$marks[$name]);
-		}
-
+		return array
+		(
+			'time'   => number_format($time, $decimals),
+			'memory' => $memory,
+			'count'  => count(self::$marks[$name])
+		);
 	}
 	
 	/**
