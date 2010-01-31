@@ -132,14 +132,25 @@ class Scaffold extends Scaffold_Utils
 	 */
 	public static function parse( $files, $config, $options = array(), $display = false )
 	{
+		# Benchmark will do the entire run from start to finish
+		Scaffold_Benchmark::start('system');
+
 		try
-		{
+		{			
+			# Setup the cache and other variables/constants
 			Scaffold::setup($config);
+
 			self::$options = $options;
 			$css = false;
 			
+			# Time it takes to get the flags
+			Scaffold_Benchmark::start('system.flags');
+			
 			# Get the flags from each of the loaded modules.
 			$flags = (self::$flags === false) ? array() : self::flags();
+			
+			# Time it takes to get the flags
+			Scaffold_Benchmark::stop('system.flags');
 			
 			# The final, combined CSS file in the cache
 			$combined = md5(serialize(array($files,$flags))) . '.css';
@@ -154,8 +165,15 @@ class Scaffold extends Scaffold_Utils
 			
 			if(Scaffold::$output === null)
 			{
+				# We're processing the files
+				Scaffold_Benchmark::start('system.check_files');
+	
 				foreach($files as $file)
 				{
+					# The time to process a single file
+					Scaffold_Benchmark::start('system.file.' . basename($file));
+					
+					# Make sure this file is allowed
 					if(substr($file, 0, 4) == "http" OR substr($file, -4, 4) != ".css")
 					{
 						Scaffold::error('Scaffold cannot the requested file - ' . $file);
@@ -190,6 +208,9 @@ class Scaffold extends Scaffold_Utils
 					}
 		
 					$css .= Scaffold_Cache::open($cached_file);
+					
+					# The time it's taken to process this file
+					Scaffold_Benchmark::stop('system.file.' . basename($file));
 				}
 	
 				Scaffold::$output = $css;
@@ -205,7 +226,10 @@ class Scaffold extends Scaffold_Utils
 				/**
 				 * Hook to modify what is sent to the browser
 				 */
-				if(!SCAFFOLD_PRODUCTION) Scaffold::hook('display');
+				if(SCAFFOLD_PRODUCTION === false) Scaffold::hook('display');
+				
+				# The time it takes to process the files
+				Scaffold_Benchmark::stop('system.check_files');
 			}
 			
 			/**
@@ -248,10 +272,11 @@ class Scaffold extends Scaffold_Utils
 			}
 		}
 		
-		/**
-		 * Save the logs and exit 
-		 */
+		# Save the logs and exit 
 		Scaffold_Event::run('system.shutdown');
+
+		# Benchmark will do the entire run from start to finish
+		Scaffold_Benchmark::stop('system');
 
 		return self::$output;
 	}
@@ -342,6 +367,13 @@ class Scaffold extends Scaffold_Utils
 				self::$modules[$name] = new $name;
 			}
 		}
+		
+		/**
+		 * Module Initialization Hook
+		 * This hook allows modules to load libraries and create events
+		 * before any processing is done at all. 
+		 */
+		self::hook('initialize');
 
 		Scaffold_Event::add('system.shutdown', array('Scaffold','shutdown'));
 	}
@@ -365,13 +397,6 @@ class Scaffold extends Scaffold_Utils
 		 * Note:Inline comments are stripped when the file is loaded.
 		 */
 		Scaffold::$css = new Scaffold_CSS($file);
-		
-		/**
-		 * Module Initialization Hook
-		 * This hook allows modules to load libraries and create events
-		 * before any processing is done at all. 
-		 */
-		self::hook('initialize');
 
 		/**
 		 * Import Process Hook
@@ -466,11 +491,13 @@ class Scaffold extends Scaffold_Utils
 		foreach(self::$modules as $module_name => $module)
 		{
 			if(method_exists($module,$method))
-			{
+			{				
+				# Create an event for this module hook
 				Scaffold_Event::add('system.' . $method, array($module_name,$method));
 			}
 		}
 		
+		# Run the event for this hook
 		Scaffold_Event::run('system.' . $method);
 	}
 	
@@ -482,12 +509,14 @@ class Scaffold extends Scaffold_Utils
 	 */
 	public static function render($output,$level = false)
 	{
+		Scaffold_Event::run('system.display');
+
 		if ($level AND ini_get('output_handler') !== 'ob_gzhandler' AND (int) ini_get('zlib.output_compression') === 0)
 		{
 			if ($level < 1 OR $level > 9)
 			{
-				// Normalize the level to be an integer between 1 and 9. This
-				// step must be done to prevent gzencode from triggering an error
+				# Normalize the level to be an integer between 1 and 9. This
+				# step must be done to prevent gzencode from triggering an error
 				$level = max(1, min($level, 9));
 			}
 
@@ -506,20 +535,19 @@ class Scaffold extends Scaffold_Utils
 			switch ($compress)
 			{
 				case 'gzip':
-					// Compress output using gzip
+					# Compress output using gzip
 					$output = gzencode($output, $level);
 				break;
 				case 'deflate':
-					// Compress output using zlib (HTTP deflate)
+					# Compress output using zlib (HTTP deflate)
 					$output = gzdeflate($output, $level);
 				break;
 			}
 
-			// This header must be sent with compressed content to prevent
-			// browser caches from breaking
+			# This header must be sent with compressed content to prevent browser caches from breaking
 			Scaffold::header('Vary','Accept-Encoding');
 
-			// Send the content encoding header
+			# Send the content encoding header
 			Scaffold::header('Content-Encoding',$compress);
 		}
 	
