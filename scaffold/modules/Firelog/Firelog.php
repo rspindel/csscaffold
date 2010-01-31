@@ -38,23 +38,37 @@ class Firelog
 	 */
 	public static function initialize()
 	{
-		self::_enable();
-	}
-	
-	/**
-	 * Loads FirePHP
-	 *
-	 * @author Anthony Short
-	 * @param $param
-	 * @return return type
-	 */
-	private static function _enable()
-	{
+		# Load FirePHP
 		if(!class_exists('FB'))
 			require dirname(__FILE__) . '/libraries/FirePHPCore/fb.php';
 
 		# Enable it
 		FB::setEnabled(true);
+		
+		# Add a hook in when the system shuts down that logs all the benchmarks
+		Scaffold_Event::add_before('system.shutdown', 'module.firelog.benchmark', array(__CLASS__,'benchmark'));
+	}
+	
+	/**
+	 * Outputs the benchamrks from Scaffold to Firebug
+	 *
+	 * @return void
+	 */
+	public static function benchmark()
+	{
+		$system 	= Scaffold_Benchmark::get('system');
+		$flags 		= Scaffold_Benchmark::get('system.flags');
+		$check		= Scaffold_Benchmark::get('system.check_files');
+		
+		$table = array();
+		$table[] = array('Event', 'Time');
+		
+		# The benchmark values
+		$table[] = array('Total Time',$system['time']);
+		$table[] = array('Set Flags', $flags['time']);
+		$table[] = array('Parse Files', $check['time']);
+		
+		FB::table('Benchmark', $table);
 	}
 
 	/**
