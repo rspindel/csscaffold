@@ -21,7 +21,7 @@ class Gradient
 		if (!class_exists('GradientGD'))
 			include(dirname(__FILE__).'/libraries/gradientgd.php');
 		
-		$file = Scaffold::$config['cache'] . "gradients/{$direction}_{$size}_{$from}_{$to}.png";
+		$file = "{$direction}_{$size}_".str_replace('#','',$from)."_".str_replace('#','',$to).".png";
 
 		if($direction == 'horizontal')
 		{
@@ -36,12 +36,16 @@ class Gradient
 			$repeat = 'x';
 		}
 
-		if(!file_exists($file)) 
+		if(!Scaffold_Cache::exists('gradients/'.$file)) 
 		{
 			Scaffold_Cache::create('gradients');
+			$file = Scaffold_Cache::find('gradients') . '/' . $file;
 			$gradient = new GradientGD($width,$height,$direction,$from,$to,$stops);
 			$gradient->save($file);
 		}
+		
+		$file = Scaffold_Cache::find('gradients') . '/' . $file;
+
 		
 		self::$gradients[] = array
 		(
@@ -51,7 +55,7 @@ class Gradient
 			$to,
 			$file
 		);
-		
+
 		$properties = "
 			background-position: top left;
 		    background-repeat: repeat-$repeat;
