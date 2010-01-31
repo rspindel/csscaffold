@@ -44,9 +44,6 @@ class Firelog
 
 		# Enable it
 		FB::setEnabled(true);
-		
-		# Add a hook in when the system shuts down that logs all the benchmarks
-		Scaffold_Event::add_before('system.shutdown', 'module.firelog.benchmark', array(__CLASS__,'benchmark'));
 	}
 	
 	/**
@@ -80,6 +77,9 @@ class Firelog
 	 */
 	public static function display()
 	{
+		# Log the benchmarks
+		self::benchmark();
+		
 		# Log about the completed file
 		if(Scaffold::$config['Firelog']['file_information'] === true)
 		{
@@ -173,7 +173,8 @@ class Firelog
 
 			FB::table('Gradients', $table);
 		}
-	
+		
+		/*
 		# Layout module
 		if(Scaffold::$config['Firelog']['layout'] === true && isset(Layout::$columns))
 		{
@@ -225,6 +226,7 @@ class Firelog
 			
 			FB::groupEnd();
 		}
+		*/
 		
 		# Validation Errors
 		if(Scaffold::$config['Firelog']['validation_errors'] === true && Validate::$errors)

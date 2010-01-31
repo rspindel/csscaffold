@@ -116,6 +116,17 @@ class Constants
 	}
 	
 	/**
+	 * Unsets a constant
+	 *
+	 * @param $key
+	 * @return void
+	 */
+	public static function remove($key)
+	{
+		unset(self::$constants[$key]);
+	}
+	
+	/**
 	 * Returns the constant value
 	 *
 	 * @author Anthony Short
@@ -137,7 +148,6 @@ class Constants
 		{
 			if(!isset($$value))
 			{
-				$css = preg_replace('/\{?\$'.$value.'\}?/', '',$css);
 				Scaffold::error('Missing constant - ' . $value);
 			}
 		}

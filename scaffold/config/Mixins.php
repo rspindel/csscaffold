@@ -1,3 +1,3 @@
 <?php
 
-$config['auto_include'] = 'mixins';
+$config['auto_include'] = false;

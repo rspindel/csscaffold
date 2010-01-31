@@ -58,13 +58,13 @@ class Mixins
 	 */
 	public static function process()
 	{
+		# Replaces each of the +mixins within the CSS
 		self::replace_mixins();
 	}
 	
 	/**
 	 * Extracts the mixin bases
 	 *
-	
 	 * @param $param
 	 * @return return type
 	 */
@@ -140,9 +140,23 @@ class Mixins
 				
 				# Parse the parameters of the mixin
 				$params = self::parse_params($mixins[0][$mixin_key], $mixins[4][$mixin_key], $bases[$mixin_name]['params']);
+
+				# Set the parameters as constants
+				foreach($params as $key => $value)
+				{
+					Constants::set($key,$value);
+				}
 				
-				# Create the property string
-				$new_properties = str_replace(array_keys($params),array_values($params),$base_properties);
+				$new_properties = Constants::replace($base_properties);
+				
+				# Unset the parameters as constants
+				foreach($params as $key => $value)
+				{
+					Constants::remove($key);
+				}
+
+				# Replace any constants within the mixins
+				$new_properties = Constants::replace($new_properties);
 				
 				# Parse conditionals if there are any in there
 				$new_properties = self::parse_conditionals($new_properties);
@@ -217,6 +231,9 @@ class Mixins
 		foreach($function_args as $key => $value)
 		{
 			$v = explode('=', $value);
+			
+			# Remove the $ so we can set it as a constants
+			$v[0] = str_replace('$','',$v[0]);
 
 			# If the user didn't include one of the params, we'll check to see if a default is available			
 			if(count($mixin_params) == 0 || !isset($mixin_params[$key]))
@@ -224,7 +241,7 @@ class Mixins
 				# If there is a default value for the param			
 				if(strstr($value, '='))
 				{
-					$parsed_value = Scaffold_Utils::unquote( trim($v[1]) );
+					$parsed_value = Constants::replace(Scaffold_Utils::unquote( trim($v[1]) ));
 					$parsed[trim($v[0])] = (string)$parsed_value;
 				}
 				
@@ -236,7 +253,6 @@ class Mixins
 			}
 			else
 			{
-
 				$value = (string)Scaffold_Utils::unquote(trim($mixin_params[$key]));
 				$parsed[trim($v[0])] = str_replace('#COMMA#',',',$value);
 			}		

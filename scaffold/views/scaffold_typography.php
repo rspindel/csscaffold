@@ -3,21 +3,10 @@
 <head>
 	<meta charset=utf-8 />
 	<title>Typography | CSScaffold</title>
-	
 	<style type="text/css"><?php echo Scaffold::$output; ?></style>
-	
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
-	<script>
-		$(document).ready(function(){
-			if (window.location.href.indexOf('grid')>0) 
-			{
-				$('#page').addClass('showgrid');
-			}
-		});
-	</script>
 </head>
 <body>
-	<div id="page" style="width:70%; margin:0 auto;">
+	<div id="type_sheet" style="width:70%; margin:0 auto;">
  
 			<h1>Lorem ipsum dolor sit amet, consectetur adipisicing elit adipisicing elit adipisicing elit</h1>
  			

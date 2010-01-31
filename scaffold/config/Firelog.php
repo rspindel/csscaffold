@@ -1,14 +1,14 @@
 <?php
 
-$config['file_information'] = true;
-$config['include_paths'] = true;
-$config['flags'] = true;
-$config['included_files'] = true;
-$config['constants'] = true;
-$config['mixins'] = true;
-$config['error_log'] = true;
-$config['custom_functions'] = true;
-$config['custom_properties'] = true;
-$config['gradients'] = true;
-$config['layout'] = true;
-$config['validation_errors'] = true;
+$config['file_information'] = false;
+$config['include_paths'] = false;
+$config['flags'] = false;
+$config['included_files'] = false;
+$config['constants'] = false;
+$config['mixins'] = false;
+$config['error_log'] = false;
+$config['custom_functions'] = false;
+$config['custom_properties'] = false;
+$config['gradients'] = false;
+$config['layout'] = false;
+$config['validation_errors'] = false;

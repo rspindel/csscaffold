@@ -49,8 +49,8 @@ final class Scaffold_Cache
 
 	
 	public function is_fresh($file)
-	{		
-		if(self::modified($file) <= ( self::$lifetime + time() ) )
+	{
+		if( time() <= ( self::$lifetime +  self::modified($file) ) )
 		{
 			return true;
 		}

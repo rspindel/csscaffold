@@ -26,7 +26,7 @@ final class Scaffold_Event {
 	 *
 	 * @var array
 	 */
-	private static $has_run = array();
+	public static $has_run = array();
 
 	/**
 	 * Data that can be processed during events

@@ -39,7 +39,7 @@ $config['document_root'] = $_SERVER['DOCUMENT_ROOT'];
  * an absolute file path, or even relative to the document root and Scaffold
  * will take care of the rest. 
  */
-$config['system'] = './';
+$config['system'] = '/Library/WebServer/Documents/scaffoldframework.com/stylesheets/scaffold/';
 
 /**
  * Cache Folder

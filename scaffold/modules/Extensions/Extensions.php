@@ -97,7 +97,7 @@ class Extensions
 				foreach($originals as $key => $value)
 				{					
 					$result = call_user_func_array('Scaffold_'.$function_name, explode(',',$found[2][$key]) );
-										
+									
 					if($result)
 					{
 						$css = str_replace($originals[$key],$result,$css);

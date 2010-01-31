@@ -4,66 +4,16 @@
  * Grid class
  *
  * @author Anthony Short
- * @dependencies None
- **/
+ */
 class Layout
 {
 
 	/**
-	 * Width of a single column
+	 * All of the grid settings
 	 *
-	 * @var string
+	 * @var Array
 	 */
-	public static $column_width;
-	
-	/**
-	 * Number of columns in the grid
-	 *
-	 * @var string
-	 */
-	public static $column_count;
-	
-	/**
-	 * Total width of the gutters combined
-	 *
-	 * @var string
-	 */
-	public static $gutter_width;
-	
-	/**
-	 * Left gutter width
-	 *
-	 * @var string
-	 */
-	public static $left_gutter_width;
-	
-	/**
-	 * Right gutter width
-	 *
-	 * @var string
-	 */
-	public static $right_gutter_width;
-	
-	/**
-	 * The total width of the grid
-	 *
-	 * @var string
-	 */
-	public static $grid_width;
-	
-	/**
-	 * The baseline height
-	 *
-	 * @var string
-	 */
-	public static $baseline;
-	
-	/**
-	 * The unit the grid is based on
-	 */
-	public static $unit;
-	
-	public static $columns;
+	public static $grid_settings;
 
 	/**
 	 * Parse the @grid rule and calculate the grid.
@@ -71,7 +21,7 @@ class Layout
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	public static function pre_process()
+	public static function import_process()
 	{
 		if( $settings = Scaffold::$css->find_at_group('grid') )
 		{
@@ -87,87 +37,85 @@ class Layout
 			# Make sure the groups have all the right properties
 			self::check_grid($groups[0],$settings);
 			
-			# The number of columns, baseline and unit
-			$cc 	= $settings['column-count'];
-			$unit 	= (isset($settings['unit'])) ? trim($settings['unit']) : 'px';
-			$bl 	= (isset($settings['baseline'])) ? $settings['baseline'] : 18;
-			$lgw 	= (isset($settings['left-gutter-width'])) ? $settings['left-gutter-width'] : 0;
-			$rgw 	= (isset($settings['right-gutter-width'])) ? $settings['right-gutter-width'] : 0;
-			$gw		= $settings['gutter-width'] = $lgw + $rgw;
-
-			if(isset($settings['grid-width']))
-			{
-				$grid = $settings['grid-width'];
-
-				$totalgutters = $cc * ($gw - 1);
-				$netgridwidth = $grid - $totalgutters;
-				
-				$cw = floor($netgridwidth / $cc);
-			}
-			else
-			{
-				$cw = $settings['column-width'];
-				$grid = ($cw + $gw) * $cc;
-			}
+			# The number of columns
+			$cc = $settings['column-count'];
 			
-			$grid_settings = array(
-				'column_count' 			=> $cc,
-				'column_width' 			=> $cw . $unit,
-				'gutter_width' 			=> $gw . $unit,
-				'left_gutter_width' 	=> $lgw . $unit,
-				'right_gutter_width' 	=> $rgw . $unit,
-				'grid_width' 			=> $grid . $unit,
-				'baseline' 				=> $bl . $unit
+			# The tyopgraphic baseline
+			$bl = $settings['baseline'];
+			
+			# The left gutter on grid columns
+			$lgw = (isset($settings['left-gutter-width'])) ? $settings['left-gutter-width'] : 0;
+			
+			# The right gutter on grid columns
+			$rgw = (isset($settings['right-gutter-width'])) ? $settings['right-gutter-width'] : 0;
+			
+			# The combined gutter widths
+			$gw	= $settings['gutter-width'] = $lgw + $rgw;
+			
+			# The total width of the grid
+			$grid = $settings['grid-width'];
+	
+			# The grid width minus all the gutter widths
+			$netgridwidth = $grid - $cc * ($gw - 1);
+			
+			# The width of a single column
+			$cw = floor($netgridwidth / $cc);
+
+			self::$grid_settings = array
+			(
+				'column_width' 			=> $cw,
+				'gutter_width' 			=> $gw,
+				'left_gutter_width' 	=> $lgw,
+				'right_gutter_width' 	=> $rgw,
+				'grid_width' 			=> $grid,
+				'baseline' 				=> $bl
 			);
-
-			# Set them as constants we can use in the css
-			foreach($grid_settings as $key => $value)
-			{
-				Constants::set($key,$value);
-			}
-			
-			if( Scaffold::$config['Layout']['grid_image'] )
-			{
-				# Generate the grid.png
-				$img = self::create_grid_image($cw, $bl, $lgw, $rgw);
-				Scaffold::$css->string .= "=grid{background:url('".$img."');}";
-			}
-			
-			if( Scaffold::$config['Layout']['grid_classes'] )
+		
+			/**
+			 * Set each of the column widths as Constants. They 
+			 * can be accessed like this: $columns_1
+			 */
+			if(class_exists('Constants'))
 			{
 				for ($i = 1; $i <= $cc; $i++)
 				{
-					self::$columns[$i] = ($i * $cw) + (($i * $gw) - $gw);
-				}	
-				
-				Scaffold::$css->string .= file_get_contents( Scaffold::find_file('Layout/css/grid.css') );
+					Constants::set('columns_' . $i, ($i * $cw) + (($i * $gw) - $gw) . 'px');
+				}
 			}
 
-			# Make each of the column variables a member variable
-			self::$column_count = $cc;
-			self::$column_width = $cw;
-			self::$gutter_width = $gw;
-			self::$left_gutter_width = $lgw;
-			self::$right_gutter_width = $rgw;
-			self::$grid_width = $grid;
-			self::$baseline = $bl;
-			self::$unit = $unit;
-		}
-	}
-	
-	public static function display()
-	{
-		if(Scaffold::option("grid") && isset(self::$column_width))
-		{
-			# Make sure we're sending HTML
-			header('Content-Type: text/html');
+			/**
+			 * Set them as constants we can use in the css. They can
+			 * be accessed like this: $column_count
+			 */
+			foreach(self::$grid_settings as $key => $value)
+			{
+				Constants::set($key,$value . 'px');
+			}
 			
-			# Load the test suite markup
-			$page = Scaffold::load_view('scaffold_grid.php');
-
-			# Echo and out!
-			echo($page); 
-			exit;
+			# Set this seperately as it doesn't need px added to it
+			self::$grid_settings['column_count'] = $cc;
+			Constants::set('column_count',$cc);
+			
+			/**
+			 * Create the grid background image
+			 */
+			$img = self::create_grid_image($cw, $bl, $lgw, $rgw);
+			Scaffold::$css->string .= "=grid-overlay{background:url('".$img."');} .grid-overlay { +grid-overlay; }";
+			
+			/**
+			 * Include the mixin templates so you can access each of
+			 * the grid properties with mixins like this: +columns(4);
+			 */
+			$mixins = Scaffold::find_file('templates/mixins.css');
+			$classes = Scaffold::find_file('templates/classes.css');
+			 
+			if( $mixins !== false AND $classes !== false )
+			{
+				Scaffold::$css->string .= file_get_contents($mixins);
+				Scaffold::$css->string .= file_get_contents($classes);
+			}
+			
+			//stop(Scaffold::$css);
 		}
 	}
 
@@ -183,13 +131,12 @@ class Layout
 	private static function create_grid_image($cw, $bl, $lgw, $rgw)
 	{
 		# Path to the image
-		$file = Scaffold::$cache_path . "Layout/{$lgw}_{$cw}_{$rgw}_{$bl}_grid.png";
-		$file = Scaffold::url_path($file);
+		$file = "{$lgw}_{$cw}_{$rgw}_{$bl}_grid.png";
 			
-		if(!file_exists($file))
+		if( ( $cache = Scaffold_Cache::find('Layout/' . $file) ) === false)
 		{
-			Scaffold::cache_create('Layout');
-			
+			Scaffold_Cache::create('Layout');
+
 			$image = ImageCreate($cw + $lgw + $rgw,$bl);
 			
 			$colorWhite		= ImageColorAllocate($image, 255, 255, 255);
@@ -208,13 +155,15 @@ class Layout
 			# Draw baseline
 			imageline($image, 0, ($bl - 1 ), $lgw + $cw + $rgw, ($bl - 1), $colorGrey);
 			
-			ImagePNG($image, $file);
+			$cache = Scaffold_Cache::find('Layout') . '/' . $file;
+			
+			ImagePNG($image, $cache);
 		    
 		    # Kill it
 		    ImageDestroy($image);
 	    }
 	    
-	    return $file;
+	    return Scaffold::url_path($cache);
 	}
 	
 	/**
@@ -226,20 +175,24 @@ class Layout
 	 */
 	private static function check_grid($group,$settings)
 	{
-		$code = '<pre><code>' . $group . '<pre></code>';
-
-		# Make sure none of the required options are missing
-		if(!isset($settings['column-count']) || ( !isset($settings['left-gutter-width']) && !isset($settings['right-gutter-width']) ) || ( !isset($settings['grid-width']) && !isset($settings['column-width']) ))
+		if(!isset($settings['column-count']))
 		{
-			$error = "@grid rule requires the <strong>column-count, left-gutter-width or right-gutter-width and column-width or grid-width</strong> properties.\n\n$code";
-			Scaffold::error($error);
-		}
-
-		elseif( isset($settings['column-width']) && isset($settings['grid-width']) )
-		{
-			Scaffold::error("You can only have either the column-width or grid-width property set.\n\n$code");
+			Scaffold::error('Missing property from @grid - <strong>column-count</strong>');
 		}
 		
-		return true;
+		elseif(!isset($settings['baseline']))
+		{
+			Scaffold::error('Missing property from @grid - <strong>baseline</strong>');
+		}
+		
+		elseif(!isset($settings['grid-width']))
+		{
+			Scaffold::error('Missing property from @grid - <strong>grid-width</strong>');
+		}
+		
+		else
+		{
+			return true;
+		}
 	}
 }

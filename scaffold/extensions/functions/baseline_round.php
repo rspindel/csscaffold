@@ -9,13 +9,11 @@
  */
 function Scaffold_baseline_round($num)
 {
-	if(isset(Layout::$baseline))
+	if(isset(Layout::$grid_settings['baseline']))
 	{
-		$baseline = Layout::$baseline;
+		$baseline = Layout::$grid_settings['baseline'];
 		return round($num/$baseline)*$baseline."px";
 	}
-	else
-	{
-		return false;
-	}
+		
+	return false;
 }
