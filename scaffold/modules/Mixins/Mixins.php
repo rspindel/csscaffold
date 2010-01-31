@@ -137,14 +137,14 @@ class Mixins
 			if(is_array($bases[$mixin_name]) AND !in_array($mixin_name, $already_mixed) )
 			{
 				$already_mixed[] = $mixin_name;
-				
+
 				# Parse the parameters of the mixin
 				$params = self::parse_params($mixins[0][$mixin_key], $mixins[4][$mixin_key], $bases[$mixin_name]['params']);
 
 				# Set the parameters as constants
 				foreach($params as $key => $value)
 				{
-					Constants::set($key,$value);
+					Constants::set($key,(string)$value);
 				}
 				
 				$new_properties = Constants::replace($base_properties);
@@ -154,9 +154,6 @@ class Mixins
 				{
 					Constants::remove($key);
 				}
-
-				# Replace any constants within the mixins
-				$new_properties = Constants::replace($new_properties);
 				
 				# Parse conditionals if there are any in there
 				$new_properties = self::parse_conditionals($new_properties);
