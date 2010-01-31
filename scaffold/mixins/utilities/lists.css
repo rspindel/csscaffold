@@ -14,7 +14,7 @@
 	li
 	{
 		+no-bullet;
-		+float(left);
+		float:left;
 		white-space:nowrap;
 	}
 }
