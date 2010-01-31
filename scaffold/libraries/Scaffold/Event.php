@@ -1,10 +1,18 @@
 <?php
 /**
- * Create events/hooks that allow callbacks. Based on the Kohana Events Class
+ * Process queuing/execution class. Allows an unlimited number of callbacks
+ * to be added to 'events'. Events can be run multiple times, and can also
+ * process event-specific data. By default, Kohana has several system events.
  *
- * @package Scaffold
+ * $Id: Event.php 4390 2009-06-04 03:05:36Z zombor $
+ *
+ * @package    Scaffold
+ * @author     Kohana Team
+ * @copyright  (c) 2007 Kohana Team
+ * @license    http://kohanaphp.com/license.html
+ * @link       http://docs.kohanaphp.com/general/events
  */
-class Scaffold_Event {
+final class Scaffold_Event {
 
 	/**
 	 * List of events

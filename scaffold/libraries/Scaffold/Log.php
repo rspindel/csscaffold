@@ -7,7 +7,7 @@
  * 
  * @author your name
  */
-class Scaffold_Log
+final class Scaffold_Log
 {
 	/**
 	 * Logs

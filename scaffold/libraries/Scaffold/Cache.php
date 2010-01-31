@@ -7,7 +7,7 @@
  * @author Anthony Short
  * @package CSScaffold
  */
-class Scaffold_Cache
+final class Scaffold_Cache
 {
 	/**
 	 * The server path to the cache directory
