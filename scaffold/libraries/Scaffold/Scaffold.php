@@ -316,7 +316,7 @@ class Scaffold extends Scaffold_Utils
 		{
 			define('SCAFFOLD_SYSPATH', self::fix_path($config['system']));
 			define('SCAFFOLD_DOCROOT', $config['document_root']);
-			define('SCAFFOLD_URLPATH', str_replace(SCAFFOLD_DOCROOT, '',$config['system']));
+			define('SCAFFOLD_URLPATH', str_replace(SCAFFOLD_DOCROOT, '',SCAFFOLD_SYSPATH));
 		}
 
 		/**
