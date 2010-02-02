@@ -2,20 +2,16 @@
 * Quick Clearfix
 *
 * Clears an element of its floated children. The quick way.
-*
-* @type Mixin
 */
 =clear
 {
-	overflow:hidden;
+	overflow:auto;
 }
 
 /**
 * Clearfix
 *
 * Clears an element of its floated children.
-*
-* @type Mixin
 */
 =clearfix
 {
@@ -29,7 +25,6 @@
 		height:0;
 		clear:both;
 		visibility:hidden;
-		overflow:hidden;
 		font-size:0;
 	}
 }
