@@ -1,5 +1,7 @@
 <?php
 
+$unique = true;
+
 /**
  * Returns a random number between two other numbers.
  *

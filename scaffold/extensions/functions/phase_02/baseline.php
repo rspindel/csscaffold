@@ -10,7 +10,7 @@ function Scaffold_baseline($num)
 {
 	if( isset(Layout::$grid_settings['baseline']) )
 	{
-		return (Layout::$grid_settings['baseline'] * $num) . 'px';
+		return (Layout::$grid_settings['baseline'] * $num) . 'px ';
 	}
 
 	return false;
