@@ -1,4 +1,3 @@
-<?php ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,7 +6,7 @@
 	
 	<style>
 		html { background:#e7e7e7; }
-		.content { width:40%; margin:30px auto; font:15px/18px Arial; padding:10px 20px; background:#fff; color:#595959; border:1px solid #aaa; margin-bottom: 20px; }
+		.content { min-width:40%; max-width:60%; margin:30px auto; font:15px/18px Arial; padding:10px 20px; background:#fff; color:#595959; border:1px solid #aaa; margin-bottom: 20px; }
 		h1 { color:#000;}
 		pre { background:#eee; padding:10px; font-size:11px; overflow:auto; }
 		.backtrace { list-style:none; padding:0; margin:0; }
