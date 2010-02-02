@@ -30,7 +30,7 @@ class Extensions
 	 */
 	public static function post_process()
 	{
-		//self::load_extensions('extensions/properties','find_property');
+		self::load_extensions('extensions/properties','find_property');
 		self::load_extensions('extensions/functions','find_functions',true);
 	}
 
