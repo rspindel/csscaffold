@@ -138,6 +138,11 @@ class Constants
 		return self::$constants[$key];
 	}
 	
+	/**
+	 * Replaces all of the constants in a CSS string
+	 * with the constants defined in the member variable $constants
+	 * using PHP's interpolation.
+	 */
 	public static function replace($css)
 	{
 		# Pull the constants into the local scope as variables
@@ -161,7 +166,6 @@ class Constants
 	/**
 	 * Loads constants from an XML file
 	 *
-	
 	 * @param $param
 	 * @return return type
 	 */
