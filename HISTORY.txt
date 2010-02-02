@@ -1,5 +1,20 @@
 Scaffold Release Notes
 
 Version 2.0.0
-	* Comments can now be left within the CSS after parsing
-	* Folder structure changed
+	* Constants use the PHP variable style now - $constant - This means it can parse the constants in the CSS super fast.
+	* PHP now sets the Expires header, rather than using the .htaccess, and a lot of other caching headers. It should pass YSlow with an A every time.
+	* You can pass multiple files to Scaffold at once like so: http://localhost/scaffold/?f=/css/master.css,/css/type.css,/css/other.css
+	* It's now completely modular. Other applications/frameworks should be able to integrate Scaffold fairly easily. You can use the Scaffold::parse function to just return the result of a parsed CSS file rather than displaying it to the browser.
+	* Logs - Scaffold can now log errors and other messages to the logs directory. You can set level of message it logs or will throw as an error (error, warning, info or debugging message).
+	* Scaffold now retains CSS-style comments
+	* Much better caching. Scaffold now caches the completely parsed request for a single group of files for a set amount of time. You can set this in the config. By default, it will check every hour if it needs to recache (only while in production).
+	* There's a new extensions folder. In here you can drop single PHP functions to create new properties and CSS functions. Take a look at what I've already made, it's really easy to do. Just have the function return whatever you want the original string replaced with.
+	* As well as enabling easy extensions, I've added LOT of functions and a couple of properties. Things like cmyk(), embed(), rand().
+	* There's a new config folder, which is where all the config files for each module are stored.
+	* New module: Absolute Urls - rewrites all URL's to be absolute so they will never break. Previously, if you called Scaffold manually (scaffold/index.php?blah) the browser would be looking for the CSS images in the scaffold directory. This just makes everything easier.
+	* New module: Firelog - Uses FirePHP to log a lot of information to Firebug. It also enables FirePHP for other modules to use.
+	* New module: Flags - You can have chunks of your CSS only show for certain flags. Eg. @flag(morning) { background:blue; } This will only show if the morning flag is set. Flags are set by modules.
+	* New module: Gradient - You can create simple gradients using the property background-gradient: direction, size, start colour, end colour. Direction can get vertical or horizontal. You need to set a size too, if it's a vertical gradient, the size will be use for the height, and vica versa for horizontal. Eventually I'll add the ability to do more complex gradients.
+	* New module: Time - Lets you set flags based on time. Take a look at the Time config file for an example.
+	* New module: Formatter - This is the combined Pretty and Minify module. You can set various options for this in it's config file. 
+	* Various bug fixes
