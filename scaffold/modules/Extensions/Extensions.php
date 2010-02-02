@@ -30,86 +30,92 @@ class Extensions
 	 */
 	public static function post_process()
 	{
-		Scaffold::$css->string = self::load_custom_properties(Scaffold::$css->string);
-		Scaffold::$css->string = self::load_custom_functions(Scaffold::$css->string);
+		//self::load_extensions('extensions/properties','find_property');
+		self::load_extensions('extensions/functions','find_functions',true);
 	}
 
 	/**
 	 * Loads each of the property functions and parses them.
 	 *
-	 * @param $css
+	 * @param $name The location of the extension files
+	 * @param $function The CSS function to call to look for instances of it in the CSS
+	 * @param $split_params Explode the params before sending them off to the user function
 	 * @return $css string
 	 */
-	private static function load_custom_properties($css)
+	public static function load_extensions($location,$function,$split_params = false)
 	{
-		$properties = Scaffold::list_files('extensions/properties');
+		$files = Scaffold::list_files($location,true);
 				
-		foreach ($properties as $path)
+		foreach ($files as $path)
 		{
-			require_once $path;
+			if(is_dir($path))
+				continue;
+
+			/**
+			 * If the functions or properties ARE unique, they will
+			 * be parsed as such. If not, properties or functions that
+			 * are found to be exactly the same will be merged.
+			 */
+			$unique = false;
 			
-			$property_name = pathinfo($path, PATHINFO_FILENAME);
-			self::$properties[] = $property_name;
+			/**
+			 * Include the function we'll use as a callback
+			 */
+			include $path;
 			
-			if( $found = Scaffold::$css->find_property($property_name) )
+			/**
+			 * The name of the property that can be used in Scaffold CSS
+			 */
+			$extension_name = pathinfo($path, PATHINFO_FILENAME);
+			
+			/**
+			 * The name of the function we'll call for this property
+			 */
+			$callback = 'Scaffold_'.str_replace('-','_',$extension_name);
+
+			/**
+			 * Find an replace them
+			 */
+			if($found = Scaffold::$css->$function($extension_name))
 			{
-				$originals = array_unique($found[0]);
-
+				// Make the list unique or not
+				$originals = ($unique === false) ? array_unique($found[0]) : $found[0];
+	
+				// Loop through each found instance
 				foreach($originals as $key => $value)
-				{					
-					$result = call_user_func('Scaffold_'.str_replace('-','_',$property_name), $found[2][$key] );
-										
-					if($result)
+				{
+					// Explode the params to send them as function params or as a single param
+					if($split_params === true)
 					{
-						$css = str_replace($originals[$key],$result,$css);
+						$result = call_user_func_array($callback,explode(',',$found[2][$key]));
 					}
 					else
 					{
-						Scaffold::error('Invalid property - <strong>' . $originals[$key] . '</strong>');
+						$result = call_user_func($callback,$found[2][$key]);
+					}
+	
+					// Run the user callback										
+					if($result === false)
+					{
+						Scaffold::error('Invalid Extension Syntax - <strong>' . $originals[$key] . '</strong>');
+					}
+					
+					// Just replace the first match if they are unique
+					elseif($unique === true)
+					{
+						$pos = strpos(Scaffold::$css->string,$originals[$key]);
+
+						if($pos !== false)
+						{
+						    Scaffold::$css->string = substr_replace(Scaffold::$css->string,$result,$pos,strlen($originals[$key]));
+						}
+					}
+					else
+					{
+						Scaffold::$css->string = str_replace($originals[$key],$result,Scaffold::$css->string);
 					}
 				}
 			}
 		}
-
-		return $css;
-	}
-
-	/**
-	 * Find and load all of the functions
-	 *
-	 * @param $css
-	 */
-	private static function load_custom_functions($css)
-	{
-		$functions = Scaffold::list_files('extensions/functions');
-		
-		foreach ($functions as $path)
-		{
-			require_once $path;
-			
-			$function_name = pathinfo($path, PATHINFO_FILENAME);
-			self::$functions[] = $function_name;
-
-			if($found = Scaffold::$css->find_functions($function_name))
-			{			
-				$originals = array_unique($found[0]);
-
-				foreach($originals as $key => $value)
-				{					
-					$result = call_user_func_array('Scaffold_'.$function_name, explode(',',$found[2][$key]) );
-									
-					if($result)
-					{
-						$css = str_replace($originals[$key],$result,$css);
-					}
-					else
-					{
-						Scaffold::error('Invalid function - <strong>' . $originals[$key] . '</strong>');
-					}
-				}
-			}
-		}
-
-		return $css;
 	}
 }
