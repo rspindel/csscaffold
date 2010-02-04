@@ -55,90 +55,90 @@ The extensions are simple PHP functions that Scaffold uses to create custom prop
 
 It wouldn't be much of a framework if it didn't include a lot of useful modules. Scaffold includes:
 
-#####Absolute URL
+####Absolute URL
 Convert url paths in your CSS into absolute path relative to the document root.
 
-#####Constants
+####Constants
 Set and use constants within your CSS. You can even use an xml file to load constants from an outside source.
 
-#####Extensions
+####Extensions
 Enables the use of extensions allowing you to create custom properties and CSS functions without needing an entire module
 
-#####Firelog
+####Firelog
 Outputs various information to Firebug if you have the FirePHP extension installed.
 
-#####Flags
+####Flags
 Have different caches depending on certain conditions. For example, you can set certain CSS to only appear in the morning, or only show to particular browser.
 
-#####Formatter
+####Formatter
 Minify your CSS before it's cached to save on size, or format your CSS in a way that it's easily readable.
 
-#####Gradient
+####Gradient
 Create gradient background images right within your CSS that are created on the fly. It makes creating buttons a snap.
 
-#####Import
+####Import
 Lets you include other CSS files to be compiled as one file. This means it's sent to the browser as one file instead of many. It's way better than the standard @import
 
-#####Iteration
+####Iteration
 Use PHP-style for loops to generate CSS
 
-#####Layout
+####Layout
 Generate grid CSS classes and mixins on the fly. It creates Blueprint-style grid classes based on a custom grid.
 
-#####Mixins
+####Mixins
 Extend selectors using base sets of properties that can take parameters.
 
-#####Nested Selectors
+####Nested Selectors
 Nest selectors as complex as you'd like. 
 
-#####Time
+####Time
 Create custom time periods where certain CSS will be displayed - like Christmas or Halloween.
 
-#####Typography
+####Typography
 Generate a specimen sheet of all the HTML elements and the styles your CSS applies to them.
 
-#####Validate
+####Validate
 Use the W3C CSS validator to validate your CSS.
 
 ### Included Functions
 
-#####rand(from,to)
+####rand(from,to)
 
 Lets you generate a random number between two other numbers
-#####baseline(n)
+####baseline(n)
 
 Using the layout module, this multiplies the baseline by n 
-#####baseline_round(n)
+####baseline_round(n)
 
 Similar to the above, but you can put in any number, and it will round to the nearest baseline unit.
-#####calc(expression)
+####calc(expression)
 
 Evaluate math expressions.
-#####cmyk(c,m,y,k)
+####cmyk(c,m,y,k)
 
 Input CMYK values, and the output is a simple hex value.
-#####cmyka(c,m,y,k,alpha)
+####cmyka(c,m,y,k,alpha)
 
 Similar to the above, but you can define an alpha value.
-#####embed(path)
+####embed(path)
 
 Embed an image in the CSS. Used as a replacement for url()
-#####enumerate(string,from,to,seperator)
+####enumerate(string,from,to,seperator)
 
 Generate a string from one value to another.
-#####hsl(hue,saturation,brightness)
+####hsl(hue,saturation,brightness)
 
 Returns a simple hex value
-#####hsla(hue,saturation,brightness,alpha)
+####hsla(hue,saturation,brightness,alpha)
 
 Well, you get the point.
 
 ### Included Properties
 
-#####background-gradient: (vertical|horizontal), size, from, to
+####background-gradient: (vertical|horizontal), size, from, to
 
 Create a gradient background image.
-#####image-replace:url()
+####image-replace:url()
 
 Replaces text with an image.
 
