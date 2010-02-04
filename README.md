@@ -43,8 +43,6 @@ To get Scaffold to work correctly, you may need to modify some of the settings i
 
 Once you've setup Scaffold, and you can see your CSS files being parsed by it, you'll want to know what you can do. The bulk of Scaffold's functionality is contained within **modules** and **extensions**. 
 
-### What are Modules and Extensions?
-
 #### Modules
 
 Modules are classes which use hooks within Scaffold to do various things to the CSS. In 2.0, however, they can hook into the core functionality of Scaffold to do just about anything they want. You might want to do custom caching or modify the files before processing.
@@ -57,39 +55,209 @@ The extensions are simple PHP functions that Scaffold uses to create custom prop
 
 It wouldn't be much of a framework if it didn't include a lot of useful modules. Scaffold includes:
 
-- **Absolute URL**: Convert url paths in your CSS into absolute path relative to the document root.
-- **Constants**: Set and use constants within your CSS. You can even use an xml file to load constants from an outside source.
-- **Extensions**: Enables the use of extensions allowing you to create custom properties and CSS functions without needing an entire module
-- **Firelog**: Outputs various information to Firebug if you have the FirePHP extension installed.
-- **Flags**: Have different caches depending on certain conditions. For example, you can set certain CSS to only appear in the morning, or only show to particular browser.
-- **Formatter**: Minify your CSS before it's cached to save on size, or format your CSS in a way that it's easily readable.
-- **Gradient**: Create gradient background images right within your CSS that are created on the fly. It makes creating buttons a snap.
-- **Import**: Lets you include other CSS files to be compiled as one file. This means it's sent to the browser as one file instead of many. It's way better than the standard @import
-- **Iteration**: Use PHP-style for loops to generate CSS
-- **Layout**: Generate grid CSS classes and mixins on the fly. It creates Blueprint-style grid classes based on a custom grid.
-- **Mixins**: Extend selectors using base sets of properties that can take parameters.
-- **Nested Selectors**: Nest selectors as complex as you'd like. 
-- **Time**: Create custom time periods where certain CSS will be displayed - like Christmas or Halloween.
-- **Typography**: Generate a specimen sheet of all the HTML elements and the styles your CSS applies to them.
-- **Validate**: Use the W3C CSS validator to validate your CSS.
+#####Absolute URL
+Convert url paths in your CSS into absolute path relative to the document root.
+
+#####Constants
+Set and use constants within your CSS. You can even use an xml file to load constants from an outside source.
+
+#####Extensions
+Enables the use of extensions allowing you to create custom properties and CSS functions without needing an entire module
+
+#####Firelog
+Outputs various information to Firebug if you have the FirePHP extension installed.
+
+#####Flags
+Have different caches depending on certain conditions. For example, you can set certain CSS to only appear in the morning, or only show to particular browser.
+
+#####Formatter
+Minify your CSS before it's cached to save on size, or format your CSS in a way that it's easily readable.
+
+#####Gradient
+Create gradient background images right within your CSS that are created on the fly. It makes creating buttons a snap.
+
+#####Import
+Lets you include other CSS files to be compiled as one file. This means it's sent to the browser as one file instead of many. It's way better than the standard @import
+
+#####Iteration
+Use PHP-style for loops to generate CSS
+
+#####Layout
+Generate grid CSS classes and mixins on the fly. It creates Blueprint-style grid classes based on a custom grid.
+
+#####Mixins
+Extend selectors using base sets of properties that can take parameters.
+
+#####Nested Selectors
+Nest selectors as complex as you'd like. 
+
+#####Time
+Create custom time periods where certain CSS will be displayed - like Christmas or Halloween.
+
+#####Typography
+Generate a specimen sheet of all the HTML elements and the styles your CSS applies to them.
+
+#####Validate
+Use the W3C CSS validator to validate your CSS.
 
 ### Included Functions
 
-- **rand(from,to)**: Lets you generate a random number between two other numbers
-- **baseline(n)**: Using the layout module, this multiplies the baseline by n 
-- **baseline_round(n)**: Similar to the above, but you can put in any number, and it will round to the nearest baseline unit.
-- **calc(expression)**: Evaluate math expressions.
-- **cmyk(c,m,y,k)**: Input CMYK values, and the output is a simple hex value.
-- **cmyka(c,m,y,k,alpha)**: Similar to the above, but you can define an alpha value.
-- **embed(path)**: Embed an image in the CSS. Used as a replacement for url()
-- **enumerate(string,from,to,seperator)**: Generate a string from one value to another.
-- **hsl(hue,saturation,brightness)**: Returns a simple hex value
-- **hsla(hue,saturation,brightness,alpha)**: Well, you get the point.
+#####rand(from,to)
+
+Lets you generate a random number between two other numbers
+#####baseline(n)
+
+Using the layout module, this multiplies the baseline by n 
+#####baseline_round(n)
+
+Similar to the above, but you can put in any number, and it will round to the nearest baseline unit.
+#####calc(expression)
+
+Evaluate math expressions.
+#####cmyk(c,m,y,k)
+
+Input CMYK values, and the output is a simple hex value.
+#####cmyka(c,m,y,k,alpha)
+
+Similar to the above, but you can define an alpha value.
+#####embed(path)
+
+Embed an image in the CSS. Used as a replacement for url()
+#####enumerate(string,from,to,seperator)
+
+Generate a string from one value to another.
+#####hsl(hue,saturation,brightness)
+
+Returns a simple hex value
+#####hsla(hue,saturation,brightness,alpha)
+
+Well, you get the point.
 
 ### Included Properties
 
-- **background-gradient: (vertical|horizontal), size, from, to**: Create a gradient background image.
-- **image-replace:url()**: Replaces text with an image.
+#####background-gradient: (vertical|horizontal), size, from, to
+
+Create a gradient background image.
+#####image-replace:url()
+
+Replaces text with an image.
+
+## Example
+
+Here's what some CSS written with Scaffold might look like:
+
+	+global-reset;
+	+html5-reset;
+	
+	/**
+	 * Include all the extra files
+	 */
+	@include 'buttons.css';
+	
+	/**
+	 * This defines the layout. It creates mixins and constants we
+	 * can use, as well as generating a png to use as a grid overlay 
+	 */
+	@grid
+	{
+		grid-width:940;
+		right-gutter-width:20;
+		column-count:16;
+		baseline:18;
+	}
+	
+	/**
+	 * Constants used throughout the design
+	 */
+	@constants
+	{
+		border			:#d9d9d9;
+		grey			:#666;
+		//light_blue	:#e5f9ff;
+		light_blue		:rgba(56,161,195,0.08);
+		light_grey		:#7d7d7d;
+		link_blue		:#4375d1;
+		red				:#c31919;
+		third			:calc(($grid_width - (2 * $gutter_width)) / 3)px;
+	}
+
+	// Define some mixins
+	=rounded
+	{
+		+border-radius(5px);
+	}
+	
+	=bordered
+	{
+		border:1px solid $border;
+	}
+	
+	=box
+	{
+		+rounded;
+		background:$light_blue;
+	}
+
+	.tweet
+	{
+		+third-unit;
+		
+		&:last-child
+		{ 
+			+last; 
+		}
+		
+		&:nth-child(odd)
+		{
+			top:-10px;
+		}
+		
+		@for $i from 1 to 3
+		{
+			&:nth-child($i)
+			{
+				blockquote
+				{
+					-webkit-transform:rotate(rand(-3,3)deg) scale( calc( rand(1,20) * 0.01 + 1 ) );
+				}
+			}
+		}
+		
+		blockquote 
+		{
+			+box;
+			+rounded;
+			padding:baseline(1);
+			color:$light_grey;
+		}
+		
+		img
+		{
+			height:50px;
+			width:50px;
+			+rounded;
+			+absolute(false,false,0,0);
+		}
+		
+		a
+		{
+			background:url(images/bg-twitter.png) left top no-repeat;
+			display:block;
+			padding:baseline(0.5) 60px 0 43px;
+			text-align:right;
+			text-decoration:none;
+			height:50px;
+			float:right;
+			line-height:15px;
+		}
+		
+		span
+		{
+			display:block;
+			color:$light_grey;
+		}
+	}
+
 
 ## Constants
 
@@ -219,6 +387,95 @@ Or do more complex nesting
 	}
 	
 The & symbol represents the parent element of the current selector. This way you can keep all the selectors for single id or class in one group.
+
+## Mixins
+
+Mixins are groups of properties you can inject into selectors that can take parameters and use conditionals. Using mixins might look like this:
+
+	// Define the mixin
+	=mixin_name
+	{
+		height:50px;
+		width:50px;
+	}
+	
+	#id
+	{
+		+mixin_name;
+	}
+	
+This will output
+
+	#id
+	{
+		+mixin_name;
+	}
+	
+You can get more complicated and add parameters too
+
+	=my_mixin($color)
+	{
+		height:50px;
+		width:50px;
+		background:$color;	
+	}
+	
+	#id
+	{
+		+my_mixin(#eee);
+	}
+	
+Which will output
+
+	#id
+	{
+		height:50px;
+		width:50px;
+		background:#eee;
+	}
+	
+The parameters can take default values too, so you might use it like this:
+
+	=my_mixin($background = '#eee')
+	{
+		background:$eee;
+	}
+	
+	#id
+	{
+		+my_mixin;
+	}
+	
+	#id2
+	{
+		+my_mixin(red);
+	}
+	
+Which will output
+
+	#id
+	{
+		background:#eee;
+	}
+	
+	#id2
+	{
+		background:red;
+	}
+	
+To get even more powerful, you can add conditional statements
+
+	=my_awesome_mixin($color,$padding = false)
+	{
+		border:$color;
+		
+		@if($padding === true)
+		{
+			padding:10px;
+		}
+	}
+
+But I think you get the idea. There are a lot of mixins already included with Scaffold. They are stored in scaffold/mixins/. These mixins are all included by default, so you don't have to include them yourself. You can change this behaviour in the mixins config.
 
 ## Creating custom functions
 
