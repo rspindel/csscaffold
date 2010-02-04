@@ -475,7 +475,9 @@ To get even more powerful, you can add conditional statements
 		}
 	}
 
-But I think you get the idea. There are a lot of mixins already included with Scaffold. They are stored in scaffold/mixins/. These mixins are all included by default, so you don't have to include them yourself. You can change this behaviour in the mixins config.
+I think you get the idea. Mixins can contain any chunk of code you want, not just properties. They can include entire nested selector groups. 
+
+There are a lot of mixins already included with Scaffold. They are stored in scaffold/mixins/. These mixins are all included by default, so you don't have to include them yourself. You can change this behaviour in the mixins config.
 
 ## Creating custom functions
 
