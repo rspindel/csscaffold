@@ -148,7 +148,8 @@ class Firelog
 			}
 		}
 		
-		# Custom Functions
+		# Custom Functions		
+		/*
 		if(Scaffold::$config['Firelog']['custom_functions'] === true && class_exists('Extensions') && Extensions::$functions)
 		{
 			self::_group('Custom Functions', Extensions::$functions);
@@ -159,6 +160,7 @@ class Firelog
 		{
 			self::_group('Custom Properties', Extensions::$properties);
 		}
+		*/
 		
 		# Gradients
 		if(Scaffold::$config['Firelog']['gradients'] === true && class_exists('Gradient') && Gradient::$gradients)
