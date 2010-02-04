@@ -20,6 +20,13 @@ class NestedSelectors
 	(
 		'@media'
 	);
+	
+	/**
+	 * Stores the CSS comments so they don't break processing
+	 *
+	 * @var array
+	 */
+	private static $comments = array();
 
 	/**
 	 * The main processing function called by Scaffold. MUST return $css!
@@ -95,7 +102,7 @@ class NestedSelectors
 	 */
 	private static function parse_comment($comment)
 	{
-		return "/*{$comment}*/";
+		return '/*'. self::$comments[$comment] .'*/';
 	}
 	
 	/**
@@ -267,6 +274,7 @@ class NestedSelectors
 	public static function to_xml($css)
 	{		
 		# Convert comments
+		self::$comments = array();
 		$xml = preg_replace_callback('/\/\*(.*?)\*\//sx', array('NestedSelectors','encode_comment') ,$css);
 		
 		# Convert imports
@@ -301,7 +309,8 @@ class NestedSelectors
 		$xml = preg_replace('/\n/', "\r\t", $xml);
 				
 		# Tie it up with a bow
-		$xml = '<?xml version="1.0" ?'.">\r<css>\r\t$xml\r</css>\r"; 		
+		$xml = '<?xml version="1.0" ?'.">\r<css>\r\t$xml\r</css>\r";
+		
 
 		return simplexml_load_string($xml);
 	}
@@ -315,9 +324,12 @@ class NestedSelectors
 	protected function encode_comment($comment)
 	{
 		// Encode new lines
-		$comment = preg_replace('/\n|\r/', '#NEWLINE#',$comment[1]);	
-		$comment = "<property name=\"comment\" value=\"" . $comment . "\" />";
-		return $comment;
+		$comment = preg_replace('/\n|\r/', '#NEWLINE#',$comment[1]);
+		
+		// Save it
+		self::$comments[] = $comment;
+
+		return "<property name=\"comment\" value=\"" . (count(self::$comments) - 1) . "\" />";
 	}
 
 }
