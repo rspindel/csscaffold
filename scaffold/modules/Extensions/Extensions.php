@@ -14,13 +14,7 @@ class Extensions
 	 * The list of created properties
 	 * @var array
 	 */
-	public static $properties = array();
-	
-	/**
-	 * List of available functions
-	 * @var array
-	 */
-	public static $functions = array();
+	public static $extensions = array();
 	
 	/**
 	 * Post Process
@@ -59,19 +53,38 @@ class Extensions
 			$unique = false;
 			
 			/**
-			 * Include the function we'll use as a callback
-			 */
-			include $path;
-			
-			/**
 			 * The name of the property that can be used in Scaffold CSS
 			 */
 			$extension_name = pathinfo($path, PATHINFO_FILENAME);
 			
 			/**
+			 * Include the function we'll use as a callback
+			 */
+			if(!isset(self::$extensions[$extension_name]))
+			{
+				include_once $path;
+			}
+			else
+			{
+				$unique = self::$extensions[$extension_name]['unique'];
+			}
+			
+			/**
 			 * The name of the function we'll call for this property
 			 */
 			$callback = 'Scaffold_'.str_replace('-','_',$extension_name);
+			
+			/**
+			 * Save this extension
+			 */
+			self::$extensions[$extension_name] = array
+			(
+				'unique' => $unique,
+				'path' => $path,
+				'callback' => $callback,
+				'function' => $function,
+				'split_params' => $split_params
+			);
 
 			/**
 			 * Find an replace them
