@@ -408,7 +408,8 @@ This will output
 
 	#id
 	{
-		+mixin_name;
+		height:50px;
+		width:50px;
 	}
 	
 You can get more complicated and add parameters too
