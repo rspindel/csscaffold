@@ -388,6 +388,95 @@ Or do more complex nesting
 	
 The & symbol represents the parent element of the current selector. This way you can keep all the selectors for single id or class in one group.
 
+## Mixins
+
+Mixins are groups of properties you can inject into selectors that can take parameters and use conditionals. Using mixins might look like this:
+
+	// Define the mixin
+	=mixin_name
+	{
+		height:50px;
+		width:50px;
+	}
+	
+	#id
+	{
+		+mixin_name;
+	}
+	
+This will output
+
+	#id
+	{
+		+mixin_name;
+	}
+	
+You can get more complicated and add parameters too
+
+	=my_mixin($color)
+	{
+		height:50px;
+		width:50px;
+		background:$color;	
+	}
+	
+	#id
+	{
+		+my_mixin(#eee);
+	}
+	
+Which will output
+
+	#id
+	{
+		height:50px;
+		width:50px;
+		background:#eee;
+	}
+	
+The parameters can take default values too, so you might use it like this:
+
+	=my_mixin($background = '#eee')
+	{
+		background:$eee;
+	}
+	
+	#id
+	{
+		+my_mixin;
+	}
+	
+	#id2
+	{
+		+my_mixin(red);
+	}
+	
+Which will output
+
+	#id
+	{
+		background:#eee;
+	}
+	
+	#id2
+	{
+		background:red;
+	}
+	
+To get even more powerful, you can add conditional statements
+
+	=my_awesome_mixin($color,$padding = false)
+	{
+		border:$color;
+		
+		@if($padding === true)
+		{
+			padding:10px;
+		}
+	}
+
+But I think you get the idea. There are a lot of mixins already included with Scaffold. They are stored in scaffold/mixins/. These mixins are all included by default, so you don't have to include them yourself. You can change this behaviour in the mixins config.
+
 ## Creating custom functions
 
 To create a custom function, you need to place a PHP file with the name of your function inside /scaffold/extensions/functions/ inside one of the 3 phase folders.
