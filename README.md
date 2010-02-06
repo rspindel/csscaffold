@@ -486,14 +486,14 @@ The gradient module is still young, so it can only do from one color to another 
 
 	#id
 	{
-		background-gradient:direction size from(#hex) to(#hex);
+		background-gradient:direction,size,from(#hex),to(#hex);
 	}
 	
 So a working example might look like this:
 
 	#id
 	{
-		background-gradient:vertical 25 from(#000) to(#fff);
+		background-gradient:vertical,25,from(#000),to(#fff);
 	}
 	
 This will create a gradient that is 25px high from black to white. You can use 'horizontal' insted of vertical and the size will determine how wide the gradient is.
