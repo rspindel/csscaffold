@@ -275,8 +275,8 @@ class Mixins
 				$result = false;
 				
 				# Find which equals sign was used and explode it
-				preg_match("/\!=|\!==|===|==/", $value, $match); 
-				
+				preg_match("/\!=|\!==|===|==|\>|\<|\>=|\<=/", $value, $match); 
+
 				# Explode it out so we can test it.
 				$exploded = explode($match[0], $value);
 				$val = trim($exploded[0]);

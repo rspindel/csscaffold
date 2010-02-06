@@ -52,15 +52,16 @@ class Formatter
         if(Scaffold::$config['Formatter']['rgb_to_hex'])
         {
             $css = self::rgb_to_hex($css);
-        }
+        }       
         
         // Strip out the units on 0 measurements eg 0px
         if(Scaffold::$config['Formatter']['remove_empty_measurements'])
         {
-            $css = preg_replace('/([^0-9])0(px|em|\%)/', '$1 0', $css);
+            $css = preg_replace('/([^0-9])0(px|em|\%)/', "\${1}0", $css);
             $css = preg_replace('/([^0-9])0\.([0-9]+)em/', '$1.$2em', $css);
+            $css = preg_replace('/\-0([^\.])/',"0\${1}",$css);
         }
-        
+
         // Convert font-weights to numbers
         if(Scaffold::$config['Formatter']['font_weights_to_numbers'])
         {
