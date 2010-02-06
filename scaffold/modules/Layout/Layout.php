@@ -56,7 +56,7 @@ class Layout
 			$grid = $settings['grid-width'];
 	
 			# The grid width minus all the gutter widths
-			$netgridwidth = $grid - $cc * ($gw - 1);
+			$netgridwidth = $grid - $cc * $gw;
 			
 			# The width of a single column
 			$cw = floor($netgridwidth / $cc);
@@ -114,8 +114,6 @@ class Layout
 				Scaffold::$css->string .= file_get_contents($mixins);
 				Scaffold::$css->string .= file_get_contents($classes);
 			}
-			
-			//stop(Scaffold::$css);
 		}
 	}
 
