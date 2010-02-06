@@ -146,7 +146,7 @@ class Formatter
      */
     private function font_weights_to_numbers($css)
     {
-    	if( $found = Scaffold_CSS::find_properties_with_value('font-weight','bold|normal',$css) )
+    	if( $found = Scaffold::$css->find_properties_with_value('font-weight','bold|normal') )
     	{	
 	    	foreach($found[2] as $key => $value)
 	    	{
@@ -172,7 +172,7 @@ class Formatter
      */
     private static function rgb_to_hex($css)
     {
-    	if( $rgbs = Scaffold_CSS::find_functions('rgb',$css) )
+    	if( $rgbs = Scaffold::$css->find_functions('rgb') )
     	{
 	    	foreach( $rgbs[2] as $key => $found )
 	    	{
