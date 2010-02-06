@@ -47,7 +47,7 @@ class Formatter
 
         // apply callback to all valid comments (and strip out surrounding ws
         $css = preg_replace_callback('@\\s*/\\*([\\s\\S]*?)\\*/\\s*@',array('Formatter', '_commentCB'), $css);
-        
+
         // Convert rgb() values to hex
         if(Scaffold::$config['Formatter']['rgb_to_hex'])
         {
@@ -211,7 +211,8 @@ class Formatter
      */
     protected function _commentCB($m)
     {
-        $m = $m[1]; 
+        $m = $m[1];
+
         // $m is the comment content w/o the surrounding tokens, 
         // but the return value will replace the entire comment.
        
@@ -266,7 +267,7 @@ class Formatter
 		
 		if(Scaffold::$config['Formatter']['preserve_comments'] === true)
 		{
-			return $m[1];
+			return '/*' .$m. '*/';
 		}
 		else
 		{
