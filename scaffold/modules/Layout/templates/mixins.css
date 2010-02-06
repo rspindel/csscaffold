@@ -61,12 +61,14 @@
 
 =pull($n)
 {
+	position:relative;
 	left:calc( -(($column_width + $gutter_width) * $n) )px;
 	margin-right:calc( -(($column_width + $gutter_width) * $n - $gutter_width) )px;
 }
 
 =push($n)
 {
+	position:relative;
 	left:calc( ($column_width + $gutter_width) * $n )px;
 	margin-right:calc( ($column_width + $gutter_width) * $n + $gutter_width )px;
 }
