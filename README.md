@@ -480,6 +480,26 @@ I think you get the idea. Mixins can contain any chunk of code you want, not jus
 
 There are a lot of mixins already included with Scaffold. They are stored in scaffold/mixins/. These mixins are all included by default, so you don't have to include them yourself. You can change this behaviour in the mixins config.
 
+## Creating Gradients
+
+The gradient module is still young, so it can only do from one color to another for now, but this is how it is used:
+
+	#id
+	{
+		background-gradient:direction size from(#hex) to(#hex);
+	}
+	
+So a working example might look like this:
+
+	#id
+	{
+		background-gradient:vertical 25 from(#000) to(#fff);
+	}
+	
+This will create a gradient that is 25px high from black to white. You can use 'horizontal' insted of vertical and the size will determine how wide the gradient is.
+
+In the next release, I plan on adding color stops. 
+
 ## Creating custom functions
 
 To create a custom function, you need to place a PHP file with the name of your function inside /scaffold/extensions/functions/ inside one of the 3 phase folders.
