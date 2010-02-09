@@ -54,9 +54,9 @@ class Layout
 			
 			# The total width of the grid
 			$grid = $settings['grid-width'];
-	
+
 			# The grid width minus all the gutter widths
-			$netgridwidth = $grid - $cc * $gw;
+			$netgridwidth = $grid - ( ($cc - 1) * $gw);
 			
 			# The width of a single column
 			$cw = floor($netgridwidth / $cc);
@@ -70,7 +70,7 @@ class Layout
 				'grid_width' 			=> $grid,
 				'baseline' 				=> $bl
 			);
-		
+			
 			/**
 			 * Set each of the column widths as Constants. They 
 			 * can be accessed like this: $columns_1
