@@ -59,7 +59,12 @@ class Layout
 			$netgridwidth = $grid - ( ($cc - 1) * $gw);
 			
 			# The width of a single column
-			$cw = floor($netgridwidth / $cc);
+			$cw = $netgridwidth / $cc;
+			
+			if(is_float($cw))
+			{
+				Scaffold::error('Grid columns don\'t divide equally. Each column is ' . $cw);
+			}
 
 			self::$grid_settings = array
 			(
