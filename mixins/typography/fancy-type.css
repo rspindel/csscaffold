@@ -4,9 +4,9 @@
  * Every 4 lines of normal type, there are 5 lines of
  * smaller type 
  */
-=small-type
+=small-type($b)
 { 
-	line-height: #[floor(!baseline*4/5)]px; 
+	line-height:calc(floor($b*4/5))px; 
 	font-size: 11px; 
 }
 
