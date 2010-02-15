@@ -64,13 +64,15 @@ class Scaffold_CSS
 	public function compress($css)
 	{		
 		# Remove comments
-		$this->string = $this->remove_comments($this->string);
+		$css = $this->remove_comments($css);
 
 		# Remove extra white space
-		$this->string = preg_replace('/\s+/', ' ', $css);
+		$css = preg_replace('/\s+/', ' ', $css);
 		
 		# Remove line breaks
-		$this->string = preg_replace('/\n|\r/', '', $css);
+		$css = preg_replace('/\n|\r/', '', $css);
+		
+		return $css;
 	}
 	
 	/**
