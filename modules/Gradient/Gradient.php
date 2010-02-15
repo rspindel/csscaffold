@@ -36,17 +36,15 @@ class Gradient
 			$repeat = 'x';
 		}
 
-		if(!Scaffold_Cache::exists('gradients/'.$file)) 
+		$file = Scaffold_Cache::path() . 'gradients/' . $file;
+
+		if(!file_exists($file)) 
 		{
 			Scaffold_Cache::create('gradients');
-			$file = Scaffold_Cache::find('gradients') . '/' . $file;
 			$gradient = new GradientGD($width,$height,$direction,$from,$to,$stops);
 			$gradient->save($file);
 		}
-		
-		$file = Scaffold_Cache::find('gradients') . '/' . $file;
 
-		
 		self::$gradients[] = array
 		(
 			$direction,
