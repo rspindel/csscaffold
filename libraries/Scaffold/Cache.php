@@ -61,6 +61,16 @@ final class Scaffold_Cache
 	}
 	
 	/**
+	 * Gets the cache path
+	 *
+	 * @return string
+	 */
+	public static function path()
+	{
+		return self::$cache_path;
+	}
+	
+	/**
 	 * Sets the lifetime of the cache
 	 *
 	 * @param $time
