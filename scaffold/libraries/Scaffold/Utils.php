@@ -18,7 +18,7 @@ class Scaffold_Utils
 	 */
 	public static function url_path($path) 
 	{
-		return self::reduce_double_slashes(str_replace( SCAFFOLD_DOCROOT, '/', realpath($path) ));
+		return self::reduce_double_slashes(str_replace( SCAFFOLD_DOCROOT, DIRECTORY_SEPARATOR, realpath($path) ));
 	}
 
 	/**
