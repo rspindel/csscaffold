@@ -1,10 +1,9 @@
 <?php
+
 /**
  * This file acts as the front controller for CSScaffold.
  * If you plan on using Scaffold anywhere else, you
- * probably want to do what this file is doing. True story.
- *
- * @package CSScaffold
+ * probably want to do what this file is doing.
  */
 
 # Include the config file
