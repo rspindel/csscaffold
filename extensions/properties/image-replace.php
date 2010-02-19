@@ -33,7 +33,7 @@ function Scaffold_image_replace($url)
 	}
 	
 	// Build the selector
-	$properties = "background:url(".Scaffold::url_path($path).") no-repeat 0 0;
+	$properties = "background:url(".Scaffold::url($path).") no-repeat 0 0;
 		height:{$height}px;
 		width:{$width}px;
 		display:block;

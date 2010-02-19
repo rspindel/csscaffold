@@ -7,25 +7,72 @@
  * rely on flagging depend on this module. Without this, they don't do anything.
  *
  * The @flag(name) syntax works as a wrapper for selectors and properties
-
-	@flag(ie6)
-	{
-		#id
-		{
-			zoom:1;
-		}
-	}
-
+ *
+ *	@flag(ie6)
+ *	{
+ *		#id
+ *		{
+ *			zoom:1;
+ *		}
+ *	}
+ *
  * 
  */
 class Flags
 {
+	/**
+	 * Stores the set flags
+	 *
+	 * @var array
+	 */
+	public static $flags = array();
+
+	/**
+	 * Get the flags from each of the loaded modules
+	 * by creating a module hook.
+	 *
+	 * @return void
+	 */
+	public static function post_setup()
+	{		
+		Scaffold::hook('flag');
+	}
+
 	/**
 	 * Post Process Hook
 	 */
 	public static function process()
 	{
 		Scaffold::$css = self::replace_flags(Scaffold::$css);
+	}
+	
+	/**
+	 * Sets a cache flag
+	 *
+	 * @param 	$name	The name of the flag to set
+	 * @return 	void
+	 */
+	public static function set($name)
+	{
+		return self::$flags[] = $name;
+	}
+	
+	/**
+	 * Return all flags, or a single flag
+	 *
+	 * @param $flag
+	 * @return boolean
+	 */
+	public static function get($flag = false)
+	{
+		if($flag === false)
+		{
+			return self::$flags;
+		}
+		else
+		{
+			return (in_array($flag,self::$flags)) ? true : false;
+		}
 	}
 
 	/**
