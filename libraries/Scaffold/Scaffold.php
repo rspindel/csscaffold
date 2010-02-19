@@ -98,6 +98,13 @@ class Scaffold extends Scaffold_Utils
 	public static $modules;
 	
 	/**
+	 * Language extensions - properties, directives and functions
+	 *
+	 * @var array
+	 */
+	public static $extensions;
+	
+	/**
 	 * If Scaffold encounted an error. You can check this variable to
 	 * see if there were any errors when in_production is set to true.
 	 *
@@ -168,7 +175,6 @@ class Scaffold extends Scaffold_Utils
 					# Set its parmissions
 					chmod($output, 0777);
 					touch($output, time());
-
 				}
 				else
 				{
@@ -231,11 +237,10 @@ class Scaffold extends Scaffold_Utils
 
 		# Save the log to file
 		if($config['enable_log'])
-		{
 			Scaffold_Log::save();
-		}
 		
-		return self::$output = array(
+		return self::$output = array
+		(
 			'status'  => self::$has_error,
 		    'content' => self::$output,
 		    'headers' => $headers,
@@ -328,14 +333,127 @@ class Scaffold extends Scaffold_Utils
 				require_once($controller);
 				self::$modules[$name] = new $name;
 			}
+			
+			# Load custom functions
+			Scaffold::extensions($module);
 		}
-		
+
+		# Load the function extensions
+		Scaffold::extensions(SCAFFOLD_SYSPATH);
+
 		/**
 		 * Module Initialization Hook
 		 * This hook allows modules to load libraries and create events
 		 * before any processing is done at all. 
 		 */
 		self::hook('initialize');
+	}
+	
+	/**
+	 * Loads functions inside an extensions folder.
+	 *
+	 * @author your name
+	 * @param $dir
+	 * @return void
+	 */
+	public static function extensions($base = false)
+	{
+		if($base !== false)
+		{
+			/**
+			 * Loads custom functions
+			 */
+			foreach(Scaffold::list_files($base.'/extensions/functions') as $dir)
+			{
+				$phase = str_replace('phase_','',basename($dir));
+				
+				foreach(Scaffold::list_files($dir) as $file)
+				{
+					if(is_dir($file))
+						continue;
+						
+					$unique = false;
+						
+					include $file;
+					
+					$name = pathinfo($file, PATHINFO_FILENAME);
+					
+					/**
+					 * The name of the function we'll call for this property
+					 */
+					$callback = 'Scaffold_'.str_replace('-','_',$name);
+					
+					self::$extensions['functions'][$name] = array
+					(
+						'unique' => $unique,
+						'path' => $file,
+						'callback' => $callback,
+						'phase' => (int)$phase
+					);
+				}
+			}
+			
+			/**
+			 * Sort the functions by phase
+			 */
+			if(isset(self::$extensions['functions']))
+			{
+				uksort(self::$extensions['functions'], array('Scaffold','sort_functions'));
+			}
+
+			/**
+			 * Loads custom properties
+			 */
+			foreach(Scaffold::list_files($base.'/extensions/properties') as $file)
+			{
+				if(is_dir($file))
+					continue;
+					
+				include $file;
+				
+				$name = pathinfo($file, PATHINFO_FILENAME);
+				
+				/**
+				 * The name of the function we'll call for this property
+				 */
+				$callback = 'Scaffold_'.str_replace('-','_',$name);
+				
+				self::$extensions['properties'][$name] = array
+				(
+					'path' => $file,
+					'callback' => $callback,
+				);
+			}
+		}
+		
+		return self::$extensions;
+	}
+	
+	/**
+	 * Sorts functions in the extensions array by phase
+	 *
+	 * @author your name
+	 * @param $a
+	 * @param $b
+	 * @return void
+	 */
+	private function sort_functions($a,$b)
+	{
+		$phase_a = self::$extensions['functions'][$a]['phase'];
+		$phase_b = self::$extensions['functions'][$b]['phase'];
+		
+		if($phase_a > $phase_b)
+		{
+			return 1;
+		}
+		elseif($phase_a < $phase_b)
+		{
+			return -1;
+		}
+		else
+		{
+			return 0;
+		}
 	}
 	
 	/**
@@ -376,7 +494,69 @@ class Scaffold extends Scaffold_Utils
 		 * The main process. None of the processes should conflict in any of the modules
 		 */
 		self::hook('process');
-			
+		
+		/**
+		 * Replace custom functions
+		 */
+		foreach(self::$extensions['functions'] as $name => $values)
+		{
+			if($found = Scaffold::$css->find_functions($name))
+			{
+				// Make the list unique or not
+				$originals = ($values['unique'] === false) ? array_unique($found[0]) : $found[0];
+	
+				// Loop through each found instance
+				foreach($originals as $key => $value)
+				{
+					$result = call_user_func_array($values['callback'],explode(',',$found[2][$key]));
+	
+					// Run the user callback										
+					if($result === false)
+					{
+						Scaffold::error('Invalid Custom Function Syntax - <strong>' . $originals[$key] . '</strong>');
+					}
+					
+					// Just replace the first match if they are unique
+					elseif($values['unique'] === true)
+					{
+						$pos = strpos(Scaffold::$css->string,$originals[$key]);
+	
+						if($pos !== false)
+						{
+						    Scaffold::$css->string = substr_replace(Scaffold::$css->string,$result,$pos,strlen($originals[$key]));
+						}
+					}
+					else
+					{
+						Scaffold::$css->string = str_replace($originals[$key],$result,Scaffold::$css->string);
+					}
+				}
+			}
+		}
+		
+		/**
+		 * Replace custom properties
+		 */
+		foreach(self::$extensions['properties'] as $name => $values)
+		{
+			if($found = Scaffold::$css->find_property($name))
+			{
+				$originals = $found[0];
+	
+				foreach($originals as $key => $value)
+				{
+					$result = call_user_func($values['callback'],$found[2][$key]);
+	
+					if($result === false)
+					{
+						Scaffold::error('Invalid Custom Property Syntax - <strong>' . $originals[$key] . '</strong>');
+					}
+					
+					Scaffold::$css->string = str_replace($originals[$key],$result,Scaffold::$css->string);
+				}
+			}
+		}
+
 		/**
 		 * Post-process Hook
 		 * After any non-standard CSS has been processed and removed. This is where
@@ -614,11 +794,11 @@ class Scaffold extends Scaffold_Utils
 				}
 				else
 				{
-					if($value === 304)
+					if($value === self::NOT_MODIFIED)
 					{
-						header('Status: 304 Not Modified', TRUE, 304);
+						header('Status: 304 Not Modified', TRUE, self::NOT_MODIFIED);
 					}
-					elseif($value === 500)
+					elseif($value === self::SERVER_ERROR)
 					{
 						header('HTTP/1.1 500 Internal Server Error');
 					}

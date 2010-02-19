@@ -42,7 +42,7 @@ if(isset($_GET['f']))
 	# Parse any array of files all at once.
 	$result = Scaffold::parse($_GET['f'],$config);
 
-	/** 
+	/**
 	 * If the user wants us to render the CSS to the browser, we run this event.
 	 * This will send the headers and output the processed CSS.
 	 */
