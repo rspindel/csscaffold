@@ -19,7 +19,7 @@ class Absolute_Urls
 	public static function formatting_process()
 	{	
 		# The absolute url to the directory of the current CSS file
-		$dir = Scaffold::url_path(Scaffold::$css->path);
+		$dir = Scaffold::url(Scaffold::$css->path);
 
 		# @imports - Thanks to the guys from Minify for the regex :)
 		if(

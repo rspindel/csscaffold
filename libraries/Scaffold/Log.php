@@ -92,7 +92,7 @@ final class Scaffold_Log
 		if (!empty($dir))
 		{
 			// Get the directory path
-			$dir = Scaffold_Utils::fix_path($dir);
+			$dir = Scaffold::path($dir);
 
 			if (is_dir($dir) AND is_writable($dir))
 			{

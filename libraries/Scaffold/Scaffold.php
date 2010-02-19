@@ -22,6 +22,13 @@ class Scaffold extends Scaffold_Utils
 	const VERSION = '2.0.0';
 	
 	/**
+	 * Path to the document root
+	 *
+	 * @var string
+	 */
+	public static $root;
+	
+	/**
 	 * The configuration for Scaffold and all of it's modules.
 	 * The config for Scaffold itself should just be inside the
 	 * config array, and module configs should be inside an array
@@ -87,14 +94,6 @@ class Scaffold extends Scaffold_Utils
 	public static $modules;
 
 	/**
-	 * Flags allow Scaffold to create cache variants based on particular
-	 * parameters. This could be the browser, the time etc. 
-	 *
-	 * @var array
-	 */
-	public static $flags = array();
-
-	/**
 	 * Options are used by modules to check if the user wants a paricular
 	 * action to occur. They don't affect the cache, like flags do, so
 	 * modules shouldn't modify the CSS string based on options. They
@@ -124,107 +123,72 @@ class Scaffold extends Scaffold_Utils
 	 * Parse the CSS. This takes an array of files, options and configs
 	 * and parses the CSS, outputing the processed CSS string.
 	 *
-	 * @param array List of files
+	 * @param string Path to the file to parse
 	 * @param array Configuration options
 	 * @param string Options
 	 * @param boolean Return the CSS rather than displaying it
 	 * @return string The processed css file as a string
 	 */
-	public static function parse( $files, $config, $options = array(), $display = false )
+	public static function parse($file,$config)
 	{
 		# Benchmark will do the entire run from start to finish
 		Scaffold_Benchmark::start('system');
 
 		try
-		{			
+		{
+			# Make sure this file is allowed
+			if(substr($file, 0, 4) == "http" OR substr($file, -4, 4) != ".css")
+			{
+				Scaffold::error("Scaffold cannot the requested file - $file");
+			}
+
 			# Setup the cache and other variables/constants
 			Scaffold::setup($config);
+			
+			# Find the file on the server
+			$file = Scaffold::find_file($file, false, true);
+			
+			# The outputted file
+			$output = Scaffold_Cache::path() . basename($file);
 
-			self::$options = $options;
-			$css = false;
+			# Before anything has happened, but the setup is done
+			Scaffold::hook('post_setup');
 			
-			# Time it takes to get the flags
-			Scaffold_Benchmark::start('system.flags');
-			
-			# Get the flags from each of the loaded modules.
-			$flags = (self::$flags === false) ? array() : self::flags();
-			
-			# Time it takes to get the flags
-			Scaffold_Benchmark::stop('system.flags');
-			
-			# The final, combined CSS file in the cache
-			$combined = md5(serialize(array($files,$flags))) . '.css';
-			
-			/**
-			 * Check if we should use the combined cache right now and skip unneeded processing
-			 */
-			if(SCAFFOLD_PRODUCTION === true AND Scaffold_Cache::exists($combined) AND Scaffold_Cache::is_fresh($combined))
+			# Check if we should use the combined cache right now and skip unneeded processing
+			if(SCAFFOLD_PRODUCTION === true AND Scaffold_Cache::exists($output) AND Scaffold_Cache::is_fresh($output))
 			{
-				Scaffold::$output = Scaffold_Cache::open($combined);
+				$output = Scaffold_Cache::open($output);
 			}
 			
-			if(Scaffold::$output === null)
+			# Nope, we need to reparse the file.
+			else
 			{
-				# We're processing the files
-				Scaffold_Benchmark::start('system.check_files');
+				# The time to process a single file
+				Scaffold_Benchmark::start('system.file.' . basename($file));
+				
+				# While not in production, we want to to always recache, so we'll fake the time
+				$modified = (SCAFFOLD_PRODUCTION) ? Scaffold_Cache::modified($output) : 0;
 	
-				foreach($files as $file)
+				# If the CSS file has been changed, or the cached version doesn't exist			
+				if(!Scaffold_Cache::exists($output) OR $modified < filemtime($file))
 				{
-					# The time to process a single file
-					Scaffold_Benchmark::start('system.file.' . basename($file));
+					# This will return the parsed CSS file
+					$css = Scaffold::process($file);
 					
-					# Make sure this file is allowed
-					if(substr($file, 0, 4) == "http" OR substr($file, -4, 4) != ".css")
-					{
-						Scaffold::error('Scaffold cannot the requested file - ' . $file);
-					}
+					stop($css);
 					
-					/**
-					 * If there are flags, we'll include them in the filename
-					 */
-					if(!empty($flags))
-					{
-						$cached_file = dirname($file) . DIRECTORY_SEPARATOR . pathinfo($file, PATHINFO_FILENAME) . '_' . implode('_', $flags) . '.css';
-					}
-					else
-					{
-						$cached_file = $file;
-					}
-	
-					$request = Scaffold::find_file($file, false, true);
-					
-					/**
-					 * While not in production, we want to to always recache, so we'll fake the time
-					 */
-					$modified = (SCAFFOLD_PRODUCTION) ? Scaffold_Cache::modified($cached_file) : 0;
-		
-					/**
-					 * If the CSS file has been changed, or the cached version doesn't exist
-					 */			
-					if(!Scaffold_Cache::exists($cached_file) OR $modified < filemtime($request))
-					{
-						Scaffold_Cache::write( Scaffold::process($request), $cached_file );
-						Scaffold_Cache::remove($combined);
-					}
-		
-					$css .= Scaffold_Cache::open($cached_file);
-					
-					# The time it's taken to process this file
-					Scaffold_Benchmark::stop('system.file.' . basename($file));
+					# Write it to the cache
+					Scaffold_Cache::write($css,$output);
 				}
+				else
+				{
+					$css = file_get_contents($output);
+				}
+					
+				# The time it's taken to process this file
+				Scaffold_Benchmark::stop('system.file.' . basename($file));
 	
 				Scaffold::$output = $css;
-	
-				/**
-				 * If any of the files have changed we need to recache the combined
-				 */
-				if(!Scaffold_Cache::exists($combined))
-				{
-					Scaffold_Cache::write(self::$output,$combined);
-				}
-				
-				# The time it takes to process the files
-				Scaffold_Benchmark::stop('system.check_files');
 			
 				/**
 				 * Hook to modify what is sent to the browser
@@ -239,7 +203,7 @@ class Scaffold extends Scaffold_Utils
 			 */
 
 			$length = strlen(Scaffold::$output);
-			$modified = Scaffold_Cache::modified($combined);
+			$modified = Scaffold_Cache::modified($output);
 			$lifetime = (SCAFFOLD_PRODUCTION === true) ? $config['cache_lifetime'] : 0;
 			
 			Scaffold::set_headers($modified,$lifetime,$length);
@@ -294,40 +258,34 @@ class Scaffold extends Scaffold_Utils
 	 * @return void
 	 */
 	public static function setup($config) 
-	{
-		/**
-		 * Choose whether to show or hide errors
-		 */
-		if(SCAFFOLD_PRODUCTION === false)
-		{	
-			ini_set('display_errors', true);
-			error_reporting(E_ALL & ~E_STRICT);
-		}
-		else
-		{
-			ini_set('display_errors', false);
-			error_reporting(0);
-		}
-		
+	{	
 		/**
 		 * Define contstants for system paths for easier access.
 		 */
-		if(!defined('SCAFFOLD_SYSPATH') && !defined('SCAFFOLD_DOCROOT'))
+		if(!defined('SCAFFOLD_SYSPATH'))
 		{
-			define('SCAFFOLD_SYSPATH', self::fix_path($config['system']));
-			define('SCAFFOLD_DOCROOT', $config['document_root']);
-			define('SCAFFOLD_URLPATH', str_replace(SCAFFOLD_DOCROOT, '',SCAFFOLD_SYSPATH));
+			define('SCAFFOLD_SYSPATH', self::path($config['system']));
+		}
+		
+		/**
+		 * Set the server variable for document root. A lot of 
+		 * the utility functions depend on this. Windows servers
+		 * don't set this, so we'll add it manually if it isn't set.
+		 */
+		if($config['document_root'] != '')
+		{
+			Scaffold::root($config['document_root']);
 		}
 
 		/**
 		 * Add include paths for finding files
 		 */
-		Scaffold::add_include_path(SCAFFOLD_SYSPATH,SCAFFOLD_DOCROOT);
-	
+		Scaffold::add_include_path(SCAFFOLD_SYSPATH,Scaffold::root());
+
 		/**
 		 * Tell the cache where to save files and for how long to keep them for
 		 */
-		Scaffold_Cache::setup( Scaffold::fix_path($config['cache']), $config['cache_lifetime'] );
+		Scaffold_Cache::setup(Scaffold::path($config['cache']),$config['cache_lifetime']);
 		
 		/**
 		 * The level at which logged messages will halt processing and be thrown as errors
@@ -335,20 +293,19 @@ class Scaffold extends Scaffold_Utils
 		self::$error_threshold = $config['error_threshold'];
 
 		/**
-		 * Disabling flags allows for quicker processing
-		 */
-		if($config['disable_flags'] === true)
-		{
-			self::$flags = false;
-		}
-		
-		/**
 		 * Tell the log where to save it's files. Set it to automatically save the log on exit
 		 */
 		if($config['enable_log'] === true)
 		{
-			Scaffold_Log::log_directory(SCAFFOLD_SYSPATH.'logs');			
-			Scaffold_Event::add('system.shutdown', array('Scaffold_Log','save'));
+			if(is_writable(SCAFFOLD_SYSPATH.'logs'))
+			{
+				Scaffold_Log::log_directory(SCAFFOLD_SYSPATH.'logs');
+				Scaffold_Event::add('system.shutdown', array('Scaffold_Log','save'));	
+			}
+			else
+			{
+				Scaffold::error("Logs folder is not writable");
+			}
 		}
 
 		/**
@@ -524,7 +481,7 @@ class Scaffold extends Scaffold_Utils
 	 * @param $method The method to check for in each of the modules
 	 * @return boolean
 	 */
-	private static function hook($method)
+	public static function hook($method)
 	{
 		foreach(self::$modules as $module_name => $module)
 		{
@@ -533,6 +490,65 @@ class Scaffold extends Scaffold_Utils
 				call_user_func(array($module_name,$method));
 			}
 		}
+	}
+	
+	/**
+	 * Takes a relative path, gets the full server path, removes
+	 * the www root path, leaving only the url path to the file/folder
+	 *
+	 * @param $relative_path
+	 */
+	public static function url($path) 
+	{
+		return self::reduce_double_slashes(str_replace( Scaffold::root(), DIRECTORY_SEPARATOR, realpath($path) ));
+	}
+	
+	/**
+	 * Cleans up a path so that it's in a format we can consistently use.
+	 *
+	 * @param $path
+	 * @return string The complete server path
+	 */
+	public static function path($path)
+	{
+		return realpath(str_replace('\\', '/', $path)) . '/';
+	}
+	
+	/**
+	 * Gets or sets the document root
+	 *
+	 * @return string
+	 */
+	public static function root($path = false)
+	{
+		if($path !== false)
+		{
+			return self::$root = Scaffold::path($path);
+		}
+		
+		if(!isset(self::$root))
+		{
+			# Try and get it for IIS or servers where it isn't set automatically
+			if(!isset($_SERVER['DOCUMENT_ROOT']))
+			{
+				if(isset($_SERVER['SERVER_SOFTWARE']) && 0 === strpos($_SERVER['SERVER_SOFTWARE'], 'Microsoft-IIS/'))
+				{
+					$path_length = strlen($_SERVER['PATH_TRANSLATED']) - strlen($_SERVER['SCRIPT_NAME']);
+					$path = substr($_SERVER['PATH_TRANSLATED'],0,path_length);   
+				    $_SERVER['DOCUMENT_ROOT'] = rtrim($path, '\\');
+				    
+				    if ($unsetPathInfo) unset($_SERVER['PATH_INFO']);
+				}
+				else
+				{
+					Scaffold::error("Can't determine the document root");
+				}
+			}
+			
+			self::$root = $_SERVER['DOCUMENT_ROOT'];
+		}
+		
+		return self::$root;
 	}
 	
 	/**
@@ -698,44 +714,6 @@ class Scaffold extends Scaffold_Utils
 	{
 		return self::$headers[$name] = $value;
 	}
-	
-	/**
-	 * Sets a cache flag
-	 *
-	 * @param 	$name	The name of the flag to set
-	 * @return 	void
-	 */
-	public static function flag_set($name)
-	{
-		return self::$flags[] = $name;
-	}
-	
-	/**
-	 * Checks if a flag is set
-	 *
-	 * @param $flag
-	 * @return boolean
-	 */
-	public static function flag($flag)
-	{
-		return (in_array($flag,self::$flags)) ? true : false;
-	}
-	
-	/**
-	 * Gets the flags from each of the modules
-	 *
-	 * @param $param
-	 * @return $array The array of flags
-	 */
-	public static function flags()
-	{		
-		if(!empty(self::$flags))
-			return self::$flags;
-			
-		self::hook('flag');
-
-		return (isset(self::$flags)) ? self::$flags : false;
-	}
 
 	/**
 	 * Get all include paths.
@@ -770,7 +748,7 @@ class Scaffold extends Scaffold_Utils
 	
 		if(!in_array($path,self::$include_paths))
 		{
-			self::$include_paths[] = Scaffold_Utils::fix_path($path);
+			self::$include_paths[] = Scaffold::path($path);
 		}
 	}
 	

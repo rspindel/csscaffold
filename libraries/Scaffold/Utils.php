@@ -10,18 +10,6 @@
 class Scaffold_Utils
 {
 	/**
-	 * Takes a relative path, gets the full server path, removes
-	 * the www root path, leaving only the url path to the file/folder
-	 *
-	 * @author Anthony Short
-	 * @param $relative_path
-	 */
-	public static function url_path($path) 
-	{
-		return self::reduce_double_slashes(str_replace( SCAFFOLD_DOCROOT, DIRECTORY_SEPARATOR, realpath($path) ));
-	}
-
-	/**
 	 * Preg quote. But better. Does the - character too. Like it should.
 	 *
 	 * @author Anthony Short
@@ -45,17 +33,6 @@ class Scaffold_Utils
 		return $str;
 	}
 
-	/**
-	 * Fixes a path (including Windows paths), finds the full path,
-	 * and adds a trailing slash. This way we always know what our paths
-	 * will look like.
-	 */
-	public static function fix_path($path)
-	{
-		$path = str_replace('\\', '/', $path);
-		return realpath($path) . '/';
-	}
-	
 	/**
 	 * Checks if a file is an image.
 	 *

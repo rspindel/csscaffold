@@ -27,8 +27,10 @@ define('SCAFFOLD_PRODUCTION',false);
  * The document root for the server. If you're server doesn't set the $_SERVER['DOCUMENT_ROOT']
  * variable (I'm looking at you Windows) you can manually enter in the server path 
  * to the document root. Most of the time, you won't need to touch this.
+ *
+ * Leave this blank to try and find the document root automatically
  */
-$config['document_root'] = $_SERVER['DOCUMENT_ROOT'];
+$config['document_root'] = '';
 
 /**
  * System Folder
@@ -53,6 +55,9 @@ $config['system'] = './';
  */
 $config['cache'] = './cache/';
 
+$config['images'] = 'images';
+$config['assets'] = 'assets';
+
 /**
  * Cache Lifetime
  *
@@ -71,13 +76,6 @@ $config['cache'] = './cache/';
  * when in production.
  */
 $config['cache_lifetime'] = 3600; // 3600 will check if it needs to recache every hour
-
-/**
- * Disable Flags
- *
- * Speeds up the processing, but you can't use cache flags
- */
-$config['disable_flags'] = false;
 
 /**
  * Enable Logging
