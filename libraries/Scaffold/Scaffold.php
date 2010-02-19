@@ -19,7 +19,11 @@
 
 class Scaffold extends Scaffold_Utils
 {
-	const VERSION = '2.0.0';
+	const VERSION = '2.0.8';
+	
+	# Server status codes
+	const NOT_MODIFIED = 304;
+	const SERVER_ERROR = 500;
 	
 	/**
 	 * Path to the document root
@@ -37,7 +41,7 @@ class Scaffold extends Scaffold_Utils
 	 * @var array
 	 */
 	public static $config;
-	
+
 	/**
 	 * CSS object for each processing phase. As Scaffold loops
 	 * through the files, it creates an new CSS object in this member 
@@ -92,17 +96,6 @@ class Scaffold extends Scaffold_Utils
 	 * @var array
 	 */
 	public static $modules;
-
-	/**
-	 * Options are used by modules to check if the user wants a paricular
-	 * action to occur. They don't affect the cache, like flags do, so
-	 * modules shouldn't modify the CSS string based on options. They
-	 * can be used to modify the output or to perform some secondary
-	 * action, like validating the CSS.
-	 *
-	 * @var array
-	 */
-	public static $options;
 	
 	/**
 	 * If Scaffold encounted an error. You can check this variable to
@@ -111,13 +104,6 @@ class Scaffold extends Scaffold_Utils
 	 * @var boolean
 	 */
 	public static $has_error = false;
-
-	/**
-	 * Stores the headers for sending to the browser.
-	 *
-	 * @var array
-	 */
-	private static $headers;
 	
 	/**
 	 * Parse the CSS. This takes an array of files, options and configs
@@ -129,7 +115,7 @@ class Scaffold extends Scaffold_Utils
 	 * @param boolean Return the CSS rather than displaying it
 	 * @return string The processed css file as a string
 	 */
-	public static function parse($file,$config)
+	public static function parse($file,$config = false)
 	{
 		# Benchmark will do the entire run from start to finish
 		Scaffold_Benchmark::start('system');
@@ -143,7 +129,8 @@ class Scaffold extends Scaffold_Utils
 			}
 
 			# Setup the cache and other variables/constants
-			Scaffold::setup($config);
+			if($config !== false)
+				Scaffold::setup($config);
 			
 			# Find the file on the server
 			$file = Scaffold::find_file($file, false, true);
@@ -175,10 +162,13 @@ class Scaffold extends Scaffold_Utils
 					# This will return the parsed CSS file
 					$css = Scaffold::process($file);
 					
-					stop($css);
+					# Write it
+					file_put_contents($output, $css);
 					
-					# Write it to the cache
-					Scaffold_Cache::write($css,$output);
+					# Set its parmissions
+					chmod($output, 0777);
+					touch($output, time());
+
 				}
 				else
 				{
@@ -201,21 +191,14 @@ class Scaffold extends Scaffold_Utils
 			 * all the headers required to score an A grade on YSlow. This
 			 * means your CSS will be sent as quickly as possible to the browser.
 			 */
-
-			$length = strlen(Scaffold::$output);
-			$modified = Scaffold_Cache::modified($output);
 			$lifetime = (SCAFFOLD_PRODUCTION === true) ? $config['cache_lifetime'] : 0;
 			
-			Scaffold::set_headers($modified,$lifetime,$length);
-
-			/** 
-			 * If the user wants us to render the CSS to the browser, we run this event.
-			 * This will send the headers and output the processed CSS.
-			 */
-			if($display === true)
-			{
-				Scaffold::render(Scaffold::$output,$config['gzip_compression']);
-			}
+			# Returns an array of headers
+			$headers = Scaffold::headers($output,$lifetime);
+			
+			# We're sending not modified. Nothing should be sent to the browser.
+			if($headers['_status'] == self::NOT_MODIFIED)
+				self::$output = '';
 			
 			# Benchmark will do the entire run from start to finish
 			Scaffold_Benchmark::stop('system');
@@ -231,6 +214,11 @@ class Scaffold extends Scaffold_Utils
 			 */
 			$message = $e->getMessage();
 			
+			/**
+			 * Add the error header
+			 */
+			$headers['_status'] = self::SERVER_ERROR;
+			
 			/** 
 			 * Load in the error view
 			 */
@@ -240,15 +228,19 @@ class Scaffold extends Scaffold_Utils
 				require Scaffold::find_file('scaffold_error.php','views');
 			}
 		}
+
+		# Save the log to file
+		if($config['enable_log'])
+		{
+			Scaffold_Log::save();
+		}
 		
-		# Log the final execution time
-		#$benchmark = Scaffold_Benchmark::get('system');
-		#Scaffold_Log::log('Total Execution - ' . $benchmark['time']);
-
-		# Save the logs and exit 
-		Scaffold_Event::run('system.shutdown');
-
-		return self::$output;
+		return self::$output = array(
+			'status'  => self::$has_error,
+		    'content' => self::$output,
+		    'headers' => $headers,
+		    'log'	  => Scaffold_Log::$log,
+		);
 	}
 
 	/**
@@ -299,8 +291,7 @@ class Scaffold extends Scaffold_Utils
 		{
 			if(is_writable(SCAFFOLD_SYSPATH.'logs'))
 			{
-				Scaffold_Log::log_directory(SCAFFOLD_SYSPATH.'logs');
-				Scaffold_Event::add('system.shutdown', array('Scaffold_Log','save'));	
+				Scaffold_Log::log_directory(SCAFFOLD_SYSPATH.'logs');	
 			}
 			else
 			{
@@ -338,11 +329,6 @@ class Scaffold extends Scaffold_Utils
 		 * before any processing is done at all. 
 		 */
 		self::hook('initialize');
-
-		/**
-		 * Create the shutdown event
-		 */
-		Scaffold_Event::add('system.shutdown', array('Scaffold','shutdown'));
 	}
 	
 	/**
@@ -412,10 +398,11 @@ class Scaffold extends Scaffold_Utils
 	 * @param $param
 	 * @return return type
 	 */
-	private static function set_headers($modified,$lifetime,$length)
-	{	
-		self::$headers = array();
-	
+	private static function headers($file,$lifetime)
+	{		
+		$length = strlen(file_get_contents($file));
+		$modified = filemtime($file);
+
 		/**
 		 * Set the expires headers
 		 */
@@ -424,15 +411,12 @@ class Scaffold extends Scaffold_Utils
 		// Set the expiration timestamp
 		$expires += $lifetime;
 
-		Scaffold::header('Last-Modified',gmdate('D, d M Y H:i:s T', $now));
-		Scaffold::header('Expires',gmdate('D, d M Y H:i:s T', $expires));
-		Scaffold::header('Cache-Control','max-age='.$lifetime);
-				
-		/**
-		 * Further caching headers
-		 */
-		Scaffold::header('ETag', md5(serialize(array($length,$modified))) );
-		Scaffold::header('Content-Type','text/css');
+		$headers['Last-Modified'] 	= gmdate('D, d M Y H:i:s T', $now);
+		$headers['Expires'] 		= gmdate('D, d M Y H:i:s T', $expires);
+		$headers['Cache-Control'] 	= 'max-age='.$lifetime;
+		$headers['ETag'] 			= md5(serialize(array($length,$modified,$file)));
+		$headers['Content-Type'] 	= 'text/css';
+		$headers['_status']			= '';
 		
 		/**
 		 * Content Length
@@ -440,7 +424,7 @@ class Scaffold extends Scaffold_Utils
 		 */
 		if(stripos(PHP_SAPI, 'cgi') === FALSE)
 		{
-			Scaffold::header('Content-Length',$length);
+			$headers['Content-Length'] = $length;
 		}
 		
 		/**
@@ -463,16 +447,15 @@ class Scaffold extends Scaffold_Utils
 
 			if ($mod_time_diff > 0)
 			{
-				// Re-send headers
-				Scaffold::header('Last-Modified', gmdate('D, d M Y H:i:s T', $mod_time) );
-				Scaffold::header('Expires', gmdate('D, d M Y H:i:s T', time() + $mod_time_diff) );
-				Scaffold::header('Cache-Control', 'max-age='.$mod_time_diff);
-				Scaffold::header('_status',304);
-
-				// Prevent any output
-				Scaffold::$output = '';
+				// Modify some of the headers
+				$headers['Last-Modified'] 	= gmdate('D, d M Y H:i:s T', $mod_time);
+				$headers['Expires'] 		= gmdate('D, d M Y H:i:s T', time() + $mod_time_diff);
+				$headers['Cache-Control']	= 'max-age='.$mod_time_diff;
+				$headers['_status'] 		= self::NOT_MODIFIED;
 			}
 		}
+		
+		return $headers;
 	}
 	
 	/**
@@ -557,7 +540,7 @@ class Scaffold extends Scaffold_Utils
 	 * @param $output What to display
 	 * @return void
 	 */
-	public static function render($output,$level = false)
+	public static function render($content,$headers,$level = false)
 	{
 		if ($level AND ini_get('output_handler') !== 'ob_gzhandler' AND (int) ini_get('zlib.output_compression') === 0)
 		{
@@ -584,26 +567,25 @@ class Scaffold extends Scaffold_Utils
 			{
 				case 'gzip':
 					# Compress output using gzip
-					$output = gzencode($output, $level);
+					$content = gzencode($content, $level);
 				break;
 				case 'deflate':
 					# Compress output using zlib (HTTP deflate)
-					$output = gzdeflate($output, $level);
+					$content = gzdeflate($content, $level);
 				break;
 			}
 
 			# This header must be sent with compressed content to prevent browser caches from breaking
-			Scaffold::header('Vary','Accept-Encoding');
+			$output['headers']['Vary'] = 'Accept-Encoding';
 
 			# Send the content encoding header
-			Scaffold::header('Content-Encoding',$compress);
+			$output['headers']['Content-Encoding'] = $compress;
 		}
 	
 		# Send the headers
-		Scaffold::send_headers();
+		Scaffold::send_headers($headers);
 	
-		echo $output;
-		exit;
+		echo $content; 
 	}
 	
 	/**
@@ -611,13 +593,13 @@ class Scaffold extends Scaffold_Utils
 	 *
 	 * @return void
 	 */
-	private static function send_headers()
+	private static function send_headers($headers)
 	{
 		if(!headers_sent())
 		{
-			self::$headers = array_unique(self::$headers);
+			$headers = array_unique($headers);
 
-			foreach(self::$headers as $name => $value)
+			foreach($headers as $name => $value)
 			{
 				if($name != '_status')
 				{
@@ -639,22 +621,6 @@ class Scaffold extends Scaffold_Utils
 	}
 
 	/**
-	 * Prepares the final output and cleans up
-	 *
-	 * @return void
-	 */
-	public static function shutdown()
-	{
-		return self::$output = array(
-			'status'  => self::$has_error,
-		    'content' => self::$output,
-		    'headers' => self::$headers,
-		    'flags'   => self::$flags,
-		    'log'	  => Scaffold_Log::$log,
-		);
-	}
-
-	/**
 	 * Displays an error and halts the parsing.
 	 *	
 	 * @param $message
@@ -671,11 +637,6 @@ class Scaffold extends Scaffold_Utils
 		 * Useful variable to let other objects know there was an error with the parsing
 		 */
 		self::$has_error = true;
-		
-		/**
-		 * Add the error header. If the CSS is rendered, this will be sent
-		 */
-		self::header('_status',500);
 		
 		/**
 		 * This will be caught in the parse method
@@ -700,19 +661,6 @@ class Scaffold extends Scaffold_Utils
 		{
 			Scaffold_Log::log($message,$level);
 		}
-	}
-	
-	/**
-	 * Adds a new HTTP header for sending later.
-	 *
-	 * @author your name
-	 * @param $name
-	 * @param $value
-	 * @return boolean
-	 */
-	private static function header($name,$value)
-	{
-		return self::$headers[$name] = $value;
 	}
 
 	/**
@@ -764,17 +712,6 @@ class Scaffold extends Scaffold_Utils
 		{
 			unset(self::$include_paths[array_search($path, self::$include_paths)]);
 		}
-	}
-	
-	/**
-	 * Checks to see if an option is set
-	 *
-	 * @param $name
-	 * @return boolean
-	 */
-	public static function option($name)
-	{
-		return isset(self::$options[$name]);
 	}
 	
 	/**

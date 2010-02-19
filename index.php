@@ -6,9 +6,6 @@
  *
  * @package CSScaffold
  */
- 
-ini_set('display_errors', TRUE);
-error_reporting(E_ALL & ~E_STRICT);
 
 # Include the config file
 include 'config.php';
@@ -42,40 +39,15 @@ if (function_exists('date_default_timezone_set'))
 
 # And we're off!
 if(isset($_GET['f']))
-{
-	/**
-	 * The files we want to parse. Full absolute URL file paths work best.
-	 * eg. request=/themes/stylesheets/master.css,/themes/stylesheets/screen.css
-	 */
-	$files = explode(',', $_GET['f']);
-	
-	/**
-	 * Various options can be set in the URL. Scaffold
-	 * itself doesn't use these, but they are handy hooks
-	 * for modules to activate functionality if they are 
-	 * present.
-	 */
-	$options = (isset($_GET['options'])) ? array_flip(explode(',',$_GET['options'])) : array();
+{	
+	# Parse any array of files all at once.
+	$result = Scaffold::parse($_GET['f'],$config);
 
-	/**
-	 * Set a base directory
-	 */	
-	if(isset($_GET['d']))
-	{
-		foreach($files as $key => $file)
-		{
-			$files[$key] = Scaffold_Utils::join_path($_GET['d'],$file);
-		}
-	}
-	
-	$result = '';
-
-	foreach($files as $file)
-	{
-		$result .= Scaffold::parse($file,$config);
-	}
-	
-	Scaffold::display($result);
+	/** 
+	 * If the user wants us to render the CSS to the browser, we run this event.
+	 * This will send the headers and output the processed CSS.
+	 */
+	Scaffold::render($result['content'],$result['headers'],$config['gzip_compression']);
 }
 
 /**
