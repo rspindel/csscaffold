@@ -66,7 +66,7 @@ class Includes
 					self::$loaded[] = $path;
 					
 					$contents = file_get_contents($path);
-					$contents = Scaffold_CSS::remove_inline_comments($contents);
+					$contents = Scaffold::remove_inline_comments($contents);
 					
 					# Check the file again for more imports
 					$contents = self::server_import($contents, realpath(dirname($path)) . '/');

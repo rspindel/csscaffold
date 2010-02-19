@@ -1076,4 +1076,14 @@ class Scaffold extends Scaffold_Utils
 
 		return $files;
 	}
+	
+	/**
+	 * Removes inline comments
+	 *
+	 * @return return type
+	 */
+	public static function remove_inline_comments($css)
+	{
+		 return preg_replace('#(\s|$)//.*$#Umsi', '', $css);
+	}
 }

@@ -42,7 +42,7 @@ class Scaffold_CSS
 	{
 		$this->path = dirname($file);
 		$this->file = $file;
-		$this->string = $this->remove_inline_comments(file_get_contents($file));
+		$this->string = Scaffold::remove_inline_comments(file_get_contents($file));
 	}
 	
 	/**
@@ -74,16 +74,6 @@ class Scaffold_CSS
 		
 		return $css;
 	}
-	
-	/**
-	 * Removes inline comments
-	 *
-	 * @return return type
-	 */
-	public function remove_inline_comments($css)
-	{
-		 return preg_replace('#(\s|$)//.*$#Umsi', '', $css);
-	}
 
 	/**
 	 * Removes css comments
@@ -95,7 +85,7 @@ class Scaffold_CSS
 		$css = $this->convert_entities('encode', $css);
 		$css = trim(preg_replace('#/\*[^*]*\*+([^/*][^*]*\*+)*/#', '', $css));
 		$css = $this->convert_entities('decode', $css);
-		$css = $this->remove_inline_comments($css);
+		$css = Scaffold::remove_inline_comments($css);
 
 		return $css;
 	}
