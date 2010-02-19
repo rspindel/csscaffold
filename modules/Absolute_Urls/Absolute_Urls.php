@@ -48,7 +48,7 @@ class Absolute_Urls
 				$media = ($found[2][$key] == "") ? '' : ' ' . preg_replace('/\s+/', '', $found[2][$key]);
 				
 				# Absolute path				
-				$absolute = self::up_directory($dir, substr_count($value, '../', 0)) . str_replace('../','',$value);
+				$absolute = self::up_directory($dir, substr_count($value, '..'.DIRECTORY_SEPARATOR , 0)) . str_replace('..'.DIRECTORY_SEPARATOR,'',$value);
 					
 				# Rewrite it
 				Scaffold::$css->string = str_replace($found[0][$key], '@import \''.$absolute.'\'' . $media . ';', Scaffold::$css);
@@ -67,7 +67,7 @@ class Absolute_Urls
 					continue;
 				
 				# Absolute path				
-				$absolute = self::up_directory($dir, substr_count($url, '../', 0)) . str_replace('../','',$url);
+				$absolute = self::up_directory($dir, substr_count($url, '..'.DIRECTORY_SEPARATOR, 0)) . str_replace('..'.DIRECTORY_SEPARATOR,'',$url);
 				
 				# If the file doesn't exist
 				if(!Scaffold::find_file($absolute))
@@ -90,7 +90,7 @@ class Absolute_Urls
 	{
 		# Absolute Path
 		if(
-			$url[0] == "/" || 
+			$url[0] == DIRECTORY_SEPARATOR || 
 			$url[0] == "\\" ||
 		    substr($url, 0, 7) == "http://" ||
 			substr($url, 0, 5) == "data:"
@@ -114,9 +114,9 @@ class Absolute_Urls
 	 */
 	public static function up_directory($path,$n)
 	{
-		$exploded = explode('/',$path);
+		$exploded = explode(DIRECTORY_SEPARATOR,$path);
 		$exploded = array_slice($exploded, 0, (count($exploded) - $n) );
-		return implode('/',$exploded) . '/';
+		return implode(DIRECTORY_SEPARATOR,$exploded) . DIRECTORY_SEPARATOR;
 	}
 
 }
