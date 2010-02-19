@@ -1,15 +1,14 @@
 <?php
 
 /**
- * Import
+ * Includes
  *
- * This allows you to import files before processing for compiling
- * into a single file and later cached. This is done via @import ''
+ * This allows you to include files before processing for compiling
+ * into a single file and later cached. 
  *
  * @author Anthony Short
- * @dependencies None
- **/
-class Import
+ */
+class Includes
 {
 	/**
 	 * Stores which files have already been included
