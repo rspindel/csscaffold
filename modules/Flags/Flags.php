@@ -93,7 +93,7 @@ class Flags
 				# See if any of the flags are set
 				foreach($flags as $flag_key => $flag)
 				{
-					if(Scaffold::flag($flag))
+					if(Flags::get($flag))
 					{
 						$parse = true;
 						break;

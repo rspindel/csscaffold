@@ -306,14 +306,21 @@ class Scaffold extends Scaffold_Utils
 		{
 			$name = basename($module);
 			$module_config = SCAFFOLD_SYSPATH.'config/' . $name . '.php';
+			$default_config = $module . '/config.php';
+			
+			unset($config);
 			
 			if(file_exists($module_config))
 			{
-				unset($config);
 				include $module_config;				
 				self::$config[$name] = $config;
 			}
-			
+			elseif(file_exists($default_config))
+			{
+				include $default_config;				
+				self::$config[$name] = $config;
+			}
+
 			self::add_include_path($module);
 			
 			if( $controller = Scaffold::find_file($name.'.php', false, true) )
