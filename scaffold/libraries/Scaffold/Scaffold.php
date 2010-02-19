@@ -184,7 +184,7 @@ class Scaffold extends Scaffold_Utils
 					 */
 					if(!empty($flags))
 					{
-						$cached_file = dirname($file) . '/' . pathinfo($file, PATHINFO_FILENAME) . '_' . implode('_', $flags) . '.css';
+						$cached_file = dirname($file) . DIRECTORY_SEPARATOR . pathinfo($file, PATHINFO_FILENAME) . '_' . implode('_', $flags) . '.css';
 					}
 					else
 					{
@@ -843,7 +843,7 @@ class Scaffold extends Scaffold_Utils
 	public static function find_file($filename, $directory = '', $required = FALSE)
 	{		
 		# Search path
-		$search = $directory.'/'.$filename;
+		$search = $directory.DIRECTORY_SEPARATOR.$filename;
 		
 		if(file_exists($filename))
 		{
@@ -899,7 +899,7 @@ class Scaffold extends Scaffold_Utils
 			if ($required === TRUE)
 			{
 				# If the file is required, throw an exception
-				self::error("Cannot find the file: " . str_replace($_SERVER['DOCUMENT_ROOT'], '/', $search));
+				self::error("Cannot find the file: " . str_replace($_SERVER['DOCUMENT_ROOT'], DIRECTORY_SEPARATOR, $search));
 			}
 			else
 			{
@@ -939,7 +939,7 @@ class Scaffold extends Scaffold_Utils
 		}
 		else
 		{
-			$path = rtrim($path, '/').'/';
+			$path = rtrim($path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
 
 			if (is_readable($path))
 			{
@@ -956,7 +956,7 @@ class Scaffold extends Scaffold_Utils
 							continue;
 						}
 						
-						$files[] = $item = str_replace('\\', '/', $item);
+						$files[] = $item = str_replace('\\', DIRECTORY_SEPARATOR, $item);
 
 						// Handle recursion
 						if (is_dir($item) AND $recursive == TRUE)
