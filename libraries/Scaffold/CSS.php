@@ -288,9 +288,10 @@ class Scaffold_CSS
 	 */
 	public function find_property($property)
 	{ 		
-		if(preg_match_all('/('.Scaffold_Utils::preg_quote($property).')\s*\:\s*(.*?)\s*\;/sx', $this->string, $matches))
+		if(preg_match_all('/[^-a-zA-Z](('.Scaffold_Utils::preg_quote($property).')\s*\:\s*(.*?)\s*\;)/sx', $this->string, $matches))
 		{
-			return (array)$matches;
+			array_shift($matches);
+			return $matches;
 		}
 		else
 		{

@@ -541,7 +541,7 @@ class Scaffold extends Scaffold_Utils
 		{
 			if($found = Scaffold::$css->find_property($name))
 			{
-				$originals = $found[0];
+				$originals = array_unique($found[0]);
 	
 				foreach($originals as $key => $value)
 				{
