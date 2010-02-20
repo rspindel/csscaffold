@@ -180,9 +180,6 @@ class Scaffold extends Scaffold_Utils
 				{
 					$css = file_get_contents($output);
 				}
-					
-				# The time it's taken to process this file
-				Scaffold_Benchmark::stop('system.file.' . basename($file));
 	
 				Scaffold::$output = $css;
 			
@@ -190,6 +187,9 @@ class Scaffold extends Scaffold_Utils
 				 * Hook to modify what is sent to the browser
 				 */
 				if(SCAFFOLD_PRODUCTION === false) Scaffold::hook('display');
+				
+				# The time it's taken to process this file
+				Scaffold_Benchmark::stop('system.file.' . basename($file));
 			}
 
 			/**
@@ -204,7 +204,7 @@ class Scaffold extends Scaffold_Utils
 			
 			# We're sending not modified. Nothing should be sent to the browser.
 			if($headers['_status'] == self::NOT_MODIFIED)
-				self::$output = '';
+				Scaffold::$output = '';
 			
 			# Benchmark will do the entire run from start to finish
 			Scaffold_Benchmark::stop('system');
@@ -338,7 +338,7 @@ class Scaffold extends Scaffold_Utils
 			Scaffold::extensions($module);
 		}
 
-		# Load the function extensions
+		# Load the extensions
 		Scaffold::extensions(SCAFFOLD_SYSPATH);
 
 		/**
