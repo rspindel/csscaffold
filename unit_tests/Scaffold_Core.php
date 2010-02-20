@@ -6,6 +6,21 @@ class CoreTests extends UnitTestCase
 {
 	var $config;
 	var $cache;
+	
+		function testUrlPath()
+		{
+			$this->assertEqual( Scaffold::url(dirname(__FILE__)), '/unit_tests');
+			$this->assertEqual( Scaffold::url(dirname(__FILE__) . '/..'), '/');
+			$this->assertEqual( Scaffold::url(dirname(__FILE__) . '/../scaffold/'), '/scaffold');
+		}
+	
+		function testFixPath()
+		{
+			$path = dirname(__FILE__);
+			$path = str_replace('/','\\',$path);
+			$path = Scaffold_Utils::fix_path($path);
+			$this->assertEqual($path,dirname(__FILE__) . '/');
+		}
 
 	function testSetFlag()
 	{

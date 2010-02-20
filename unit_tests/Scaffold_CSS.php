@@ -1,7 +1,7 @@
 <?php
 
 require_once('simpletest/autorun.php');
-require_once('../scaffold/libraries/Scaffold/CSS.php');
+require_once('../libraries/Scaffold/CSS.php');
 
 class CSSUtilityTests extends UnitTestCase
 {
@@ -19,12 +19,14 @@ class CSSUtilityTests extends UnitTestCase
 		$this->assertEqual( Scaffold_CSS::remove_properties('border','1px', '#id{border:1px;border:2px;}'), '#id{border:2px;}');
 	}
 	
+	/*
 	function testEncodeEntities()
 	{
 		$this->assertEqual( Scaffold_CSS::convert_entities('encode','"'),"#SCAFFOLD-QUOTE#");
 		$this->assertEqual( Scaffold_CSS::convert_entities('encode','""'),"#SCAFFOLD-QUOTE##SCAFFOLD-QUOTE#");
 		$this->assertEqual( Scaffold_CSS::convert_entities('encode','#id{background: url(data:image/png;base64,iVBORw0KGgoAA);}'),"#id{background: url(#SCAFFOLD-IMGDATA-PNG#base64,iVBORw0KGgoAA);}");
 	}
+	*/
 	
 	function testSelectorExists()
 	{

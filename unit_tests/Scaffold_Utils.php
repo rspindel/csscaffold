@@ -1,26 +1,10 @@
 <?php
 
 require_once('simpletest/autorun.php');
-require_once('../scaffold/libraries/Scaffold/Utils.php');
+require_once('../libraries/Scaffold/Utils.php');
 
 class UtilityTests extends UnitTestCase
-{
-	
-	function testUrlPath()
-	{
-		$this->assertEqual( Scaffold_Utils::url_path(dirname(__FILE__)), '/unit_tests');
-		$this->assertEqual( Scaffold_Utils::url_path(dirname(__FILE__) . '/..'), '/');
-		$this->assertEqual( Scaffold_Utils::url_path(dirname(__FILE__) . '/../scaffold/'), '/scaffold');
-	}
-
-	function testFixPath()
-	{
-		$path = dirname(__FILE__);
-		$path = str_replace('/','\\',$path);
-		$path = Scaffold_Utils::fix_path($path);
-		$this->assertEqual($path,dirname(__FILE__) . '/');
-	}
-	
+{	
 	function testPregQuote()
 	{
 		$string = "#selector-name.class   {background: url(_images/blah.png); }";

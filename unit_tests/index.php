@@ -1,7 +1,10 @@
 <?php
 
+ini_set('display_errors', true);
+error_reporting(E_ALL & ~E_STRICT);
+
 require_once('simpletest/autorun.php');
-require_once('../scaffold/libraries/Bootstrap.php');
+require_once('../libraries/Bootstrap.php');
 
 $test = &new GroupTest('All tests');
 
@@ -22,19 +25,19 @@ $test->addTestCase(new CSSUtilityTests());
 //$test->addTestCase(new CacheTests());
 
 // Logging tests
-require_once('Scaffold_Log.php');
-$test->addTestCase(new LogTests());
+//require_once('Scaffold_Log.php');
+//$test->addTestCase(new LogTests());
 
 // Scaffold Core tests
-require_once('Scaffold_Core.php');
-$test->addTestCase(new CoreTests());
+//require_once('Scaffold_Core.php');
+//$test->addTestCase(new CoreTests());
 
 // Stress-tests for each of the included modules
-require_once('Scaffold_Modules.php');
-$test->addTestCase(new ModulesTests());
+//require_once('Scaffold_Modules.php');
+//$test->addTestCase(new ModulesTests());
 
 // Makes sure the correct headers are sent
-require_once('Scaffold_HTTP.php');
-$test->addTestCase(new HTTPTests());
+//require_once('Scaffold_HTTP.php');
+//$test->addTestCase(new HTTPTests());
 
 $test->run(new HtmlReporter());
