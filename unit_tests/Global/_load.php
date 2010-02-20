@@ -1,7 +1,7 @@
 <?php
 
-require_once('simpletest/autorun.php');
-require_once('../libraries/Bootstrap.php');
+require_once(dirname(__FILE__) . '/simpletest/autorun.php');
+require_once(dirname(__FILE__) . '/../libraries/Bootstrap.php');
 
 include '../config.php';
 
