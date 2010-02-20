@@ -202,10 +202,6 @@ class Scaffold extends Scaffold_Utils
 			# Returns an array of headers
 			$headers = Scaffold::headers($output,$lifetime);
 			
-			# We're sending not modified. Nothing should be sent to the browser.
-			if($headers['_status'] == self::NOT_MODIFIED)
-				Scaffold::$output = '';
-			
 			# Benchmark will do the entire run from start to finish
 			Scaffold_Benchmark::stop('system');
 		}
@@ -729,44 +725,51 @@ class Scaffold extends Scaffold_Utils
 	 */
 	public static function render($content,$headers,$level = false)
 	{
-		if ($level AND ini_get('output_handler') !== 'ob_gzhandler' AND (int) ini_get('zlib.output_compression') === 0)
+		# If it's not modified, we shouldn't be sending anything to the browser
+		if($headers['_status'] == self::NOT_MODIFIED)
+			$content = false;
+		
+		if($content !== false)
 		{
-			if ($level < 1 OR $level > 9)
+			if ($level AND ini_get('output_handler') !== 'ob_gzhandler' AND (int) ini_get('zlib.output_compression') === 0)
 			{
-				# Normalize the level to be an integer between 1 and 9. This
-				# step must be done to prevent gzencode from triggering an error
-				$level = max(1, min($level, 9));
+				if ($level < 1 OR $level > 9)
+				{
+					# Normalize the level to be an integer between 1 and 9. This
+					# step must be done to prevent gzencode from triggering an error
+					$level = max(1, min($level, 9));
+				}
+	
+				if (stripos(@$_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE)
+				{
+					$compress = 'gzip';
+				}
+				elseif (stripos(@$_SERVER['HTTP_ACCEPT_ENCODING'], 'deflate') !== FALSE)
+				{
+					$compress = 'deflate';
+				}
 			}
-
-			if (stripos(@$_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE)
+	
+			if (isset($compress) AND $level > 0)
 			{
-				$compress = 'gzip';
+				switch ($compress)
+				{
+					case 'gzip':
+						# Compress output using gzip
+						$content = gzencode($content, $level);
+					break;
+					case 'deflate':
+						# Compress output using zlib (HTTP deflate)
+						$content = gzdeflate($content, $level);
+					break;
+				}
+	
+				# This header must be sent with compressed content to prevent browser caches from breaking
+				$output['headers']['Vary'] = 'Accept-Encoding';
+	
+				# Send the content encoding header
+				$output['headers']['Content-Encoding'] = $compress;
 			}
-			elseif (stripos(@$_SERVER['HTTP_ACCEPT_ENCODING'], 'deflate') !== FALSE)
-			{
-				$compress = 'deflate';
-			}
-		}
-
-		if (isset($compress) AND $level > 0)
-		{
-			switch ($compress)
-			{
-				case 'gzip':
-					# Compress output using gzip
-					$content = gzencode($content, $level);
-				break;
-				case 'deflate':
-					# Compress output using zlib (HTTP deflate)
-					$content = gzdeflate($content, $level);
-				break;
-			}
-
-			# This header must be sent with compressed content to prevent browser caches from breaking
-			$output['headers']['Vary'] = 'Accept-Encoding';
-
-			# Send the content encoding header
-			$output['headers']['Content-Encoding'] = $compress;
 		}
 	
 		# Send the headers

@@ -1,10 +1,8 @@
 <?php
 
-include '_load.php';
-
-class EnvironmentTests extends UnitTestCase
+class Test_Environment extends Scaffold_Test
 {
-	function testDocumentRoot()
+	function test_document_root()
 	{
 		$this->assertTrue(realpath($_SERVER['DOCUMENT_ROOT']));
 	}

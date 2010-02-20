@@ -5,6 +5,8 @@
  * If you plan on using Scaffold anywhere else, you
  * probably want to do what this file is doing.
  */
+ini_set('display_errors', true);
+error_reporting(E_ALL & ~E_STRICT);
 
 # Include the config file
 include 'config.php';

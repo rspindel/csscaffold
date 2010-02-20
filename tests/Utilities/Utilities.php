@@ -1,9 +1,6 @@
 <?php
 
-require_once('simpletest/autorun.php');
-require_once('../libraries/Scaffold/Utils.php');
-
-class UtilityTests extends UnitTestCase
+class UtilityTests extends Scaffold_Test
 {	
 	function testPregQuote()
 	{
