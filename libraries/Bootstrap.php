@@ -8,3 +8,4 @@ require dirname(__FILE__) . '/Scaffold/Scaffold.php';
 require dirname(__FILE__) . '/Scaffold/Benchmark.php';
 require dirname(__FILE__) . '/Scaffold/Cache.php';
 require dirname(__FILE__) . '/Scaffold/Event.php';
+require dirname(__FILE__) . '/Scaffold/Test.php';

@@ -1,16 +1,26 @@
 <?php
 
-require_once(dirname(__FILE__) . '/../_load.php');
-
-class CSSUtilityTests extends UnitTestCase
+class Test_CSS extends Scaffold_Test
 {
-	function testRemoveComments()
-	{	
-		$css = new Scaffold_CSS(dirname(__FILE__) . '/01.css');
+	/**
+	 * Scaffold_CSS instance
+	 *
+	 * @var object
+	 */
+	private $css;
 
-		$this->assertEqual( $css->remove_comments('/* Comment */'), '');
-		$this->assertEqual( $css->remove_comments('/* http://www.google.com */'), '');
-		$this->assertEqual( $css->remove_comments('/* /* */'), '');
-		$this->assertEqual( $css->remove_comments("/* \n\n\r\t */"), '');
+	function setUp()
+	{
+		parent::init(__FILE__);	
+		
+		$this->css = new Scaffold_CSS( $this->find('01.css') );
+	}
+	
+	function test_find_functions()
+	{
+		$found = $this->css->find_functions('test');
+
+		// Make sure it's an array
+		$this->assertTrue( is_array($found) );
 	}
 }

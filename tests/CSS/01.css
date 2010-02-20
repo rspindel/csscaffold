@@ -1,4 +1,9 @@
+@group
+{
+	key:value;
+}
+
 #id
 {
-	
+	width:test(value);
 }
