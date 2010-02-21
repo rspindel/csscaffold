@@ -345,6 +345,11 @@ class Scaffold extends Scaffold_Utils
 		self::hook('initialize');
 	}
 	
+
+	/******************************************************************************************************
+	 * Extension Methods
+	 *****************************************************************************************************/
+	
 	/**
 	 * Loads functions inside an extensions folder.
 	 *
@@ -451,6 +456,11 @@ class Scaffold extends Scaffold_Utils
 			return 0;
 		}
 	}
+	
+	
+	/******************************************************************************************************
+	 * Engine Methods
+	 *****************************************************************************************************/
 	
 	/**
 	 * Parses the single CSS file
@@ -574,7 +584,125 @@ class Scaffold extends Scaffold_Utils
 
 		return (string)Scaffold::$css;
 	}
+	
+	/**
+	 * Allows modules to hook into the processing at any point
+	 *
+	 * @param $method The method to check for in each of the modules
+	 * @return boolean
+	 */
+	public static function hook($method)
+	{
+		foreach(self::$modules as $module_name => $module)
+		{
+			if(method_exists($module,$method))
+			{				
+				call_user_func(array($module_name,$method));
+			}
+		}
+	}
+	
 
+	/******************************************************************************************************
+	 * Display Methods
+	 *****************************************************************************************************/
+	
+	/**
+	 * Renders the CSS
+	 *
+	 * @param $output What to display
+	 * @return void
+	 */
+	public static function render($content,$headers,$level = false)
+	{
+		# If it's not modified, we shouldn't be sending anything to the browser
+		if($headers['_status'] == self::NOT_MODIFIED)
+			$content = false;
+		
+		if($content !== false)
+		{
+			if ($level AND ini_get('output_handler') !== 'ob_gzhandler' AND (int) ini_get('zlib.output_compression') === 0)
+			{
+				if ($level < 1 OR $level > 9)
+				{
+					# Normalize the level to be an integer between 1 and 9. This
+					# step must be done to prevent gzencode from triggering an error
+					$level = max(1, min($level, 9));
+				}
+	
+				if (stripos(@$_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE)
+				{
+					$compress = 'gzip';
+				}
+				elseif (stripos(@$_SERVER['HTTP_ACCEPT_ENCODING'], 'deflate') !== FALSE)
+				{
+					$compress = 'deflate';
+				}
+			}
+	
+			if (isset($compress) AND $level > 0)
+			{
+				switch ($compress)
+				{
+					case 'gzip':
+						# Compress output using gzip
+						$content = gzencode($content, $level);
+					break;
+					case 'deflate':
+						# Compress output using zlib (HTTP deflate)
+						$content = gzdeflate($content, $level);
+					break;
+				}
+	
+				# This header must be sent with compressed content to prevent browser caches from breaking
+				$output['headers']['Vary'] = 'Accept-Encoding';
+	
+				# Send the content encoding header
+				$output['headers']['Content-Encoding'] = $compress;
+			}
+		}
+	
+		# Send the headers
+		Scaffold::send_headers($headers);
+	
+		echo $content; 
+	}
+	
+	/**
+	 * Loads a view file
+	 *
+	 * @param 	string	The name of the view
+	 * @param	boolean	Render the view immediately
+	 * @param	boolean Return the contents of the view
+	 * @return	void	If the view is rendered
+	 * @return	string	The contents of the view
+	 */
+	public static function view( $view, $render = false )
+	{
+		# Find the view file
+		$view = self::find_file($view . '.php', 'views', true);
+		
+		# Display the view
+		if ($render === true)
+		{
+			include $view;
+			return;
+		}
+		
+		# Return the view
+		else
+		{
+			ob_start();
+			echo file_get_contents($view);
+			return ob_get_clean();
+		}
+	}
+
+	
+	/******************************************************************************************************
+	 * Header Methods
+	 *****************************************************************************************************/
+	
 	/**
 	 * Sets the HTTP headers for a particular file
 	 *
@@ -642,19 +770,138 @@ class Scaffold extends Scaffold_Utils
 	}
 	
 	/**
-	 * Allows modules to hook into the processing at any point
+	 * Sends all of the stored headers to the browser
 	 *
-	 * @param $method The method to check for in each of the modules
-	 * @return boolean
+	 * @return void
 	 */
-	public static function hook($method)
+	private static function send_headers($headers)
 	{
-		foreach(self::$modules as $module_name => $module)
+		if(!headers_sent())
 		{
-			if(method_exists($module,$method))
-			{				
-				call_user_func(array($module_name,$method));
+			$headers = array_unique($headers);
+
+			foreach($headers as $name => $value)
+			{
+				if($name != '_status')
+				{
+					header($name . ':' . $value);
+				}
+				else
+				{
+					if($value === self::NOT_MODIFIED)
+					{
+						header('Status: 304 Not Modified', TRUE, self::NOT_MODIFIED);
+					}
+					elseif($value === self::SERVER_ERROR)
+					{
+						header('HTTP/1.1 500 Internal Server Error');
+					}
+				}
 			}
+		}
+	}
+	
+
+	/******************************************************************************************************
+	 * Message Methods
+	 *****************************************************************************************************/
+
+	/**
+	 * Displays an error and halts the parsing.
+	 *	
+	 * @param $message
+	 * @return void
+	 */
+	public static function error($message)
+	{
+		/**
+		 * Log the message before we throw the error
+		 */
+		Scaffold_Log::log($message,0);
+		
+		/**
+		 * Useful variable to let other objects know there was an error with the parsing
+		 */
+		self::$has_error = true;
+		
+		/**
+		 * This will be caught in the parse method
+		 */
+		throw new Exception($message);
+	}
+	
+	/**
+	 * Uses the logging class to log a message
+	 *
+	 * @author your name
+	 * @param $message
+	 * @return void
+	 */
+	public static function log($message,$level)
+	{
+		if ($level <= self::$error_threshold)
+		{
+			self::error($message);
+		}
+		else
+		{
+			Scaffold_Log::log($message,$level);
+		}
+	}
+	
+
+	/******************************************************************************************************
+	 * Path Methods
+	 *****************************************************************************************************/
+
+	/**
+	 * Get all include paths.
+	 *
+	 * @return  array
+	 */
+	public static function include_paths()
+	{
+		return self::$include_paths;
+	}
+	
+	/**
+	 * Adds a path to the include paths list
+	 *
+	 * @param 	$path 	The server path to add
+	 * @return 	void
+	 */
+	public static function add_include_path($path)
+	{
+		if(func_num_args() > 1)
+		{
+			$args = func_get_args();
+
+			foreach($args as $inc)
+				self::add_include_path($inc);
+		}
+	
+		if(is_file($path))
+		{
+			$path = dirname($path);
+		}
+	
+		if(!in_array($path,self::$include_paths))
+		{
+			self::$include_paths[] = Scaffold::path($path);
+		}
+	}
+	
+	/**
+	 * Removes an include path
+	 *
+	 * @param	$path 	The server path to remove
+	 * @return 	void
+	 */
+	public static function remove_include_path($path)
+	{
+		if(in_array($path, self::$include_paths))
+		{
+			unset(self::$include_paths[array_search($path, self::$include_paths)]);
 		}
 	}
 	
@@ -717,222 +964,9 @@ class Scaffold extends Scaffold_Utils
 		return self::$root;
 	}
 	
-	/**
-	 * Renders the CSS
-	 *
-	 * @param $output What to display
-	 * @return void
-	 */
-	public static function render($content,$headers,$level = false)
-	{
-		# If it's not modified, we shouldn't be sending anything to the browser
-		if($headers['_status'] == self::NOT_MODIFIED)
-			$content = false;
-		
-		if($content !== false)
-		{
-			if ($level AND ini_get('output_handler') !== 'ob_gzhandler' AND (int) ini_get('zlib.output_compression') === 0)
-			{
-				if ($level < 1 OR $level > 9)
-				{
-					# Normalize the level to be an integer between 1 and 9. This
-					# step must be done to prevent gzencode from triggering an error
-					$level = max(1, min($level, 9));
-				}
-	
-				if (stripos(@$_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE)
-				{
-					$compress = 'gzip';
-				}
-				elseif (stripos(@$_SERVER['HTTP_ACCEPT_ENCODING'], 'deflate') !== FALSE)
-				{
-					$compress = 'deflate';
-				}
-			}
-	
-			if (isset($compress) AND $level > 0)
-			{
-				switch ($compress)
-				{
-					case 'gzip':
-						# Compress output using gzip
-						$content = gzencode($content, $level);
-					break;
-					case 'deflate':
-						# Compress output using zlib (HTTP deflate)
-						$content = gzdeflate($content, $level);
-					break;
-				}
-	
-				# This header must be sent with compressed content to prevent browser caches from breaking
-				$output['headers']['Vary'] = 'Accept-Encoding';
-	
-				# Send the content encoding header
-				$output['headers']['Content-Encoding'] = $compress;
-			}
-		}
-	
-		# Send the headers
-		Scaffold::send_headers($headers);
-	
-		echo $content; 
-	}
-	
-	/**
-	 * Sends all of the stored headers to the browser
-	 *
-	 * @return void
-	 */
-	private static function send_headers($headers)
-	{
-		if(!headers_sent())
-		{
-			$headers = array_unique($headers);
-
-			foreach($headers as $name => $value)
-			{
-				if($name != '_status')
-				{
-					header($name . ':' . $value);
-				}
-				else
-				{
-					if($value === self::NOT_MODIFIED)
-					{
-						header('Status: 304 Not Modified', TRUE, self::NOT_MODIFIED);
-					}
-					elseif($value === self::SERVER_ERROR)
-					{
-						header('HTTP/1.1 500 Internal Server Error');
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Displays an error and halts the parsing.
-	 *	
-	 * @param $message
-	 * @return void
-	 */
-	public static function error($message)
-	{
-		/**
-		 * Log the message before we throw the error
-		 */
-		Scaffold_Log::log($message,0);
-		
-		/**
-		 * Useful variable to let other objects know there was an error with the parsing
-		 */
-		self::$has_error = true;
-		
-		/**
-		 * This will be caught in the parse method
-		 */
-		throw new Exception($message);
-	}
-	
-	/**
-	 * Uses the logging class to log a message
-	 *
-	 * @author your name
-	 * @param $message
-	 * @return void
-	 */
-	public static function log($message,$level)
-	{
-		if ($level <= self::$error_threshold)
-		{
-			self::error($message);
-		}
-		else
-		{
-			Scaffold_Log::log($message,$level);
-		}
-	}
-
-	/**
-	 * Get all include paths.
-	 *
-	 * @return  array
-	 */
-	public static function include_paths()
-	{
-		return self::$include_paths;
-	}
-	
-	/**
-	 * Adds a path to the include paths list
-	 *
-	 * @param 	$path 	The server path to add
-	 * @return 	void
-	 */
-	public static function add_include_path($path)
-	{
-		if(func_num_args() > 1)
-		{
-			$args = func_get_args();
-
-			foreach($args as $inc)
-				self::add_include_path($inc);
-		}
-	
-		if(is_file($path))
-		{
-			$path = dirname($path);
-		}
-	
-		if(!in_array($path,self::$include_paths))
-		{
-			self::$include_paths[] = Scaffold::path($path);
-		}
-	}
-	
-	/**
-	 * Removes an include path
-	 *
-	 * @param	$path 	The server path to remove
-	 * @return 	void
-	 */
-	public static function remove_include_path($path)
-	{
-		if(in_array($path, self::$include_paths))
-		{
-			unset(self::$include_paths[array_search($path, self::$include_paths)]);
-		}
-	}
-	
-	/**
-	 * Loads a view file
-	 *
-	 * @param 	string	The name of the view
-	 * @param	boolean	Render the view immediately
-	 * @param	boolean Return the contents of the view
-	 * @return	void	If the view is rendered
-	 * @return	string	The contents of the view
-	 */
-	public static function view( $view, $render = false )
-	{
-		# Find the view file
-		$view = self::find_file($view . '.php', 'views', true);
-		
-		# Display the view
-		if ($render === true)
-		{
-			include $view;
-			return;
-		}
-		
-		# Return the view
-		else
-		{
-			ob_start();
-			echo file_get_contents($view);
-			return ob_get_clean();
-		}
-	}
+	/******************************************************************************************************
+	 * File and Directory Methods
+	 *****************************************************************************************************/
 	
 	/**
 	 * Find a resource file in a given directory. Files will be located according
@@ -1079,6 +1113,11 @@ class Scaffold extends Scaffold_Utils
 
 		return $files;
 	}
+
+	
+	/******************************************************************************************************
+	 * Utility Methods
+	 *****************************************************************************************************/
 	
 	/**
 	 * Removes inline comments
