@@ -7,8 +7,13 @@ class HTTPTests extends Scaffold_Test
 		parent::init(__FILE__);
 	}
 
-	function testHeaders()
+	function test_set_header()
 	{
+		Scaffold::set_header('name','value');
+	}
+}
+
+
 //		$files = array('/unit_tests/_files/HTTP/standard.css');
 //		$options = array();
 //		$this->loadConfig();
@@ -24,5 +29,3 @@ class HTTPTests extends Scaffold_Test
 //		
 		// Make sure the content length is set
 //		$this->assertNotEqual( strlen($result['headers']['Content-Length']), 0);
-	}
-}
