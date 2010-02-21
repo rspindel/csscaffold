@@ -1,0 +1,8 @@
+#id
+{
+	width:test(value);
+	width:test2(value);
+	width:test2(value2);
+	width:test3(value,value,value);
+	width:test4(value,value(another),value);
+}

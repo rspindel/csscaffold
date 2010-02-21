@@ -1,0 +1,16 @@
+@identifier
+{
+	key:value;
+}
+
+@identifier name
+{
+	key:value;
+}
+
+@identifier name(param,param)
+{
+	key:value;
+}
+
+@identifier 'value' another value;
