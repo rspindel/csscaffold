@@ -7,9 +7,31 @@ class HTTPTests extends Scaffold_Test
 		parent::init(__FILE__);
 	}
 
-	function test_set_header()
+	function test_nolifetime()
 	{
-		Scaffold::set_header('name','value');
+		$headers = Scaffold::headers($this->find('01.css'),0);
+		$now = time();
+		$this->assertEqual($headers['Cache-Control'],'max-age=0');
+		$this->assertEqual(strtotime($headers['Expires']),$now);
+	}
+	
+	function test_tensecondlifetime()
+	{
+		$headers = Scaffold::headers($this->find('01.css'),10);
+		$now = time();
+		$this->assertEqual($headers['Cache-Control'],'max-age=10');
+		$this->assertEqual(strtotime($headers['Expires']),$now + 10);
+	}
+
+	function test_etag()
+	{
+		file_put_contents($this->find('01.css'), '');
+		$headers = Scaffold::headers($this->find('01.css'),0);
+		
+		file_put_contents($this->find('01.css'), time());
+		$new_headers = Scaffold::headers($this->find('01.css'),0);
+		
+		$this->assertNotEqual($headers['ETag'],$new_headers['ETag']);
 	}
 }
 

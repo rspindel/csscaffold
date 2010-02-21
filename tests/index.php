@@ -3,6 +3,10 @@
 ini_set('display_errors', false);
 error_reporting(E_ALL & ~E_STRICT ^ E_DEPRECATED);
 
+chdir(dirname(__FILE__));
+
+define(BASEURL,'http://local.scaffoldframework.com/');
+
 require_once(dirname(__FILE__) . '/../vendor/simpletest/autorun.php');
 require_once(dirname(__FILE__) . '/../libraries/Bootstrap.php');
 require_once(dirname(__FILE__) . '/../libraries/Scaffold/Test.php');
