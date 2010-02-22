@@ -29,6 +29,13 @@ class Scaffold
 	public static $init = false;
 	
 	/**
+	 * Production mode?
+	 *
+	 * @var boolean
+	 */
+	public static $production = false;
+	
+	/**
 	 * Path to the document root
 	 *
 	 * @var string
@@ -54,13 +61,6 @@ class Scaffold
 	 */
 	private static $error_threshold;
 
-	/**
-	 * The final output
-	 *
-	 * @var Mixed
-	 */
-	public static $output;
-	
 	/**
 	 * Include paths
 	 *
@@ -111,6 +111,41 @@ class Scaffold
 	 * @var mixed
 	 */
 	private static $compression = false;
+	
+	/**
+	 * Logging object
+	 *
+	 * @var object
+	 */
+	public static $log;
+	
+	/**
+	 * Caching object
+	 *
+	 * @var object
+	 */
+	public static $cache;
+	
+	/**
+	 * Is Scaffold handling errors?
+	 *
+	 * @var boolean
+	 */
+	private static $errors = false;
+	
+	/**
+	 * The directory to save processed files to
+	 *
+	 * @var string
+	 */
+	public static $output_path;
+	
+	/**
+	 * The lifetime of a processed file
+	 *
+	 * @var int
+	 */
+	public static $lifetime;
 
 	/**
 	 * Sets the initial variables, checks if we need to process the css
@@ -122,21 +157,46 @@ class Scaffold
 	{
 		if(Scaffold::$init === true)
 			return;
-
+		
+		Scaffold::$init = true;
+			
 		/**
-		 * Choose whether to show or hide errors
+		 * The processing mode
 		 */
-		if($config['display_errors'] === true)
-		{	
+		Scaffold::$production = $config['in_production'];
+		
+		/**
+		 * Load the libraries. Do it manually if you don't like this way.
+		 */
+		if($config['auto_load'])
+		{		
+			spl_autoload_register(array('Scaffold','auto_load'));
+		}
+		
+		/**
+		 * Let Scaffold catch exceptions and errors
+		 */
+		if($config['errors'] AND Scaffold::$production === false)
+		{
 			ini_set('display_errors', true);
 			error_reporting(E_ALL | E_STRICT);
-		}
-		else
-		{
-			ini_set('display_errors', false);
-			error_reporting(0);
-		}
 
+			# Exceptions
+			set_exception_handler(array('Scaffold','exception_handler'));
+			
+			# Errors
+			set_error_handler(array('Scaffold','error_handler'));
+			
+			# Scaffold is handling errors
+			Scaffold::$errors = true;
+		}
+		
+		/**
+		 * Scaffold will run this just before it closes. It also
+		 * manages fatal errors if you've set Scaffold to handle errors
+		 */
+		register_shutdown_function(array('Scaffold','shutdown_handler'));
+		
 		/**
 		 * Set timezone, just in case it isn't set. PHP 5.2+ 
 		 * throws a tantrum if you try and use time() without
@@ -179,26 +239,6 @@ class Scaffold
 		Scaffold::add_include_path(SCAFFOLD_SYSPATH,Scaffold::root());
 		
 		/**
-		 * If we're just in development mode, we'll want to always recache
-		 * the file. Setting the cache_lifetime to 0 will force Scaffold
-		 * to make sure it reparsed the file each time.
-		 */
-		if(SCAFFOLD_PRODUCTION === false)
-		{
-			$config['cache_lifetime'] = 0;
-		}
-
-		/**
-		 * Tell the cache where to save files and for how long to keep them for
-		 */
-		Scaffold_Cache::setup(Scaffold::path($config['cache']),$config['cache_lifetime']);
-		
-		/**
-		 * The level at which logged messages will halt processing and be thrown as errors
-		 */
-		self::$error_threshold = $config['error_threshold'];
-
-		/**
 		 * Get the singleton instance of the log
 		 */
 		Scaffold::$log = Scaffold_Log::instance();
@@ -206,7 +246,7 @@ class Scaffold
 		/**
 		 * Tell the log where to save it's files.
 		 */
-		if($config['enable_log'] === true)
+		if($config['log'] === true)
 		{
 			if(is_writable(SCAFFOLD_SYSPATH.'logs'))
 			{
@@ -217,15 +257,55 @@ class Scaffold
 				Scaffold::error("Logs folder is not writable");
 			}
 		}
+		
+		/**
+		 * If we're just in development mode, we'll want to always recache
+		 * the file. Setting the cache_lifetime to 0 will force Scaffold
+		 * to make sure it reparsed the file each time.
+		 */
+		if(Scaffold::$production === false)
+		{
+			self::$lifetime = 0;
+		}
+		else
+		{
+			self::$lifetime = $config['cache_lifetime'];
+		}
+
+		/**
+		 * Tell the cache where to save files and for how long to keep them for
+		 */
+		$cache = Scaffold::path($config['cache']);
+
+		if (!is_dir($cache) OR !is_writable($cache))
+		{
+			Scaffold::error("Cache path does not exist or is not writable. [".Scaffold::url($cache)."]");
+		}
+
+		Scaffold::$cache = new Scaffold_Cache($cache,$config['cache_lifetime']);
+		
+		/**
+		 * The output directory. This where we'll save processed CSS files.
+		 */
+		if($config['output_path'] == '')
+		{
+			self::$output_path = $cache;
+		}
+		else
+		{
+			self::$output_path = Scaffold::path($config['output_path']);
+		}
+		
+		/**
+		 * The level at which logged messages will halt processing and be thrown as errors
+		 */
+		self::$error_threshold = $config['error_threshold'];
 
 		# Load the modules
 		Scaffold::modules(SCAFFOLD_SYSPATH);
 
 		# Load the extensions
 		Scaffold::extensions(SCAFFOLD_SYSPATH);
-		
-		# Scaffold is now ready to be used
-		Scaffold::$init = true;
 	}
 	
 	/**
@@ -264,9 +344,9 @@ class Scaffold
 	public static function auto_load($class)
 	{
 		// Transform the class name into a path
-		$file = str_replace('_', '/', strtolower($class));
+		$file = str_replace('_', '/', strtolower($class)) . '.php';
 
-		if ($path = Scaffold::find_file('libraries', $file))
+		if ($path = Scaffold::find_file($file,'libraries'))
 		{
 			// Load the class file
 			require $path;
@@ -371,7 +451,7 @@ class Scaffold
 	 * @param $b
 	 * @return void
 	 */
-	private function sort_functions($a,$b)
+	private static function sort_functions($a,$b)
 	{
 		$phase_a = self::$extensions['functions'][$a]['phase'];
 		$phase_b = self::$extensions['functions'][$b]['phase'];
@@ -408,15 +488,15 @@ class Scaffold
 		{
 			$name = basename($module);
 			
-			if( $controller = Scaffold::find_file($name.'.php', false, true) )
+			self::add_include_path($module);
+			
+			if( $controller = Scaffold::find_file($name.'.php') )
 			{
 				require_once($controller);
 				self::$modules[$name] = new $name;
 				
 				$module_config = SCAFFOLD_SYSPATH.'config/' . $name . '.php';
 				$default_config = $module . '/config.php';
-				
-				unset($config);
 				
 				if(file_exists($module_config))
 				{
@@ -427,11 +507,14 @@ class Scaffold
 					include $default_config;				
 				}
 				
-				self::$modules[$name]->config = $config; 
-	
-				self::add_include_path($module);
+				if(isset($config))
+				{
+					self::$modules[$name]->config = $config; 
+					unset($config);
+				}
 				
-				self::$modules[$name]->init();
+				if(method_exists(self::$modules[$name], 'init'))
+					self::$modules[$name]->init();
 			}
 			
 			# Load custom functions
@@ -669,7 +752,7 @@ class Scaffold
 		/**
 		 * Log the message before we throw the error
 		 */
-		Scaffold_Log::log($message,0);
+		Scaffold::$log->add($message,0);
 		
 		/**
 		 * Useful variable to let other objects know there was an error with the parsing
@@ -677,51 +760,36 @@ class Scaffold
 		self::$has_error = true;
 		
 		/**
+		 * Server error status
+		 */
+		if(!headers_sent())
+			header('Content-Type: text/html;', TRUE, 500);
+
+		/**
 		 * This will be caught in the parse method
 		 */
 		throw new Exception($message);
 	}
 	
 	/**
-	 * Uses the logging class to log a message
-	 *
-	 * @author your name
-	 * @param $message
-	 * @return void
-	 */
-	public static function log($message,$level)
-	{
-		if ($level <= self::$error_threshold)
-		{
-			self::error($message);
-		}
-		else
-		{
-			Scaffold_Log::log($message,$level);
-		}
-	}
-	
-	/**
 	 * PHP error handler, converts all errors into ErrorExceptions. This handler
 	 * respects error_reporting settings.
 	 *
-	 * @throws  ErrorException
 	 * @author 	Kohana
+	 * @throws  ErrorException
 	 * @return  TRUE
 	 */
 	public static function error_handler($code, $error, $file = NULL, $line = NULL)
 	{
 		if (error_reporting() & $code)
 		{
-			// This error is not suppressed by current error reporting settings
-			// Convert the error into an ErrorException
+			# Convert the error into an ErrorException
 			throw new ErrorException($error, $code, 0, $file, $line);
 		}
 
-		// Do not execute the PHP error handler
+		# Do not execute the PHP error handler
 		return TRUE;
 	}
-	
 
 	/**
 	 * Inline exception handler, displays the error message, source of the
@@ -735,89 +803,74 @@ class Scaffold
 	{
 		try
 		{
-			// Get the exception information
+			# Exception text information
 			$type    = get_class($e);
 			$code    = $e->getCode();
 			$message = $e->getMessage();
-			$file    = $e->getFile();
+			$file    = str_replace(SCAFFOLD_SYSPATH,'',$e->getFile());
 			$line    = $e->getLine();
-
-			// Create a text version of the exception
-			$error = Kohana::exception_text($e);
-
-			if (is_object(Kohana::$log))
+			
+			if($e instanceof ErrorException)
 			{
-				// Add this exception to the log
-				Kohana::$log->add(Kohana::ERROR, $error);
-			}
-
-			if (Kohana::$is_cli)
-			{
-				// Just display the text of the exception
-				echo "\n{$error}\n";
-
-				return TRUE;
-			}
-
-			// Get the exception backtrace
-			$trace = $e->getTrace();
-
-			if ($e instanceof ErrorException)
-			{
-				if (isset(Kohana::$php_errors[$code]))
+				$php_errors = array(
+					E_ERROR              => 'Fatal Error',
+					E_USER_ERROR         => 'User Error',
+					E_PARSE              => 'Parse Error',
+					E_WARNING            => 'Warning',
+					E_USER_WARNING       => 'User Warning',
+					E_STRICT             => 'Strict',
+					E_NOTICE             => 'Notice',
+					E_RECOVERABLE_ERROR  => 'Recoverable Error',
+				);
+				
+				if(isset($php_errors[$code]))
 				{
 					// Use the human-readable error name
-					$code = Kohana::$php_errors[$code];
-				}
-
-				if (version_compare(PHP_VERSION, '5.3', '<'))
-				{
-					// Workaround for a bug in ErrorException::getTrace() that exists in
-					// all PHP 5.2 versions. @see http://bugs.php.net/bug.php?id=45895
-					for ($i = count($trace) - 1; $i > 0; --$i)
-					{
-						if (isset($trace[$i - 1]['args']))
-						{
-							// Re-position the args
-							$trace[$i]['args'] = $trace[$i - 1]['args'];
-
-							// Remove the args
-							unset($trace[$i - 1]['args']);
-						}
-					}
+					$code = $php_errors[$code];
 				}
 			}
 
-			if ( ! headers_sent())
-			{
-				// Make sure the proper content type is sent with a 500 status
-				header('Content-Type: text/html; charset='.Kohana::$charset, TRUE, 500);
-			}
-
-			// Start an output buffer
+			# Error view html
 			ob_start();
-
-			// Include the exception HTML
-			include Kohana::find_file('views', 'kohana/error');
-
-			// Display the contents of the output buffer
+			include Scaffold::find_file('scaffold/error.php', 'views');
 			echo ob_get_clean();
 
-			return TRUE;
+			return true;
 		}
 		catch (Exception $e)
 		{
-			// Clean the output buffer if one exists
+			# Clean the output buffer if one exists
 			ob_get_level() and ob_clean();
 
-			// Display the exception text
-			echo Kohana::exception_text($e), "\n";
+			# Display the exception text
+			echo $e->getMessage();
 
-			// Exit with an error status
 			exit(1);
 		}
-	}	
+	}
+	
+	/**
+	 * Catches errors that are not caught by the error handler, such as E_PARSE.
+	 *
+	 * @uses    Scaffold::exception_handler
+	 * @return  void
+	 */
+	public static function shutdown_handler()
+	{
+		if(!Scaffold::$init)
+			return;
+		
+		if ($error = error_get_last() AND (error_reporting() & $error['type']))
+		{
+			# If an output buffer exists, clear it
+			ob_get_level() and ob_clean();
 
+			# Fake an exception for nice debugging
+			Scaffold::exception_handler(new ErrorException($error['message'], $error['type'], 0, $error['file'], $error['line']));
+
+			exit(1);
+		}
+	}
 
 	/******************************************************************************************************
 	 * Path Methods
@@ -882,7 +935,7 @@ class Scaffold
 	 */
 	public static function url($path) 
 	{
-		return self::reduce_double_slashes(str_replace( Scaffold::root(), DIRECTORY_SEPARATOR, realpath($path) ));
+		return str_replace( Scaffold::root(), DIRECTORY_SEPARATOR, realpath($path) );
 	}
 	
 	/**

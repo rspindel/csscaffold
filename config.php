@@ -19,7 +19,7 @@
  * Also, in production mode, errors are disabled and any modules which change
  * the output will not be available - like the Typography module. 
  */
-define('SCAFFOLD_PRODUCTION',false);
+$config['in_production'] = false;
 
 /**
  * Document Root
@@ -55,8 +55,16 @@ $config['system'] = './';
  */
 $config['cache'] = './cache/';
 
-$config['images'] = 'images';
-$config['assets'] = 'assets';
+/**
+ * Output Path
+ *
+ * This is the directory where the processed files will be output. This shouldn't
+ * be the same directory as the original files are stored, or you could run into 
+ * some problems.
+ *
+ * This is optional, leaving this blank will store them in the cache. 
+ */
+$config['output_path'] = '';
 
 /**
  * Cache Lifetime
@@ -78,12 +86,20 @@ $config['assets'] = 'assets';
 $config['cache_lifetime'] = 3600; // 3600 will check if it needs to recache every hour
 
 /**
- * Enable Logging
+ * Errors
+ * 
+ * Boolean value for showing or hiding error messages. If true, Scaffold will display
+ * error messages in the browser. In production mode, the errors are not shown.
+ */
+$config['errors'] = true;
+
+/**
+ * Message Logging
  *
  * If you enable logging, errors, warnings and messages will be saved to the logs directory
  * inside the system folder.
  */
-$config['enable_log'] = true;
+$config['log'] = true;
 
 /**
  * Error Threshold
@@ -119,6 +135,10 @@ $config['gzip_compression'] = false;
 $config['timezone'] = 'GMT';
 
 /**
- * Boolean value for showing or hiding error messages.
+ * Auto Loading
+ *
+ * Scaffold can automatically load it's classes, so you only need to include the main
+ * scaffold.php file rather than all of the classes. If you don't want Scaffold to 
+ * register an auto_load function, make this false.
  */
-$config['display_errors'] = true;
+$config['auto_load'] = true;

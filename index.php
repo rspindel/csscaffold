@@ -19,18 +19,7 @@ if(isset($_GET['f']))
 	/**
 	 * The Scaffold core class
 	 */
-	include './libraries/Scaffold/Scaffold.php';
-	
-	/**
-	 * Load the libraries. Do it manually if you don't like this way.
-	 */
-	spl_autoload_register(array('Scaffold','auto_load'),true);
-	
-	/**
-	 * Let Scaffold catch exceptions and errors
-	 */
-	set_exception_handler(array('Scaffold','exception_handler'));
-	set_error_handler(array('Scaffold','error_handler'));
+	include './libraries/scaffold/scaffold.php';
 
 	/**
 	 * Starts Scaffold and sets it's options. 
@@ -41,7 +30,7 @@ if(isset($_GET['f']))
 	 * Parse a single file and get the result
 	 */
 	$scaffold = new Scaffold_Engine();
-	$result = $scaffold->parse_file($_GET['f'],Scaffold::cache());
+	$result = $scaffold->parse_file($_GET['f']);
 
 	/**
 	 * Get the headers for this file.

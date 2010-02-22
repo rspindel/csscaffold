@@ -40,12 +40,12 @@ class Scaffold_Engine
 		/** 
 		 * When the output file expirex
 		 */
-		$expires = (SCAFFOLD_PRODUCTION) ? 0 : Scaffold::$lifetime + filemtime($output);
+		$expires = (Scaffold::$production) ? 0 : Scaffold::$lifetime + filemtime($output);
 		
 		/**
 		 * When the output file was last modified
 		 */
-		$modified = (SCAFFOLD_PRODUCTION) ? filemtime($output) : 0;
+		$modified = (Scaffold::$production) ? filemtime($output) : 0;
 		
 		/**
 		 * In development mode, it will always reparse the file.
@@ -83,31 +83,6 @@ class Scaffold_Engine
 			chmod($output, 0777);
 			touch($output, time());
 		}
-		
-		/**
-		 * If any errors were encountered
-		 */
-		catch( Exception $e )
-		{
-			/** 
-			 * The message returned by the error 
-			 */
-			$message = $e->getMessage();
-			
-			/**
-			 * Add the error header
-			 */
-			$headers['_status'] = self::SERVER_ERROR;
-			
-			/** 
-			 * Load in the error view
-			 */
-			if(SCAFFOLD_PRODUCTION === false && Scaffold::$config['display_errors'] === true)
-			{
-				header('HTTP/1.1 500 Internal Server Error');
-				require Scaffold::find_file('scaffold_error.php','views');
-			}
-		}
 
 		return file_get_contents($output);
 	}
@@ -121,16 +96,7 @@ class Scaffold_Engine
 	 */
 	public function parse_string($css)
 	{
-		try
-		{
-			$css = $this->process( new Scaffold_CSS($css) );
-		}
-		catch( Exception $e )
-		{
-			echo $e->getMessage();
-		}
-		
-		return $css;
+		return $this->process( new Scaffold_CSS($css) );
 	}
 
 	/**
@@ -140,8 +106,15 @@ class Scaffold_Engine
 	 * @param $base		The base path to use for paths. Usually the directory of the CSS file
 	 * @return $css 	string
 	 */
-	public function process( Scaffold_CSS $css, string $base )
+	public function process( Scaffold_CSS $css, $base = false )
 	{
+		/**
+		 * The base directory to use for any directory handling
+		 * in the css.
+		 */
+		if($base !== false)
+			$css->directory($base);
+
 		/**
 		 * Import Process Hook
 		 * This hook is for doing any type of importing/including in the CSS
@@ -242,7 +215,7 @@ class Scaffold_Engine
 		 * Hook that is only run in development mode. It's used for creating extra
 		 * assets or changing what is displayed to the browser.
 		 */
-		if(SCAFFOLD_PRODUCTION === false) Scaffold::hook('output',$css);
+		if(Scaffold::$production === false) Scaffold::hook('output',$css);
 
 		return $css->string;
 	}
