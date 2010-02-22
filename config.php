@@ -103,7 +103,7 @@ $config['enable_log'] = true;
 $config['error_threshold'] = 1;
 
 /**
- * Use PHP compression
+ * PHP gzip compression
  *
  * If you don't want to use the .htaccess to gzip your files, you can have Scaffold
  * do it for you before it outputs the CSS to the browser. Not that this takes longer
@@ -112,3 +112,13 @@ $config['error_threshold'] = 1;
  * Set this from 1-9, with 9 being the highest compression, and false being no compression.
  */
 $config['gzip_compression'] = false;
+
+/**
+ * Set your local timezone. Not entirely important unless you want accurate time detection
+ */
+$config['timezone'] = 'GMT';
+
+/**
+ * Boolean value for showing or hiding error messages.
+ */
+$config['display_errors'] = true;

@@ -5,50 +5,58 @@
  * If you plan on using Scaffold anywhere else, you
  * probably want to do what this file is doing.
  */
+
 ini_set('display_errors', true);
-error_reporting(E_ALL & ~E_STRICT);
+error_reporting(E_ALL | E_STRICT);
 
-# Include the config file
-include 'config.php';
-
-# Load the libraries. Do it manually if you don't like this way.
-include 'libraries/Bootstrap.php';
-
-/**
- * Choose whether to show or hide errors
- */
-if(SCAFFOLD_PRODUCTION === false)
-{	
-	ini_set('display_errors', true);
-	error_reporting(E_ALL & ~E_STRICT);
-}
-else
-{
-	ini_set('display_errors', false);
-	error_reporting(0);
-}
-
-/**
- * Set timezone, just in case it isn't set. PHP 5.2+ 
- * throws a tantrum if you try and use time() without
- * this being set.
- */
-if (function_exists('date_default_timezone_set'))
-{
-	date_default_timezone_set('GMT');
-}
-
-# And we're off!
 if(isset($_GET['f']))
-{	
-	# Parse any array of files all at once.
-	$result = Scaffold::parse($_GET['f'],$config);
+{
+	/**
+	 * Scaffold configuration
+	 */
+	include './config.php';
+	
+	/**
+	 * The Scaffold core class
+	 */
+	include './libraries/Scaffold/Scaffold.php';
+	
+	/**
+	 * Load the libraries. Do it manually if you don't like this way.
+	 */
+	spl_autoload_register(array('Scaffold','auto_load'),true);
+	
+	/**
+	 * Let Scaffold catch exceptions and errors
+	 */
+	set_exception_handler(array('Scaffold','exception_handler'));
+	set_error_handler(array('Scaffold','error_handler'));
+
+	/**
+	 * Starts Scaffold and sets it's options. 
+	 */
+	Scaffold::init($config);
+
+	/**
+	 * Parse a single file and get the result
+	 */
+	$scaffold = new Scaffold_Engine();
+	$result = $scaffold->parse_file($_GET['f'],Scaffold::cache());
+
+	/**
+	 * Get the headers for this file.
+	 */
+	$headers = Scaffold_HTTP::headers($_GET['f'], Scaffold::$lifetime);
 
 	/**
 	 * If the user wants us to render the CSS to the browser, we run this event.
 	 * This will send the headers and output the processed CSS.
 	 */
-	Scaffold::render($result['content'],$result['headers'],$config['gzip_compression']);
+	Scaffold::render($result,$headers);
+}
+else
+{
+	exit('No file or string requested.');
 }
 
 /**
@@ -59,7 +67,7 @@ if(isset($_GET['f']))
  */
 function stop($var = '') 
 {
-	if( $var == '' ) $var = 'Hammer time! Line ' . __LINE__;
+	if( $var == '' ) $var = 'Hammer time!';
 	header('Content-Type: text/plain');
 	print_r($var);
 	exit;
