@@ -1,40 +1,56 @@
 <?php
 
 /**
- * Scaffold_Log
- *
- * Logs messages to files and handles errors
- * 
- * @author your name
+ * Handles message logging and saving
+ * @package Scaffold
  */
-final class Scaffold_Log
+
+class Scaffold_Log
 {
 	/**
-	 * Logs
+	 * Singleton instance
+	 *
+	 * @var object
+	 */
+	private static $instance;
+
+	/**
+	 * Log messages
 	 *
 	 * @var array
 	 */
-	public static $log = array();
+	public $messages = array();
 	
 	/**
 	 * The log directory
 	 *
 	 * @var string
 	 */
-	public static $log_directory;
-
+	public $directory;
+	
 	/**
-	 * Log Levels
+	 * Get in the singleton instance of the log
 	 *
-	 * @var array
+	 * @author your name
+	 * @param $param
+	 * @return Scaffold_Log
 	 */
-	private static $log_levels = array
-	(
-		'Error',
-		'Warning',
-		'Info',
-		'Debug',
-	);
+	public static function instance($save = true)
+	{
+		if(self::$instance === null)
+		{
+			# Create the instance
+			self::$instance = new self;
+			
+			# Save the log on exit
+			if($save === true)
+			{
+				register_shutdown_function(array(self::$instance,'save'));
+			}
+		}
+		
+		return self::$instance;
+	}
 
 	/**
 	 * Logs a message
@@ -43,9 +59,19 @@ final class Scaffold_Log
 	 * @param $level The severity of the log message
 	 * @return void
 	 */
-	public static function log($message,$level = 3)
+	public function add($message,$level = 3)
 	{
-		self::$log[$level][date('Y-m-d H:i:s P')] = $message;
+		if($this->directory === null)
+			return;
+		
+		$this->messages[] = array
+		(
+			'type' => $level,
+			'time' => date('Y-m-d H:i:s P'),
+			'body' => $message
+		);
+		
+		return $this;
 	}
 
 	/**
@@ -53,14 +79,14 @@ final class Scaffold_Log
 	 *
 	 * @return  void
 	 */
-	public static function save()
+	public function save()
 	{
-		if (empty(self::$log))
-			return false;
+		if(empty($this->messages) OR $this->directory === null)
+			return $this;
+	
+		$filename = $this->directory.date('Y-m-d').'.log.php';
 
-		$filename = self::log_directory().date('Y-m-d').'.log.php';
-
-		if (!is_file($filename))
+		if(is_file($filename))
 		{
 			touch($filename);
 			chmod($filename, 0644);
@@ -68,17 +94,15 @@ final class Scaffold_Log
 
 		// Messages to write
 		$messages = array();
-		$log = self::$log;
 
-		foreach($log as $type => $value)
+		foreach($this->messages as $message)
 		{
-			foreach($value as $date => $message)
-			{
-				$messages[] = $date.' --- '.self::$log_levels[$type].': '.$message;
-			}
+			$messages[] = $message['time'] . ' --- ' . $message['type'] . ' : ' . $message['body'];
 		}
+		
+		file_put_contents($filename, implode(PHP_EOL, $messages).PHP_EOL, FILE_APPEND);
 
-		return file_put_contents($filename, implode(PHP_EOL, $messages).PHP_EOL, FILE_APPEND);
+		return $this;
 	}
 
 	/**
@@ -87,24 +111,29 @@ final class Scaffold_Log
 	 * @param   string  new log directory
 	 * @return  string
 	 */
-	public static function log_directory($dir = NULL)
+	public function directory($dir = NULL)
 	{
-		if (!empty($dir))
+		if($dir !== null)
 		{
-			// Get the directory path
-			$dir = Scaffold::path($dir);
-
 			if (is_dir($dir) AND is_writable($dir))
 			{
 				// Change the log directory
-				self::$log_directory = $dir;
+				$this->directory = $dir . DIRECTORY_SEPARATOR;
 			}
+		}
 
-		}
-		
-		if(isset(self::$log_directory))
-		{
-			return self::$log_directory;
-		}
+		return $this->directory;
+	}
+	
+	/**
+	 * Returns all the currently stored messages
+	 *
+	 * @author your name
+	 * @param $param
+	 * @return array
+	 */
+	public function messages()
+	{
+		return $this->messages;
 	}
 }

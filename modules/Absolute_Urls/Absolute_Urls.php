@@ -7,8 +7,8 @@
  * 
  * @author Anthony Short
  */
-class Absolute_Urls
-{
+class Absolute_Urls extends Scaffold_Module
+{	
 	/**
 	 * Takes a CSS string, rewrites all URL's using Scaffold's built-in find_file method
 	 *
@@ -16,10 +16,10 @@ class Absolute_Urls
 	 * @param $css
 	 * @return $css string
 	 */
-	public static function formatting_process()
+	public function format($css)
 	{	
 		# The absolute url to the directory of the current CSS file
-		$dir = Scaffold::url(Scaffold::$css->path);
+		$dir = Scaffold::url($css->path);
 
 		# @imports - Thanks to the guys from Minify for the regex :)
 		if(
@@ -34,7 +34,7 @@ class Absolute_Urls
 			        ([a-zA-Z,\\s]*)?     # 2 = media list
 			        ;                    # end token
 			    /x'
-			    ,Scaffold::$css
+			    ,$css
 			    ,$found
 			)
 		)
@@ -42,41 +42,43 @@ class Absolute_Urls
 			foreach($found[1] as $key => $value)
 			{			
 				# Should we skip it
-				if(self::skip($value))
+				if($this->skip($value))
 					continue;
 				
 				$media = ($found[2][$key] == "") ? '' : ' ' . preg_replace('/\s+/', '', $found[2][$key]);
 				
 				# Absolute path				
-				$absolute = self::up_directory($dir, substr_count($value, '..'.DIRECTORY_SEPARATOR , 0)) . str_replace('..'.DIRECTORY_SEPARATOR,'',$value);
+				$absolute = $this->up_directory($dir, substr_count($value, '..'.DIRECTORY_SEPARATOR , 0)) . str_replace('..'.DIRECTORY_SEPARATOR,'',$value);
 					
 				# Rewrite it
-				Scaffold::$css->string = str_replace($found[0][$key], '@import \''.$absolute.'\'' . $media . ';', Scaffold::$css);
+				$css->string = str_replace($found[0][$key], '@import \''.$absolute.'\'' . $media . ';', Scaffold::$css);
 			}
 		}
 		
 		# Convert all url()'s to absolute paths if required
-		if( preg_match_all('/url\\(\\s*([^\\)\\s]+)\\s*\\)/', Scaffold::$css, $found) )
+		if( preg_match_all('/url\\(\\s*([^\\)\\s]+)\\s*\\)/', $css, $found) )
 		{
 			foreach($found[1] as $key => $value)
 			{
 				$url = Scaffold_Utils::unquote($value);
 	
 				# Absolute Path
-				if(self::skip($url))
+				if($this->skip($url))
 					continue;
 				
 				# Absolute path				
-				$absolute = self::up_directory($dir, substr_count($url, '..'.DIRECTORY_SEPARATOR, 0)) . str_replace('..'.DIRECTORY_SEPARATOR,'',$url);
+				$absolute = $this->up_directory($dir, substr_count($url, '..'.DIRECTORY_SEPARATOR, 0)) . str_replace('..'.DIRECTORY_SEPARATOR,'',$url);
 				
 				# If the file doesn't exist
 				if(!Scaffold::find_file($absolute))
-					Scaffold::log("Missing image - {$absolute}", 1);
+					Scaffold::$log->add("Missing image - {$absolute}", 1);
 					
 				# Rewrite it
-				Scaffold::$css->string = str_replace($found[0][$key], 'url('.$absolute.')', Scaffold::$css);
+				$css->string = str_replace($found[0][$key], 'url('.$absolute.')', $css);
 			}
 		}
+		
+		return $css;
 	}
 	
 	/**

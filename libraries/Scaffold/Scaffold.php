@@ -17,13 +17,23 @@
  * @link https://github.com/anthonyshort/csscaffold/master
  */
 
-class Scaffold extends Scaffold_Utils
+class Scaffold
 {
 	const VERSION = '2.0.8';
 	
-	# Server status codes
-	const NOT_MODIFIED = 304;
-	const SERVER_ERROR = 500;
+	/**
+	 * If Scaffold has been initialized
+	 *
+	 * @var boolean
+	 */
+	public static $init = false;
+	
+	/**
+	 * Production mode?
+	 *
+	 * @var boolean
+	 */
+	public static $production = false;
 	
 	/**
 	 * Path to the document root
@@ -41,16 +51,6 @@ class Scaffold extends Scaffold_Utils
 	 * @var array
 	 */
 	public static $config;
-
-	/**
-	 * CSS object for each processing phase. As Scaffold loops
-	 * through the files, it creates an new CSS object in this member 
-	 * variable. It is through this variable that modules can access
-	 * the current CSS string being processed
-	 *
-	 * @var object
-	 */
-	public static $css;
 	
 	/**
 	 * The level of logged message to be thrown as an error. Setting this
@@ -61,13 +61,6 @@ class Scaffold extends Scaffold_Utils
 	 */
 	private static $error_threshold;
 
-	/**
-	 * The final, combined output of the CSS.
-	 *
-	 * @var Mixed
-	 */
-	public static $output = null;
-	
 	/**
 	 * Include paths
 	 *
@@ -86,7 +79,7 @@ class Scaffold extends Scaffold_Utils
 	 *
 	 * @var array
 	 */
-	private static $find_file_paths;
+	private static $find_file_paths = array();
 	
 	/**
 	 * List of included modules. They are stored with the module name
@@ -102,7 +95,7 @@ class Scaffold extends Scaffold_Utils
 	 *
 	 * @var array
 	 */
-	public static $extensions;
+	public static $extensions = array();
 	
 	/**
 	 * If Scaffold encounted an error. You can check this variable to
@@ -113,136 +106,46 @@ class Scaffold extends Scaffold_Utils
 	public static $has_error = false;
 	
 	/**
-	 * Parse the CSS. This takes an array of files, options and configs
-	 * and parses the CSS, outputing the processed CSS string.
+	 * Level of PHP compression. By default, this is false.
 	 *
-	 * @param string Path to the file to parse
-	 * @param array Configuration options
-	 * @param string Options
-	 * @param boolean Return the CSS rather than displaying it
-	 * @return string The processed css file as a string
+	 * @var mixed
 	 */
-	public static function parse($file,$config = false)
-	{
-		# Benchmark will do the entire run from start to finish
-		Scaffold_Benchmark::start('system');
-
-		try
-		{
-			# Make sure this file is allowed
-			if(substr($file, 0, 4) == "http" OR substr($file, -4, 4) != ".css")
-			{
-				Scaffold::error("Scaffold cannot the requested file - $file");
-			}
-
-			# Setup the cache and other variables/constants
-			if($config !== false)
-				Scaffold::setup($config);
-			
-			# Find the file on the server
-			$file = Scaffold::find_file($file, false, true);
-			
-			# The outputted file
-			$output = Scaffold_Cache::path() . basename($file);
-
-			# Before anything has happened, but the setup is done
-			Scaffold::hook('post_setup');
-			
-			# Check if we should use the combined cache right now and skip unneeded processing
-			if(SCAFFOLD_PRODUCTION === true AND Scaffold_Cache::exists($output) AND Scaffold_Cache::is_fresh($output))
-			{
-				$output = Scaffold_Cache::open($output);
-			}
-			
-			# Nope, we need to reparse the file.
-			else
-			{
-				# The time to process a single file
-				Scaffold_Benchmark::start('system.file.' . basename($file));
-				
-				# While not in production, we want to to always recache, so we'll fake the time
-				$modified = (SCAFFOLD_PRODUCTION) ? Scaffold_Cache::modified($output) : 0;
+	private static $compression = false;
 	
-				# If the CSS file has been changed, or the cached version doesn't exist			
-				if(!Scaffold_Cache::exists($output) OR $modified < filemtime($file))
-				{
-					# This will return the parsed CSS file
-					$css = Scaffold::process($file);
-					
-					# Write it
-					file_put_contents($output, $css);
-					
-					# Set its parmissions
-					chmod($output, 0777);
-					touch($output, time());
-				}
-				else
-				{
-					$css = file_get_contents($output);
-				}
+	/**
+	 * Logging object
+	 *
+	 * @var object
+	 */
+	public static $log;
 	
-				Scaffold::$output = $css;
-			
-				/**
-				 * Hook to modify what is sent to the browser
-				 */
-				if(SCAFFOLD_PRODUCTION === false) Scaffold::hook('display');
-				
-				# The time it's taken to process this file
-				Scaffold_Benchmark::stop('system.file.' . basename($file));
-			}
-
-			/**
-			 * Set the HTTP headers for the request. Scaffold will set
-			 * all the headers required to score an A grade on YSlow. This
-			 * means your CSS will be sent as quickly as possible to the browser.
-			 */
-			$lifetime = (SCAFFOLD_PRODUCTION === true) ? $config['cache_lifetime'] : 0;
-			
-			# Returns an array of headers
-			$headers = Scaffold::headers($output,$lifetime);
-			
-			# Benchmark will do the entire run from start to finish
-			Scaffold_Benchmark::stop('system');
-		}
-		
-		/**
-		 * If any errors were encountered
-		 */
-		catch( Exception $e )
-		{
-			/** 
-			 * The message returned by the error 
-			 */
-			$message = $e->getMessage();
-			
-			/**
-			 * Add the error header
-			 */
-			$headers['_status'] = self::SERVER_ERROR;
-			
-			/** 
-			 * Load in the error view
-			 */
-			if(SCAFFOLD_PRODUCTION === false && $display === true)
-			{
-				Scaffold::send_headers();
-				require Scaffold::find_file('scaffold_error.php','views');
-			}
-		}
-
-		# Save the log to file
-		if($config['enable_log'])
-			Scaffold_Log::save();
-		
-		return self::$output = array
-		(
-			'status'  => self::$has_error,
-		    'content' => self::$output,
-		    'headers' => $headers,
-		    'log'	  => Scaffold_Log::$log,
-		);
-	}
+	/**
+	 * Caching object
+	 *
+	 * @var object
+	 */
+	public static $cache;
+	
+	/**
+	 * Is Scaffold handling errors?
+	 *
+	 * @var boolean
+	 */
+	private static $errors = false;
+	
+	/**
+	 * The directory to save processed files to
+	 *
+	 * @var string
+	 */
+	public static $output_path;
+	
+	/**
+	 * The lifetime of a processed file
+	 *
+	 * @var int
+	 */
+	public static $lifetime;
 
 	/**
 	 * Sets the initial variables, checks if we need to process the css
@@ -250,14 +153,74 @@ class Scaffold extends Scaffold_Utils
 	 *
 	 * @return void
 	 */
-	public static function setup($config) 
-	{	
+	public static function init($config) 
+	{
+		if(Scaffold::$init === true)
+			return;
+		
+		Scaffold::$init = true;
+			
+		/**
+		 * The processing mode
+		 */
+		Scaffold::$production = $config['in_production'];
+		
+		/**
+		 * Load the libraries. Do it manually if you don't like this way.
+		 */
+		if($config['auto_load'])
+		{		
+			spl_autoload_register(array('Scaffold','auto_load'));
+		}
+		
+		/**
+		 * Let Scaffold catch exceptions and errors
+		 */
+		if($config['errors'] AND Scaffold::$production === false)
+		{
+			ini_set('display_errors', true);
+			error_reporting(E_ALL | E_STRICT);
+
+			# Exceptions
+			set_exception_handler(array('Scaffold','exception_handler'));
+			
+			# Errors
+			set_error_handler(array('Scaffold','error_handler'));
+			
+			# Scaffold is handling errors
+			Scaffold::$errors = true;
+		}
+		
+		/**
+		 * Scaffold will run this just before it closes. It also
+		 * manages fatal errors if you've set Scaffold to handle errors
+		 */
+		register_shutdown_function(array('Scaffold','shutdown_handler'));
+		
+		/**
+		 * Set timezone, just in case it isn't set. PHP 5.2+ 
+		 * throws a tantrum if you try and use time() without
+		 * this being set.
+		 */
+		if(function_exists('date_default_timezone_set'))
+		{
+			date_default_timezone_set($config['timezone']);
+		}
+
 		/**
 		 * Define contstants for system paths for easier access.
 		 */
 		if(!defined('SCAFFOLD_SYSPATH'))
 		{
 			define('SCAFFOLD_SYSPATH', self::path($config['system']));
+		}
+		
+		/**
+		 * Set the amount of PHP gzipping to use.
+		 */
+		if($config['gzip_compression'] !== false)
+		{
+			self::$compression = $config['gzip_compression'];
 		}
 		
 		/**
@@ -274,77 +237,123 @@ class Scaffold extends Scaffold_Utils
 		 * Add include paths for finding files
 		 */
 		Scaffold::add_include_path(SCAFFOLD_SYSPATH,Scaffold::root());
-
-		/**
-		 * Tell the cache where to save files and for how long to keep them for
-		 */
-		Scaffold_Cache::setup(Scaffold::path($config['cache']),$config['cache_lifetime']);
 		
 		/**
-		 * The level at which logged messages will halt processing and be thrown as errors
+		 * Get the singleton instance of the log
 		 */
-		self::$error_threshold = $config['error_threshold'];
-
+		Scaffold::$log = Scaffold_Log::instance();
+		
 		/**
-		 * Tell the log where to save it's files. Set it to automatically save the log on exit
+		 * Tell the log where to save it's files.
 		 */
-		if($config['enable_log'] === true)
+		if($config['log'] === true)
 		{
 			if(is_writable(SCAFFOLD_SYSPATH.'logs'))
 			{
-				Scaffold_Log::log_directory(SCAFFOLD_SYSPATH.'logs');	
+				Scaffold::$log->directory(SCAFFOLD_SYSPATH.'logs');	
 			}
 			else
 			{
 				Scaffold::error("Logs folder is not writable");
 			}
 		}
+		
+		/**
+		 * If we're just in development mode, we'll want to always recache
+		 * the file. Setting the cache_lifetime to 0 will force Scaffold
+		 * to make sure it reparsed the file each time.
+		 */
+		if(Scaffold::$production === false)
+		{
+			self::$lifetime = 0;
+		}
+		else
+		{
+			self::$lifetime = $config['cache_lifetime'];
+		}
 
 		/**
-		 * Load each of the modules
+		 * Tell the cache where to save files and for how long to keep them for
 		 */
-		foreach(Scaffold::list_files(SCAFFOLD_SYSPATH.'modules') as $module)
-		{
-			$name = basename($module);
-			$module_config = SCAFFOLD_SYSPATH.'config/' . $name . '.php';
-			$default_config = $module . '/config.php';
-			
-			unset($config);
-			
-			if(file_exists($module_config))
-			{
-				include $module_config;				
-				self::$config[$name] = $config;
-			}
-			elseif(file_exists($default_config))
-			{
-				include $default_config;				
-				self::$config[$name] = $config;
-			}
+		$cache = Scaffold::path($config['cache']);
 
-			self::add_include_path($module);
-			
-			if( $controller = Scaffold::find_file($name.'.php', false, true) )
-			{
-				require_once($controller);
-				self::$modules[$name] = new $name;
-			}
-			
-			# Load custom functions
-			Scaffold::extensions($module);
+		if (!is_dir($cache) OR !is_writable($cache))
+		{
+			Scaffold::error("Cache path does not exist or is not writable. [".Scaffold::url($cache)."]");
 		}
+
+		Scaffold::$cache = new Scaffold_Cache($cache,$config['cache_lifetime']);
+		
+		/**
+		 * The output directory. This where we'll save processed CSS files.
+		 */
+		if($config['output_path'] == '')
+		{
+			self::$output_path = $cache;
+		}
+		else
+		{
+			self::$output_path = Scaffold::path($config['output_path']);
+		}
+		
+		/**
+		 * The level at which logged messages will halt processing and be thrown as errors
+		 */
+		self::$error_threshold = $config['error_threshold'];
+
+		# Load the modules	
+		Scaffold::modules(SCAFFOLD_SYSPATH);
 
 		# Load the extensions
 		Scaffold::extensions(SCAFFOLD_SYSPATH);
-
-		/**
-		 * Module Initialization Hook
-		 * This hook allows modules to load libraries and create events
-		 * before any processing is done at all. 
-		 */
-		self::hook('initialize');
 	}
 	
+	/**
+	 * Resets everything and finishes up.
+	 *
+	 * @author your name
+	 * @param $param
+	 * @return void
+	 */
+	public static function deinit()
+	{
+		if(Scaffold::$init)
+		{
+			# Remove everything init created
+			Scaffold::$config = Scaffold::$output = NULL;
+			
+			# Reset storage
+			Scaffold::$modules = Scaffold::$extensions = array();
+			
+			# Reset booleans
+			Scaffold::$init = Scaffold::$has_error = FALSE;
+		}
+	}
+	
+	/**
+	 * Automatically loads Scaffold's classes from the libraries
+	 * directory in the default setup.
+	 *
+	 *     // Loads libraries/my/class/name.php
+	 *     Scaffold::auto_load('My_Class_Name');
+	 *
+	 * @param   string   class name
+	 * @author 	Kohana
+	 * @return  boolean
+	 */
+	public static function auto_load($class)
+	{
+		# Transform the class name into a path
+		$file = str_replace('_', '/', strtolower($class)) . '.php';
+
+		if ($path = Scaffold::find_file($file,'libraries'))
+		{
+			require $path;
+			return TRUE;
+		}
+
+		return FALSE;
+	}
 
 	/******************************************************************************************************
 	 * Extension Methods
@@ -438,7 +447,7 @@ class Scaffold extends Scaffold_Utils
 	 * @param $b
 	 * @return void
 	 */
-	private function sort_functions($a,$b)
+	private static function sort_functions($a,$b)
 	{
 		$phase_a = self::$extensions['functions'][$a]['phase'];
 		$phase_b = self::$extensions['functions'][$b]['phase'];
@@ -459,146 +468,58 @@ class Scaffold extends Scaffold_Utils
 	
 	
 	/******************************************************************************************************
-	 * Engine Methods
+	 * Addon Methods
 	 *****************************************************************************************************/
 	
 	/**
-	 * Parses the single CSS file
+	 * Loads the modules and returns the array
 	 *
-	 * @param $file 	The file to the parsed
-	 * @return $css 	string
+	 * @author your name
+	 * @param $path
+	 * @return array
 	 */
-	public static function process($file)
+	public static function modules($path = false)
 	{
-		/**
-		 * This allows Scaffold to find files in the directory of the CSS file
-		 */
-		Scaffold::add_include_path($file);
-
-		/** 
-		 * We create a new CSS object for each file. This object
-		 * allows modules to easily manipulate the CSS string.
-		 * Note:Inline comments are stripped when the file is loaded.
-		 */
-		Scaffold::$css = new Scaffold_CSS($file);
-
-		/**
-		 * Import Process Hook
-		 * This hook is for doing any type of importing/including in the CSS
-		 */
-		self::hook('import_process');
+		# Return a single module
+		if(isset(Scaffold::$modules[$path]))
+		{
+			return Scaffold::$modules[$path];
+		}
 		
-		/**
-		 * Pre-process Hook
-		 * There shouldn't be any heavy processing of the string here. Just pulling
-		 * out @ rules, constants and other bits and pieces.
-		 */
-		self::hook('pre_process');
+		# Or all of them
+		elseif(isset(Scaffold::$modules))
+		{
+			return Scaffold::$modules;
+		}
+
+		# Or load them all
+		foreach(Scaffold::list_files($path.'modules') as $module)
+		{
+			$config = array();
+			$name = basename($module);
 			
-		/**
-		 * Process Hook
-		 * The main process. None of the processes should conflict in any of the modules
-		 */
-		self::hook('process');
-		
-		/**
-		 * Replace custom functions
-		 */
-		foreach(self::$extensions['functions'] as $name => $values)
-		{
-			if($found = Scaffold::$css->find_functions($name))
+			# This will allow us to find files inside the module folder
+			self::add_include_path($module);
+			
+			if( $controller = Scaffold::find_file($name.'.php') )
 			{
-				// Make the list unique or not
-				$originals = ($values['unique'] === false) ? array_unique($found[0]) : $found[0];
-	
-				// Loop through each found instance
-				foreach($originals as $key => $value)
+				# Module_name/Module_name.php
+				require_once($controller);
+				
+				# Load the config from /config/Module_name.php
+				$module_config = SCAFFOLD_SYSPATH.'config/' . $name . '.php';
+				
+				if(file_exists($module_config))
 				{
-					$result = call_user_func_array($values['callback'],explode(',',$found[2][$key]));
-	
-					// Run the user callback										
-					if($result === false)
-					{
-						Scaffold::error('Invalid Custom Function Syntax - <strong>' . $originals[$key] . '</strong>');
-					}
-					
-					// Just replace the first match if they are unique
-					elseif($values['unique'] === true)
-					{
-						$pos = strpos(Scaffold::$css->string,$originals[$key]);
-	
-						if($pos !== false)
-						{
-						    Scaffold::$css->string = substr_replace(Scaffold::$css->string,$result,$pos,strlen($originals[$key]));
-						}
-					}
-					else
-					{
-						Scaffold::$css->string = str_replace($originals[$key],$result,Scaffold::$css->string);
-					}
+					include $module_config;				
 				}
+				
+				# Create the instance
+				self::$modules[$name] = new $name($config);
 			}
-		}
-		
-		/**
-		 * Replace custom properties
-		 */
-		foreach(self::$extensions['properties'] as $name => $values)
-		{
-			if($found = Scaffold::$css->find_property($name))
-			{
-				$originals = array_unique($found[0]);
-	
-				foreach($originals as $key => $value)
-				{
-					$result = call_user_func($values['callback'],$found[2][$key]);
-	
-					if($result === false)
-					{
-						Scaffold::error('Invalid Custom Property Syntax - <strong>' . $originals[$key] . '</strong>');
-					}
-					
-					Scaffold::$css->string = str_replace($originals[$key],$result,Scaffold::$css->string);
-				}
-			}
-		}
-
-		/**
-		 * Post-process Hook
-		 * After any non-standard CSS has been processed and removed. This is where
-		 * the nested selectors are parsed. It's not perfectly standard CSS yet, but
-		 * there shouldn't be an Scaffold syntax left at all.
-		 */
-		self::hook('post_process');
-
-		/**
-		 * Formatting Hook
-		 * Stylise the string, rewriting urls and other parts of the string. No heavy processing.
-		 */
-		self::hook('formatting_process');
-		
-		/**
-		 * Clean up the include paths
-		 */
-		self::remove_include_path($file);
-
-		return (string)Scaffold::$css;
-	}
-	
-	/**
-	 * Allows modules to hook into the processing at any point
-	 *
-	 * @param $method The method to check for in each of the modules
-	 * @return boolean
-	 */
-	public static function hook($method)
-	{
-		foreach(self::$modules as $module_name => $module)
-		{
-			if(method_exists($module,$method))
-			{				
-				call_user_func(array($module_name,$method));
-			}
+			
+			# Load custom functions
+			Scaffold::extensions($module);
 		}
 	}
 	
@@ -613,21 +534,23 @@ class Scaffold extends Scaffold_Utils
 	 * @param $output What to display
 	 * @return void
 	 */
-	public static function render($content,$headers,$level = false)
+	public static function render($content,$headers)
 	{
 		# If it's not modified, we shouldn't be sending anything to the browser
-		if($headers['_status'] == self::NOT_MODIFIED)
+		if($headers['_status'] == 304)
+		{
 			$content = false;
+		}
 		
 		if($content !== false)
 		{
-			if ($level AND ini_get('output_handler') !== 'ob_gzhandler' AND (int) ini_get('zlib.output_compression') === 0)
+			if (self::$compression AND ini_get('output_handler') !== 'ob_gzhandler' AND (int) ini_get('zlib.output_compression') === 0)
 			{
-				if ($level < 1 OR $level > 9)
+				if (self::$compression < 1 OR self::$compression > 9)
 				{
 					# Normalize the level to be an integer between 1 and 9. This
 					# step must be done to prevent gzencode from triggering an error
-					$level = max(1, min($level, 9));
+					self::$compression = max(1, min(self::$compression, 9));
 				}
 	
 				if (stripos(@$_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE)
@@ -640,17 +563,17 @@ class Scaffold extends Scaffold_Utils
 				}
 			}
 	
-			if (isset($compress) AND $level > 0)
+			if (isset($compress) AND self::$compression > 0)
 			{
 				switch ($compress)
 				{
 					case 'gzip':
 						# Compress output using gzip
-						$content = gzencode($content, $level);
+						$content = gzencode($content, self::$compression);
 					break;
 					case 'deflate':
 						# Compress output using zlib (HTTP deflate)
-						$content = gzdeflate($content, $level);
+						$content = gzdeflate($content, self::$compression);
 					break;
 				}
 	
@@ -709,8 +632,9 @@ class Scaffold extends Scaffold_Utils
 	 * @param $param
 	 * @return return type
 	 */
-	private static function headers($file,$lifetime)
-	{		
+	public static function headers($file,$lifetime)
+	{
+		$file = Scaffold::find_file($file);
 		$length = strlen(file_get_contents($file));
 		$modified = filemtime($file);
 
@@ -788,13 +712,9 @@ class Scaffold extends Scaffold_Utils
 				}
 				else
 				{
-					if($value === self::NOT_MODIFIED)
+					if($value === 304)
 					{
 						header('Status: 304 Not Modified', TRUE, self::NOT_MODIFIED);
-					}
-					elseif($value === self::SERVER_ERROR)
-					{
-						header('HTTP/1.1 500 Internal Server Error');
 					}
 				}
 			}
@@ -817,12 +737,18 @@ class Scaffold extends Scaffold_Utils
 		/**
 		 * Log the message before we throw the error
 		 */
-		Scaffold_Log::log($message,0);
+		Scaffold::$log->add($message,0);
 		
 		/**
 		 * Useful variable to let other objects know there was an error with the parsing
 		 */
 		self::$has_error = true;
+		
+		/**
+		 * Server error status
+		 */
+		if(!headers_sent())
+			header('Content-Type: text/html;', TRUE, 500);
 		
 		/**
 		 * This will be caught in the parse method
@@ -831,24 +757,111 @@ class Scaffold extends Scaffold_Utils
 	}
 	
 	/**
-	 * Uses the logging class to log a message
+	 * PHP error handler, converts all errors into ErrorExceptions. This handler
+	 * respects error_reporting settings.
 	 *
-	 * @author your name
-	 * @param $message
-	 * @return void
+	 * @author 	Kohana
+	 * @throws  ErrorException
+	 * @return  TRUE
 	 */
-	public static function log($message,$level)
+	public static function error_handler($code, $error, $file = NULL, $line = NULL)
 	{
-		if ($level <= self::$error_threshold)
+		if (error_reporting() & $code)
 		{
-			self::error($message);
+			# Convert the error into an ErrorException
+			throw new ErrorException($error, $code, 0, $file, $line);
 		}
-		else
+
+		# Do not execute the PHP error handler
+		return TRUE;
+	}
+
+	/**
+	 * Inline exception handler, displays the error message, source of the
+	 * exception, and the stack trace of the error.
+	 *
+	 * @author 	Kohana
+	 * @param   object   exception object
+	 * @return  boolean
+	 */
+	public static function exception_handler(Exception $e)
+	{
+		try
 		{
-			Scaffold_Log::log($message,$level);
+			# Exception text information
+			$type    = get_class($e);
+			$code    = $e->getCode();
+			$message = $e->getMessage();
+			$file    = str_replace(SCAFFOLD_SYSPATH,'',$e->getFile());
+			$line    = $e->getLine();
+			
+			if($e instanceof ErrorException)
+			{
+				$php_errors = array(
+					E_ERROR              => 'Fatal Error',
+					E_USER_ERROR         => 'User Error',
+					E_PARSE              => 'Parse Error',
+					E_WARNING            => 'Warning',
+					E_USER_WARNING       => 'User Warning',
+					E_STRICT             => 'Strict',
+					E_NOTICE             => 'Notice',
+					E_RECOVERABLE_ERROR  => 'Recoverable Error',
+				);
+				
+				
+				if(isset($php_errors[$code]))
+				{
+					// Use the human-readable error name
+					$code = $php_errors[$code];
+				}
+			}
+			
+			if(Scaffold::$has_error)
+			{
+				$code = 'Compiler Error';
+			}
+
+			# Error view html
+			ob_start();
+			include Scaffold::find_file('scaffold/error.php', 'views');
+			echo ob_get_clean();
+
+			return true;
+		}
+		catch (Exception $e)
+		{
+			# Clean the output buffer if one exists
+			ob_get_level() and ob_clean();
+
+			# Display the exception text
+			echo $e->getMessage();
+
+			exit(1);
 		}
 	}
 	
+	/**
+	 * Catches errors that are not caught by the error handler, such as E_PARSE.
+	 *
+	 * @uses    Scaffold::exception_handler
+	 * @return  void
+	 */
+	public static function shutdown_handler()
+	{
+		if(!Scaffold::$init)
+			return;
+	
+		if ($error = error_get_last() AND (error_reporting() & $error['type']))
+		{
+			# If an output buffer exists, clear it
+			ob_get_level() and ob_clean();
+
+			# Fake an exception for nice debugging
+			Scaffold::exception_handler(new ErrorException($error['message'], $error['type'], 0, $error['file'], $error['line']));
+
+			exit(1);
+		}
+	}
 
 	/******************************************************************************************************
 	 * Path Methods
@@ -913,7 +926,7 @@ class Scaffold extends Scaffold_Utils
 	 */
 	public static function url($path) 
 	{
-		return self::reduce_double_slashes(str_replace( Scaffold::root(), DIRECTORY_SEPARATOR, realpath($path) ));
+		return str_replace( Scaffold::root(), DIRECTORY_SEPARATOR, realpath($path) );
 	}
 	
 	/**

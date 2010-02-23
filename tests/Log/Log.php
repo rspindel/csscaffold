@@ -1,54 +1,48 @@
 <?php
 
-include '_load.php';
-
-class LogTests extends UnitTestCase
+class Test_Log extends Scaffold_Test
 {
-	function setup()
-	{
-		Scaffold_Log::enable(true);
-		Scaffold_Log::setup( dirname(__FILE__) . '/../scaffold/logs' );
-		Scaffold_Log::$log = array();
-		return true;
-	}
+	/**
+	 * The log instance
+	 *
+	 * @var object
+	 */
+	private $log;
 
-	function testSetup()
+	function setUp()
 	{
-		$this->assertTrue( $this->setup() );
+		parent::init(__FILE__);	
+		$this->log = Scaffold_Log::instance(false);
+		$this->log->directory($this->dir . 'logs/');
 	}
 	
-	function testEnabled()
+	function test_add()
 	{
-		Scaffold_Log::enable(true);
-		$this->assertTrue( Scaffold_Log::$enabled );
+		// Add a new message
+		$this->log->add('Test log message');
+		
+		// This should be in the messages array
+		$this->assertEqual(count($this->log->messages()),1);
 	}
+	
+	function test_save()
+	{
+		$this->log->save();
 
-	function testLogDirectory()
-	{
-		$this->assertNotNull( Scaffold_Log::log_directory() );
+		// There should be 3 in the dir, including the 2 . paths
+		$this->assertEqual(count(scandir($this->log->directory())),3);
 	}
 	
-	function testDisabled()
+	function tearDown()
 	{
-		$this->setup();
-		Scaffold_Log::enable(false);
-		$this->assertFalse( Scaffold_Log::$enabled );
-		$this->assertFalse( Scaffold_Log::log('This shouldn\'t be logged') );
-		$this->assertFalse( Scaffold_Log::save() );
-		$this->assertFalse( Scaffold_Log::log_directory() );
-	}
-	
-	function testLog()
-	{
-		$this->setup();
-		Scaffold_Log::log('This should be logged');
-		$this->assertEqual( count(Scaffold_Log::$log), 1);
-	}
-	
-	function testSave()
-	{
-		$this->setup();
-		Scaffold_Log::log('This should be logged');
-		$this->assertTrue( Scaffold_Log::save() );	
+		$dirs = $this->log->directory();
+		
+		foreach(scandir($dirs) as $dir)
+		{
+			if($dir[0] == '.')
+				continue;
+
+			unlink($this->log->directory() . '/' . $dir);
+		}
 	}
 }

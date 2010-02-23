@@ -8,37 +8,37 @@
  *
  * @author Anthony Short
  */
-class Includes
+class Includes extends Scaffold_Module
 {
 	/**
 	 * Stores which files have already been included
 	 *
 	 * @var array
 	 */
-	public static $loaded = array();
+	public $loaded = array();
 
 	/**
 	 * This function occurs before everything else
 	 *
-	 * @author Anthony Short
 	 * @param $css
 	 */
-	public static function import_process()
+	public function import($css)
 	{
 		# Add the original file to the loaded array
-		self::$loaded[] = Scaffold::$css->file;
+		$this->loaded[] = $css->path;
 		
 		# Find all the @server imports
-		Scaffold::$css->string = self::server_import(Scaffold::$css->string,Scaffold::$css->path);
+		$css->string = $this->server_import($css->string,dirname($css->path));
+
+		return $css;
 	}
 	
 	/**
 	 * Imports css via @import statements
 	 * 
-	 * @author Anthony Short
 	 * @param $css
 	 */
-	public static function server_import($css,$base)
+	public function server_import($css,$base)
 	{				
 		if(preg_match_all('/\@include\s+(?:\'|\")([^\'\"]+)(?:\'|\")\;/', $css, $matches))
 		{
@@ -53,23 +53,23 @@ class Includes
 			if(pathinfo($include, PATHINFO_EXTENSION) != 'css')
 			{
 				$css = str_replace($matches[0][0], '', $css);
-				Scaffold::log('Invalid @include file - ' . $include);
-				self::server_import($css,$base);
+				Scaffold::log('Invalid @include file - ' . $include,1);
+				$this->server_import($css,$base);
 			}
 
 			# Find the file
 			if($path = Scaffold::find_file($include,$base))
 			{
 				# Make sure it hasn't already been included	
-				if(!in_array($path, self::$loaded))
+				if(!in_array($path,$this->loaded))
 				{
-					self::$loaded[] = $path;
+					$this->loaded[] = $path;
 					
 					$contents = file_get_contents($path);
 					$contents = Scaffold::remove_inline_comments($contents);
 					
 					# Check the file again for more imports
-					$contents = self::server_import($contents, realpath(dirname($path)) . '/');
+					$contents = $this->server_import($contents, realpath(dirname($path)) . '/');
 					
 					$css = str_replace($matches[0][0], $contents, $css);
 				}
@@ -86,8 +86,7 @@ class Includes
 				Scaffold::error('Can\'t find the @include file - <strong>' . $unique[0] . '</strong>');
 			}
 			
-			$css = self::server_import($css,$base);
-
+			$css = $this->server_import($css,$base);
 		}
 
 		return $css;
@@ -99,8 +98,8 @@ class Includes
 	 * @author Anthony Short
 	 * @return return type
 	 */
-	public static function reset()
+	public function reset()
 	{
-		self::$loaded = array();
+		$this->$loaded = array();
 	}
 }

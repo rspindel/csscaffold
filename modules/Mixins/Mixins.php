@@ -9,15 +9,24 @@
  * 
  * @author Anthony Short
  */
-class Mixins
+class Mixins extends Scaffold_Module
 {
-
+	/**
+	 * Default configuration
+	 *
+	 * @var array
+	 */
+	protected $defaults = array
+	(
+		'auto_include' => false
+	);
+	
 	/**
 	 * Stores the mixins for debugging purposes
 	 *
 	 * @var array
 	 */
-	public static $mixins = array();
+	public $mixins = array();
 	
 	/**
 	 * Imports all of the mixins in the mixins folder automatically. All comments
@@ -25,20 +34,22 @@ class Mixins
 	 *
 	 * @return void
 	 */
-	public static function import_process()
+	public function import($css)
 	{
-		$folder = Scaffold::$config['Mixins']['auto_include'];
+		$folder = $this->config['auto_include'];
 
 		if($folder === false) 
-			return;
-
+			return $css;
+		
 		foreach(Scaffold::list_files($folder,true) as $file)
 		{
 			if(is_dir($file))
 				continue;
 				
-			Scaffold::$css->string .= Scaffold::$css->remove_comments(file_get_contents($file));
+			$css->string .= $css->remove_comments(file_get_contents($file));
 		}
+
+		return $css;
 	}
 	
 	/**
@@ -46,9 +57,9 @@ class Mixins
 	 *
 	 * @return void
 	 */
-	public static function pre_process()
+	public function pre_process($css)
 	{
-		self::extract_bases();
+		return $this->extract_bases($css);
 	}
 	
 	/**
@@ -56,10 +67,9 @@ class Mixins
 	 *
 	 * @return void
 	 */
-	public static function process()
+	public function process($css)
 	{
-		# Replaces each of the +mixins within the CSS
-		self::replace_mixins();
+		return $this->replace_mixins($css);
 	}
 	
 	/**
@@ -68,10 +78,10 @@ class Mixins
 	 * @param $param
 	 * @return return type
 	 */
-	public static function extract_bases()
+	public function extract_bases($css)
 	{				
 		# Finds any selectors starting with =mixin-name
-		if( $found = Scaffold::$css->find_selectors('\=(?P<name>[0-9a-zA-Z_-]*)(\((?P<args>.*?)\))?', 5) )
+		if( $found = $css->find_selectors('\=(?P<name>[0-9a-zA-Z_-]*)(\((?P<args>.*?)\))?', 5) )
 		{
 			# Just to make life a little easier
 			$full_base 		= $found[0];
@@ -89,11 +99,13 @@ class Mixins
 			}
 						
 			# Store this away for debugging
-			self::$mixins = $bases;
+			$this->mixins = $bases;
 			
 			# Remove all of the mixin bases
-			Scaffold::$css->string = str_replace($full_base,'',Scaffold::$css);
+			$css->string = str_replace($full_base,'',$css);
 		}
+		
+		return $css;
 	}
 
 	/**
@@ -102,15 +114,15 @@ class Mixins
 	 * @author Anthony Short
 	 * @return $css string
 	 */
-	public static function replace_mixins()
+	public function replace_mixins($css)
 	{
 		# Find the mixins
-		if($mixins = self::find_mixins(Scaffold::$css->string))
+		if($mixins = $this->find_mixins($css->string))
 		{
 			# Loop through each of the found +mixins
 			foreach($mixins[2] as $mixin_key => $mixin_name)
 			{
-				Scaffold::$css->string = str_replace($mixins[0][$mixin_key], self::build_mixins($mixin_key, $mixins), Scaffold::$css);
+				$css->string = str_replace($mixins[0][$mixin_key], $this->build_mixins($mixin_key, $mixins), $css->string);
 			}
 		}
 	}
@@ -123,9 +135,9 @@ class Mixins
 	 * @param $mixins - An array of found mixins
 	 * @return string
 	 */
-	public static function build_mixins($mixin_key, $mixins, $already_mixed = array())
+	public function build_mixins($mixin_key, $mixins, $already_mixed = array())
 	{
-		$bases =& self::$mixins;
+		$bases =& $this->mixins;
 		
 		$mixin_name = $mixins[2][$mixin_key];
 				
@@ -139,7 +151,7 @@ class Mixins
 				$already_mixed[] = $mixin_name;
 
 				# Parse the parameters of the mixin
-				$params = self::parse_params($mixins[0][$mixin_key], $mixins[4][$mixin_key], $bases[$mixin_name]['params']);
+				$params = $this->parse_params($mixins[0][$mixin_key], $mixins[4][$mixin_key], $bases[$mixin_name]['params']);
 
 				# Set the parameters as constants
 				foreach($params as $key => $value)
@@ -156,17 +168,17 @@ class Mixins
 				}
 				
 				# Parse conditionals if there are any in there
-				$new_properties = self::parse_conditionals($new_properties);
+				$new_properties = $this->parse_conditionals($new_properties);
 	
 				# Find nested mixins
-				if($inner_mixins = self::find_mixins($new_properties))
+				if($inner_mixins = $this->find_mixins($new_properties))
 				{
 					# Loop through all the ones we found, skipping on recursion by passing
 					# through the current mixin we're working on
 					foreach($inner_mixins[0] as $key => $value)
 					{
 						# Parse the mixin and replace it within the property string
-						$new_properties = str_replace($value, self::build_mixins($key, $inner_mixins, $already_mixed), $new_properties);
+						$new_properties = str_replace($value, $this->build_mixins($key, $inner_mixins, $already_mixed), $new_properties);
 					}
 				}	
 							
@@ -194,7 +206,7 @@ class Mixins
 	 * @param $string
 	 * @return array
 	 */
-	public static function find_mixins($string)
+	public function find_mixins($string)
 	{	
 		return Scaffold_Utils::match('/\+(([0-9a-zA-Z_-]*?)(\((.*?)\))?)\;/xs', $string);
 	}
@@ -206,7 +218,7 @@ class Mixins
 	 * @param $params
 	 * @return array
 	 */
-	public static function parse_params($mixin_name, $params, $function_args = array())
+	public function parse_params($mixin_name, $params, $function_args = array())
 	{
 		$parsed = array();
 		
@@ -264,10 +276,10 @@ class Mixins
 	 * @param $string A string of css
 	 * @return void
 	 **/
-	public static function parse_conditionals($string = "")
+	public function parse_conditionals($string = "")
 	{		
 		# Find all @if, @else, and @elseif's groups
-		if($found = self::find_conditionals($string))
+		if($found = $this->find_conditionals($string))
 		{
 			# Go through each one
 			foreach($found[1] as $key => $value)
@@ -314,7 +326,7 @@ class Mixins
 	 * @param $string
 	 * @return array
 	 */
-	public static function find_conditionals($string = "")
+	public function find_conditionals($string = "")
 	{
 		$recursive = 2; 
 		

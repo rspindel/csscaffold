@@ -4,18 +4,19 @@
  * Iteration
  *
  * @author Anthony Short
- * @dependencies Constants
  */
-class Iteration
+class Iteration extends Scaffold_Module
 {
 	/**
 	 * Extracts the iteration loops from the CSS
 	 *
 	 * @return return type
 	 */
-	public static function pre_process()
+	public function pre_process($css)
 	{
-		Scaffold::$css->string = self::parse(Scaffold::$css->string);
+		$css->string = self::parse($css->string);
+		
+		return $css;
 	}
 	
 	/**
@@ -25,7 +26,7 @@ class Iteration
 	 * @param $string
 	 * @return string
 	 */
-	public static function parse($css)
+	public function parse($css)
 	{
 		if($found = self::find_fors($css))
 		{	
@@ -58,7 +59,7 @@ class Iteration
 	 * @param $string
 	 * @return array
 	 */
-	public static function find_fors($string = "")
+	public function find_fors($string = "")
 	{		
 		$regex = 
 			'/

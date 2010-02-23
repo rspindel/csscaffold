@@ -16,14 +16,7 @@ class Scaffold_CSS
 	 *
 	 * @var string
 	 */
-	public $path;
-	
-	/**
-	 * The name of this CSS file
-	 *
-	 * @var string
-	 */
-	public $file;
+	public $path = '';
 	
 	/**
 	 * The string of CSS code
@@ -38,11 +31,9 @@ class Scaffold_CSS
 	 * @param $file
 	 * @return void
 	 */
-	public function __construct($file)
+	public function __construct($string)
 	{
-		$this->path = dirname($file);
-		$this->file = $file;
-		$this->string = Scaffold::remove_inline_comments(file_get_contents($file));
+		$this->string = Scaffold::remove_inline_comments($string);
 	}
 	
 	/**
@@ -53,6 +44,18 @@ class Scaffold_CSS
 	public function __toString()
 	{
 		return $this->string;
+	}
+	
+	/**
+	 * Set the base directory
+	 *
+	 * @param $path
+	 * @return Scaffold_CSS
+	 */
+	public function directory($path)
+	{
+		$this->path = $path;
+		return $this;
 	}
 
 	/**
@@ -177,7 +180,7 @@ class Scaffold_CSS
 					// Make sure it's set
 					if(isset($value[1]))
 					{
-						$found['values'][trim($value[0])] = str_replace('#COLON#', ':', Scaffold::unquote($value[1]));
+						$found['values'][trim($value[0])] = str_replace('#COLON#', ':', trim($value[1], "'\" "));
 					}
 				}
 			}

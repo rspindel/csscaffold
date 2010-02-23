@@ -32,67 +32,6 @@ class Scaffold_Utils
 
 		return $str;
 	}
-
-	/**
-	 * Checks if a file is an image.
-	 *
-	 * @author Anthony Short
-	 * @param $path string
-	 */
-	public static function is_image($path)
-	{
-		if (array_search(pathinfo($path, PATHINFO_EXTENSION), array('gif', 'jpg', 'jpeg', 'png')) !== false)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-	
-	/**
-	 * Checks if a file is css.
-	 *
-	 * @author Anthony Short
-	 * @param $path string
-	 */	
-	public static function is_css($path)
-	{
-		return (pathinfo($path, PATHINFO_EXTENSION) == 'css') ? true : false;
-	}
-
-	/**
-	 * Quick regex matching
-	 *
-	 * @author Anthony Short
-	 * @param $regex
-	 * @param $subject
-	 * @param $i
-	 * @return array
-	 */
-	public static function match($regex, $subject, $i = "")
-	{
-		if(preg_match_all($regex, $subject, $match))
-		{
-			return ($i == "") ? $match : $match[$i];
-		}
-		else
-		{
-			return array();
-		}
-	}
-	
-	/** 
-	 * Removes all quotes from a string
-	 *
-	 * @author Anthony Short
-	 * @param $str string
-	 */
-	public static function remove_all_quotes($str)
-	{
-		return str_replace(array('"', "'"), '', $str);
-	}
 	
 	/** 
 	 * Removes quotes surrounding a string
