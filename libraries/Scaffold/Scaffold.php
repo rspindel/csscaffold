@@ -635,6 +635,7 @@ class Scaffold
 	public static function headers($file,$lifetime)
 	{
 		$file = Scaffold::find_file($file);
+
 		$length = strlen(file_get_contents($file));
 		$modified = filemtime($file);
 
@@ -649,7 +650,7 @@ class Scaffold
 		$headers['Last-Modified'] 	= gmdate('D, d M Y H:i:s T', $now);
 		$headers['Expires'] 		= gmdate('D, d M Y H:i:s T', $expires);
 		$headers['Cache-Control'] 	= 'max-age='.$lifetime;
-		$headers['ETag'] 			= md5(serialize(array($length,$modified,$file)));
+		$headers['ETag'] 			= Scaffold::etag($file);
 		$headers['Content-Type'] 	= 'text/css';
 		$headers['_status']			= '';
 		
@@ -719,6 +720,17 @@ class Scaffold
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Creates a hash of a file to be used as an etag
+	 *
+	 * @param $file Path to the file
+	 * @return string
+	 */
+	public static function etag($file)
+	{
+		return md5(serialize(array(strlen(file_get_contents($file)),filemtime($file),$file)));
 	}
 	
 
@@ -1126,7 +1138,6 @@ class Scaffold
 
 		return $files;
 	}
-
 	
 	/******************************************************************************************************
 	 * Utility Methods
