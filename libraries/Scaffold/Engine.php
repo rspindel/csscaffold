@@ -30,14 +30,14 @@ class Scaffold_Engine
 	 * Parse the CSS file. This takes an array of files, options and configs
 	 * and parses the CSS, outputing the processed CSS string.
 	 *
-	 * @param string Path to the file to parse
-	 * @param string The file to output the parsed CSS
-	 * @return string The processed css file as a string
+	 * @param 	string	Path to the file to parse
+	 * @param 	string	(Optional) The target directory to save the combined file. MUST be an absolute URL. 
+	 * @return	string	The processed css file as a string
 	 */
-	public function parse_file($file)
+	public function parse_file($file,$target = false)
 	{		
 		# Make sure this file is allowed
-		if(substr($file, 0, 4) == "http" OR substr($file, -4, 4) != ".scss")
+		if(substr($file, 0, 4) == "http" OR substr($file, -4, 4) != ".css")
 		{
 			Scaffold::error("Scaffold cannot parse the requested file - $file");
 		}
@@ -46,7 +46,14 @@ class Scaffold_Engine
 		$file = Scaffold::find_file($file, false, true);
 		
 		# The file to output
-		$output = Scaffold::$output_path . basename($file);
+		if($target === false)
+		{
+			$output = Scaffold::$output_path . basename($file);
+		}
+		else
+		{
+			$output = Scaffold::root() . $target;
+		}
 
 		# When the output file expires
 		$expires = (Scaffold::$production) ? 0 : Scaffold::$lifetime + filemtime($output);
@@ -86,6 +93,31 @@ class Scaffold_Engine
 	public function parse_string($css)
 	{
 		return $this->compile( new Scaffold_CSS($css) );
+	}
+	
+	/**
+	 * Parses an array of files and outputs the combined string
+	 *
+	 * @author your name
+	 * @param $files
+	 * @return string
+	 */
+	public function parse_array(array $files, $base = false)
+	{
+		# This combined CSS string
+		$css = '';
+		
+		foreach($files as $file)
+		{
+			if($base !== false)
+			{
+				$file = $base . DIRECTORY_SEPARATOR . $file;
+			}
+			
+			$css .= $this->parse_file($file);
+		}
+		
+		return $css;
 	}
 
 	/**
