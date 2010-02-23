@@ -8,7 +8,7 @@
  *
  * @author Anthony Short
  */
-class Includes
+class Includes extends Scaffold_Module
 {
 	/**
 	 * Stores which files have already been included
@@ -23,13 +23,15 @@ class Includes
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	public static function import_process()
+	public static function import_process($css)
 	{
 		# Add the original file to the loaded array
-		self::$loaded[] = Scaffold::$css->file;
+		self::$loaded[] = $css->path;
 		
 		# Find all the @server imports
-		Scaffold::$css->string = self::server_import(Scaffold::$css->string,Scaffold::$css->path);
+		$css->string = self::server_import($css->string,dirname($css->path));
+
+		return $css;
 	}
 	
 	/**
@@ -53,7 +55,7 @@ class Includes
 			if(pathinfo($include, PATHINFO_EXTENSION) != 'css')
 			{
 				$css = str_replace($matches[0][0], '', $css);
-				Scaffold::log('Invalid @include file - ' . $include);
+				Scaffold::log('Invalid @include file - ' . $include,1);
 				self::server_import($css,$base);
 			}
 

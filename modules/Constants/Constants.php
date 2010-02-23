@@ -26,7 +26,7 @@
  *
  * @author Anthony Short
  */
-class Constants
+class Constants extends Scaffold_Module
 {
 	/**
 	 * Stores all of the constants for the app

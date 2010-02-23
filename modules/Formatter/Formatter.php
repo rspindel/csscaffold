@@ -9,7 +9,7 @@
  * @author Stephen Clay <steve@mrclay.org>
  * @author Anthony Short
  */
-class Formatter
+class Formatter extends Scaffold_Module
 {
 	public static function formatting_process()
 	{

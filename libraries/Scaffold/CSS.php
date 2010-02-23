@@ -16,7 +16,7 @@ class Scaffold_CSS
 	 *
 	 * @var string
 	 */
-	private $path = '';
+	public $path = '';
 	
 	/**
 	 * The string of CSS code

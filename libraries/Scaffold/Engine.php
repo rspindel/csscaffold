@@ -10,6 +10,23 @@
 class Scaffold_Engine
 {
 	/**
+	 * Hooking Object
+	 *
+	 * @var object
+	 */
+	private $hooks;
+
+	/**
+	 * Creates the hooking object and sets up the engine
+	 *
+	 * @param $hooks	Array	An array of objects which will have methods called
+	 */
+	public function __construct($hooks)
+	{
+		$this->hooks = $hooks;
+	}
+
+	/**
 	 * Parse the CSS file. This takes an array of files, options and configs
 	 * and parses the CSS, outputing the processed CSS string.
 	 *
@@ -18,68 +35,41 @@ class Scaffold_Engine
 	 * @return string The processed css file as a string
 	 */
 	public function parse_file($file)
-	{
-		/**
-		 * Make sure this file is allowed
-		 */
+	{	
+		# Make sure this file is allowed
 		if(substr($file, 0, 4) == "http" OR substr($file, -4, 4) != ".css")
 		{
 			Scaffold::error("Scaffold cannot the requested file - $file");
 		}
 		
-		/**
-		 * Find the file on the server
-		 */
+		# Find the file on the server
 		$file = Scaffold::find_file($file, false, true);
 		
-		/**
-		 * The file to output
-		 */
+		# The file to output
 		$output = Scaffold::$output_path . basename($file);
 
-		/** 
-		 * When the output file expirex
-		 */
+		# When the output file expires
 		$expires = (Scaffold::$production) ? 0 : Scaffold::$lifetime + filemtime($output);
 		
-		/**
-		 * When the output file was last modified
-		 */
+		# When the output file was last modified
 		$modified = (Scaffold::$production) ? filemtime($output) : 0;
-		
-		/**
-		 * In development mode, it will always reparse the file.
-		 */
+
 		if(!file_exists($output) OR time() >= $expires OR $modified < filemtime($file))
 		{				
-			/**
-			 * This allows Scaffold to find files in the directory of the CSS file
-			 */
+			# Allows Scaffold to find files in the directory of the CSS file
 			Scaffold::add_include_path($file);
 			
-			/**
-			 * Load the original CSS file
-			 */
+			# Load the original CSS file
 			$css = file_get_contents($file);
 
-			/**
-			 * This will return the parsed CSS
-			 */
-			$css = $this->process( new Scaffold_CSS($css), dirname($file) );
+			# This will return the parsed CSS
+			$css = $this->compile( new Scaffold_CSS($css), $file );
 			
-			/**
-			 * Remove the include path
-			 */
+			# Remove the include path
 			Scaffold::remove_include_path($file);
 			
-			/**
-			 * Write it to the output directory
-			 */
+			# Write it to the output directory
 			file_put_contents($output, $css);
-			
-			/**
-			 * Set its permissions
-			 */
 			chmod($output, 0777);
 			touch($output, time());
 		}
@@ -88,15 +78,14 @@ class Scaffold_Engine
 	}
 	
 	/**
-	 * Parses a single string of CSS through the parser
+	 * Parses a single string of CSS through the compiler
 	 *
-	 * @author your name
 	 * @param $css
 	 * @return string
 	 */
 	public function parse_string($css)
 	{
-		return $this->process( new Scaffold_CSS($css) );
+		return $this->compile( new Scaffold_CSS($css) );
 	}
 
 	/**
@@ -106,11 +95,10 @@ class Scaffold_Engine
 	 * @param $base		The base path to use for paths. Usually the directory of the CSS file
 	 * @return $css 	string
 	 */
-	public function process( Scaffold_CSS $css, $base = false )
+	private function compile( Scaffold_CSS $css, $base = false )
 	{
 		/**
-		 * The base directory to use for any directory handling
-		 * in the css.
+		 * The file the CSS is from. Used for any path functions dealing with the CSS
 		 */
 		if($base !== false)
 			$css->directory($base);
@@ -119,20 +107,22 @@ class Scaffold_Engine
 		 * Import Process Hook
 		 * This hook is for doing any type of importing/including in the CSS
 		 */
-		Scaffold::hook('import_process',$css);
+		$this->hooks->run('import_process');
+
+		$css = Scaffold::hook('import_process',$css);
 		
 		/**
 		 * Pre-process Hook
 		 * There shouldn't be any heavy processing of the string here. Just pulling
 		 * out @ rules, constants and other bits and pieces.
 		 */
-		Scaffold::hook('pre_process',$css);
+		$css = Scaffold::hook('pre_process',$css);
 			
 		/**
 		 * Process Hook
 		 * The main process. None of the processes should conflict in any of the modules
 		 */
-		Scaffold::hook('process',$css);
+		$css = Scaffold::hook('process',$css);
 		
 		/**
 		 * Replace custom functions

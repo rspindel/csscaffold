@@ -88,7 +88,7 @@ class Scaffold
 	 *
 	 * @var array
 	 */
-	public static $modules = array();
+	public static $modules;
 	
 	/**
 	 * Language extensions - properties, directives and functions
@@ -343,19 +343,15 @@ class Scaffold
 	 */
 	public static function auto_load($class)
 	{
-		// Transform the class name into a path
+		# Transform the class name into a path
 		$file = str_replace('_', '/', strtolower($class)) . '.php';
 
 		if ($path = Scaffold::find_file($file,'libraries'))
 		{
-			// Load the class file
 			require $path;
-
-			// Class has been found
 			return TRUE;
 		}
 
-		// Class is not in the filesystem
 		return FALSE;
 	}
 
@@ -472,7 +468,7 @@ class Scaffold
 	
 	
 	/******************************************************************************************************
-	 * Module Methods
+	 * Addon Methods
 	 *****************************************************************************************************/
 	
 	/**
@@ -482,39 +478,44 @@ class Scaffold
 	 * @param $path
 	 * @return array
 	 */
-	public static function modules($path)
+	public static function modules($path = false)
 	{
+		# Return a single module
+		if(isset(Scaffold::$modules[$path]))
+		{
+			return Scaffold::$modules[$path];
+		}
+		
+		# Or all of them
+		elseif(isset(Scaffold::$modules))
+		{
+			return Scaffold::$modules;
+		}
+
+		# Or load them all
 		foreach(Scaffold::list_files($path.'modules') as $module)
 		{
+			$config = array();
 			$name = basename($module);
 			
+			# This will allow us to find files inside the module folder
 			self::add_include_path($module);
 			
 			if( $controller = Scaffold::find_file($name.'.php') )
 			{
+				# Module_name/Module_name.php
 				require_once($controller);
-				self::$modules[$name] = new $name;
 				
+				# Load the config from /config/Module_name.php
 				$module_config = SCAFFOLD_SYSPATH.'config/' . $name . '.php';
-				$default_config = $module . '/config.php';
 				
 				if(file_exists($module_config))
 				{
 					include $module_config;				
 				}
-				elseif(file_exists($default_config))
-				{
-					include $default_config;				
-				}
 				
-				if(isset($config))
-				{
-					self::$modules[$name]->config = $config; 
-					unset($config);
-				}
-				
-				if(method_exists(self::$modules[$name], 'init'))
-					self::$modules[$name]->init();
+				# Create the instance
+				self::$modules[$name] = new $name($config);
 			}
 			
 			# Load custom functions
@@ -528,15 +529,17 @@ class Scaffold
 	 * @param $method The method to check for in each of the modules
 	 * @return boolean
 	 */
-	public static function hook($method,&$data = null)
+	public static function hook($method,$data = null)
 	{
 		foreach(self::$modules as $module_name => $module)
 		{
 			if(method_exists($module,$method))
 			{
-				self::$modules[$module_name]->$method($data);
+				$data = self::$modules[$module_name]->$method($data);
 			}
 		}
+		
+		return $data;
 	}
 	
 
@@ -764,7 +767,7 @@ class Scaffold
 		 */
 		if(!headers_sent())
 			header('Content-Type: text/html;', TRUE, 500);
-
+		
 		/**
 		 * This will be caught in the parse method
 		 */
@@ -823,11 +826,17 @@ class Scaffold
 					E_RECOVERABLE_ERROR  => 'Recoverable Error',
 				);
 				
+				
 				if(isset($php_errors[$code]))
 				{
 					// Use the human-readable error name
 					$code = $php_errors[$code];
 				}
+			}
+			
+			if(Scaffold::$has_error)
+			{
+				$code = 'Compiler Error';
 			}
 
 			# Error view html
@@ -859,7 +868,7 @@ class Scaffold
 	{
 		if(!Scaffold::$init)
 			return;
-		
+	
 		if ($error = error_get_last() AND (error_reporting() & $error['type']))
 		{
 			# If an output buffer exists, clear it

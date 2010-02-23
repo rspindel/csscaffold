@@ -29,7 +29,11 @@ if(isset($_GET['f']))
 	/**
 	 * Parse a single file and get the result
 	 */
-	$scaffold = new Scaffold_Engine();
+	$scaffold = new Scaffold_Engine( Scaffold::modules() );
+	
+	/**
+	 * Add the loaded modules 
+	 */	
 	$result = $scaffold->parse_file($_GET['f']);
 
 	/**

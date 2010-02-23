@@ -9,15 +9,24 @@
  * 
  * @author Anthony Short
  */
-class Mixins
+class Mixins extends Scaffold_Module
 {
-
+	/**
+	 * Default configuration
+	 *
+	 * @var array
+	 */
+	protected $defaults = array
+	(
+		'auto_include' => false
+	);
+	
 	/**
 	 * Stores the mixins for debugging purposes
 	 *
 	 * @var array
 	 */
-	public static $mixins = array();
+	public $mixins = array();
 	
 	/**
 	 * Imports all of the mixins in the mixins folder automatically. All comments
@@ -25,20 +34,22 @@ class Mixins
 	 *
 	 * @return void
 	 */
-	public static function import_process()
+	public function import_process($css)
 	{
-		$folder = Scaffold::$config['Mixins']['auto_include'];
+		$folder = $this->config['auto_include'];
 
 		if($folder === false) 
-			return;
-
+			return $css;
+		
 		foreach(Scaffold::list_files($folder,true) as $file)
 		{
 			if(is_dir($file))
 				continue;
 				
-			Scaffold::$css->string .= Scaffold::$css->remove_comments(file_get_contents($file));
+			$css->string .= $css->remove_comments(file_get_contents($file));
 		}
+
+		return $css;
 	}
 	
 	/**

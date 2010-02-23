@@ -4,9 +4,8 @@
  * Iteration
  *
  * @author Anthony Short
- * @dependencies Constants
  */
-class Iteration
+class Iteration extends Scaffold_Module
 {
 	/**
 	 * Extracts the iteration loops from the CSS
