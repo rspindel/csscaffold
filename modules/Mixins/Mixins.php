@@ -34,7 +34,7 @@ class Mixins extends Scaffold_Module
 	 *
 	 * @return void
 	 */
-	public function import($css)
+	public function import( Scaffold_CSS $css )
 	{
 		$folder = $this->config['auto_include'];
 
@@ -57,7 +57,7 @@ class Mixins extends Scaffold_Module
 	 *
 	 * @return void
 	 */
-	public function pre_process($css)
+	public function pre_process( Scaffold_CSS $css )
 	{
 		return $this->extract_bases($css);
 	}
@@ -67,7 +67,7 @@ class Mixins extends Scaffold_Module
 	 *
 	 * @return void
 	 */
-	public function process($css)
+	public function process( Scaffold_CSS $css )
 	{
 		return $this->replace_mixins($css);
 	}

@@ -32,7 +32,7 @@ class NestedSelectors extends Scaffold_Module
 	 * @author Anthony Short
 	 * @return $css string
 	 */
-	public function post_process($css)
+	public function post_process( Scaffold_CSS $css )
 	{
 		# These will break the xml, so we'll transform them for now
 		$css->convert_entities('encode');

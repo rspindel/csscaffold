@@ -11,7 +11,7 @@
  */
 class Formatter extends Scaffold_Module
 {
-	public function format($css)
+	public function format( Scaffold_CSS $css )
 	{
 		if($this->config['compress'] === true)
 		{

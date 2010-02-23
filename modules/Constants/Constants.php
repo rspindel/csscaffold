@@ -30,7 +30,7 @@ class Constants extends Scaffold_Module
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	public function pre_process($css)
+	public function pre_process( Scaffold_CSS $css )
 	{
 		# Global Constants
 		$this->set_global_constants();
@@ -56,7 +56,7 @@ class Constants extends Scaffold_Module
 	 *
 	 * @return void
 	 */
-	public function process($css)
+	public function process( Scaffold_CSS $css )
 	{
 		$css->string = $this->replace($css->string);
 	}

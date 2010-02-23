@@ -16,7 +16,7 @@ class Absolute_Urls extends Scaffold_Module
 	 * @param $css
 	 * @return $css string
 	 */
-	public function format($css)
+	public function format( Scaffold_CSS $css )
 	{	
 		# The absolute url to the directory of the current CSS file
 		$dir = Scaffold::url($css->path);

@@ -42,7 +42,7 @@ class Scaffold_Module
 	 * @param 	$css	Object	Instance of the Scaffold_CSS object
 	 * @return 	$css	Object	The modified CSS object
 	 */
-	public function import($css) { return $css; } 
+	public function import( Scaffold_CSS $css ) { return $css; } 
 	
 	/**
 	 * Handles the extraction of syntax parts to use during processing
@@ -50,7 +50,7 @@ class Scaffold_Module
 	 * @param 	$css	Object	Instance of the Scaffold_CSS object
 	 * @return 	$css	Object	The modified CSS object
 	 */
-	public function pre_process($css) { return $css; } 
+	public function pre_process( Scaffold_CSS $css ) { return $css; } 
 	
 	/**
 	 * Where most of the processing should occur.
@@ -58,7 +58,7 @@ class Scaffold_Module
 	 * @param 	$css	Object	Instance of the Scaffold_CSS object
 	 * @return 	$css	Object	The modified CSS object
 	 */
-	public function process($css) { return $css; } 
+	public function process( Scaffold_CSS $css ) { return $css; } 
 	
 	/**
 	 * Making sure the last parts of the syntax are valid CSS
@@ -66,7 +66,7 @@ class Scaffold_Module
 	 * @param 	$css	Object	Instance of the Scaffold_CSS object
 	 * @return 	$css	Object	The modified CSS object
 	 */
-	public function post_process($css) { return $css; } 
+	public function post_process( Scaffold_CSS $css ) { return $css; } 
 	
 	/**
 	 * Only formatting of the CSS should occur here
@@ -74,7 +74,7 @@ class Scaffold_Module
 	 * @param 	$css	Object	Instance of the Scaffold_CSS object
 	 * @return 	$css	Object	The modified CSS object
 	 */
-	public function format($css) { return $css; } 
+	public function format( Scaffold_CSS $css ) { return $css; } 
 	
 	/**
 	 * Only occurs when not in production. For creating additional assets or
@@ -83,5 +83,5 @@ class Scaffold_Module
 	 * @param 	$css	Object	Instance of the Scaffold_CSS object
 	 * @return 	$css	Object	The modified CSS object
 	 */
-	public function output($css) { return $css; } 
+	public function output( Scaffold_CSS $css ) { return $css; } 
 }

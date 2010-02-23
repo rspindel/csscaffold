@@ -22,7 +22,7 @@ class Includes extends Scaffold_Module
 	 *
 	 * @param $css
 	 */
-	public function import($css)
+	public function import( Scaffold_CSS $css )
 	{
 		# Add the original file to the loaded array
 		$this->loaded[] = $css->path;

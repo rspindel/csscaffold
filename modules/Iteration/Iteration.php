@@ -12,7 +12,7 @@ class Iteration extends Scaffold_Module
 	 *
 	 * @return return type
 	 */
-	public function pre_process($css)
+	public function pre_process( Scaffold_CSS $css )
 	{
 		$css->string = self::parse($css->string);
 		
