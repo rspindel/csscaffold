@@ -83,10 +83,10 @@ class Scaffold_Log
 	{
 		if(empty($this->messages) OR $this->directory === null)
 			return $this;
-
+	
 		$filename = $this->directory.date('Y-m-d').'.log.php';
 
-		if (!is_file($filename))
+		if(is_file($filename))
 		{
 			touch($filename);
 			chmod($filename, 0644);
@@ -118,7 +118,7 @@ class Scaffold_Log
 			if (is_dir($dir) AND is_writable($dir))
 			{
 				// Change the log directory
-				$this->directory = $dir;
+				$this->directory = $dir . DIRECTORY_SEPARATOR;
 			}
 		}
 
