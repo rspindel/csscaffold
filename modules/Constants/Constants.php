@@ -33,7 +33,7 @@ class Constants extends Scaffold_Module
 	 *
 	 * @var array
 	 */
-	public static $constants = array();
+	public $constants = array();
 
 	/**
 	 * The pre-processing function occurs after the importing,
@@ -44,27 +44,29 @@ class Constants extends Scaffold_Module
 	 * @author Anthony Short
 	 * @param $css
 	 */
-	public static function pre_process()
+	public function pre_process($css)
 	{
 		# Global Constants
-		self::set_global_constants();
+		$this->set_global_constants();
 		
 		# XML Constants
-		self::load_xml_constants( Scaffold::$config['Constants']['xml_path'] );
+		$this->load_xml_constants( $this->config['xml_path'] );
 
 		# If there are some constants, let do it.
-		if( $found = Scaffold::$css->find_at_group('constants') )
+		if( $found = $css->find_at_group('constants') )
 		{
 			# Create our template style constants
 			foreach($found['values'] as $key => $value)
 			{				
 				# Check if this contains other constants
-				$value = self::replace($value);
+				$value = $this->replace($value);
 				
 				# Set it
-				self::set($key, $value);
+				$this->set($key, $value);
 			}	
 		}
+		
+		return $css;
 	}
 	
 	/**
@@ -72,9 +74,9 @@ class Constants extends Scaffold_Module
 	 *
 	 * @return void
 	 */
-	public static function process()
+	public function process($css)
 	{
-		Scaffold::$css->string = self::replace(Scaffold::$css->string);
+		$css->string = $this->replace($css->string);
 	}
 
 	/**
@@ -82,11 +84,11 @@ class Constants extends Scaffold_Module
 	 *
 	 * @return void
 	 */
-	private static function set_global_constants()
+	private function set_global_constants()
 	{
-		foreach(Scaffold::$config['Constants']['global'] as $key => $value)
+		foreach($this->config['global'] as $key => $value)
 		{
-			self::set($key,$value);
+			$this->set($key,$value);
 		}
 	}
 
@@ -98,7 +100,7 @@ class Constants extends Scaffold_Module
 	 * @param $value
 	 * @return null
 	 */
-	public static function set($key, $value = "")
+	public function set($key, $value = "")
 	{
 		# So we can pass through a whole array
 		# and set them all at once
@@ -106,12 +108,12 @@ class Constants extends Scaffold_Module
 		{
 			foreach($key as $name => $val)
 			{
-				self::$constants[$name] = $val;
+				$this->constants[$name] = $val;
 			}
 		}
 		else
 		{
-			self::$constants[$key] = $value;
+			$this->constants[$key] = $value;
 		}	
 	}
 	
@@ -121,9 +123,9 @@ class Constants extends Scaffold_Module
 	 * @param $key
 	 * @return void
 	 */
-	public static function remove($key)
+	public function remove($key)
 	{
-		unset(self::$constants[$key]);
+		unset($this->constants[$key]);
 	}
 	
 	/**
@@ -133,9 +135,9 @@ class Constants extends Scaffold_Module
 	 * @param $key
 	 * @return string
 	 */
-	public static function get($key)
+	public function get($key)
 	{
-		return self::$constants[$key];
+		return $this->$constants[$key];
 	}
 	
 	/**
@@ -143,17 +145,20 @@ class Constants extends Scaffold_Module
 	 * with the constants defined in the member variable $constants
 	 * using PHP's interpolation.
 	 */
-	public static function replace($css)
+	public function replace($css)
 	{
 		# Pull the constants into the local scope as variables
-		extract(self::$constants, EXTR_SKIP);
+		extract($this->constants, EXTR_SKIP);
 		
-		# Remove unset variables from the string, so errors aren't thrown
-		foreach(array_unique( Scaffold_Utils::match('/\{?\$([A-Za-z0-9_-]+)\}?/', $css, 1) ) as $value)
+		if( $found = preg_match_all('/\{?\$([A-Za-z0-9_-]+)\}?/', $css, $found) )
 		{
-			if(!isset($$value))
+			# Remove unset variables from the string, so errors aren't thrown
+			foreach(array_unique($found[1]) as $value)
 			{
-				Scaffold::error('Missing constant - ' . $value);
+				if(!isset($$value))
+				{
+					Scaffold::error('Missing constant - ' . $value);
+				}
 			}
 		}
 
@@ -169,7 +174,7 @@ class Constants extends Scaffold_Module
 	 * @param $param
 	 * @return return type
 	 */
-	private static function load_xml_constants($file)
+	private function load_xml_constants($file)
 	{
 		if($file === false)
 			return;
@@ -177,8 +182,7 @@ class Constants extends Scaffold_Module
 		# If the xml file doesn't exist
 		if(!file_exists($file))
 		{
-			Scaffold::log("Missing constants XML file. The file ($file) doesn't exist.",1);
-			return;
+			return Scaffold::$log->add("Missing constants XML file. The file ($file) doesn't exist.",1);
 		}
 		
 		# Load the xml
@@ -187,7 +191,7 @@ class Constants extends Scaffold_Module
 		# Loop through them and set them as constants
 		foreach($xml->constant as $key => $value)
 		{
-			self::set((string)$value->name, (string)$value->value);
+			$this->set((string)$value->name, (string)$value->value);
 		}
 	}
 		

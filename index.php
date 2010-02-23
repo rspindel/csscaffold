@@ -29,7 +29,7 @@ if(isset($_GET['f']))
 	/**
 	 * Parse a single file and get the result
 	 */
-	$scaffold = new Scaffold_Engine( Scaffold::modules() );
+	$scaffold = new Scaffold_Engine();
 	
 	/**
 	 * Add the loaded modules 
@@ -39,7 +39,7 @@ if(isset($_GET['f']))
 	/**
 	 * Get the headers for this file.
 	 */
-	$headers = Scaffold_HTTP::headers($_GET['f'], Scaffold::$lifetime);
+	$headers = Scaffold::headers($_GET['f'], Scaffold::$lifetime);
 
 	/**
 	 * If the user wants us to render the CSS to the browser, we run this event.

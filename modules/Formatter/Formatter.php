@@ -11,16 +11,18 @@
  */
 class Formatter extends Scaffold_Module
 {
-	public static function formatting_process()
+	public function format($css)
 	{
-		if(Scaffold::$config['Formatter']['compress'] === true)
+		if($this->config['compress'] === true)
 		{
-			Scaffold::$css->string = self::minify(Scaffold::$css->string);
+			$css->string = $this->minify($css->string);
 		}
 		else
 		{
-			Scaffold::$css->string = self::prettify(Scaffold::$css->string);
+			$css->string = $this->prettify($css->string);
 		}
+		
+		return $css;
 	}
 
     /**
@@ -29,7 +31,7 @@ class Formatter extends Scaffold_Module
      * @param string $css
      * @return string
      */
-    public static function minify($css)
+    public function minify($css)
     {
         $css = str_replace("\r\n", "\n", $css);
         
@@ -51,7 +53,7 @@ class Formatter extends Scaffold_Module
         // Convert rgb() values to hex
         if(Scaffold::$config['Formatter']['rgb_to_hex'])
         {
-            $css = self::rgb_to_hex($css);
+            $css = $this->rgb_to_hex($css);
         }       
         
         // Strip out the units on 0 measurements eg 0px
@@ -65,7 +67,7 @@ class Formatter extends Scaffold_Module
         // Convert font-weights to numbers
         if(Scaffold::$config['Formatter']['font_weights_to_numbers'])
         {
-            $css = self::font_weights_to_numbers($css);
+            $css = $this->font_weights_to_numbers($css);
         }
 
         // remove ws around { } and last semicolon in declaration block
@@ -171,7 +173,7 @@ class Formatter extends Scaffold_Module
      * @param $css
      * @return string
      */
-    private static function rgb_to_hex($css)
+    private function rgb_to_hex($css)
     {
     	if( $rgbs = Scaffold::$css->find_functions('rgb') )
     	{
@@ -304,7 +306,7 @@ class Formatter extends Scaffold_Module
      * @param $css
      * @return string
      */
-    public static function prettify($css)
+    public function prettify($css)
     {
   		// escape data protocol to prevent processing
     	$css = preg_replace('#(url\(data:[^\)]+\))#e', "'esc('.base64_encode('$1').')'", $css);

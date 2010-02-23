@@ -180,7 +180,7 @@ class Scaffold_CSS
 					// Make sure it's set
 					if(isset($value[1]))
 					{
-						$found['values'][trim($value[0])] = str_replace('#COLON#', ':', Scaffold::unquote($value[1]));
+						$found['values'][trim($value[0])] = str_replace('#COLON#', ':', trim($value[1], "'\" "));
 					}
 				}
 			}

@@ -301,7 +301,7 @@ class Scaffold
 		 */
 		self::$error_threshold = $config['error_threshold'];
 
-		# Load the modules
+		# Load the modules	
 		Scaffold::modules(SCAFFOLD_SYSPATH);
 
 		# Load the extensions
@@ -556,7 +556,7 @@ class Scaffold
 	public static function render($content,$headers)
 	{
 		# If it's not modified, we shouldn't be sending anything to the browser
-		if($headers['_status'] == self::NOT_MODIFIED)
+		if($headers['_status'] == 304)
 		{
 			$content = false;
 		}
@@ -651,8 +651,9 @@ class Scaffold
 	 * @param $param
 	 * @return return type
 	 */
-	private static function headers($file,$lifetime)
-	{		
+	public static function headers($file,$lifetime)
+	{
+		$file = Scaffold::find_file($file);
 		$length = strlen(file_get_contents($file));
 		$modified = filemtime($file);
 
@@ -730,7 +731,7 @@ class Scaffold
 				}
 				else
 				{
-					if($value === self::NOT_MODIFIED)
+					if($value === 304)
 					{
 						header('Status: 304 Not Modified', TRUE, self::NOT_MODIFIED);
 					}

@@ -33,4 +33,71 @@ class Scaffold_Module
 	{
 		$this->config = array_merge($this->defaults,$config);
 	}
+	
+	/**
+	 * Handles importing of CSS files and partials
+	 *
+	 * @param 	$css	Object	Instance of the Scaffold_CSS object
+	 * @return 	$css	Object	The modified CSS object
+	 */
+	public function import($css)
+	{
+		return $css;
+	}
+	
+	/**
+	 * Handles the extraction of syntax parts to use during processing
+	 *
+	 * @param 	$css	Object	Instance of the Scaffold_CSS object
+	 * @return 	$css	Object	The modified CSS object
+	 */
+	public function pre_process($css)
+	{
+		return $css;
+	}
+	
+	/**
+	 * Where most of the processing should occur.
+	 *
+	 * @param 	$css	Object	Instance of the Scaffold_CSS object
+	 * @return 	$css	Object	The modified CSS object
+	 */
+	public function process($css)
+	{
+		return $css;
+	}
+	
+	/**
+	 * Making sure the last parts of the syntax are valid CSS
+	 *
+	 * @param 	$css	Object	Instance of the Scaffold_CSS object
+	 * @return 	$css	Object	The modified CSS object
+	 */
+	public function post_process($css)
+	{
+		return $css;
+	}
+	
+	/**
+	 * Only formatting of the CSS should occur here
+	 *
+	 * @param 	$css	Object	Instance of the Scaffold_CSS object
+	 * @return 	$css	Object	The modified CSS object
+	 */
+	public function format($css)
+	{
+		return $css;
+	}
+	
+	/**
+	 * Only occurs when not in production. For creating additional assets or
+	 * changing the final output of Scaffold
+	 *
+	 * @param 	$css	Object	Instance of the Scaffold_CSS object
+	 * @return 	$css	Object	The modified CSS object
+	 */
+	public function output($css)
+	{
+		return $css;
+	}
 }

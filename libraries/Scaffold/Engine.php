@@ -10,9 +10,9 @@
 class Scaffold_Engine
 {
 	/**
-	 * Hooking Object
+	 * Array of objects to use as processing hooks
 	 *
-	 * @var object
+	 * @var array
 	 */
 	private $hooks;
 
@@ -21,9 +21,9 @@ class Scaffold_Engine
 	 *
 	 * @param $hooks	Array	An array of objects which will have methods called
 	 */
-	public function __construct($hooks)
+	public function __construct()
 	{
-		$this->hooks = $hooks;
+		$this->hooks = Scaffold::modules();
 	}
 
 	/**
@@ -35,11 +35,11 @@ class Scaffold_Engine
 	 * @return string The processed css file as a string
 	 */
 	public function parse_file($file)
-	{	
+	{		
 		# Make sure this file is allowed
-		if(substr($file, 0, 4) == "http" OR substr($file, -4, 4) != ".css")
+		if(substr($file, 0, 4) == "http" OR substr($file, -4, 4) != ".scss")
 		{
-			Scaffold::error("Scaffold cannot the requested file - $file");
+			Scaffold::error("Scaffold cannot parse the requested file - $file");
 		}
 		
 		# Find the file on the server
@@ -101,28 +101,37 @@ class Scaffold_Engine
 		 * The file the CSS is from. Used for any path functions dealing with the CSS
 		 */
 		if($base !== false)
+		{
 			$css->directory($base);
+		}
 
 		/**
 		 * Import Process Hook
 		 * This hook is for doing any type of importing/including in the CSS
 		 */
-		$this->hooks->run('import_process');
-
-		$css = Scaffold::hook('import_process',$css);
+		foreach($this->hooks as $hook)
+		{
+			$css = $hook->import($css);
+		}
 		
 		/**
 		 * Pre-process Hook
 		 * There shouldn't be any heavy processing of the string here. Just pulling
 		 * out @ rules, constants and other bits and pieces.
 		 */
-		$css = Scaffold::hook('pre_process',$css);
+		foreach($this->hooks as $hook)
+		{
+			$css = $hook->pre_process($css);
+		}
 			
 		/**
 		 * Process Hook
 		 * The main process. None of the processes should conflict in any of the modules
 		 */
-		$css = Scaffold::hook('process',$css);
+		foreach($this->hooks as $module)
+		{
+			$css = $hook->process($css);
+		}
 		
 		/**
 		 * Replace custom functions
@@ -152,12 +161,12 @@ class Scaffold_Engine
 	
 						if($pos !== false)
 						{
-						    Scaffold::$css->string = substr_replace(Scaffold::$css->string,$result,$pos,strlen($originals[$key]));
+						    $css->string = substr_replace($css->string,$result,$pos,strlen($originals[$key]));
 						}
 					}
 					else
 					{
-						Scaffold::$css->string = str_replace($originals[$key],$result,Scaffold::$css->string);
+						$css->string = str_replace($originals[$key],$result,$css);
 					}
 				}
 			}
@@ -181,7 +190,7 @@ class Scaffold_Engine
 						Scaffold::error('Invalid Custom Property Syntax - <strong>' . $originals[$key] . '</strong>');
 					}
 					
-					Scaffold::$css->string = str_replace($originals[$key],$result,Scaffold::$css->string);
+					$css->string = str_replace($originals[$key],$result,$css->string);
 				}
 			}
 		}
@@ -192,20 +201,32 @@ class Scaffold_Engine
 		 * the nested selectors are parsed. It's not perfectly standard CSS yet, but
 		 * there shouldn't be an Scaffold syntax left at all.
 		 */
-		Scaffold::hook('post_process',$css);
+		foreach($this->hooks as $hook)
+		{
+			$css = $hook->post_process($css);
+		}
 
 		/**
 		 * Formatting Hook
 		 * Stylise the string, rewriting urls and other parts of the string. No heavy processing.
 		 */
-		Scaffold::hook('formatting_process',$css);
+		foreach($this->hooks as $hook)
+		{
+			$css = $hook->format($css);
+		}
 				
 		/**
 		 * Output Hook
 		 * Hook that is only run in development mode. It's used for creating extra
 		 * assets or changing what is displayed to the browser.
 		 */
-		if(Scaffold::$production === false) Scaffold::hook('output',$css);
+		if(Scaffold::$production === false)
+		{
+			foreach($this->hooks as $hook)
+			{
+				$css = $hook->output($css);
+			}
+		}
 
 		return $css->string;
 	}
