@@ -522,25 +522,6 @@ class Scaffold
 			Scaffold::extensions($module);
 		}
 	}
-
-	/**
-	 * Allows modules to hook into the processing at any point
-	 *
-	 * @param $method The method to check for in each of the modules
-	 * @return boolean
-	 */
-	public static function hook($method,$data = null)
-	{
-		foreach(self::$modules as $module_name => $module)
-		{
-			if(method_exists($module,$method))
-			{
-				$data = self::$modules[$module_name]->$method($data);
-			}
-		}
-		
-		return $data;
-	}
 	
 
 	/******************************************************************************************************

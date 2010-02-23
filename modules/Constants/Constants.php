@@ -9,23 +9,9 @@
  * You can set CSScaffold constants using XML. This allows you to create
  * constants using a CMS or by any other means to tie it in with your CSS.
  *
- * XML must be in this format:
- 
- 	<?xml version="1.0" ?>
- 	<constants>
- 	
- 		<constant>
- 			<name>Foo</name>
- 			<value>Bar</value>
- 		</constant>
- 	
- 	</constants>
- *
- * By default, it requires a constants.xml file in the root of the CSS directory.
- * You can change this in the plugins config.
- *
  * @author Anthony Short
  */
+
 class Constants extends Scaffold_Module
 {
 	/**
@@ -52,16 +38,12 @@ class Constants extends Scaffold_Module
 		# XML Constants
 		$this->load_xml_constants( $this->config['xml_path'] );
 
-		# If there are some constants, let do it.
-		if( $found = $css->find_at_group('constants') )
+		# If there are some @constants, let do it.
+		if($found = $css->find_at_group('constants'))
 		{
-			# Create our template style constants
 			foreach($found['values'] as $key => $value)
 			{				
-				# Check if this contains other constants
 				$value = $this->replace($value);
-				
-				# Set it
 				$this->set($key, $value);
 			}	
 		}
@@ -93,17 +75,15 @@ class Constants extends Scaffold_Module
 	}
 
 	/**
-	 * Sets constants
+	 * Sets constants. If the first value is an array, it will set all them as constants,
+	 * using the keys of the array as the keys of the constants.
 	 *
-	 * @author Anthony Short
-	 * @param $key
-	 * @param $value
-	 * @return null
+	 * @param 	$key
+	 * @param 	$value
+	 * @return 	null
 	 */
 	public function set($key, $value = "")
 	{
-		# So we can pass through a whole array
-		# and set them all at once
 		if(is_array($key))
 		{
 			foreach($key as $name => $val)

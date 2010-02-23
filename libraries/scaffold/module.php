@@ -3,18 +3,18 @@
 /**
  * Scaffold_Module
  *
- * The parent class for Scaffold modules
+ * The class for Scaffold modules
  * 
  * @author Anthony Short
  */
 class Scaffold_Module
 {
 	/**
-	 * Configuration for the module
+	 * The configuration
 	 *
 	 * @var array
 	 */
-	public $config;
+	public $config = array();
 	
 	/**
 	 * Default settings which are used if the configuration
@@ -25,25 +25,24 @@ class Scaffold_Module
 	protected $defaults = array();
 	
 	/**
-	 * Constructor
+	 * Sets the configuration
 	 *
+	 * @author your name
+	 * @param $config
 	 * @return void
 	 */
 	public function __construct($config)
 	{
-		$this->config = array_merge($this->defaults,$config);
+		$this->config = array_merge($this->defaults, $config);
 	}
-	
+
 	/**
 	 * Handles importing of CSS files and partials
 	 *
 	 * @param 	$css	Object	Instance of the Scaffold_CSS object
 	 * @return 	$css	Object	The modified CSS object
 	 */
-	public function import($css)
-	{
-		return $css;
-	}
+	public function import($css) { return $css; } 
 	
 	/**
 	 * Handles the extraction of syntax parts to use during processing
@@ -51,10 +50,7 @@ class Scaffold_Module
 	 * @param 	$css	Object	Instance of the Scaffold_CSS object
 	 * @return 	$css	Object	The modified CSS object
 	 */
-	public function pre_process($css)
-	{
-		return $css;
-	}
+	public function pre_process($css) { return $css; } 
 	
 	/**
 	 * Where most of the processing should occur.
@@ -62,10 +58,7 @@ class Scaffold_Module
 	 * @param 	$css	Object	Instance of the Scaffold_CSS object
 	 * @return 	$css	Object	The modified CSS object
 	 */
-	public function process($css)
-	{
-		return $css;
-	}
+	public function process($css) { return $css; } 
 	
 	/**
 	 * Making sure the last parts of the syntax are valid CSS
@@ -73,10 +66,7 @@ class Scaffold_Module
 	 * @param 	$css	Object	Instance of the Scaffold_CSS object
 	 * @return 	$css	Object	The modified CSS object
 	 */
-	public function post_process($css)
-	{
-		return $css;
-	}
+	public function post_process($css) { return $css; } 
 	
 	/**
 	 * Only formatting of the CSS should occur here
@@ -84,10 +74,7 @@ class Scaffold_Module
 	 * @param 	$css	Object	Instance of the Scaffold_CSS object
 	 * @return 	$css	Object	The modified CSS object
 	 */
-	public function format($css)
-	{
-		return $css;
-	}
+	public function format($css) { return $css; } 
 	
 	/**
 	 * Only occurs when not in production. For creating additional assets or
@@ -96,8 +83,5 @@ class Scaffold_Module
 	 * @param 	$css	Object	Instance of the Scaffold_CSS object
 	 * @return 	$css	Object	The modified CSS object
 	 */
-	public function output($css)
-	{
-		return $css;
-	}
+	public function output($css) { return $css; } 
 }

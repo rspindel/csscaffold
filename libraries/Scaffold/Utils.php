@@ -34,17 +34,6 @@ class Scaffold_Utils
 	}
 	
 	/** 
-	 * Removes all quotes from a string
-	 *
-	 * @author Anthony Short
-	 * @param $str string
-	 */
-	public static function remove_all_quotes($str)
-	{
-		return str_replace(array('"', "'"), '', $str);
-	}
-	
-	/** 
 	 * Removes quotes surrounding a string
 	 *
 	 * @author Anthony Short

@@ -20,7 +20,6 @@ class Includes extends Scaffold_Module
 	/**
 	 * This function occurs before everything else
 	 *
-	 * @author Anthony Short
 	 * @param $css
 	 */
 	public function import($css)
@@ -37,7 +36,6 @@ class Includes extends Scaffold_Module
 	/**
 	 * Imports css via @import statements
 	 * 
-	 * @author Anthony Short
 	 * @param $css
 	 */
 	public function server_import($css,$base)
@@ -89,7 +87,6 @@ class Includes extends Scaffold_Module
 			}
 			
 			$css = $this->server_import($css,$base);
-
 		}
 
 		return $css;
