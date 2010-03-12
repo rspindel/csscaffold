@@ -1,0 +1,7 @@
+/**
+ * Turns off outlines
+ */
+=outline-off {
+	outline: none;
+	-moz-outline: none;
+}
