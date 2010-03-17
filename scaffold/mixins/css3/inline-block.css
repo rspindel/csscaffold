@@ -10,6 +10,6 @@
 	zoom:1;
 	display:-moz-inline-box;
 	display:inline-block;
-	display:inline; 
+	display:inline !ie;
 	vertical-align:top;
 }
