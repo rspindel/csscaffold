@@ -8,8 +8,8 @@
 =inline-block
 {
 	zoom:1;
+	display:-moz-inline-box;
+	display:inline-block;
 	display:inline; 
-	display:-moz-inline-box; 
-	display:inline-block; 
 	vertical-align:top;
 }
