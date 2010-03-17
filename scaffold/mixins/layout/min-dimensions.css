@@ -1,6 +1,6 @@
 =min-height($h)
 {
-	// For good browsers
+    // For good browsers
     & { min-height:$h; }
     
     // For IE6
@@ -12,7 +12,7 @@
 
 =min-width($w)
 {
-	// For good browsers
+    // For good browsers
     & { min-width:$w; }
     
     // For IE6

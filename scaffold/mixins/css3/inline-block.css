@@ -7,9 +7,21 @@
 */
 =inline-block
 {
-	zoom:1;
 	display:-moz-inline-box;
 	display:inline-block;
-	display:inline !ie;
 	vertical-align:top;
+	display:inline;
+	zoom:1;
+	
+	// The below IE selectors have to be applied in seperate rules
+	
+	// IE6
+	* html & {
+		display:inline;
+	}
+	
+	// IE7
+	*:first-child+html & {
+		display:inline;
+	}
 }
