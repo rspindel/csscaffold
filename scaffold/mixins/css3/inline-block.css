@@ -10,7 +10,6 @@
 	display:-moz-inline-box;
 	display:inline-block;
 	vertical-align:top;
-	display:inline;
 	zoom:1;
 	
 	// The below IE selectors have to be applied in seperate rules
