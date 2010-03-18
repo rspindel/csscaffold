@@ -228,6 +228,12 @@ class NestedSelectors
 			$parent = str_replace("#SCAFFOLD-PARENT#", $parent, $child);
 		}
 		
+		# If the child references the root selector
+		elseif (strstr($child, "#SCAFFOLD-ROOT#"))
+		{
+			$parent = str_replace("#SCAFFOLD-ROOT#", 'html', $child);
+		}
+
 		# Otherwise, do it normally
 		else
 		{
@@ -255,6 +261,11 @@ class NestedSelectors
 			if (strstr($child, "#SCAFFOLD-PARENT#"))
 			{
 				$children[$key] = str_replace("#SCAFFOLD-PARENT#", $parent, $child);	
+			}
+			# If the child references the root selector
+			if (strstr($child, "#SCAFFOLD-ROOT#"))
+			{
+				$children[$key] = str_replace("#SCAFFOLD-ROOT#", 'html', $child);
 			}
 			else
 			{
