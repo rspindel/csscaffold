@@ -346,7 +346,7 @@ class Scaffold_CSS
 			'"' => '#SCAFFOLD-QUOTE#',
 			'>' => '#SCAFFOLD-GREATER#',
 			'&' => '#SCAFFOLD-PARENT#',
-			'?' => '#SCAFFOLD-PREFIX-SELECTOR#',
+			'?' => '#SCAFFOLD-NESTED-PARENT#',
 			'data:image/PNG;' => '#SCAFFOLD-IMGDATA-PNG#',
 			'data:image/JPG;' => "#SCAFFOLD-IMGDATA-JPG#",
 			'data:image/png;' => '#SCAFFOLD-IMGDATA-PNG#',

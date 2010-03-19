@@ -224,18 +224,16 @@ class NestedSelectors
 		
 		# If the child references the parent selector
 		elseif (strstr($child, "#SCAFFOLD-PARENT#"))
-		{						
+		{
 			$parent = str_replace("#SCAFFOLD-PARENT#", $parent, $child);
 		}
-		
-		# If the child contains a selector prefix
-		elseif (strstr($child, "#SCAFFOLD-PREFIX-SELECTOR#"))
+		# If the child references the nested parent selector
+		elseif (strstr($child, "#SCAFFOLD-NESTED-PARENT#"))
 		{
-			$prefix = array_shift(explode(' ',trim(str_replace("#SCAFFOLD-PREFIX-SELECTOR#", '', trim($child)))));
-			$child = str_replace($prefix, '', trim($child));
-			$parent = str_replace("#SCAFFOLD-PREFIX-SELECTOR#", $parent, trim($child));
+			$parent = implode(' ', array_slice(explode(' ', $parent), 0, -1));
+			$parent = str_replace("#SCAFFOLD-NESTED-PARENT#", $parent, $child);
 		}
-
+		
 		# Otherwise, do it normally
 		else
 		{
@@ -264,12 +262,11 @@ class NestedSelectors
 			{
 				$children[$key] = str_replace("#SCAFFOLD-PARENT#", $parent, $child);	
 			}
-			# If the child contains a selector prefix
-			if (strstr($child, "#SCAFFOLD-PREFIX-SELECTOR#"))
+			# If the child references the nested parent selector
+			elseif (strstr($child, "#SCAFFOLD-NESTED-PARENT#"))
 			{
-				$prefix = array_shift(explode(' ',trim(str_replace("#SCAFFOLD-PREFIX-SELECTOR#", '', trim($child)))));
-				$child = str_replace($prefix, '', trim($child));
-				$children[$key] = str_replace("#SCAFFOLD-PREFIX-SELECTOR#", $prefix.' '.$parent, trim($child));
+				$children[$key] = implode(' ', array_slice(explode(' ', $parent), 0, -1));
+				$children[$key] = str_replace("#SCAFFOLD-NESTED-PARENT#", $parent, $child);
 			}
 			else
 			{
