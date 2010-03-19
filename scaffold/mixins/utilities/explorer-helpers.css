@@ -1,0 +1,72 @@
+ /**
+  * Renders a transparent png for IE 6 & 7
+  */
+=iepng($url,$sizingMethod = 'image') {
+	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='$url',sizingMethod='$sizingMethod');
+}
+
+/**
+ * Generates styles required to perform a simple hover state
+ * containg a transparent png for IE6 & 7
+ */
+/*
+	------- This -------
+
+	a {
+		span {
+			+iepng-hover(/myimage.png);
+		}
+	}
+
+	
+	------- Generates below css -------
+
+	a span,
+	{
+		display: block;
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 98px;
+		width: 189px;
+		text-indent: -50000px;
+		filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/myimage.png', sizingMethod='image');
+	}
+
+	a
+	{
+		background-image: none;
+		overflow: hidden;
+		text-indent: 0;
+		cursor: hand;
+	}
+
+	a:hover span
+	{
+		top: -49px;
+		left: 0px;
+	}
+*/
+
+=iepng-hover($url, $sizingMethod = 'image') {
+	
+	/* Apply rules to nested parent */
+	? {
+		background-image: none;
+		overflow: hidden;
+		text-indent: 0;
+		cursor: hand;
+	}
+	
+	display: block;
+	+absolute(0,0);
+	image-size: url($url);
+	text-indent: -50000px;
+	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='$url',sizingMethod='$sizingMethod');
+	
+	?:hover {
+		span {
+			image-holder-position: url($url), 0, 50%;
+		}
+	}
+}
