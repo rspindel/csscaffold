@@ -11,16 +11,36 @@
  * @param $url
  * @return string
  */
-function Scaffold_image_replace($url)
+//function Scaffold_image_replace($url, $x = 0, $y = 0)
+function Scaffold_image_replace($params)
 {
+	if(preg_match_all('/\([^)]*?,[^)]*?\)/',$params, $matches))
+	{
+		foreach($matches as $key => $original)
+		{
+			$new = str_replace(',','#COMMA#',$original);
+			$params = str_replace($original,$new,$params);
+		}
+	}
+
+	$params = explode(',',$params);
+
+	foreach(array('url','x','y') as $key => $name)
+	{
+		$$name = trim(str_replace('#COMMA#',',', array_shift($params) ));
+	}
+
 	$url = preg_replace('/\s+/','',$url);
 	$url = preg_replace('/url\\([\'\"]?|[\'\"]?\)$/', '', $url);
 
+	if(!$x) $x = 0;
+
+	if(!$y) $y = 0;
+
 	$path = Scaffold::find_file($url);
-	
-	if($path === false)
-		return false;
-																		
+
+	if($path === false)	return false;
+
 	// Get the size of the image file
 	$size = GetImageSize($path);
 	$width = $size[0];
@@ -33,7 +53,7 @@ function Scaffold_image_replace($url)
 	}
 	
 	// Build the selector
-	$properties = "background:url(".Scaffold::url_path($path).") no-repeat 0 0;
+	$properties = "background:url(".Scaffold::url_path($path).") no-repeat $x $y;
 		height:{$height}px;
 		width:{$width}px;
 		display:block;
