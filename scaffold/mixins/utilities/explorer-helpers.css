@@ -2,6 +2,7 @@
   * Renders a transparent png for IE 6 & 7
   */
 =iepng($url,$sizingMethod = 'image') {
+	background-image: none;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='$url',sizingMethod='$sizingMethod');
 }
 
