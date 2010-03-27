@@ -11,7 +11,7 @@
  * @param $url
  * @return string
  */
-function Scaffold_image_width($url)
+function Scaffold_image_width($url, $w = false)
 {
 	$url = preg_replace('/\s+/','',$url);
 	$url = preg_replace('/url\\([\'\"]?|[\'\"]?\)$/', '', $url);
@@ -25,6 +25,10 @@ function Scaffold_image_width($url)
 	$size = GetImageSize($path);
 	$width = $size[0];
 	
+	if($w == '50%'){
+		$width = $width*0.5;
+	}
+
 	// Make sure theres a value so it doesn't break the css
 	if(!$width)
 	{

@@ -11,10 +11,12 @@
  * @param $url
  * @return string
  */
-function Scaffold_image_height($url)
+function Scaffold_image_height($url,$h = false)
 {
 	$url = preg_replace('/\s+/','',$url);
 	$url = preg_replace('/url\\([\'\"]?|[\'\"]?\)$/', '', $url);
+
+	$h = trim($h);
 
 	$path = Scaffold::find_file($url);
 	
@@ -25,6 +27,10 @@ function Scaffold_image_height($url)
 	$size = GetImageSize($path);
 	$height = $size[1];
 	
+	if($h == '50%'){
+		$height = $height*0.5;
+	}
+
 	// Make sure theres a value so it doesn't break the css
 	if(!$height)
 	{
