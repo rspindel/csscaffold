@@ -17,6 +17,26 @@
 	+position("absolute", $top, $left, $bottom, $right);
 }
 
+=absolute-tr($top = 0, $right = 0)
+{
+	+position("absolute", $top, false, false, $right);
+}
+
+=absolute-tl($top = 0, $left = 0)
+{
+	+position("absolute", $top, $left, false, false);
+}
+
+=absolute-br($bottom = 0, $right = 0)
+{
+	+position("absolute", false, false, $bottom, $right);
+}
+
+=absolute-bl($bottom = 0, $left = 0)
+{
+	+position("absolute", false, $bottom, $left, false);
+}
+
 =relative($top = false, $left = false, $bottom = false, $right = false)
 {
 	+position("relative", $top, $left, $bottom, $right);
