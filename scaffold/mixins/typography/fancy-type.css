@@ -6,7 +6,7 @@
  */
 =small-type
 { 
-	line-height: #[floor(!baseline*4/5)]px; 
+	line-height: calc(floor($baseline*4/5))px; 
 	font-size: 11px; 
 }
 

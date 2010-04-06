@@ -7,8 +7,8 @@
 * @type Mixin
 * @param !side The direction of the float
 */
-=float(!side)
+=float($side)
 {
-	float:!side;
+	float:$side;
 	display:inline;
 }
