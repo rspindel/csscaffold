@@ -274,7 +274,7 @@ class NestedSelectors
 			}
 		}
 		
-		return implode(",",$children);
+		return str_replace('  ',' ', implode(",",$children));
 	}
 	
 
