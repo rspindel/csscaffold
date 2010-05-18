@@ -34,7 +34,7 @@
 
 =absolute-bl($bottom = 0, $left = 0)
 {
-	+position("absolute", false, $bottom, $left, false);
+	+position("absolute", false, $left, $bottom, false);
 }
 
 =relative($top = false, $left = false, $bottom = false, $right = false)
