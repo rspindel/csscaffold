@@ -47,7 +47,7 @@ function Scaffold_image_replace_matrix($params)
 	}
 	
 	// Build the selector
-	$properties = "background:url(".Scaffold::url_path($path).") no-repeat $x $y;
+	$properties = "background:url(".Scaffold::url_path($path).") no-repeat {$x}px {$y}px;
 		height:{$height}px;
 		width:{$width}px;
 		display:block;

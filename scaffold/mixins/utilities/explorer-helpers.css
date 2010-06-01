@@ -26,7 +26,7 @@
 	}
 	
 	display: block;
-	+absolute($y,$x);
+	+absolute({$y}px,{$x}px);
 	image-size: url($url);
 	text-indent: -50000px;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='$url',sizingMethod='$sizingMethod');
@@ -156,14 +156,14 @@
 	}
 	
 	display: block;
-	+absolute($y, $x);
+	+absolute({$y}px, {$x}px);
 	image-size: url($url);
 	text-indent: -50000px;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='$url',sizingMethod='$sizingMethod');
 	
 	?:hover {
 		span {
-			left: $x;
+			left: {$x}px;
 			top: calc($y - $height)px;
 		}
 	}
