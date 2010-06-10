@@ -1,9 +1,9 @@
 /**
  * Adds a drop shadow
  */
-=box-shadow($x, $y, $blur, $color)
+=box-shadow($x, $y, $blur, $color, $inset = '')
 {
-	-moz-box-shadow:$x $y $blur $color;
-	-webkit-box-shadow:$x $y $blur $color;
-	box-shadow:$x $y $blur $color;
+ 	-moz-box-shadow: $inset $x $y $blur $color;
+	-webkit-box-shadow: $inset $x $y $blur $color;
+	box-shadow: $inset $x $y $blur $color;
 }
