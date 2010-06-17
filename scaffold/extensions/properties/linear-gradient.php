@@ -29,9 +29,10 @@ function Scaffold_linear_gradient($params)
 	
 	$applyTo = array(
 		'-moz-linear-gradient',
+		'filter',
 		'-webkit-gradient'
 		);
-		
+
 	foreach($applyTo as $k){
 		switch($k){
 			case '-moz-linear-gradient':
@@ -54,11 +55,37 @@ function Scaffold_linear_gradient($params)
 				}
 				$webkit = 'background-image:'."\t\t\t".'-webkit-gradient(linear, '.$direction.', from('.$from.'), to('.$to.'));';
 				break;
+			case 'filter':
+			  switch($direction){
+					case 'top':
+						$GradientType = 0;
+						$startColorstr = $from;
+						$endColorstr = $to;
+						break;
+					case 'right':
+						$GradientType = 1;
+						$startColorstr = $to;
+						$endColorstr = $from;
+						break;
+					case 'bottom':
+					$GradientType = 0;
+					$startColorstr = $to;
+					$endColorstr = $from;
+						break;
+					case 'left':
+						$GradientType = 1;
+						$startColorstr = $from;
+						$endColorstr = $to;
+						break;
+				}
+				$filter = 'filter:'."\t\t\t".'progid:DXImageTransform.Microsoft.gradient(GradientType='.$GradientType.',startColorstr='.$startColorstr.', endColorstr='.$endColorstr.');'."\n";
+				$filter .= '-ms-filter:'."\t\t\t".'"progid:DXImageTransform.Microsoft.gradient(GradientType='.$GradientType.',startColorstr='.$startColorstr.', endColorstr='.$endColorstr.')";'."\n";
+				break;
 		}
 	}
 	
 	// Build the selector
-	$properties = $gecko."\n\t".$webkit;
+	$properties = $gecko."\n\t".$webkit."\n\t".$filter;
 
 	return $properties;
 }
