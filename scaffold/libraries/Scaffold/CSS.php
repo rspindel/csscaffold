@@ -80,7 +80,7 @@ class Scaffold_CSS
 	 */
 	public function remove_inline_comments($css)
 	{
-		 return preg_replace('#(\s|$)//.*$#Umsi', '', $css);
+		 return preg_replace('#(\s|^)//.*$#Umsi', '', $css);
 	}
 
 	/**
