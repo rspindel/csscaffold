@@ -140,6 +140,11 @@ Well, you get the point.
 Create a gradient background image.
 #####image-replace:url()
 
+#####background-rgba: color (3 format : 128,255,0 or violet or #fef), alpha
+
+Create a rgba background image and insert pure css3 rgba background for modern browser
+#####image-replace:url()
+
 Replaces text with an image.
 
 ## Example
