@@ -139,7 +139,7 @@ Well, you get the point.
 
 Create a gradient background image.
 
-#####background-rgba: color (3 format : 128,255,0 or violet or #fef), alpha
+#####background-rgba: color (3 formats : 128,255,0 or violet or #fef), alpha
 
 Create a rgba background image and insert pure css3 rgba background for modern browser
 #####image-replace:url()
