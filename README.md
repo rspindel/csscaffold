@@ -138,7 +138,6 @@ Well, you get the point.
 #####background-gradient: (vertical|horizontal), size, from, to
 
 Create a gradient background image.
-#####image-replace:url()
 
 #####background-rgba: color (3 format : 128,255,0 or violet or #fef), alpha
 
