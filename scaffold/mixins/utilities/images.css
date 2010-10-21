@@ -35,6 +35,7 @@
  */
 =image-bg($url) {
        background: url($url) no-repeat;
+       image-size: url($url);
        
        .ie6 & {
               +iepng($url);
