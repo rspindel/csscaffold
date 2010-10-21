@@ -29,3 +29,14 @@
 {
 	image-rendering:optimizeSpeed;
 }
+
+/**
+ * Adds background image to html element
+ */
+=image-bg($url) {
+       background: url($url) no-repeat;
+       
+       .ie6 & {
+              +iepng($url);
+       }
+}
