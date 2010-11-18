@@ -41,3 +41,18 @@
               +iepng($url);
        }
 }
+
+/**
+ * Replace with image matrix
+ * 
+ * Requires image-replace-matrix extension and css_browser_selector.js
+ */
+=image-matrix-replace($url, $width, $height, $x = 0, $y = 0) {
+       span {
+              image-replace-matrix: url($url), $width, $height, $x, $y;
+
+              .ie6 & em {
+                     +ie6png-matrix($url, $x, $y);
+              }
+       }
+}
